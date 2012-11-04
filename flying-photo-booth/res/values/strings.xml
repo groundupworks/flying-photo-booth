@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Flying PhotoBooth</string>
+
+    <!-- Capture Fragment -->
+    <string name="capture__title_frame">PHOTO %1$d OF 4</string>
+    <string name="capture__status_focusing">FOCUSING</string>
+    <string name="capture__start_button_text">PRESS TO BEGIN</string>
+    <string name="capture__countdown_one">1</string>
+    <string name="capture__countdown_two">2</string>
+    <string name="capture__countdown_three">3</string>
+    <string name="capture__countdown_separator">•</string>
+    <string name="capture__error_no_camera">No camera available</string>
+    <string name="capture__error_camera_in_use">Camera in use by another application</string>
+
+    <!-- Confirm Image Fragment -->
+    <string name="confirm_image__share_chooser_title">Share image using</string>
+    <string name="confirm_image__error_generic">An error has occurred</string>
+
+</resources>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="titlebar_color">#353c32</color>
+    <color name="background_color">#f0eeec</color>
+    <color name="lt_text_color">#999999</color>
+    <color name="selection_color">#0066ff</color>
+
+</resources>
