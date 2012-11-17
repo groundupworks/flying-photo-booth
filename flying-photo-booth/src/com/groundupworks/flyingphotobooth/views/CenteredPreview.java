@@ -258,9 +258,7 @@ public class CenteredPreview extends ViewGroup implements SurfaceHolder.Callback
 
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-        if (mCamera != null) {
-            mCamera.startPreview();
-        }
+        start();
     }
 
     @Override
@@ -335,6 +333,15 @@ public class CenteredPreview extends ViewGroup implements SurfaceHolder.Callback
                 // Invalidate the layout since camera has changed.
                 requestLayout();
             }
+        }
+    }
+
+    /**
+     * Starts the preview if both camera and surface are ready.
+     */
+    public void start() {
+        if (mCamera != null && mSurfaceCreated) {
+            mCamera.startPreview();
         }
     }
 }

@@ -74,6 +74,21 @@ public class CaptureFragment extends Fragment {
     private static final int CAPTURED_JPEG_QUALITY = 100;
 
     /**
+     * Flag to indicate whether the fragment is launched with preference to use the front-facing camera.
+     */
+    private boolean mUseFrontFacing = false;
+
+    /**
+     * Flag to track whether {@link #onPause()} is called.
+     */
+    private boolean mOnPauseCalled = false;
+
+    /**
+     * Number of cameras on the device.
+     */
+    private int mNumCameras = 0;
+
+    /**
      * Id of the selected camera.
      */
     private int mCameraId = INVALID_CAMERA_ID;
@@ -133,30 +148,32 @@ public class CaptureFragment extends Fragment {
          * Get params.
          */
         Bundle args = getArguments();
-        boolean useFrontFacing = args.getBoolean(FRAGMENT_BUNDLE_KEY_CAMERA);
+        mUseFrontFacing = args.getBoolean(FRAGMENT_BUNDLE_KEY_CAMERA);
 
         /*
-         * Select camera.
+         * Default to first camera available.
+         */
+        mNumCameras = Camera.getNumberOfCameras();
+        if (mNumCameras > 0) {
+            mCameraId = 0;
+        }
+
+        /*
+         * Try to select camera based on preference.
          */
         int cameraPreference = CameraInfo.CAMERA_FACING_BACK;
-        if (useFrontFacing) {
+        if (mUseFrontFacing) {
             cameraPreference = CameraInfo.CAMERA_FACING_FRONT;
         }
 
-        int numCameras = Camera.getNumberOfCameras();
         CameraInfo cameraInfo = new CameraInfo();
-        for (int cameraId = 0; cameraId < numCameras; cameraId++) {
+        for (int cameraId = 0; cameraId < mNumCameras; cameraId++) {
             Camera.getCameraInfo(cameraId, cameraInfo);
             if (cameraInfo.facing == cameraPreference) {
                 mCameraId = cameraId;
                 break;
             }
         }
-
-        /*
-         * Initialize timer for scheduling tasks.
-         */
-        mTimer = new Timer("countdownTimer");
     }
 
     @Override
@@ -181,22 +198,28 @@ public class CaptureFragment extends Fragment {
         /*
          * Functionalize views.
          */
-        mSwitchButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Switch camera.
-                boolean useFrontFacing = false;
-                CameraInfo cameraInfo = new CameraInfo();
-                Camera.getCameraInfo(mCameraId, cameraInfo);
-                if (cameraInfo.facing == CameraInfo.CAMERA_FACING_BACK) {
-                    useFrontFacing = true;
-                }
+        // Show switch button only if more than one camera is available.
+        if (mNumCameras > 1) {
+            mSwitchButton.setVisibility(View.VISIBLE);
+            mSwitchButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // Switch camera.
+                    boolean useFrontFacing = false;
+                    CameraInfo cameraInfo = new CameraInfo();
+                    if (mCameraId != INVALID_CAMERA_ID) {
+                        Camera.getCameraInfo(mCameraId, cameraInfo);
+                        if (cameraInfo.facing == CameraInfo.CAMERA_FACING_BACK) {
+                            useFrontFacing = true;
+                        }
 
-                // Relaunch fragment with new camera.
-                ((LaunchActivity) getActivity()).replaceFragment(CaptureFragment.newInstance(useFrontFacing), false,
-                        true);
-            }
-        });
+                        // Relaunch fragment with new camera.
+                        ((LaunchActivity) getActivity()).replaceFragment(CaptureFragment.newInstance(useFrontFacing),
+                                false, true);
+                    }
+                }
+            });
+        }
 
         mStartButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -225,86 +248,99 @@ public class CaptureFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        if (mCameraId != INVALID_CAMERA_ID) {
-            try {
-                mCamera = Camera.open(mCameraId);
+        /*
+         * Initialize timer for scheduling tasks.
+         */
+        mTimer = new Timer("countdownTimer");
 
-                /*
-                 * Configure camera parameters.
-                 */
-                Parameters params = mCamera.getParameters();
-
-                // Set auto white balance if supported.
-                List<String> whiteBalances = params.getSupportedWhiteBalance();
-                if (whiteBalances != null) {
-                    for (String whiteBalance : whiteBalances) {
-                        if (whiteBalance.equals(Camera.Parameters.WHITE_BALANCE_AUTO)) {
-                            params.setWhiteBalance(whiteBalance);
-                        }
-                    }
-                }
-
-                // Set auto antibanding if supported.
-                List<String> antibandings = params.getSupportedAntibanding();
-                if (antibandings != null) {
-                    for (String antibanding : antibandings) {
-                        if (antibanding.equals(Camera.Parameters.ANTIBANDING_AUTO)) {
-                            params.setAntibanding(antibanding);
-                        }
-                    }
-                }
-
-                // Set macro focus mode if supported.
-                List<String> focusModes = params.getSupportedFocusModes();
-                if (focusModes != null) {
-                    for (String focusMode : focusModes) {
-                        if (focusMode.equals(Camera.Parameters.FOCUS_MODE_MACRO)) {
-                            params.setFocusMode(focusMode);
-                        }
-                    }
-                }
-
-                // Set quality for Jpeg capture.
-                params.setJpegQuality(CAPTURED_JPEG_QUALITY);
-
-                // Set optimal size for Jpeg capture.
-                Size pictureSize = CameraHelper.getOptimalPictureSize(mCamera.getParameters()
-                        .getSupportedPictureSizes(), ImageHelper.IMAGE_SIZE, ImageHelper.IMAGE_SIZE);
-                params.setPictureSize(pictureSize.width, pictureSize.height);
-
-                mCamera.setParameters(params);
-
-                /*
-                 * Setup preview.
-                 */
-                mPreviewDisplayOrientation = CameraHelper.getCameraScreenOrientation(getActivity(), mCameraId);
-                mCamera.setDisplayOrientation(mPreviewDisplayOrientation);
-                mPreview.setCamera(mCamera, mPreviewDisplayOrientation);
-            } catch (RuntimeException e) {
-                Toast.makeText(getActivity(), getString(R.string.capture__error_camera_in_use), Toast.LENGTH_SHORT)
-                        .show();
-            }
+        /*
+         * Reload the fragment if resuming from onPause().
+         */
+        if (mOnPauseCalled) {
+            // Relaunch fragment with new camera.
+            ((LaunchActivity) getActivity()).replaceFragment(CaptureFragment.newInstance(mUseFrontFacing), false, true);
         } else {
-            Toast.makeText(getActivity(), getString(R.string.capture__error_no_camera), Toast.LENGTH_SHORT).show();
+            if (mCameraId != INVALID_CAMERA_ID) {
+                try {
+                    mCamera = Camera.open(mCameraId);
+
+                    /*
+                     * Configure camera parameters.
+                     */
+                    Parameters params = mCamera.getParameters();
+
+                    // Set auto white balance if supported.
+                    List<String> whiteBalances = params.getSupportedWhiteBalance();
+                    if (whiteBalances != null) {
+                        for (String whiteBalance : whiteBalances) {
+                            if (whiteBalance.equals(Camera.Parameters.WHITE_BALANCE_AUTO)) {
+                                params.setWhiteBalance(whiteBalance);
+                            }
+                        }
+                    }
+
+                    // Set auto antibanding if supported.
+                    List<String> antibandings = params.getSupportedAntibanding();
+                    if (antibandings != null) {
+                        for (String antibanding : antibandings) {
+                            if (antibanding.equals(Camera.Parameters.ANTIBANDING_AUTO)) {
+                                params.setAntibanding(antibanding);
+                            }
+                        }
+                    }
+
+                    // Set macro focus mode if supported.
+                    List<String> focusModes = params.getSupportedFocusModes();
+                    if (focusModes != null) {
+                        for (String focusMode : focusModes) {
+                            if (focusMode.equals(Camera.Parameters.FOCUS_MODE_MACRO)) {
+                                params.setFocusMode(focusMode);
+                            }
+                        }
+                    }
+
+                    // Set quality for Jpeg capture.
+                    params.setJpegQuality(CAPTURED_JPEG_QUALITY);
+
+                    // Set optimal size for Jpeg capture.
+                    Size pictureSize = CameraHelper.getOptimalPictureSize(mCamera.getParameters()
+                            .getSupportedPictureSizes(), ImageHelper.IMAGE_SIZE, ImageHelper.IMAGE_SIZE);
+                    params.setPictureSize(pictureSize.width, pictureSize.height);
+
+                    mCamera.setParameters(params);
+
+                    /*
+                     * Setup preview.
+                     */
+                    Activity activity = getActivity();
+                    mPreviewDisplayOrientation = CameraHelper.getCameraScreenOrientation(activity, mCameraId);
+                    mCamera.setDisplayOrientation(mPreviewDisplayOrientation);
+                    mPreview.setCamera(mCamera, mPreviewDisplayOrientation);
+                } catch (RuntimeException e) {
+                    Toast.makeText(getActivity(), getString(R.string.capture__error_camera_in_use), Toast.LENGTH_SHORT)
+                            .show();
+                }
+            } else {
+                Toast.makeText(getActivity(), getString(R.string.capture__error_no_camera), Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
     @Override
     public void onPause() {
+        if (mTimer != null) {
+            mTimer.cancel();
+        }
+
         if (mCamera != null) {
             mPreview.setCamera(null, CameraHelper.CAMERA_SCREEN_ORIENTATION_0);
             mCamera.release();
             mCamera = null;
         }
 
+        mOnPauseCalled = true;
+
         super.onPause();
-    }
-
-    @Override
-    public void onDestroy() {
-        mTimer.cancel();
-
-        super.onDestroy();
     }
 
     //
@@ -347,8 +383,8 @@ public class CaptureFragment extends Fragment {
                                 @Override
                                 public void run() {
                                     // Restart preview and capture next frames.
-                                    if (mCamera != null) {
-                                        mCamera.startPreview();
+                                    if (mCamera != null && mPreview != null) {
+                                        mPreview.start();
                                     }
 
                                     kickoffCaptureSequence();
@@ -489,11 +525,15 @@ public class CaptureFragment extends Fragment {
      */
     private void nextFragment() {
         CameraInfo cameraInfo = new CameraInfo();
-        Camera.getCameraInfo(mCameraId, cameraInfo);
-        boolean isReflected = cameraInfo.facing == CameraInfo.CAMERA_FACING_FRONT;
+        if (mCameraId != INVALID_CAMERA_ID) {
+            Camera.getCameraInfo(mCameraId, cameraInfo);
+            boolean isReflected = cameraInfo.facing == CameraInfo.CAMERA_FACING_FRONT;
 
-        ((LaunchActivity) getActivity()).replaceFragment(
-                ConfirmImageFragment.newInstance(mFramesData, mPreviewDisplayOrientation, isReflected), true, false);
+            ((LaunchActivity) getActivity())
+                    .replaceFragment(
+                            ConfirmImageFragment.newInstance(mFramesData, mPreviewDisplayOrientation, isReflected),
+                            true, false);
+        }
     }
 
     //

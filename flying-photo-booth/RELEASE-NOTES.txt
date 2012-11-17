@@ -1,3 +1,21 @@
+VERSION 1.1
+
+Flying PhotoBooth allows you to create 4-pane photo strips from your device cameras. You will be able to create, save and share your captured moments all in less than 40 seconds.
+
+New Fixes:
+
+    • Crash on devices without a front-facing camera
+    • Frozen camera preview when resuming the app
+
+Features:
+
+    • Front- and back-facing camera support
+    • Auto-focus before each capture where hardware permits
+    • Photo booth-style countdown timer
+    • Preconfigured greyscale filter
+    • Automatic adding of captured photo strip to the Gallery
+    • Sharing through Email, WhatsApp, Facebook, Twitter, etc.
+    
 VERSION 1.0
 
 Flying PhotoBooth allows you to create 4-pane photo strips from your device cameras. You will be able to create, save and share your captured moments all in less than 40 seconds.
