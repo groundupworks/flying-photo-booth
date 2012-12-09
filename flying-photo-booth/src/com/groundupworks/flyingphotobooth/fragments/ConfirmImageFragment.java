@@ -16,11 +16,13 @@
 package com.groundupworks.flyingphotobooth.fragments;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Message;
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -92,6 +94,10 @@ public class ConfirmImageFragment extends ControllerBackedFragment<ConfirmImageC
 
     public static final String MESSAGE_BUNDLE_KEY_REFLECTION = FRAGMENT_BUNDLE_KEY_REFLECTION;
 
+    public static final String MESSAGE_BUNDLE_KEY_FILTER = "filter";
+
+    public static final String MESSAGE_BUNDLE_KEY_ARRANGEMENT = "arrangement";
+
     /**
      * The uri to the Jpeg stored in the file system.
      */
@@ -123,9 +129,25 @@ public class ConfirmImageFragment extends ControllerBackedFragment<ConfirmImageC
         boolean reflection = args.getBoolean(FRAGMENT_BUNDLE_KEY_REFLECTION);
 
         /*
+         * Get user preferences.
+         */
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String filterPref = preferences.getString(getString(R.string.pref__filter_key),
+                getString(R.string.pref__filter_none));
+        String arrangementPref = preferences.getString(getString(R.string.pref__arrangement_key),
+                getString(R.string.pref__arrangement_vertical));
+
+        /*
          * Inflate views from XML.
          */
-        View view = inflater.inflate(R.layout.fragment_confirm_image, container, false);
+        View view = null;
+        if (arrangementPref.equals(getString(R.string.pref__arrangement_horizontal))) {
+            view = inflater.inflate(R.layout.fragment_confirm_image_horizontal, container, false);
+        } else if (arrangementPref.equals(getString(R.string.pref__arrangement_box))) {
+            view = inflater.inflate(R.layout.fragment_confirm_image_box, container, false);
+        } else {
+            view = inflater.inflate(R.layout.fragment_confirm_image_vertical, container, false);
+        }
 
         mSaveButton = (ImageButton) view.findViewById(R.id.save_button);
         mShareButton = (ImageButton) view.findViewById(R.id.share_button);
@@ -173,6 +195,8 @@ public class ConfirmImageFragment extends ControllerBackedFragment<ConfirmImageC
         bundle.putByteArray(MESSAGE_BUNDLE_KEY_JPEG_DATA_3, jpegData3);
         bundle.putFloat(MESSAGE_BUNDLE_KEY_ROTATION, rotation);
         bundle.putBoolean(MESSAGE_BUNDLE_KEY_REFLECTION, reflection);
+        bundle.putString(MESSAGE_BUNDLE_KEY_FILTER, filterPref);
+        bundle.putString(MESSAGE_BUNDLE_KEY_ARRANGEMENT, arrangementPref);
         msg.setData(bundle);
         sendEvent(msg);
 

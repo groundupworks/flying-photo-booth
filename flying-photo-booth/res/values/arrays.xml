@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <array name="pref__arrangement_options">
+        <item>@string/pref__arrangement_vertical</item>
+        <item>@string/pref__arrangement_horizontal</item>
+        <item>@string/pref__arrangement_box</item>
+    </array>
+    <array name="pref__filter_options">
+        <item>@string/pref__filter_none</item>
+        <item>@string/pref__filter_bw</item>
+        <item>@string/pref__filter_line_art</item>
+    </array>
+
+</resources>

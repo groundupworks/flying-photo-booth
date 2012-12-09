@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import android.app.Activity;
+import android.content.Intent;
 import android.hardware.Camera;
 import android.hardware.Camera.AutoFocusCallback;
 import android.hardware.Camera.CameraInfo;
@@ -35,6 +36,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.groundupworks.flyingphotobooth.LaunchActivity;
+import com.groundupworks.flyingphotobooth.MyPreferenceActivity;
 import com.groundupworks.flyingphotobooth.R;
 import com.groundupworks.flyingphotobooth.helpers.CameraHelper;
 import com.groundupworks.flyingphotobooth.helpers.ImageHelper;
@@ -126,6 +128,8 @@ public class CaptureFragment extends Fragment {
 
     private TextView mStatus;
 
+    private ImageButton mPreferencesButton;
+
     private ImageButton mSwitchButton;
 
     private CenteredPreview mPreview;
@@ -187,6 +191,7 @@ public class CaptureFragment extends Fragment {
 
         mTitle = (TextView) view.findViewById(R.id.title);
         mStatus = (TextView) view.findViewById(R.id.status);
+        mPreferencesButton = (ImageButton) view.findViewById(R.id.preferences_button);
         mSwitchButton = (ImageButton) view.findViewById(R.id.switch_button);
         mPreview = (CenteredPreview) view.findViewById(R.id.preview);
         mCountdown = (LinearLayout) view.findViewById(R.id.countdown);
@@ -198,6 +203,14 @@ public class CaptureFragment extends Fragment {
         /*
          * Functionalize views.
          */
+        mPreferencesButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent preferencesIntent = new Intent(getActivity(), MyPreferenceActivity.class);
+                startActivity(preferencesIntent);
+            }
+        });
+
         // Show switch button only if more than one camera is available.
         if (mNumCameras > 1) {
             mSwitchButton.setVisibility(View.VISIBLE);
@@ -228,6 +241,7 @@ public class CaptureFragment extends Fragment {
                     mStartButton.setEnabled(false);
                     mStartButton.setVisibility(View.INVISIBLE);
                     mSwitchButton.setVisibility(View.GONE);
+                    mPreferencesButton.setVisibility(View.GONE);
 
                     // Kick off capture sequence.
                     kickoffCaptureSequence();

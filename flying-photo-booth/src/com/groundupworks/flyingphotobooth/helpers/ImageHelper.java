@@ -19,12 +19,8 @@ import java.io.File;
 import java.io.OutputStream;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
-import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Matrix;
-import android.graphics.Paint;
 import android.os.Environment;
 
 /**
@@ -68,38 +64,6 @@ public class ImageHelper {
      * Error code to indicate an error in the bitmap decoding process.
      */
     private static final int DECODE_ERROR = -1;
-
-    /**
-     * Comic panel padding.
-     */
-    public static final int PHOTO_STRIP_PANEL_PADDING = 25;
-
-    //
-    // Private methods.
-    //
-
-    /**
-     * Draws the outline of a rectangle.
-     * 
-     * @param canvas
-     *            the canvas to draw on.
-     * @param left
-     *            the left side of the rectangle to be drawn.
-     * @param top
-     *            the top of the rectangle to be drawn.
-     * @param right
-     *            the right side of the rectangle to be drawn.
-     * @param bottom
-     *            the bottom of the rectangle to be drawn.
-     * @param paint
-     *            the {@link Paint} to use for drawing.
-     */
-    private static void drawRectOutline(Canvas canvas, float left, float top, float right, float bottom, Paint paint) {
-        canvas.drawLine(left, top, right, top, paint);
-        canvas.drawLine(right, top, right, bottom, paint);
-        canvas.drawLine(right, bottom, left, bottom, paint);
-        canvas.drawLine(left, bottom, left, top, paint);
-    }
 
     //
     // Public methods.
@@ -252,46 +216,14 @@ public class ImageHelper {
      * 
      * @param bitmaps
      *            the array of bitmaps to join into one photo strip.
+     * @param arrangement
+     *            the arrangement of the bitmaps.
      * @return the photo strip as a single bitmap.
      */
-    public static Bitmap createPhotoStrip(Bitmap[] bitmaps) {
+    public static Bitmap createPhotoStrip(Bitmap[] bitmaps, Arrangement arrangement) {
         Bitmap returnBitmap = null;
-
         if (bitmaps != null && bitmaps.length > 0) {
-            // Calculate return bitmap dimensions.
-            int srcBitmapWidth = bitmaps[0].getWidth();
-            int srcBitmapHeight = bitmaps[0].getHeight();
-            int returnBitmapWidth = srcBitmapWidth + PHOTO_STRIP_PANEL_PADDING * 2;
-            int returnBitmapHeight = srcBitmapHeight * bitmaps.length + PHOTO_STRIP_PANEL_PADDING
-                    * (bitmaps.length + 1);
-
-            // Create canvas to draw on return bitmap.
-            returnBitmap = Bitmap.createBitmap(returnBitmapWidth, returnBitmapHeight, Config.RGB_565);
-            Canvas canvas = new Canvas(returnBitmap);
-            canvas.drawColor(Color.WHITE);
-
-            // Draw each bitmap.
-            int i = 0;
-            for (Bitmap bitmap : bitmaps) {
-                int left = PHOTO_STRIP_PANEL_PADDING;
-                int top = (srcBitmapHeight + PHOTO_STRIP_PANEL_PADDING) * i + PHOTO_STRIP_PANEL_PADDING;
-                int right = left + srcBitmapWidth - 1;
-                int bottom = top + srcBitmapHeight - 1;
-
-                // Draw bitmaps.
-                canvas.drawBitmap(bitmap, left, top, null);
-
-                // Draw panel borders.
-                Paint paint = new Paint();
-
-                paint.setColor(Color.DKGRAY);
-                drawRectOutline(canvas, left, top, right, bottom, paint);
-
-                paint.setColor(Color.LTGRAY);
-                drawRectOutline(canvas, left - 1, top - 1, right + 1, bottom + 1, paint);
-
-                i++;
-            }
+            returnBitmap = arrangement.createPhotoStrip(bitmaps);
         }
 
         return returnBitmap;
@@ -314,5 +246,20 @@ public class ImageHelper {
          * @return the filtered bitmap; or null if unsuccessful.
          */
         public Bitmap applyFilter(Bitmap srcBitmap);
+    }
+
+    /**
+     * An arrangement of bitmaps to create a photo strip. Only supports exactly four bitmaps of the same size.
+     */
+    public interface Arrangement {
+
+        /**
+         * Creates a photo strip.
+         * 
+         * @param srcBitmaps
+         *            the array of bitmaps to join into one photo strip. Must not be null.
+         * @return the photo strip; or null if unsuccessful.
+         */
+        public Bitmap createPhotoStrip(Bitmap[] srcBitmaps);
     }
 }

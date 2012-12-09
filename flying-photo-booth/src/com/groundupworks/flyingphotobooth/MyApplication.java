@@ -16,6 +16,7 @@
 package com.groundupworks.flyingphotobooth;
 
 import android.app.Application;
+import android.content.Context;
 import android.os.HandlerThread;
 import android.os.Looper;
 
@@ -28,6 +29,8 @@ public class MyApplication extends Application {
 
     private static final String WORKER_THREAD_NAME = "workerThread";
 
+    private static Context sInstance;
+
     private static HandlerThread sWorkerThread = null;
 
     private static Looper sUiLooper = null;
@@ -35,6 +38,9 @@ public class MyApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+
+        // Set a static reference to the Application Context.
+        sInstance = this;
 
         // Start a worker thread that has a {@link Looper} to execute background tasks.
         sWorkerThread = new HandlerThread(WORKER_THREAD_NAME);
@@ -47,6 +53,13 @@ public class MyApplication extends Application {
     //
     // Public methods.
     //
+
+    /**
+     * @return the Application {@link Context}; or null if {@link Application#onCreate()} has not been called.
+     */
+    public static Context getContext() {
+        return sInstance;
+    }
 
     /**
      * @return the {@link Looper} to process background tasks.

@@ -21,14 +21,21 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Message;
+import com.groundupworks.flyingphotobooth.MyApplication;
+import com.groundupworks.flyingphotobooth.R;
+import com.groundupworks.flyingphotobooth.arrangements.BoxArrangement;
+import com.groundupworks.flyingphotobooth.arrangements.HorizontalArrangement;
+import com.groundupworks.flyingphotobooth.arrangements.VerticalArrangement;
+import com.groundupworks.flyingphotobooth.filters.BlackAndWhiteFilter;
+import com.groundupworks.flyingphotobooth.filters.LineArtFilter;
 import com.groundupworks.flyingphotobooth.fragments.ConfirmImageFragment;
 import com.groundupworks.flyingphotobooth.helpers.ImageHelper;
+import com.groundupworks.flyingphotobooth.helpers.ImageHelper.Arrangement;
 import com.groundupworks.flyingphotobooth.helpers.ImageHelper.ImageFilter;
-import com.jabistudio.androidjhlabs.filter.GrayscaleFilter;
-import com.jabistudio.androidjhlabs.filter.util.AndroidUtils;
 
 /**
  * Controller class for the {@link ConfirmImageFragment}.
@@ -57,6 +64,8 @@ public class ConfirmImageController extends BaseController {
     protected void handleEvent(Message msg) {
         switch (msg.what) {
             case ConfirmImageFragment.IMAGE_VIEW_READY:
+                final Context context = MyApplication.getContext();
+
                 /*
                  * Create an image bitmap from Jpeg data.
                  */
@@ -67,15 +76,37 @@ public class ConfirmImageController extends BaseController {
                 byte[] jpegData3 = bundle.getByteArray(ConfirmImageFragment.MESSAGE_BUNDLE_KEY_JPEG_DATA_3);
                 float rotation = bundle.getFloat(ConfirmImageFragment.MESSAGE_BUNDLE_KEY_ROTATION);
                 boolean reflection = bundle.getBoolean(ConfirmImageFragment.MESSAGE_BUNDLE_KEY_REFLECTION);
+                String filterPref = bundle.getString(ConfirmImageFragment.MESSAGE_BUNDLE_KEY_FILTER);
+                String arrangementPref = bundle.getString(ConfirmImageFragment.MESSAGE_BUNDLE_KEY_ARRANGEMENT);
+
+                // Select filter.
+                ImageFilter filter = null;
+                if (filterPref.equals(context.getString(R.string.pref__filter_bw))) {
+                    filter = new BlackAndWhiteFilter();
+                } else if (filterPref.equals(context.getString(R.string.pref__filter_line_art))) {
+                    filter = new LineArtFilter();
+                } else {
+                    // No filter. Keep filter as null.
+                }
+
+                // Select arrangement.
+                Arrangement arrangement = null;
+                if (arrangementPref.equals(context.getString(R.string.pref__arrangement_horizontal))) {
+                    arrangement = new HorizontalArrangement();
+                } else if (arrangementPref.equals(context.getString(R.string.pref__arrangement_box))) {
+                    arrangement = new BoxArrangement();
+                } else {
+                    arrangement = new VerticalArrangement();
+                }
 
                 // Do the image processing.
                 Bitmap[] bitmaps = new Bitmap[4];
-                bitmaps[0] = ImageHelper.createImage(jpegData0, rotation, reflection, new MyImageFilter());
-                bitmaps[1] = ImageHelper.createImage(jpegData1, rotation, reflection, null);
-                bitmaps[2] = ImageHelper.createImage(jpegData2, rotation, reflection, new MyImageFilter());
-                bitmaps[3] = ImageHelper.createImage(jpegData3, rotation, reflection, null);
+                bitmaps[0] = ImageHelper.createImage(jpegData0, rotation, reflection, filter);
+                bitmaps[1] = ImageHelper.createImage(jpegData1, rotation, reflection, filter);
+                bitmaps[2] = ImageHelper.createImage(jpegData2, rotation, reflection, filter);
+                bitmaps[3] = ImageHelper.createImage(jpegData3, rotation, reflection, filter);
 
-                mBitmap = ImageHelper.createPhotoStrip(bitmaps);
+                mBitmap = ImageHelper.createPhotoStrip(bitmaps, arrangement);
 
                 // Recycle original bitmaps.
                 for (Bitmap bitmap : bitmaps) {
@@ -141,49 +172,6 @@ public class ConfirmImageController extends BaseController {
                 break;
             default:
                 break;
-        }
-    }
-
-    //
-    // Private inner classes.
-    //
-
-    /**
-     * A series of image filters to apply to the original image.
-     */
-    private class MyImageFilter implements ImageFilter {
-
-        @Override
-        public Bitmap applyFilter(Bitmap srcBitmap) {
-            Bitmap filteredBitmap = null;
-
-            final int width = srcBitmap.getWidth();
-            final int height = srcBitmap.getHeight();
-            int[] colors = AndroidUtils.bitmapToIntArray(srcBitmap);
-
-            /*
-             * Apply image filters.
-             */
-            GrayscaleFilter f = new GrayscaleFilter();
-            colors = f.filter(colors, width, height);
-
-            // EdgeFilter edgeFilter = new EdgeFilter();
-            // colors = edgeFilter.filter(colors, width, height);
-            //
-            // ThresholdFilter thresholdFilter = new ThresholdFilter();
-            // thresholdFilter.setDimensions(width, height);
-            // thresholdFilter.setLowerThreshold(35);
-            // thresholdFilter.setUpperThreshold(0);
-            // thresholdFilter.setWhite(Color.BLACK);
-            // thresholdFilter.setBlack(Color.WHITE);
-            // colors = thresholdFilter.filter(colors, width, height);
-            //
-            // MedianFilter medianFilter = new MedianFilter();
-            // colors = medianFilter.filter(colors, width, height);
-
-            filteredBitmap = Bitmap.createBitmap(colors, 0, width, width, height, Bitmap.Config.ARGB_8888);
-
-            return filteredBitmap;
         }
     }
 
