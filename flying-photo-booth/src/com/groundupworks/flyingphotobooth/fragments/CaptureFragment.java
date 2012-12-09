@@ -36,6 +36,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.groundupworks.flyingphotobooth.LaunchActivity;
+import com.groundupworks.flyingphotobooth.LaunchActivity.BackPressedHandler;
 import com.groundupworks.flyingphotobooth.MyPreferenceActivity;
 import com.groundupworks.flyingphotobooth.R;
 import com.groundupworks.flyingphotobooth.helpers.CameraHelper;
@@ -99,6 +100,11 @@ public class CaptureFragment extends Fragment {
      * Timer for scheduling tasks.
      */
     private Timer mTimer = null;
+
+    /**
+     * Flag to track whether capture sequence is running.
+     */
+    private boolean mIsCaptureSequenceRunning = false;
 
     /**
      * The selected camera.
@@ -182,8 +188,6 @@ public class CaptureFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        super.onCreateView(inflater, container, savedInstanceState);
-
         /*
          * Inflate views from XML.
          */
@@ -200,13 +204,38 @@ public class CaptureFragment extends Fragment {
         mCountdownOne = (TextView) view.findViewById(R.id.countdown_one);
         mStartButton = (Button) view.findViewById(R.id.start_button);
 
+        return view;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        final LaunchActivity activity = (LaunchActivity) getActivity();
+
+        /*
+         * Set handler for back pressed event.
+         */
+        activity.setBackPressedHandler(new BackPressedHandler() {
+
+            @Override
+            public boolean isHandled() {
+                // If capture sequence is running, exit capture sequence on back pressed event.
+                if (mIsCaptureSequenceRunning) {
+                    activity.replaceFragment(CaptureFragment.newInstance(mUseFrontFacing), false, true);
+                }
+
+                return mIsCaptureSequenceRunning;
+            }
+        });
+
         /*
          * Functionalize views.
          */
         mPreferencesButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent preferencesIntent = new Intent(getActivity(), MyPreferenceActivity.class);
+                Intent preferencesIntent = new Intent(activity, MyPreferenceActivity.class);
                 startActivity(preferencesIntent);
             }
         });
@@ -227,8 +256,7 @@ public class CaptureFragment extends Fragment {
                         }
 
                         // Relaunch fragment with new camera.
-                        ((LaunchActivity) getActivity()).replaceFragment(CaptureFragment.newInstance(useFrontFacing),
-                                false, true);
+                        activity.replaceFragment(CaptureFragment.newInstance(useFrontFacing), false, true);
                     }
                 }
             });
@@ -243,6 +271,9 @@ public class CaptureFragment extends Fragment {
                     mSwitchButton.setVisibility(View.GONE);
                     mPreferencesButton.setVisibility(View.GONE);
 
+                    // Set flag to indicate capture sequence is running.
+                    mIsCaptureSequenceRunning = true;
+
                     // Kick off capture sequence.
                     kickoffCaptureSequence();
                 }
@@ -254,8 +285,6 @@ public class CaptureFragment extends Fragment {
          */
         mFrameIndex = 0;
         mFramesData = new byte[TOTAL_FRAMES_TO_CAPTURE][];
-
-        return view;
     }
 
     @Override
@@ -344,6 +373,7 @@ public class CaptureFragment extends Fragment {
     public void onPause() {
         if (mTimer != null) {
             mTimer.cancel();
+            mIsCaptureSequenceRunning = false;
         }
 
         if (mCamera != null) {
@@ -408,6 +438,9 @@ public class CaptureFragment extends Fragment {
                     }
                 }, COUNTDOWN_STEP_DELAY);
             } else {
+                // Set flag to indicate capture sequence is no longer running.
+                mIsCaptureSequenceRunning = false;
+
                 // Transition to next fragment since enough frames have been captured.
                 nextFragment();
             }

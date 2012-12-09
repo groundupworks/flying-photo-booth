@@ -30,11 +30,23 @@ import com.groundupworks.flyingphotobooth.fragments.CaptureFragment;
  */
 public class LaunchActivity extends FragmentActivity {
 
+    /**
+     * Handler for the back pressed event.
+     */
+    private BackPressedHandler mBackPressedHandler = null;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_launch);
         addFragment(CaptureFragment.newInstance(true), false);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (mBackPressedHandler == null || !mBackPressedHandler.isHandled()) {
+            super.onBackPressed();
+        }
     }
 
     //
@@ -80,5 +92,30 @@ public class LaunchActivity extends FragmentActivity {
             ft.addToBackStack(null);
         }
         ft.commit();
+    }
+
+    /**
+     * Sets a handler for the back pressed event.
+     * 
+     * @param handler
+     *            the handler for the back pressed event. Pass null to clear.
+     */
+    public void setBackPressedHandler(BackPressedHandler handler) {
+        mBackPressedHandler = handler;
+    }
+
+    //
+    // Public interfaces.
+    //
+
+    /**
+     * Handler interface for the back pressed event.
+     */
+    public interface BackPressedHandler {
+
+        /**
+         * @return true if back press event is handled; false otherwise.
+         */
+        boolean isHandled();
     }
 }

@@ -26,9 +26,11 @@ import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewStub;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
+import com.groundupworks.flyingphotobooth.LaunchActivity;
 import com.groundupworks.flyingphotobooth.R;
 import com.groundupworks.flyingphotobooth.controllers.ConfirmImageController;
 import com.groundupworks.flyingphotobooth.helpers.ImageHelper;
@@ -107,6 +109,8 @@ public class ConfirmImageFragment extends ControllerBackedFragment<ConfirmImageC
     // Views.
     //
 
+    private ViewStub mScrollViewStub;
+
     private ImageButton mSaveButton;
 
     private ImageButton mShareButton;
@@ -115,7 +119,23 @@ public class ConfirmImageFragment extends ControllerBackedFragment<ConfirmImageC
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        super.onCreateView(inflater, container, savedInstanceState);
+        /*
+         * Inflate views from XML.
+         */
+        View view = inflater.inflate(R.layout.fragment_confirm_image, container, false);
+
+        mScrollViewStub = (ViewStub) view.findViewById(R.id.scrollview_stub);
+        mSaveButton = (ImageButton) view.findViewById(R.id.save_button);
+        mShareButton = (ImageButton) view.findViewById(R.id.share_button);
+
+        return view;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        
+        final LaunchActivity activity = (LaunchActivity) getActivity();
 
         /*
          * Get params.
@@ -131,26 +151,24 @@ public class ConfirmImageFragment extends ControllerBackedFragment<ConfirmImageC
         /*
          * Get user preferences.
          */
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(activity);
         String filterPref = preferences.getString(getString(R.string.pref__filter_key),
                 getString(R.string.pref__filter_none));
         String arrangementPref = preferences.getString(getString(R.string.pref__arrangement_key),
                 getString(R.string.pref__arrangement_vertical));
 
         /*
-         * Inflate views from XML.
+         * Inflate view stub.
          */
-        View view = null;
         if (arrangementPref.equals(getString(R.string.pref__arrangement_horizontal))) {
-            view = inflater.inflate(R.layout.fragment_confirm_image_horizontal, container, false);
+            mScrollViewStub.setLayoutResource(R.layout.fragment_confirm_image_horizontal);
         } else if (arrangementPref.equals(getString(R.string.pref__arrangement_box))) {
-            view = inflater.inflate(R.layout.fragment_confirm_image_box, container, false);
+            mScrollViewStub.setLayoutResource(R.layout.fragment_confirm_image_box);
         } else {
-            view = inflater.inflate(R.layout.fragment_confirm_image_vertical, container, false);
+            mScrollViewStub.setLayoutResource(R.layout.fragment_confirm_image_vertical);
         }
 
-        mSaveButton = (ImageButton) view.findViewById(R.id.save_button);
-        mShareButton = (ImageButton) view.findViewById(R.id.share_button);
+        View view = mScrollViewStub.inflate();
         mImage = (ImageView) view.findViewById(R.id.image);
 
         /*
@@ -199,8 +217,6 @@ public class ConfirmImageFragment extends ControllerBackedFragment<ConfirmImageC
         bundle.putString(MESSAGE_BUNDLE_KEY_ARRANGEMENT, arrangementPref);
         msg.setData(bundle);
         sendEvent(msg);
-
-        return view;
     }
 
     @Override
