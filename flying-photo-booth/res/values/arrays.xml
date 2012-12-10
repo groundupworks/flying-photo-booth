@@ -9,7 +9,7 @@
     <array name="pref__filter_options">
         <item>@string/pref__filter_none</item>
         <item>@string/pref__filter_bw</item>
-        <item>@string/pref__filter_line_art</item>
+        <item>@string/pref__filter_bw_mixed</item>
     </array>
 
 </resources>

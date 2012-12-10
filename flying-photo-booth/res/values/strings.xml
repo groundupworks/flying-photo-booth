@@ -14,6 +14,7 @@
     <string name="pref__filter_title">Filter</string>
     <string name="pref__filter_none">None</string>
     <string name="pref__filter_bw">Black &amp; White</string>
+    <string name="pref__filter_bw_mixed">Mixed Black &amp; White</string>
     <string name="pref__filter_line_art">Line Art</string>
 
     <!-- Capture Fragment -->

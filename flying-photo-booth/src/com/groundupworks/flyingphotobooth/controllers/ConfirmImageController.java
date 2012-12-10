@@ -80,11 +80,16 @@ public class ConfirmImageController extends BaseController {
                 String arrangementPref = bundle.getString(ConfirmImageFragment.MESSAGE_BUNDLE_KEY_ARRANGEMENT);
 
                 // Select filter.
-                ImageFilter filter = null;
+                ImageFilter filterEven = null;
+                ImageFilter filterOdd = null;
                 if (filterPref.equals(context.getString(R.string.pref__filter_bw))) {
-                    filter = new BlackAndWhiteFilter();
+                    filterEven = new BlackAndWhiteFilter();
+                    filterOdd = new BlackAndWhiteFilter();
+                } else if (filterPref.equals(context.getString(R.string.pref__filter_bw_mixed))) {
+                    filterOdd = new BlackAndWhiteFilter();
                 } else if (filterPref.equals(context.getString(R.string.pref__filter_line_art))) {
-                    filter = new LineArtFilter();
+                    filterEven = new LineArtFilter();
+                    filterOdd = new LineArtFilter();
                 } else {
                     // No filter. Keep filter as null.
                 }
@@ -101,10 +106,10 @@ public class ConfirmImageController extends BaseController {
 
                 // Do the image processing.
                 Bitmap[] bitmaps = new Bitmap[4];
-                bitmaps[0] = ImageHelper.createImage(jpegData0, rotation, reflection, filter);
-                bitmaps[1] = ImageHelper.createImage(jpegData1, rotation, reflection, filter);
-                bitmaps[2] = ImageHelper.createImage(jpegData2, rotation, reflection, filter);
-                bitmaps[3] = ImageHelper.createImage(jpegData3, rotation, reflection, filter);
+                bitmaps[0] = ImageHelper.createImage(jpegData0, rotation, reflection, filterEven);
+                bitmaps[1] = ImageHelper.createImage(jpegData1, rotation, reflection, filterOdd);
+                bitmaps[2] = ImageHelper.createImage(jpegData2, rotation, reflection, filterEven);
+                bitmaps[3] = ImageHelper.createImage(jpegData3, rotation, reflection, filterOdd);
 
                 mBitmap = ImageHelper.createPhotoStrip(bitmaps, arrangement);
 
