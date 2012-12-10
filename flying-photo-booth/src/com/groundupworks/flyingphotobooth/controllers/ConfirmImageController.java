@@ -80,16 +80,28 @@ public class ConfirmImageController extends BaseController {
                 String arrangementPref = bundle.getString(ConfirmImageFragment.MESSAGE_BUNDLE_KEY_ARRANGEMENT);
 
                 // Select filter.
-                ImageFilter filterEven = null;
-                ImageFilter filterOdd = null;
+                ImageFilter filter0 = null;
+                ImageFilter filter1 = null;
+                ImageFilter filter2 = null;
+                ImageFilter filter3 = null;
                 if (filterPref.equals(context.getString(R.string.pref__filter_bw))) {
-                    filterEven = new BlackAndWhiteFilter();
-                    filterOdd = new BlackAndWhiteFilter();
+                    filter0 = new BlackAndWhiteFilter();
+                    filter1 = new BlackAndWhiteFilter();
+                    filter2 = new BlackAndWhiteFilter();
+                    filter3 = new BlackAndWhiteFilter();
                 } else if (filterPref.equals(context.getString(R.string.pref__filter_bw_mixed))) {
-                    filterOdd = new BlackAndWhiteFilter();
+                    if (arrangementPref.equals(context.getString(R.string.pref__arrangement_box))) {
+                        filter1 = new BlackAndWhiteFilter();
+                        filter2 = new BlackAndWhiteFilter();
+                    } else {
+                        filter1 = new BlackAndWhiteFilter();
+                        filter3 = new BlackAndWhiteFilter();
+                    }
                 } else if (filterPref.equals(context.getString(R.string.pref__filter_line_art))) {
-                    filterEven = new LineArtFilter();
-                    filterOdd = new LineArtFilter();
+                    filter0 = new LineArtFilter();
+                    filter1 = new LineArtFilter();
+                    filter2 = new LineArtFilter();
+                    filter3 = new LineArtFilter();
                 } else {
                     // No filter. Keep filter as null.
                 }
@@ -106,10 +118,10 @@ public class ConfirmImageController extends BaseController {
 
                 // Do the image processing.
                 Bitmap[] bitmaps = new Bitmap[4];
-                bitmaps[0] = ImageHelper.createImage(jpegData0, rotation, reflection, filterEven);
-                bitmaps[1] = ImageHelper.createImage(jpegData1, rotation, reflection, filterOdd);
-                bitmaps[2] = ImageHelper.createImage(jpegData2, rotation, reflection, filterEven);
-                bitmaps[3] = ImageHelper.createImage(jpegData3, rotation, reflection, filterOdd);
+                bitmaps[0] = ImageHelper.createImage(jpegData0, rotation, reflection, filter0);
+                bitmaps[1] = ImageHelper.createImage(jpegData1, rotation, reflection, filter1);
+                bitmaps[2] = ImageHelper.createImage(jpegData2, rotation, reflection, filter2);
+                bitmaps[3] = ImageHelper.createImage(jpegData3, rotation, reflection, filter3);
 
                 mBitmap = ImageHelper.createPhotoStrip(bitmaps, arrangement);
 
