@@ -4,6 +4,7 @@
     <string name="app_name">Flying PhotoBooth</string>
 
     <!-- Preferences -->
+    <string name="pref__camera_key">pref__camera</string>
     <string name="pref__arrangement_key">pref__arrangement</string>
     <string name="pref__arrangement_title">Arrangement</string>
     <string name="pref__arrangement_vertical">Vertical</string>

@@ -19,13 +19,16 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.hardware.Camera;
 import android.hardware.Camera.AutoFocusCallback;
 import android.hardware.Camera.CameraInfo;
 import android.hardware.Camera.Parameters;
 import android.hardware.Camera.Size;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -384,6 +387,9 @@ public class CaptureFragment extends Fragment {
 
         mOnPauseCalled = true;
 
+        // Save the camera preference.
+        saveCameraPreference(getActivity());
+
         super.onPause();
     }
 
@@ -581,6 +587,17 @@ public class CaptureFragment extends Fragment {
                             ConfirmImageFragment.newInstance(mFramesData, mPreviewDisplayOrientation, isReflected),
                             true, false);
         }
+    }
+
+    /**
+     * Saves the current camera preference.
+     * 
+     * @param context
+     *            the {@link Context}.
+     */
+    private void saveCameraPreference(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
+        preferences.edit().putBoolean(getString(R.string.pref__camera_key), mUseFrontFacing).commit();
     }
 
     //

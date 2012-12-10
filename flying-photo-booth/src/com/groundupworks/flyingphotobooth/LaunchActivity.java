@@ -16,7 +16,9 @@
 package com.groundupworks.flyingphotobooth;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -39,7 +41,13 @@ public class LaunchActivity extends FragmentActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_launch);
-        addFragment(CaptureFragment.newInstance(true), false);
+
+        // Get last used camera preference.
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        boolean cameraPref = preferences.getBoolean(getString(R.string.pref__camera_key), true);
+
+        // Start with capture fragment.
+        addFragment(CaptureFragment.newInstance(cameraPref), false);
     }
 
     @Override

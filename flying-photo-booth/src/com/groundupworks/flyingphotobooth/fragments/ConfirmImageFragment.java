@@ -151,7 +151,7 @@ public class ConfirmImageFragment extends ControllerBackedFragment<ConfirmImageC
         /*
          * Get user preferences.
          */
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(activity);
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(activity.getApplicationContext());
         String filterPref = preferences.getString(getString(R.string.pref__filter_key),
                 getString(R.string.pref__filter_none));
         String arrangementPref = preferences.getString(getString(R.string.pref__arrangement_key),
