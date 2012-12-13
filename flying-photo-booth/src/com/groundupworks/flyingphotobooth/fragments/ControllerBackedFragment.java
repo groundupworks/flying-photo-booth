@@ -74,7 +74,10 @@ public abstract class ControllerBackedFragment<T extends BaseController> extends
      *            the event to handle.
      */
     protected void sendEvent(Message msg) {
-        mController.sendToWorkerHandler(msg);
+        T controller = mController;
+        if (controller != null) {
+            controller.sendToWorkerHandler(msg);
+        }
     }
 
     /**

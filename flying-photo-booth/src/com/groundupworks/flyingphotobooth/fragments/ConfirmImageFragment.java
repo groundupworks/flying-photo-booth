@@ -15,6 +15,8 @@
  */
 package com.groundupworks.flyingphotobooth.fragments;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -33,6 +35,7 @@ import android.widget.Toast;
 import com.groundupworks.flyingphotobooth.LaunchActivity;
 import com.groundupworks.flyingphotobooth.R;
 import com.groundupworks.flyingphotobooth.controllers.ConfirmImageController;
+import com.groundupworks.flyingphotobooth.helpers.BeamHelper;
 import com.groundupworks.flyingphotobooth.helpers.ImageHelper;
 
 /**
@@ -134,7 +137,7 @@ public class ConfirmImageFragment extends ControllerBackedFragment<ConfirmImageC
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        
+
         final LaunchActivity activity = (LaunchActivity) getActivity();
 
         /*
@@ -225,6 +228,10 @@ public class ConfirmImageFragment extends ControllerBackedFragment<ConfirmImageC
         Message msg = Message.obtain();
         msg.what = FRAGMENT_DESTROYED;
         sendEvent(msg);
+
+        // Cancel Android Beam.
+        BeamHelper.beamUris(getActivity(), null);
+
         super.onDestroy();
     }
 
@@ -239,10 +246,12 @@ public class ConfirmImageFragment extends ControllerBackedFragment<ConfirmImageC
 
     @Override
     public void handleUiUpdate(Message msg) {
+        Activity activity = getActivity();
+        Context appContext = activity.getApplicationContext();
+
         switch (msg.what) {
             case ConfirmImageController.ERROR_OCCURRED:
-                Toast.makeText(getActivity(), getString(R.string.confirm_image__error_generic), Toast.LENGTH_LONG)
-                        .show();
+                Toast.makeText(activity, getString(R.string.confirm_image__error_generic), Toast.LENGTH_LONG).show();
                 break;
             case ConfirmImageController.BITMAP_READY:
                 mImage.setImageBitmap((Bitmap) msg.obj);
@@ -253,9 +262,12 @@ public class ConfirmImageFragment extends ControllerBackedFragment<ConfirmImageC
                 mShareButton.setVisibility(View.VISIBLE);
                 mJpegUri = Uri.parse("file://" + (String) msg.obj);
 
+                // Setup Android Beam.
+                BeamHelper.beamUris(activity, new Uri[] { mJpegUri });
+
                 // Request adding Jpeg to Android Gallery.
-                MediaScannerConnection.scanFile(getActivity().getApplicationContext(),
-                        new String[] { mJpegUri.getPath() }, new String[] { ImageHelper.JPEG_MIME_TYPE }, null);
+                MediaScannerConnection.scanFile(appContext, new String[] { mJpegUri.getPath() },
+                        new String[] { ImageHelper.JPEG_MIME_TYPE }, null);
             default:
                 break;
         }
