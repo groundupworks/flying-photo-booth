@@ -17,6 +17,7 @@ package com.groundupworks.flyingphotobooth.helpers;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
 import android.net.Uri;
 import android.nfc.NfcAdapter;
 import android.os.Build;
@@ -25,20 +26,57 @@ import android.os.Build;
  * Android Beam is only available for JellyBean and above. No action is taken for lower SDK levels or devices with no
  * NFC support. In order for Android Beam to work, both devices must have:
  * 
- * (1) Hardware that supports NFC.
+ * (1) Hardware that supports NFC
  * 
- * (2) Android JellyBean or above.
+ * (2) Android JellyBean or above
  * 
- * (3) NFC enabled in Settings.
+ * (3) Screen on and unlocked
  * 
- * (4) Bluetooth enabled in Settings.
+ * (4) NFC enabled in Settings
  * 
- * (5) Android Beam enabled in Settings.
+ * (5) Bluetooth enabled in Settings
+ * 
+ * (6) Android Beam enabled in Settings
  * 
  * @author Benedict Lau
  */
 @SuppressLint("NewApi")
 public class BeamHelper {
+
+    //
+    // Private methods.
+    //
+
+    /**
+     * Gets the default NFC adapter.
+     * 
+     * @param context
+     *            the {@link Context}.
+     * @return the NFC adapter; or null if the device does not support NFC.
+     */
+    private static NfcAdapter getNfcAdapter(Context context) {
+        NfcAdapter nfcAdapter = null;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            nfcAdapter = NfcAdapter.getDefaultAdapter(context.getApplicationContext());
+        }
+
+        return nfcAdapter;
+    }
+
+    //
+    // Public methods.
+    //
+
+    /**
+     * Checks if the device supports NFC.
+     * 
+     * @param context
+     *            the {@link Context}.
+     * @return true if hardware supports NFC; false otherwise.
+     */
+    public static boolean supportsBeam(Context context) {
+        return getNfcAdapter(context) != null;
+    }
 
     /**
      * Sets up the NFC adapter to send a list of {@link Uri} with 'file' or 'content' scheme. To clear the NFC adapter
@@ -51,11 +89,9 @@ public class BeamHelper {
      */
     public static void beamUris(Activity activity, Uri[] uris) {
         if (activity != null && !activity.isFinishing()) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                NfcAdapter nfcAdapter = NfcAdapter.getDefaultAdapter(activity.getApplicationContext());
-                if (nfcAdapter != null) {
-                    nfcAdapter.setBeamPushUris(uris, activity);
-                }
+            NfcAdapter nfcAdapter = getNfcAdapter(activity);
+            if (nfcAdapter != null) {
+                nfcAdapter.setBeamPushUris(uris, activity);
             }
         }
     }

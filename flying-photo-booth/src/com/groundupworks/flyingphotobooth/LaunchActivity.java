@@ -19,6 +19,7 @@ import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -100,6 +101,16 @@ public class LaunchActivity extends FragmentActivity {
             ft.addToBackStack(null);
         }
         ft.commit();
+    }
+
+    /**
+     * Shows a {@link DialogFragment}.
+     * 
+     * @param fragment
+     *            the new {@link DialogFragment} to show.
+     */
+    public void showDialogFragment(DialogFragment fragment) {
+        fragment.show(getSupportFragmentManager(), null);
     }
 
     /**

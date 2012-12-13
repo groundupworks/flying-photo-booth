@@ -118,6 +118,8 @@ public class ConfirmImageFragment extends ControllerBackedFragment<ConfirmImageC
 
     private ImageButton mShareButton;
 
+    private ImageButton mBeamButton;
+
     private ImageView mImage;
 
     @Override
@@ -130,6 +132,7 @@ public class ConfirmImageFragment extends ControllerBackedFragment<ConfirmImageC
         mScrollViewStub = (ViewStub) view.findViewById(R.id.scrollview_stub);
         mSaveButton = (ImageButton) view.findViewById(R.id.save_button);
         mShareButton = (ImageButton) view.findViewById(R.id.share_button);
+        mBeamButton = (ImageButton) view.findViewById(R.id.beam_button);
 
         return view;
     }
@@ -192,8 +195,6 @@ public class ConfirmImageFragment extends ControllerBackedFragment<ConfirmImageC
         mShareButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mSaveButton.setEnabled(false);
-
                 Uri jpegUri = mJpegUri;
                 if (jpegUri != null) {
                     // Launch sharing Intent.
@@ -203,6 +204,21 @@ public class ConfirmImageFragment extends ControllerBackedFragment<ConfirmImageC
                     startActivity(Intent.createChooser(sharingIntent,
                             getString(R.string.confirm_image__share_chooser_title)));
                 }
+            }
+        });
+
+        mBeamButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getActivity(), getString(R.string.confirm_image__beam_toast), Toast.LENGTH_LONG).show();
+            }
+        });
+
+        mBeamButton.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                ((LaunchActivity) getActivity()).showDialogFragment(BeamDetailsDialogFragment.newInstance());
+                return true;
             }
         });
 
@@ -255,11 +271,13 @@ public class ConfirmImageFragment extends ControllerBackedFragment<ConfirmImageC
                 break;
             case ConfirmImageController.BITMAP_READY:
                 mImage.setImageBitmap((Bitmap) msg.obj);
-                mShareButton.setEnabled(true);
                 break;
             case ConfirmImageController.JPEG_SAVED:
                 mSaveButton.setVisibility(View.INVISIBLE);
                 mShareButton.setVisibility(View.VISIBLE);
+                if (BeamHelper.supportsBeam(appContext)) {
+                    mBeamButton.setVisibility(View.VISIBLE);
+                }
                 mJpegUri = Uri.parse("file://" + (String) msg.obj);
 
                 // Setup Android Beam.
