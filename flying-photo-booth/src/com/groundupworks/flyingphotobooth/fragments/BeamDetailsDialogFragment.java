@@ -15,10 +15,12 @@
  */
 package com.groundupworks.flyingphotobooth.fragments;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.app.DialogFragment;
@@ -31,18 +33,36 @@ import com.groundupworks.flyingphotobooth.R;
  */
 public class BeamDetailsDialogFragment extends DialogFragment {
 
+    @SuppressLint("NewApi")
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        return new AlertDialog.Builder(getActivity())
-                .setTitle(getString(R.string.confirm_image__beam_dialog_title))
-                .setMessage(R.string.confirm_image__beam_dialog_message)
-                .setPositiveButton(R.string.confirm_image__beam_dialog_button_text,
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int whichButton) {
-                                startActivity(new Intent(Settings.ACTION_SETTINGS));
-                            }
-                        }).create();
+        Dialog dialog = null;
+        // AlertDialog.THEME_DEVICE_DEFAULT_LIGHT only available in ICS and above.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+            dialog = new AlertDialog.Builder(getActivity(), AlertDialog.THEME_DEVICE_DEFAULT_LIGHT)
+                    .setTitle(getString(R.string.confirm_image__beam_dialog_title))
+                    .setMessage(R.string.confirm_image__beam_dialog_message)
+                    .setPositiveButton(R.string.confirm_image__beam_dialog_button_text,
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int whichButton) {
+                                    startActivity(new Intent(Settings.ACTION_SETTINGS));
+                                }
+                            }).create();
+        } else {
+            dialog = new AlertDialog.Builder(getActivity())
+                    .setTitle(getString(R.string.confirm_image__beam_dialog_title))
+                    .setMessage(R.string.confirm_image__beam_dialog_message)
+                    .setPositiveButton(R.string.confirm_image__beam_dialog_button_text,
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int whichButton) {
+                                    startActivity(new Intent(Settings.ACTION_SETTINGS));
+                                }
+                            }).create();
+        }
+
+        return dialog;
     }
 
     //
