@@ -16,10 +16,10 @@
 package com.groundupworks.flyingphotobooth.arrangements;
 
 import android.graphics.Bitmap;
-import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import com.groundupworks.flyingphotobooth.helpers.ImageHelper;
 
 /**
  * Horizontal arrangement of bitmaps to create a photo strip.
@@ -39,7 +39,7 @@ public class HorizontalArrangement extends BaseArrangement {
                 * (srcBitmaps.length + 1);
         int returnBitmapHeight = srcBitmapHeight + PHOTO_STRIP_PANEL_PADDING * 2;
 
-        returnBitmap = Bitmap.createBitmap(returnBitmapWidth, returnBitmapHeight, Config.RGB_565);
+        returnBitmap = Bitmap.createBitmap(returnBitmapWidth, returnBitmapHeight, ImageHelper.BITMAP_CONFIG);
         if (returnBitmap != null) {
             // Create canvas to draw on return bitmap.
             Canvas canvas = new Canvas(returnBitmap);

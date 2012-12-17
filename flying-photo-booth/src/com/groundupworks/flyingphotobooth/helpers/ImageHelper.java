@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.OutputStream;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
+import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.os.Environment;
@@ -54,6 +55,11 @@ public class ImageHelper {
      * The default width and height of a image.
      */
     public static final int IMAGE_SIZE = 300;
+
+    /**
+     * Bitmap configuration.
+     */
+    public static final Bitmap.Config BITMAP_CONFIG = Config.ARGB_8888;
 
     /**
      * The default Jpeg quality.

@@ -10,6 +10,8 @@
         <item>@string/pref__filter_none</item>
         <item>@string/pref__filter_bw</item>
         <item>@string/pref__filter_bw_mixed</item>
+        <item>@string/pref__filter_sepia</item>
+        <item>@string/pref__filter_sepia_mixed</item>
     </array>
 
 </resources>

@@ -32,6 +32,7 @@ import com.groundupworks.flyingphotobooth.arrangements.HorizontalArrangement;
 import com.groundupworks.flyingphotobooth.arrangements.VerticalArrangement;
 import com.groundupworks.flyingphotobooth.filters.BlackAndWhiteFilter;
 import com.groundupworks.flyingphotobooth.filters.LineArtFilter;
+import com.groundupworks.flyingphotobooth.filters.SepiaFilter;
 import com.groundupworks.flyingphotobooth.fragments.ConfirmImageFragment;
 import com.groundupworks.flyingphotobooth.helpers.ImageHelper;
 import com.groundupworks.flyingphotobooth.helpers.ImageHelper.Arrangement;
@@ -96,6 +97,19 @@ public class ConfirmImageController extends BaseController {
                     } else {
                         filter1 = new BlackAndWhiteFilter();
                         filter3 = new BlackAndWhiteFilter();
+                    }
+                } else if (filterPref.equals(context.getString(R.string.pref__filter_sepia))) {
+                    filter0 = new SepiaFilter();
+                    filter1 = new SepiaFilter();
+                    filter2 = new SepiaFilter();
+                    filter3 = new SepiaFilter();
+                } else if (filterPref.equals(context.getString(R.string.pref__filter_sepia_mixed))) {
+                    if (arrangementPref.equals(context.getString(R.string.pref__arrangement_box))) {
+                        filter1 = new SepiaFilter();
+                        filter2 = new SepiaFilter();
+                    } else {
+                        filter1 = new SepiaFilter();
+                        filter3 = new SepiaFilter();
                     }
                 } else if (filterPref.equals(context.getString(R.string.pref__filter_line_art))) {
                     filter0 = new LineArtFilter();
