@@ -33,17 +33,17 @@ import com.groundupworks.flyingphotobooth.arrangements.VerticalArrangement;
 import com.groundupworks.flyingphotobooth.filters.BlackAndWhiteFilter;
 import com.groundupworks.flyingphotobooth.filters.LineArtFilter;
 import com.groundupworks.flyingphotobooth.filters.SepiaFilter;
-import com.groundupworks.flyingphotobooth.fragments.ConfirmImageFragment;
+import com.groundupworks.flyingphotobooth.fragments.ShareFragment;
 import com.groundupworks.flyingphotobooth.helpers.ImageHelper;
 import com.groundupworks.flyingphotobooth.helpers.ImageHelper.Arrangement;
 import com.groundupworks.flyingphotobooth.helpers.ImageHelper.ImageFilter;
 
 /**
- * Controller class for the {@link ConfirmImageFragment}.
+ * Controller class for the {@link ShareFragment}.
  * 
  * @author Benedict Lau
  */
-public class ConfirmImageController extends BaseController {
+public class ShareController extends BaseController {
 
     //
     // Controller events. The ui should be notified of these events.
@@ -64,21 +64,21 @@ public class ConfirmImageController extends BaseController {
     @Override
     protected void handleEvent(Message msg) {
         switch (msg.what) {
-            case ConfirmImageFragment.IMAGE_VIEW_READY:
+            case ShareFragment.IMAGE_VIEW_READY:
                 final Context context = MyApplication.getContext();
 
                 /*
                  * Create an image bitmap from Jpeg data.
                  */
                 Bundle bundle = msg.getData();
-                byte[] jpegData0 = bundle.getByteArray(ConfirmImageFragment.MESSAGE_BUNDLE_KEY_JPEG_DATA_0);
-                byte[] jpegData1 = bundle.getByteArray(ConfirmImageFragment.MESSAGE_BUNDLE_KEY_JPEG_DATA_1);
-                byte[] jpegData2 = bundle.getByteArray(ConfirmImageFragment.MESSAGE_BUNDLE_KEY_JPEG_DATA_2);
-                byte[] jpegData3 = bundle.getByteArray(ConfirmImageFragment.MESSAGE_BUNDLE_KEY_JPEG_DATA_3);
-                float rotation = bundle.getFloat(ConfirmImageFragment.MESSAGE_BUNDLE_KEY_ROTATION);
-                boolean reflection = bundle.getBoolean(ConfirmImageFragment.MESSAGE_BUNDLE_KEY_REFLECTION);
-                String filterPref = bundle.getString(ConfirmImageFragment.MESSAGE_BUNDLE_KEY_FILTER);
-                String arrangementPref = bundle.getString(ConfirmImageFragment.MESSAGE_BUNDLE_KEY_ARRANGEMENT);
+                byte[] jpegData0 = bundle.getByteArray(ShareFragment.MESSAGE_BUNDLE_KEY_JPEG_DATA_0);
+                byte[] jpegData1 = bundle.getByteArray(ShareFragment.MESSAGE_BUNDLE_KEY_JPEG_DATA_1);
+                byte[] jpegData2 = bundle.getByteArray(ShareFragment.MESSAGE_BUNDLE_KEY_JPEG_DATA_2);
+                byte[] jpegData3 = bundle.getByteArray(ShareFragment.MESSAGE_BUNDLE_KEY_JPEG_DATA_3);
+                float rotation = bundle.getFloat(ShareFragment.MESSAGE_BUNDLE_KEY_ROTATION);
+                boolean reflection = bundle.getBoolean(ShareFragment.MESSAGE_BUNDLE_KEY_REFLECTION);
+                String filterPref = bundle.getString(ShareFragment.MESSAGE_BUNDLE_KEY_FILTER);
+                String arrangementPref = bundle.getString(ShareFragment.MESSAGE_BUNDLE_KEY_ARRANGEMENT);
 
                 // Select filter.
                 ImageFilter filter0 = null;
@@ -157,7 +157,7 @@ public class ConfirmImageController extends BaseController {
                     reportError();
                 }
                 break;
-            case ConfirmImageFragment.IMAGE_CONFIRMED:
+            case ShareFragment.IMAGE_CONFIRMED:
                 /*
                  * Save image bitmap as Jpeg.
                  */
@@ -192,7 +192,7 @@ public class ConfirmImageController extends BaseController {
                     reportError();
                 }
                 break;
-            case ConfirmImageFragment.FRAGMENT_DESTROYED:
+            case ShareFragment.FRAGMENT_DESTROYED:
                 /*
                  * Recycle bitmap.
                  */

@@ -34,7 +34,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 import com.groundupworks.flyingphotobooth.LaunchActivity;
 import com.groundupworks.flyingphotobooth.R;
-import com.groundupworks.flyingphotobooth.controllers.ConfirmImageController;
+import com.groundupworks.flyingphotobooth.controllers.ShareController;
 import com.groundupworks.flyingphotobooth.helpers.BeamHelper;
 import com.groundupworks.flyingphotobooth.helpers.ImageHelper;
 
@@ -43,7 +43,7 @@ import com.groundupworks.flyingphotobooth.helpers.ImageHelper;
  * 
  * @author Benedict Lau
  */
-public class ConfirmImageFragment extends ControllerBackedFragment<ConfirmImageController> {
+public class ShareFragment extends ControllerBackedFragment<ShareController> {
 
     //
     // Fragment bundle keys.
@@ -256,8 +256,8 @@ public class ConfirmImageFragment extends ControllerBackedFragment<ConfirmImageC
     //
 
     @Override
-    protected ConfirmImageController initController() {
-        return new ConfirmImageController();
+    protected ShareController initController() {
+        return new ShareController();
     }
 
     @Override
@@ -266,13 +266,13 @@ public class ConfirmImageFragment extends ControllerBackedFragment<ConfirmImageC
         Context appContext = activity.getApplicationContext();
 
         switch (msg.what) {
-            case ConfirmImageController.ERROR_OCCURRED:
+            case ShareController.ERROR_OCCURRED:
                 Toast.makeText(activity, getString(R.string.confirm_image__error_generic), Toast.LENGTH_LONG).show();
                 break;
-            case ConfirmImageController.BITMAP_READY:
+            case ShareController.BITMAP_READY:
                 mImage.setImageBitmap((Bitmap) msg.obj);
                 break;
-            case ConfirmImageController.JPEG_SAVED:
+            case ShareController.JPEG_SAVED:
                 mSaveButton.setVisibility(View.INVISIBLE);
                 mShareButton.setVisibility(View.VISIBLE);
                 if (BeamHelper.supportsBeam(appContext)) {
@@ -296,7 +296,7 @@ public class ConfirmImageFragment extends ControllerBackedFragment<ConfirmImageC
     //
 
     /**
-     * Creates a new {@link ConfirmImageFragment} instance.
+     * Creates a new {@link ShareFragment} instance.
      * 
      * @param jpegData
      *            byte arrays of Jpeg data.
@@ -304,10 +304,10 @@ public class ConfirmImageFragment extends ControllerBackedFragment<ConfirmImageC
      *            clockwise rotation applied to image in degrees.
      * @param reflection
      *            horizontal reflection applied to image.
-     * @return the new {@link ConfirmImageFragment} instance.
+     * @return the new {@link ShareFragment} instance.
      */
-    public static ConfirmImageFragment newInstance(byte[][] jpegData, float rotation, boolean reflection) {
-        ConfirmImageFragment fragment = new ConfirmImageFragment();
+    public static ShareFragment newInstance(byte[][] jpegData, float rotation, boolean reflection) {
+        ShareFragment fragment = new ShareFragment();
 
         Bundle args = new Bundle();
         args.putByteArray(FRAGMENT_BUNDLE_KEY_JPEG_DATA_0, jpegData[JPEG_DATA_INDEX_0]);

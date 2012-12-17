@@ -584,7 +584,7 @@ public class CaptureFragment extends Fragment {
 
             ((LaunchActivity) getActivity())
                     .replaceFragment(
-                            ConfirmImageFragment.newInstance(mFramesData, mPreviewDisplayOrientation, isReflected),
+                            ShareFragment.newInstance(mFramesData, mPreviewDisplayOrientation, isReflected),
                             true, false);
         }
     }
