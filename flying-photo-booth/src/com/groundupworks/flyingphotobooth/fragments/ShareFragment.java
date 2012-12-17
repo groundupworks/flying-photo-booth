@@ -79,9 +79,7 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
 
     public static final int IMAGE_VIEW_READY = 0;
 
-    public static final int IMAGE_CONFIRMED = 1;
-
-    public static final int FRAGMENT_DESTROYED = 2;
+    public static final int FRAGMENT_DESTROYED = 1;
 
     //
     // Message bundle keys.
@@ -114,8 +112,6 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
 
     private ViewStub mScrollViewStub;
 
-    private ImageButton mSaveButton;
-
     private ImageButton mShareButton;
 
     private ImageButton mBeamButton;
@@ -130,7 +126,6 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
         View view = inflater.inflate(R.layout.fragment_confirm_image, container, false);
 
         mScrollViewStub = (ViewStub) view.findViewById(R.id.scrollview_stub);
-        mSaveButton = (ImageButton) view.findViewById(R.id.save_button);
         mShareButton = (ImageButton) view.findViewById(R.id.share_button);
         mBeamButton = (ImageButton) view.findViewById(R.id.beam_button);
 
@@ -180,18 +175,6 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
         /*
          * Functionalize views.
          */
-        mSaveButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mSaveButton.setEnabled(false);
-
-                // Notify controller the image is confirmed.
-                Message msg = Message.obtain();
-                msg.what = IMAGE_CONFIRMED;
-                sendEvent(msg);
-            }
-        });
-
         mShareButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -273,7 +256,6 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
                 mImage.setImageBitmap((Bitmap) msg.obj);
                 break;
             case ShareController.JPEG_SAVED:
-                mSaveButton.setVisibility(View.INVISIBLE);
                 mShareButton.setVisibility(View.VISIBLE);
                 if (BeamHelper.supportsBeam(appContext)) {
                     mBeamButton.setVisibility(View.VISIBLE);

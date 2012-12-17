@@ -166,8 +166,7 @@ public class ShareController extends BaseController {
                     // An error has occurred.
                     reportError();
                 }
-                break;
-            case ShareFragment.IMAGE_CONFIRMED:
+
                 /*
                  * Save image bitmap as Jpeg.
                  */
