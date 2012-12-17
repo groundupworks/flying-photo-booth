@@ -52,9 +52,15 @@ public class ImageHelper {
     public static final String JPEG_MIME_TYPE = "image/jpeg";
 
     /**
-     * The default width and height of a image.
+     * The width and height of an image.
      */
-    public static final int IMAGE_SIZE = 300;
+    public static final int IMAGE_SIZE = 600;
+
+    /**
+     * The scaling factor applied to an image to create its thumbnail. The thumbnail is used to show the image on
+     * screen.
+     */
+    public static final float THUMB_SCALING_FACTOR = 0.5f;
 
     /**
      * Bitmap configuration.

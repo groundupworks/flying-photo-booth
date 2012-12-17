@@ -57,6 +57,8 @@ public class ShareController extends BaseController {
 
     private Bitmap mBitmap = null;
 
+    private Bitmap mThumb = null;
+
     //
     // BaseController implementation.
     //
@@ -147,11 +149,19 @@ public class ShareController extends BaseController {
 
                 // Notify ui.
                 if (mBitmap != null) {
-                    // Bitmap is ready.
-                    Message uiMsg = Message.obtain();
-                    uiMsg.what = BITMAP_READY;
-                    uiMsg.obj = mBitmap;
-                    sendUiUpdate(uiMsg);
+                    float thumbWidth = ((float) (mBitmap.getWidth())) * ImageHelper.THUMB_SCALING_FACTOR;
+                    float thumbHeight = ((float) (mBitmap.getHeight())) * ImageHelper.THUMB_SCALING_FACTOR;
+                    mThumb = Bitmap.createScaledBitmap(mBitmap, (int) thumbWidth, (int) thumbHeight, true);
+                    if (mThumb != null) {
+                        // Bitmap is ready.
+                        Message uiMsg = Message.obtain();
+                        uiMsg.what = BITMAP_READY;
+                        uiMsg.obj = mThumb;
+                        sendUiUpdate(uiMsg);
+                    } else {
+                        // An error has occurred.
+                        reportError();
+                    }
                 } else {
                     // An error has occurred.
                     reportError();
