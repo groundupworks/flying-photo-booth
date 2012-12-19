@@ -85,6 +85,11 @@ public class CaptureFragment extends Fragment {
     private boolean mUseFrontFacing = false;
 
     /**
+     * Flag to indicate whether countdown or manual trigger is used.
+     */
+    private boolean mUseManualTrigger = false;
+
+    /**
      * Flag to track whether {@link #onPause()} is called.
      */
     private boolean mOnPauseCalled = false;
@@ -265,6 +270,23 @@ public class CaptureFragment extends Fragment {
             });
         }
 
+        // Get trigger mode preference.
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity()
+                .getApplicationContext());
+        String triggerPref = preferences.getString(getString(R.string.pref__trigger_key),
+                getString(R.string.pref__trigger_countdown));
+        mUseManualTrigger = triggerPref.equals(getString(R.string.pref__trigger_manual));
+
+        // Configure title and start button text.
+        if (mUseManualTrigger) {
+            // Update title.
+            mTitle.setText(String.format(getString(R.string.capture__title_frame), mFrameIndex + 1));
+            mStartButton.setText(getString(R.string.capture__start_manual_button_text));
+        } else {
+            mStartButton.setText(getString(R.string.capture__start_countdown_button_text));
+        }
+
+        // Configure start button behaviour.
         mStartButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -398,13 +420,29 @@ public class CaptureFragment extends Fragment {
     //
 
     /**
-     * Callback when focus is ready for capture.
+     * Callback when focus is ready for capture. Used in countdown trigger mode.
      */
-    private class CaptureFocusCallback implements AutoFocusCallback {
+    private class CountdownCaptureFocusCallback implements AutoFocusCallback {
 
         @Override
         public void onAutoFocus(boolean success, Camera camera) {
             mStatus.setText("");
+        }
+    }
+
+    /**
+     * Callback when focus is ready for capture. Used in manual trigger mode.
+     */
+    private class ManualCaptureFocusCallback implements AutoFocusCallback {
+
+        @Override
+        public void onAutoFocus(boolean success, Camera camera) {
+            mStatus.setText("");
+
+            // Capture frame.
+            if (mCamera != null) {
+                mCamera.takePicture(null, null, new JpegPictureCallback());
+            }
         }
     }
 
@@ -432,12 +470,23 @@ public class CaptureFragment extends Fragment {
 
                                 @Override
                                 public void run() {
-                                    // Restart preview and capture next frames.
+                                    // Restart preview.
                                     if (mCamera != null && mPreview != null) {
                                         mPreview.start();
                                     }
 
-                                    kickoffCaptureSequence();
+                                    // Capture next frames.
+                                    if (mUseManualTrigger) {
+                                        // Update title.
+                                        mTitle.setText(String.format(getString(R.string.capture__title_frame),
+                                                mFrameIndex + 1));
+
+                                        // Enable start button.
+                                        mStartButton.setEnabled(true);
+                                        mStartButton.setVisibility(View.VISIBLE);
+                                    } else {
+                                        kickoffCountdownCapture();
+                                    }
                                 }
                             });
                         }
@@ -458,7 +507,7 @@ public class CaptureFragment extends Fragment {
     //
 
     /**
-     * Reset countdown timer.
+     * Resets countdown timer.
      */
     private void resetCountdownTimer() {
         if (mCountdown != null) {
@@ -473,9 +522,21 @@ public class CaptureFragment extends Fragment {
     }
 
     /**
-     * Kicks off countdown and auto-focus, capture frame at the end.
+     * Kicks off capture. Determines code path based on {@link #mUseManualTrigger}.
      */
     private void kickoffCaptureSequence() {
+        // Kickoff capture sequence.
+        if (mUseManualTrigger) {
+            kickoffManualCapture();
+        } else {
+            kickoffCountdownCapture();
+        }
+    }
+
+    /**
+     * Kicks off countdown and auto-focus, captures frame at the end.
+     */
+    private void kickoffCountdownCapture() {
         // Update title.
         mTitle.setText(String.format(getString(R.string.capture__title_frame), mFrameIndex + 1));
 
@@ -503,7 +564,7 @@ public class CaptureFragment extends Fragment {
                             }
 
                             if (mCamera != null) {
-                                mCamera.autoFocus(new CaptureFocusCallback());
+                                mCamera.autoFocus(new CountdownCaptureFocusCallback());
                             }
                         }
                     });
@@ -574,6 +635,20 @@ public class CaptureFragment extends Fragment {
     }
 
     /**
+     * Kicks off auto-focus, captures frame at the end.
+     */
+    private void kickoffManualCapture() {
+        // Kick off auto-focus and indicate status.
+        if (mStatus != null) {
+            mStatus.setText(String.format(getString(R.string.capture__status_focusing), mFrameIndex + 1));
+        }
+
+        if (mCamera != null) {
+            mCamera.autoFocus(new ManualCaptureFocusCallback());
+        }
+    }
+
+    /**
      * Launches the next {@link Fragment}.
      */
     private void nextFragment() {
@@ -582,10 +657,8 @@ public class CaptureFragment extends Fragment {
             Camera.getCameraInfo(mCameraId, cameraInfo);
             boolean isReflected = cameraInfo.facing == CameraInfo.CAMERA_FACING_FRONT;
 
-            ((LaunchActivity) getActivity())
-                    .replaceFragment(
-                            ShareFragment.newInstance(mFramesData, mPreviewDisplayOrientation, isReflected),
-                            true, false);
+            ((LaunchActivity) getActivity()).replaceFragment(
+                    ShareFragment.newInstance(mFramesData, mPreviewDisplayOrientation, isReflected), true, false);
         }
     }
 

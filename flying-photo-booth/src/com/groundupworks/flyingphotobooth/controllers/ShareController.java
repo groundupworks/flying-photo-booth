@@ -203,11 +203,15 @@ public class ShareController extends BaseController {
                 break;
             case ShareFragment.FRAGMENT_DESTROYED:
                 /*
-                 * Recycle bitmap.
+                 * Recycle bitmaps.
                  */
                 if (mBitmap != null) {
                     mBitmap.recycle();
                     mBitmap = null;
+                }
+                if (mThumb != null) {
+                    mThumb.recycle();
+                    mThumb = null;
                 }
                 break;
             default:

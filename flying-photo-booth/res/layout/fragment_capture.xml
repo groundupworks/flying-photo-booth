@@ -132,8 +132,7 @@
             android:layout_alignParentBottom="true"
             android:layout_alignTop="@id/countdown"
             android:layout_margin="6dip"
-            android:background="@drawable/selector_button"
-            android:text="@string/capture__start_button_text" />
+            android:background="@drawable/selector_button" />
 
         <!-- Camera preview -->
 

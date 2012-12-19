@@ -15,5 +15,12 @@
         android:entryValues="@array/pref__filter_options"
         android:key="@string/pref__filter_key"
         android:title="@string/pref__filter_title" />
+    <ListPreference
+        android:defaultValue="@string/pref__trigger_countdown"
+        android:dialogTitle="@string/pref__trigger_title"
+        android:entries="@array/pref__trigger_options"
+        android:entryValues="@array/pref__trigger_options"
+        android:key="@string/pref__trigger_key"
+        android:title="@string/pref__trigger_title" />
 
 </PreferenceScreen>
