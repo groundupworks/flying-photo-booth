@@ -734,14 +734,21 @@ public class CaptureFragment extends Fragment {
 
         // Check if we need more frames.
         if (mFrameIndex < TOTAL_FRAMES_TO_CAPTURE) {
+            // Update title.
+            mTitle.setText(String.format(getString(R.string.capture__title_frame), mFrameIndex + 1));
+
+            // Restart preview.
+            if (mCamera != null && mPreview != null) {
+                mPreview.start();
+            }
+
             // Fade out review overlay.
             Animation animation = AnimationUtils.loadAnimation(context, R.anim.fade_out);
             animation.setAnimationListener(new AnimationListener() {
 
                 @Override
                 public void onAnimationStart(Animation animation) {
-                    // Update title.
-                    mTitle.setText(String.format(getString(R.string.capture__title_frame), mFrameIndex + 1));
+                    // Do nothing.
                 }
 
                 @Override
@@ -754,11 +761,6 @@ public class CaptureFragment extends Fragment {
                     // Hide the review overlay.
                     mReviewOverlay.setVisibility(View.GONE);
                     mReviewImage.setImageBitmap(null);
-
-                    // Restart preview.
-                    if (mCamera != null && mPreview != null) {
-                        mPreview.start();
-                    }
 
                     // Capture next frames.
                     if (mUseManualTrigger) {
