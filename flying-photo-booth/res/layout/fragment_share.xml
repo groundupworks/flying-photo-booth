@@ -7,7 +7,7 @@
 
     <!-- Top bar -->
 
-    <include layout="@layout/fragment_confirm_image_top_bar" />
+    <include layout="@layout/fragment_share_top_bar" />
 
     <!-- Main content -->
 

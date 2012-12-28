@@ -40,9 +40,9 @@ public class BeamDetailsDialogFragment extends DialogFragment {
         // AlertDialog.THEME_DEVICE_DEFAULT_LIGHT only available in ICS and above.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
             dialog = new AlertDialog.Builder(getActivity(), AlertDialog.THEME_DEVICE_DEFAULT_LIGHT)
-                    .setTitle(getString(R.string.confirm_image__beam_dialog_title))
-                    .setMessage(R.string.confirm_image__beam_dialog_message)
-                    .setPositiveButton(R.string.confirm_image__beam_dialog_button_text,
+                    .setTitle(getString(R.string.beam_details__dialog_title))
+                    .setMessage(R.string.beam_details__dialog_message)
+                    .setPositiveButton(R.string.beam_details__dialog_button_text,
                             new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int whichButton) {
@@ -51,9 +51,9 @@ public class BeamDetailsDialogFragment extends DialogFragment {
                             }).create();
         } else {
             dialog = new AlertDialog.Builder(getActivity())
-                    .setTitle(getString(R.string.confirm_image__beam_dialog_title))
-                    .setMessage(R.string.confirm_image__beam_dialog_message)
-                    .setPositiveButton(R.string.confirm_image__beam_dialog_button_text,
+                    .setTitle(getString(R.string.beam_details__dialog_title))
+                    .setMessage(R.string.beam_details__dialog_message)
+                    .setPositiveButton(R.string.beam_details__dialog_button_text,
                             new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int whichButton) {

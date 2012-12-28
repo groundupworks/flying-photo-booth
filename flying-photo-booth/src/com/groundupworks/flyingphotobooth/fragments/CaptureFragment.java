@@ -18,10 +18,13 @@ package com.groundupworks.flyingphotobooth.fragments;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.hardware.Camera;
 import android.hardware.Camera.AutoFocusCallback;
 import android.hardware.Camera.CameraInfo;
@@ -31,10 +34,16 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.Animation.AnimationListener;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -73,6 +82,16 @@ public class CaptureFragment extends Fragment {
      * Delay between countdown steps in milliseconds.
      */
     private static final int COUNTDOWN_STEP_DELAY = 1000;
+
+    /**
+     * Duration to display the review overlay.
+     */
+    private static final int REVIEW_OVERLAY_WAIT_DURATION = 2000;
+
+    /**
+     * Threshold distance to recognize a swipe to remove gesture.
+     */
+    private static final float REVIEW_REMOVE_GESTURE_THRESHOLD = 100f;
 
     /**
      * The default captured Jpeg quality.
@@ -125,6 +144,11 @@ public class CaptureFragment extends Fragment {
     private int mPreviewDisplayOrientation = CameraHelper.CAMERA_SCREEN_ORIENTATION_0;
 
     /**
+     * Flag to indicate whether the camera image is reflected.
+     */
+    private boolean mIsReflected = false;
+
+    /**
      * The current frame index.
      */
     private int mFrameIndex = 0;
@@ -158,6 +182,12 @@ public class CaptureFragment extends Fragment {
 
     private Button mStartButton;
 
+    private LinearLayout mReviewOverlay;
+
+    private TextView mReviewStatus;
+
+    private ImageView mReviewImage;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -187,6 +217,11 @@ public class CaptureFragment extends Fragment {
         CameraInfo cameraInfo = new CameraInfo();
         for (int cameraId = 0; cameraId < mNumCameras; cameraId++) {
             Camera.getCameraInfo(cameraId, cameraInfo);
+
+            // Set flag to indicate whether the camera image is reflected.
+            mIsReflected = isCameraImageReflected(cameraInfo);
+
+            // Break on finding the preferred camera.
             if (cameraInfo.facing == cameraPreference) {
                 mCameraId = cameraId;
                 break;
@@ -211,6 +246,9 @@ public class CaptureFragment extends Fragment {
         mCountdownTwo = (TextView) view.findViewById(R.id.countdown_two);
         mCountdownOne = (TextView) view.findViewById(R.id.countdown_one);
         mStartButton = (Button) view.findViewById(R.id.start_button);
+        mReviewOverlay = (LinearLayout) view.findViewById(R.id.review_overlay);
+        mReviewStatus = (TextView) view.findViewById(R.id.review_status);
+        mReviewImage = (ImageView) view.findViewById(R.id.review_image);
 
         return view;
     }
@@ -220,6 +258,12 @@ public class CaptureFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
         final LaunchActivity activity = (LaunchActivity) getActivity();
+
+        /*
+         * Reset frames.
+         */
+        mFrameIndex = 0;
+        mFramesData = new byte[TOTAL_FRAMES_TO_CAPTURE][];
 
         /*
          * Set handler for back pressed event.
@@ -304,12 +348,6 @@ public class CaptureFragment extends Fragment {
                 }
             }
         });
-
-        /*
-         * Reset frames.
-         */
-        mFrameIndex = 0;
-        mFramesData = new byte[TOTAL_FRAMES_TO_CAPTURE][];
     }
 
     @Override
@@ -420,27 +458,16 @@ public class CaptureFragment extends Fragment {
     //
 
     /**
-     * Callback when focus is ready for capture. Used in countdown trigger mode.
+     * Callback when focus is ready for capture.
      */
-    private class CountdownCaptureFocusCallback implements AutoFocusCallback {
-
-        @Override
-        public void onAutoFocus(boolean success, Camera camera) {
-            mStatus.setText("");
-        }
-    }
-
-    /**
-     * Callback when focus is ready for capture. Used in manual trigger mode.
-     */
-    private class ManualCaptureFocusCallback implements AutoFocusCallback {
+    private class MyAutoFocusCallback implements AutoFocusCallback {
 
         @Override
         public void onAutoFocus(boolean success, Camera camera) {
             mStatus.setText("");
 
             // Capture frame.
-            if (mCamera != null) {
+            if (mUseManualTrigger && mCamera != null) {
                 mCamera.takePicture(null, null, new JpegPictureCallback());
             }
         }
@@ -453,52 +480,100 @@ public class CaptureFragment extends Fragment {
 
         @Override
         public void onPictureTaken(byte[] data, Camera camera) {
-            // Save frame Jpeg data in memory.
+            // Save Jpeg frame in memory.
             mFramesData[mFrameIndex] = data;
 
-            // Increment frame index.
-            mFrameIndex++;
+            // Setup review overlay for user to review captured frame.
+            mReviewStatus.setText(getString(R.string.capture__review_instructions));
+            mReviewStatus.setTextColor(getResources().getColor(R.color.lt_text_color));
+            Bitmap bitmap = ImageHelper.createImage(data, mPreviewDisplayOrientation, mIsReflected, null);
+            mReviewImage.setImageBitmap(bitmap);
+            mReviewOverlay.setVisibility(View.VISIBLE);
 
-            if (mFrameIndex < TOTAL_FRAMES_TO_CAPTURE) {
-                mTimer.schedule(new TimerTask() {
+            // Setup task to clear the review overlay after a frame removal event or after a fixed timeout.
+            final CountDownLatch latch = new CountDownLatch(1);
+            mTimer.schedule(new TimerTask() {
 
-                    @Override
-                    public void run() {
-                        final Activity activity = getActivity();
-                        if (activity != null && !activity.isFinishing()) {
-                            activity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    synchronized (latch) {
+                        try {
+                            // Wait for user input or a fixed timeout.
+                            latch.await(REVIEW_OVERLAY_WAIT_DURATION, TimeUnit.MILLISECONDS);
 
-                                @Override
-                                public void run() {
-                                    // Restart preview.
-                                    if (mCamera != null && mPreview != null) {
-                                        mPreview.start();
+                            // Post task to ui thread to prepare for next capture.
+                            final Activity activity = getActivity();
+                            if (activity != null && !activity.isFinishing()) {
+                                activity.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        prepareNextCapture(activity.getApplicationContext());
                                     }
-
-                                    // Capture next frames.
-                                    if (mUseManualTrigger) {
-                                        // Update title.
-                                        mTitle.setText(String.format(getString(R.string.capture__title_frame),
-                                                mFrameIndex + 1));
-
-                                        // Enable start button.
-                                        mStartButton.setEnabled(true);
-                                        mStartButton.setVisibility(View.VISIBLE);
-                                    } else {
-                                        kickoffCountdownCapture();
-                                    }
-                                }
-                            });
+                                });
+                            }
+                        } catch (InterruptedException e) {
+                            // Do nothing.
                         }
                     }
-                }, COUNTDOWN_STEP_DELAY);
-            } else {
-                // Set flag to indicate capture sequence is no longer running.
-                mIsCaptureSequenceRunning = false;
+                }
+            }, 0);
+            mReviewOverlay.setOnTouchListener(new ReviewOverlayOnTouchListener(latch));
+        }
+    }
 
-                // Transition to next fragment since enough frames have been captured.
-                nextFragment();
+    /**
+     * {@link OnTouchListener} for the review overlay. Removes the last captured frame when a remove gesture is
+     * detected.
+     */
+    private class ReviewOverlayOnTouchListener implements OnTouchListener {
+
+        private CountDownLatch mReviewLatch;
+
+        private boolean isEnabled = true;
+
+        private float mDownX = 0f;
+
+        private float mDownY = 0f;
+
+        /**
+         * Constructor.
+         * 
+         * @param latch
+         *            the latch to countdown as a signal to proceed with capture sequence.
+         */
+        private ReviewOverlayOnTouchListener(CountDownLatch latch) {
+            mReviewLatch = latch;
+        }
+
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            if (isEnabled) {
+                int action = event.getAction();
+                if (action == MotionEvent.ACTION_DOWN) {
+                    mDownX = event.getX();
+                    mDownY = event.getY();
+                } else if (action == MotionEvent.ACTION_MOVE) {
+                    float distance = Math.abs(event.getX() - mDownX) + Math.abs(event.getY() - mDownY);
+                    if (distance > REVIEW_REMOVE_GESTURE_THRESHOLD) {
+                        // Disable listener. Ensure by toggling a flag and then setting the listener to null.
+                        isEnabled = false;
+                        mReviewOverlay.setOnTouchListener(null);
+
+                        // Remove frame by decrementing index.
+                        mFrameIndex--;
+
+                        // Indicate removed status.
+                        mReviewStatus.setText(getString(R.string.capture__review_removed));
+                        mReviewStatus.setTextColor(getResources().getColor(R.color.selection_color));
+
+                        // Notify latch to proceed with capture sequence.
+                        mReviewLatch.countDown();
+                    }
+                }
             }
+
+            // Handle all touch events.
+            return true;
         }
     }
 
@@ -534,6 +609,20 @@ public class CaptureFragment extends Fragment {
     }
 
     /**
+     * Kicks off auto-focus, captures frame at the end.
+     */
+    private void kickoffManualCapture() {
+        // Kick off auto-focus and indicate status.
+        if (mStatus != null) {
+            mStatus.setText(String.format(getString(R.string.capture__status_focusing)));
+        }
+
+        if (mCamera != null) {
+            mCamera.autoFocus(new MyAutoFocusCallback());
+        }
+    }
+
+    /**
      * Kicks off countdown and auto-focus, captures frame at the end.
      */
     private void kickoffCountdownCapture() {
@@ -559,12 +648,11 @@ public class CaptureFragment extends Fragment {
 
                             // Kick off auto-focus and indicate status.
                             if (mStatus != null) {
-                                mStatus.setText(String.format(getString(R.string.capture__status_focusing),
-                                        mFrameIndex + 1));
+                                mStatus.setText(String.format(getString(R.string.capture__status_focusing)));
                             }
 
                             if (mCamera != null) {
-                                mCamera.autoFocus(new CountdownCaptureFocusCallback());
+                                mCamera.autoFocus(new MyAutoFocusCallback());
                             }
                         }
                     });
@@ -635,16 +723,68 @@ public class CaptureFragment extends Fragment {
     }
 
     /**
-     * Kicks off auto-focus, captures frame at the end.
+     * Checks whether the camera image is reflected.
+     * 
+     * @return true if the camera image is reflected; false otherwise.
      */
-    private void kickoffManualCapture() {
-        // Kick off auto-focus and indicate status.
-        if (mStatus != null) {
-            mStatus.setText(String.format(getString(R.string.capture__status_focusing), mFrameIndex + 1));
-        }
+    private boolean isCameraImageReflected(CameraInfo cameraInfo) {
+        return cameraInfo.facing == CameraInfo.CAMERA_FACING_FRONT;
+    }
 
-        if (mCamera != null) {
-            mCamera.autoFocus(new ManualCaptureFocusCallback());
+    /**
+     * Prepares for the next capture or jump to next fragment if all frames have been collected.
+     */
+    private void prepareNextCapture(Context context) {
+        // Increment frame index.
+        mFrameIndex++;
+
+        // Check if we need more frames.
+        if (mFrameIndex < TOTAL_FRAMES_TO_CAPTURE) {
+            // Fade out review overlay.
+            Animation animation = AnimationUtils.loadAnimation(context, R.anim.fade_out);
+            animation.setAnimationListener(new AnimationListener() {
+
+                @Override
+                public void onAnimationStart(Animation animation) {
+                    // Do nothing.
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+                    // Do nothing.
+                }
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    // Hide the review overlay.
+                    mReviewOverlay.setVisibility(View.GONE);
+                    mReviewImage.setImageBitmap(null);
+
+                    // Restart preview.
+                    if (mCamera != null && mPreview != null) {
+                        mPreview.start();
+                    }
+
+                    // Capture next frames.
+                    if (mUseManualTrigger) {
+                        // Update title.
+                        mTitle.setText(String.format(getString(R.string.capture__title_frame), mFrameIndex + 1));
+
+                        // Enable start button.
+                        mStartButton.setEnabled(true);
+                        mStartButton.setVisibility(View.VISIBLE);
+                    } else {
+                        kickoffCountdownCapture();
+                    }
+                }
+            });
+            mReviewOverlay.startAnimation(animation);
+        } else {
+            // Set flag to indicate capture sequence is no longer running.
+            mIsCaptureSequenceRunning = false;
+
+            // Transition to next fragment since enough frames have been captured.
+            nextFragment();
         }
     }
 
@@ -652,14 +792,8 @@ public class CaptureFragment extends Fragment {
      * Launches the next {@link Fragment}.
      */
     private void nextFragment() {
-        CameraInfo cameraInfo = new CameraInfo();
-        if (mCameraId != INVALID_CAMERA_ID) {
-            Camera.getCameraInfo(mCameraId, cameraInfo);
-            boolean isReflected = cameraInfo.facing == CameraInfo.CAMERA_FACING_FRONT;
-
-            ((LaunchActivity) getActivity()).replaceFragment(
-                    ShareFragment.newInstance(mFramesData, mPreviewDisplayOrientation, isReflected), true, false);
-        }
+        ((LaunchActivity) getActivity()).replaceFragment(
+                ShareFragment.newInstance(mFramesData, mPreviewDisplayOrientation, mIsReflected), true, false);
     }
 
     /**

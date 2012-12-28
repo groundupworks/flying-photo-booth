@@ -32,15 +32,19 @@
     <string name="capture__countdown_two">2</string>
     <string name="capture__countdown_three">3</string>
     <string name="capture__countdown_separator">•</string>
+    <string name="capture__review_instructions">Swipe screen to retake</string>
+    <string name="capture__review_removed">Removed</string>
     <string name="capture__error_no_camera">No camera available</string>
     <string name="capture__error_camera_in_use">Camera in use by another application</string>
 
     <!-- Confirm Image Fragment -->
-    <string name="confirm_image__beam_toast">Tap compatible device to send with Android Beam, long press icon for details</string>
-    <string name="confirm_image__beam_dialog_title">Android Beam</string>
-    <string name="confirm_image__beam_dialog_message">To beam a photo strip, both devices must have:\n\n1. Hardware that supports NFC\n2. Android JellyBean or above\n3. Screen on and unlocked\n4. NFC enabled\n5. Bluetooth enabled\n6. Android Beam enabled\n\nTap devices together to initiate transfer.</string>
-    <string name="confirm_image__beam_dialog_button_text">Settings</string>
-    <string name="confirm_image__share_chooser_title">Share image using</string>
-    <string name="confirm_image__error_generic">An error has occurred</string>
+    <string name="share__beam_toast">Tap compatible device to send with Android Beam, long press icon for details</string>
+    <string name="share__share_chooser_title">Share image using</string>
+    <string name="share__error_generic">An error has occurred</string>
+
+    <!-- Beam Details Dialog Fragment -->
+    <string name="beam_details__dialog_title">Android Beam</string>
+    <string name="beam_details__dialog_message">To beam a photo strip, both devices must have:\n\n1. Hardware that supports NFC\n2. Android JellyBean or above\n3. Screen on and unlocked\n4. NFC enabled\n5. Bluetooth enabled\n6. Android Beam enabled\n\nTap devices together to initiate transfer.</string>
+    <string name="beam_details__dialog_button_text">Settings</string>
 
 </resources>

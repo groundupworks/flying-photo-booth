@@ -123,7 +123,7 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
         /*
          * Inflate views from XML.
          */
-        View view = inflater.inflate(R.layout.fragment_confirm_image, container, false);
+        View view = inflater.inflate(R.layout.fragment_share, container, false);
 
         mScrollViewStub = (ViewStub) view.findViewById(R.id.scrollview_stub);
         mShareButton = (ImageButton) view.findViewById(R.id.share_button);
@@ -162,11 +162,11 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
          * Inflate view stub.
          */
         if (arrangementPref.equals(getString(R.string.pref__arrangement_horizontal))) {
-            mScrollViewStub.setLayoutResource(R.layout.fragment_confirm_image_horizontal);
+            mScrollViewStub.setLayoutResource(R.layout.fragment_share_horizontal);
         } else if (arrangementPref.equals(getString(R.string.pref__arrangement_box))) {
-            mScrollViewStub.setLayoutResource(R.layout.fragment_confirm_image_box);
+            mScrollViewStub.setLayoutResource(R.layout.fragment_share_box);
         } else {
-            mScrollViewStub.setLayoutResource(R.layout.fragment_confirm_image_vertical);
+            mScrollViewStub.setLayoutResource(R.layout.fragment_share_vertical);
         }
 
         View view = mScrollViewStub.inflate();
@@ -184,8 +184,7 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
                     Intent sharingIntent = new Intent(Intent.ACTION_SEND);
                     sharingIntent.setType(ImageHelper.JPEG_MIME_TYPE);
                     sharingIntent.putExtra(Intent.EXTRA_STREAM, jpegUri);
-                    startActivity(Intent.createChooser(sharingIntent,
-                            getString(R.string.confirm_image__share_chooser_title)));
+                    startActivity(Intent.createChooser(sharingIntent, getString(R.string.share__share_chooser_title)));
                 }
             }
         });
@@ -193,7 +192,7 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
         mBeamButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getActivity(), getString(R.string.confirm_image__beam_toast), Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity(), getString(R.string.share__beam_toast), Toast.LENGTH_LONG).show();
             }
         });
 
@@ -250,7 +249,7 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
 
         switch (msg.what) {
             case ShareController.ERROR_OCCURRED:
-                Toast.makeText(activity, getString(R.string.confirm_image__error_generic), Toast.LENGTH_LONG).show();
+                Toast.makeText(activity, getString(R.string.share__error_generic), Toast.LENGTH_LONG).show();
                 break;
             case ShareController.BITMAP_READY:
                 mImage.setImageBitmap((Bitmap) msg.obj);
