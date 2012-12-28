@@ -344,7 +344,14 @@ public class CaptureFragment extends Fragment {
                     mIsCaptureSequenceRunning = true;
 
                     // Kick off capture sequence.
-                    kickoffCaptureSequence();
+                    if (mUseManualTrigger) {
+                        kickoffManualCapture();
+                    } else {
+                        // Update title.
+                        mTitle.setText(String.format(getString(R.string.capture__title_frame), mFrameIndex + 1));
+
+                        kickoffCountdownCapture();
+                    }
                 }
             }
         });
@@ -555,9 +562,8 @@ public class CaptureFragment extends Fragment {
                 } else if (action == MotionEvent.ACTION_MOVE) {
                     float distance = Math.abs(event.getX() - mDownX) + Math.abs(event.getY() - mDownY);
                     if (distance > REVIEW_REMOVE_GESTURE_THRESHOLD) {
-                        // Disable listener. Ensure by toggling a flag and then setting the listener to null.
+                        // Disable listener.
                         isEnabled = false;
-                        mReviewOverlay.setOnTouchListener(null);
 
                         // Remove frame by decrementing index.
                         mFrameIndex--;
@@ -597,18 +603,6 @@ public class CaptureFragment extends Fragment {
     }
 
     /**
-     * Kicks off capture. Determines code path based on {@link #mUseManualTrigger}.
-     */
-    private void kickoffCaptureSequence() {
-        // Kickoff capture sequence.
-        if (mUseManualTrigger) {
-            kickoffManualCapture();
-        } else {
-            kickoffCountdownCapture();
-        }
-    }
-
-    /**
      * Kicks off auto-focus, captures frame at the end.
      */
     private void kickoffManualCapture() {
@@ -626,9 +620,6 @@ public class CaptureFragment extends Fragment {
      * Kicks off countdown and auto-focus, captures frame at the end.
      */
     private void kickoffCountdownCapture() {
-        // Update title.
-        mTitle.setText(String.format(getString(R.string.capture__title_frame), mFrameIndex + 1));
-
         // Set visibility of countdown timer.
         mCountdown.setVisibility(View.VISIBLE);
 
@@ -735,6 +726,9 @@ public class CaptureFragment extends Fragment {
      * Prepares for the next capture or jump to next fragment if all frames have been collected.
      */
     private void prepareNextCapture(Context context) {
+        // Cancel review overlay touch listener.
+        mReviewOverlay.setOnTouchListener(null);
+
         // Increment frame index.
         mFrameIndex++;
 
@@ -746,7 +740,8 @@ public class CaptureFragment extends Fragment {
 
                 @Override
                 public void onAnimationStart(Animation animation) {
-                    // Do nothing.
+                    // Update title.
+                    mTitle.setText(String.format(getString(R.string.capture__title_frame), mFrameIndex + 1));
                 }
 
                 @Override
@@ -767,9 +762,6 @@ public class CaptureFragment extends Fragment {
 
                     // Capture next frames.
                     if (mUseManualTrigger) {
-                        // Update title.
-                        mTitle.setText(String.format(getString(R.string.capture__title_frame), mFrameIndex + 1));
-
                         // Enable start button.
                         mStartButton.setEnabled(true);
                         mStartButton.setVisibility(View.VISIBLE);
