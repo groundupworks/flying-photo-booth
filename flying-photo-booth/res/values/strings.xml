@@ -33,7 +33,7 @@
     <string name="capture__countdown_three">3</string>
     <string name="capture__countdown_separator">•</string>
     <string name="capture__review_instructions">Swipe screen to retake</string>
-    <string name="capture__review_removed">Removed</string>
+    <string name="capture__review_discarded">Discarded</string>
     <string name="capture__error_no_camera">No camera available</string>
     <string name="capture__error_camera_in_use">Camera in use by another application</string>
 

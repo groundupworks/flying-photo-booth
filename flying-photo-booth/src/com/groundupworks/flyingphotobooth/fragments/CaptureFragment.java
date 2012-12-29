@@ -569,7 +569,7 @@ public class CaptureFragment extends Fragment {
                         mFrameIndex--;
 
                         // Indicate removed status.
-                        mReviewStatus.setText(getString(R.string.capture__review_removed));
+                        mReviewStatus.setText(getString(R.string.capture__review_discarded));
                         mReviewStatus.setTextColor(getResources().getColor(R.color.selection_color));
 
                         // Notify latch to proceed with capture sequence.
