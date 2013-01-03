@@ -443,6 +443,7 @@ public class CaptureFragment extends Fragment {
     public void onPause() {
         if (mTimer != null) {
             mTimer.cancel();
+            mTimer = null;
             mIsCaptureSequenceRunning = false;
         }
 
@@ -499,31 +500,33 @@ public class CaptureFragment extends Fragment {
 
             // Setup task to clear the review overlay after a frame removal event or after a fixed timeout.
             final CountDownLatch latch = new CountDownLatch(1);
-            mTimer.schedule(new TimerTask() {
+            if (mTimer != null) {
+                mTimer.schedule(new TimerTask() {
 
-                @Override
-                public void run() {
-                    synchronized (latch) {
-                        try {
-                            // Wait for user input or a fixed timeout.
-                            latch.await(REVIEW_OVERLAY_WAIT_DURATION, TimeUnit.MILLISECONDS);
+                    @Override
+                    public void run() {
+                        synchronized (latch) {
+                            try {
+                                // Wait for user input or a fixed timeout.
+                                latch.await(REVIEW_OVERLAY_WAIT_DURATION, TimeUnit.MILLISECONDS);
 
-                            // Post task to ui thread to prepare for next capture.
-                            final Activity activity = getActivity();
-                            if (activity != null && !activity.isFinishing()) {
-                                activity.runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        prepareNextCapture(activity.getApplicationContext());
-                                    }
-                                });
+                                // Post task to ui thread to prepare for next capture.
+                                final Activity activity = getActivity();
+                                if (activity != null && !activity.isFinishing()) {
+                                    activity.runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            prepareNextCapture(activity.getApplicationContext());
+                                        }
+                                    });
+                                }
+                            } catch (InterruptedException e) {
+                                // Do nothing.
                             }
-                        } catch (InterruptedException e) {
-                            // Do nothing.
                         }
                     }
-                }
-            }, 0);
+                }, 0);
+            }
             mReviewOverlay.setOnTouchListener(new ReviewOverlayOnTouchListener(latch));
         }
     }
@@ -623,94 +626,96 @@ public class CaptureFragment extends Fragment {
         // Set visibility of countdown timer.
         mCountdown.setVisibility(View.VISIBLE);
 
-        mTimer.schedule(new TimerTask() {
+        if (mTimer != null) {
+            mTimer.schedule(new TimerTask() {
 
-            @Override
-            public void run() {
-                final Activity activity = getActivity();
-                if (activity != null && !activity.isFinishing()) {
-                    activity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    final Activity activity = getActivity();
+                    if (activity != null && !activity.isFinishing()) {
+                        activity.runOnUiThread(new Runnable() {
 
-                        @Override
-                        public void run() {
-                            if (mCountdownThree != null) {
-                                mCountdownThree.setTextColor(getResources().getColor(R.color.selection_color));
+                            @Override
+                            public void run() {
+                                if (mCountdownThree != null) {
+                                    mCountdownThree.setTextColor(getResources().getColor(R.color.selection_color));
+                                }
+
+                                // Kick off auto-focus and indicate status.
+                                if (mStatus != null) {
+                                    mStatus.setText(String.format(getString(R.string.capture__status_focusing)));
+                                }
+
+                                if (mCamera != null) {
+                                    mCamera.autoFocus(new MyAutoFocusCallback());
+                                }
                             }
-
-                            // Kick off auto-focus and indicate status.
-                            if (mStatus != null) {
-                                mStatus.setText(String.format(getString(R.string.capture__status_focusing)));
-                            }
-
-                            if (mCamera != null) {
-                                mCamera.autoFocus(new MyAutoFocusCallback());
-                            }
-                        }
-                    });
+                        });
+                    }
                 }
-            }
-        }, COUNTDOWN_STEP_DELAY * 2);
+            }, COUNTDOWN_STEP_DELAY * 2);
 
-        mTimer.schedule(new TimerTask() {
+            mTimer.schedule(new TimerTask() {
 
-            @Override
-            public void run() {
-                final Activity activity = getActivity();
-                if (activity != null && !activity.isFinishing()) {
-                    activity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    final Activity activity = getActivity();
+                    if (activity != null && !activity.isFinishing()) {
+                        activity.runOnUiThread(new Runnable() {
 
-                        @Override
-                        public void run() {
-                            if (mCountdownTwo != null) {
-                                mCountdownTwo.setTextColor(getResources().getColor(R.color.selection_color));
+                            @Override
+                            public void run() {
+                                if (mCountdownTwo != null) {
+                                    mCountdownTwo.setTextColor(getResources().getColor(R.color.selection_color));
+                                }
                             }
-                        }
-                    });
+                        });
+                    }
                 }
-            }
-        }, COUNTDOWN_STEP_DELAY * 3);
+            }, COUNTDOWN_STEP_DELAY * 3);
 
-        mTimer.schedule(new TimerTask() {
+            mTimer.schedule(new TimerTask() {
 
-            @Override
-            public void run() {
-                final Activity activity = getActivity();
-                if (activity != null && !activity.isFinishing()) {
-                    activity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    final Activity activity = getActivity();
+                    if (activity != null && !activity.isFinishing()) {
+                        activity.runOnUiThread(new Runnable() {
 
-                        @Override
-                        public void run() {
-                            if (mCountdownOne != null) {
-                                mCountdownOne.setTextColor(getResources().getColor(R.color.selection_color));
+                            @Override
+                            public void run() {
+                                if (mCountdownOne != null) {
+                                    mCountdownOne.setTextColor(getResources().getColor(R.color.selection_color));
+                                }
                             }
-                        }
-                    });
+                        });
+                    }
                 }
-            }
-        }, COUNTDOWN_STEP_DELAY * 4);
+            }, COUNTDOWN_STEP_DELAY * 4);
 
-        mTimer.schedule(new TimerTask() {
+            mTimer.schedule(new TimerTask() {
 
-            @Override
-            public void run() {
-                final Activity activity = getActivity();
-                if (activity != null && !activity.isFinishing()) {
-                    activity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    final Activity activity = getActivity();
+                    if (activity != null && !activity.isFinishing()) {
+                        activity.runOnUiThread(new Runnable() {
 
-                        @Override
-                        public void run() {
-                            // Reset countdown timer to initial state.
-                            resetCountdownTimer();
+                            @Override
+                            public void run() {
+                                // Reset countdown timer to initial state.
+                                resetCountdownTimer();
 
-                            // Capture frame.
-                            if (mCamera != null) {
-                                mCamera.takePicture(null, null, new JpegPictureCallback());
+                                // Capture frame.
+                                if (mCamera != null) {
+                                    mCamera.takePicture(null, null, new JpegPictureCallback());
+                                }
                             }
-                        }
-                    });
+                        });
+                    }
                 }
-            }
-        }, COUNTDOWN_STEP_DELAY * 5);
+            }, COUNTDOWN_STEP_DELAY * 5);
+        }
     }
 
     /**
