@@ -23,4 +23,9 @@
         android:key="@string/pref__trigger_key"
         android:title="@string/pref__trigger_title" />
 
+    <Preference
+        android:key="@string/pref__rate_key"
+        android:summary="@string/pref__rate_summary"
+        android:title="@string/pref__rate_title" />
+
 </PreferenceScreen>

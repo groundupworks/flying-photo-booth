@@ -20,8 +20,11 @@
     <string name="pref__filter_line_art">Line Art</string>
     <string name="pref__trigger_key">pref__trigger</string>
     <string name="pref__trigger_title">Trigger</string>
-    <string name="pref__trigger_countdown">Countdown</string>
     <string name="pref__trigger_manual">Manual</string>
+    <string name="pref__trigger_countdown">Countdown</string>
+    <string name="pref__rate_key">pref__rate</string>
+    <string name="pref__rate_title">What do you think?</string>
+    <string name="pref__rate_summary">Your feedback is appreciated</string>
 
     <!-- Capture Fragment -->
     <string name="capture__title_frame">PHOTO %1$d OF 4</string>

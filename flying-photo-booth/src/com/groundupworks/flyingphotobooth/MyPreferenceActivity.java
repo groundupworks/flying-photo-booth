@@ -16,7 +16,11 @@
 package com.groundupworks.flyingphotobooth;
 
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.preference.Preference;
 import android.preference.PreferenceActivity;
 
 /**
@@ -26,9 +30,30 @@ import android.preference.PreferenceActivity;
  */
 public class MyPreferenceActivity extends PreferenceActivity {
 
+    /**
+     * Base uri for Google Play.
+     */
+    private static final String GOOGLE_PLAY_BASE_URI = "market://details?id=";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.preferences);
+
+        // Launch rating page on Google Play when clicked.
+        Preference button = (Preference) findPreference(getString(R.string.pref__rate_key));
+        button.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference arg0) {
+                Uri uri = Uri.parse(GOOGLE_PLAY_BASE_URI + getPackageName());
+                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                try {
+                    startActivity(intent);
+                } catch (ActivityNotFoundException e) {
+                    // Do nothing.
+                }
+                return true;
+            }
+        });
     }
 }
