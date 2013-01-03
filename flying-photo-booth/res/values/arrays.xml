@@ -14,8 +14,8 @@
         <item>@string/pref__filter_sepia_mixed</item>
     </array>
     <array name="pref__trigger_options">
-        <item>@string/pref__trigger_countdown</item>
         <item>@string/pref__trigger_manual</item>
+        <item>@string/pref__trigger_countdown</item>
     </array>
 
 </resources>
