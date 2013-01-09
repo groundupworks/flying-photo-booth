@@ -1,3 +1,22 @@
+VERSION 2.2
+
+Flying PhotoBooth allows you to create 4-pane photo strips from your device cameras. You will be able to create, save and share your captured moments all in less than 30 seconds.
+
+FEATURES
+
+Create:
+
+    • Photo booth-style countdown timer or manually trigger a capture
+    • Swipe-to-retake feature to quickly review each captured photo
+    • Selection of photo arrangements and filters
+    • Front- and back-facing camera support
+    
+Share:
+
+    • Photo strips are auto-saved and added to the Gallery
+    • Beam to compatible devices using Android Beam
+    • Share through Facebook, Twitter, WhatsApp, Email, etc.
+
 VERSION 2.1
 
 Flying PhotoBooth allows you to create 4-pane photo strips from your device cameras. You will be able to create, save and share your captured moments all in less than 30 seconds.
