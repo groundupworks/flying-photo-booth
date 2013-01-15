@@ -40,7 +40,7 @@
     <string name="capture__error_no_camera">No camera available</string>
     <string name="capture__error_camera_in_use">Camera in use by another application</string>
 
-    <!-- Confirm Image Fragment -->
+    <!-- Share Fragment -->
     <string name="share__beam_toast">Tap compatible device to send with Android Beam, long press icon for details</string>
     <string name="share__share_chooser_title">Share image using</string>
     <string name="share__error_generic">An error has occurred</string>
@@ -49,5 +49,10 @@
     <string name="beam_details__dialog_title">Android Beam</string>
     <string name="beam_details__dialog_message">To beam a photo strip, both devices must have:\n\n1. Hardware that supports NFC\n2. Android JellyBean or above\n3. Screen on and unlocked\n4. NFC enabled\n5. Bluetooth enabled\n6. Android Beam enabled\n\nTap devices together to initiate transfer.</string>
     <string name="beam_details__dialog_button_text">Settings</string>
+
+    <!-- Storage Error Dialog Fragment -->
+    <string name="storage_error__dialog_title">Storage Unavailable</string>
+    <string name="storage_error__dialog_message">This application requires access to shared/external storage, such as an SD card mounted to the device.</string>
+    <string name="storage_error__dialog_button_text">Exit</string>
 
 </resources>

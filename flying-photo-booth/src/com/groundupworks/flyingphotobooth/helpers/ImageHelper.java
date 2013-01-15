@@ -15,14 +15,12 @@
  */
 package com.groundupworks.flyingphotobooth.helpers;
 
-import java.io.File;
 import java.io.OutputStream;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
-import android.os.Environment;
 
 /**
  * A helper class containing image processing-related methods and configurations.
@@ -82,30 +80,12 @@ public class ImageHelper {
     //
 
     /**
-     * Gets the path to the writable captured image directory. The directory will be created if it does not exist.
+     * Gets the path to the writable captured image directory.
      * 
      * @return the path to the captured image directory; or null if unsuccessful.
      */
-    public synchronized static String getCapturedImageDirectory() {
-        String directoryPath = null;
-
-        // Check if we currently have read and write access to the external storage.
-        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-            // Set the path to the default image directory.
-            directoryPath = Environment.getExternalStorageDirectory() + IMAGE_FOLDER;
-            File directory = new File(directoryPath);
-
-            // Check if directory has already been created.
-            if (!directory.exists()) {
-                // Create directory if it does not exist.
-                if (!directory.mkdir()) {
-                    // If directory creation fails, set path to null for return to indicate error.
-                    directoryPath = null;
-                }
-            }
-        }
-
-        return directoryPath;
+    public static String getCapturedImageDirectory() {
+        return StorageHelper.getDirectory(IMAGE_FOLDER);
     }
 
     /**
@@ -113,7 +93,7 @@ public class ImageHelper {
      * 
      * @return the automatically generated file name.
      */
-    public synchronized static String generateCapturedImageName() {
+    public static String generateCapturedImageName() {
         return JPEG_FILENAME_PREFIX + Long.toString(System.currentTimeMillis()) + JPEG_EXTENSION;
     }
 

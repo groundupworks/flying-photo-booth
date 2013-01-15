@@ -18,6 +18,7 @@ package com.groundupworks.flyingphotobooth;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -25,6 +26,8 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import com.groundupworks.flyingphotobooth.fragments.CaptureFragment;
+import com.groundupworks.flyingphotobooth.fragments.StorageErrorDialogFragment;
+import com.groundupworks.flyingphotobooth.helpers.StorageHelper;
 
 /**
  * The launch {@link Activity}.
@@ -34,14 +37,27 @@ import com.groundupworks.flyingphotobooth.fragments.CaptureFragment;
 public class LaunchActivity extends FragmentActivity {
 
     /**
+     * Worker handler for posting background tasks.
+     */
+    private Handler mWorkerHandler;
+
+    /**
      * Handler for the back pressed event.
      */
     private BackPressedHandler mBackPressedHandler = null;
+
+    /**
+     * Reference to the storage error dialog if shown.
+     */
+    private StorageErrorDialogFragment mStorageError = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_launch);
+
+        // Create worker handler.
+        mWorkerHandler = new Handler(MyApplication.getWorkerLooper());
 
         // Get last used camera preference.
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
@@ -49,6 +65,33 @@ public class LaunchActivity extends FragmentActivity {
 
         // Start with capture fragment. Use replaceFragment() to ensure only one instance of CaptureFragment is added.
         replaceFragment(CaptureFragment.newInstance(cameraPref), false, true);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // Check availability of external storage in background.
+        mWorkerHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                if (!StorageHelper.isExternalStorageAvailable()) {
+                    mStorageError = StorageErrorDialogFragment.newInstance();
+                    showDialogFragment(mStorageError);
+                }
+            }
+        });
+    }
+
+    @Override
+    protected void onPause() {
+        // Dismiss storage error fragment since we will check again onResume().
+        if (mStorageError != null) {
+            mStorageError.dismiss();
+            mStorageError = null;
+        }
+
+        super.onPause();
     }
 
     @Override
