@@ -22,6 +22,7 @@
     <string name="pref__trigger_title">Trigger</string>
     <string name="pref__trigger_manual">Manual</string>
     <string name="pref__trigger_countdown">Countdown</string>
+    <string name="pref__trigger_burst">Burst</string>
     <string name="pref__rate_key">pref__rate</string>
     <string name="pref__rate_title">What do you think?</string>
     <string name="pref__rate_summary">Your feedback is appreciated</string>

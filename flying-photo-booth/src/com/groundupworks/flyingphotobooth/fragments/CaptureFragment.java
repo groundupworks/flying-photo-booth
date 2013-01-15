@@ -69,6 +69,21 @@ public class CaptureFragment extends Fragment {
     private static final String FRAGMENT_BUNDLE_KEY_CAMERA = "camera";
 
     /**
+     * Manual trigger mode.
+     */
+    private static final int TRIGGER_MODE_MANUAL = 0;
+
+    /**
+     * Countdown trigger mode.
+     */
+    private static final int TRIGGER_MODE_COUNTDOWN = 1;
+
+    /**
+     * Burst trigger mode.
+     */
+    private static final int TRIGGER_MODE_BURST = 2;
+
+    /**
      * Invalid camera id.
      */
     private static final int INVALID_CAMERA_ID = -1;
@@ -84,9 +99,19 @@ public class CaptureFragment extends Fragment {
     private static final int COUNTDOWN_STEP_DELAY = 1000;
 
     /**
+     * Delay between captures in burst mode.
+     */
+    private static final int BURST_DELAY = 1000;
+
+    /**
      * Duration to display the review overlay.
      */
     private static final int REVIEW_OVERLAY_WAIT_DURATION = 2000;
+
+    /**
+     * Duration to display the review overlay in burst mode.
+     */
+    private static final int REVIEW_OVERLAY_WAIT_DURATION_BURST = 1000;
 
     /**
      * Threshold distance to recognize a swipe to remove gesture.
@@ -104,9 +129,9 @@ public class CaptureFragment extends Fragment {
     private boolean mUseFrontFacing = false;
 
     /**
-     * Flag to indicate whether countdown or manual trigger is used.
+     * The selected trigger mode.
      */
-    private boolean mUseManualTrigger = false;
+    private int mTriggerMode = TRIGGER_MODE_MANUAL;
 
     /**
      * Flag to track whether {@link #onPause()} is called.
@@ -319,10 +344,16 @@ public class CaptureFragment extends Fragment {
                 .getApplicationContext());
         String triggerPref = preferences.getString(getString(R.string.pref__trigger_key),
                 getString(R.string.pref__trigger_countdown));
-        mUseManualTrigger = triggerPref.equals(getString(R.string.pref__trigger_manual));
+        if (triggerPref.equals(getString(R.string.pref__trigger_countdown))) {
+            mTriggerMode = TRIGGER_MODE_COUNTDOWN;
+        } else if (triggerPref.equals(getString(R.string.pref__trigger_burst))) {
+            mTriggerMode = TRIGGER_MODE_BURST;
+        } else {
+            mTriggerMode = TRIGGER_MODE_MANUAL;
+        }
 
         // Configure title and start button text.
-        if (mUseManualTrigger) {
+        if (mTriggerMode == TRIGGER_MODE_MANUAL) {
             // Update title.
             mTitle.setText(String.format(getString(R.string.capture__title_frame), mFrameIndex + 1));
             mStartButton.setText(getString(R.string.capture__start_manual_button_text));
@@ -344,7 +375,7 @@ public class CaptureFragment extends Fragment {
                     mIsCaptureSequenceRunning = true;
 
                     // Kick off capture sequence.
-                    if (mUseManualTrigger) {
+                    if (mTriggerMode == TRIGGER_MODE_MANUAL) {
                         kickoffManualCapture();
                     } else {
                         // Update title.
@@ -475,7 +506,7 @@ public class CaptureFragment extends Fragment {
             mStatus.setText("");
 
             // Capture frame.
-            if (mUseManualTrigger && mCamera != null) {
+            if (mTriggerMode == TRIGGER_MODE_MANUAL && mCamera != null) {
                 mCamera.takePicture(null, null, new JpegPictureCallback());
             }
         }
@@ -498,7 +529,14 @@ public class CaptureFragment extends Fragment {
             mReviewImage.setImageBitmap(bitmap);
             mReviewOverlay.setVisibility(View.VISIBLE);
 
-            // Setup task to clear the review overlay after a frame removal event or after a fixed timeout.
+            // Setup task to clear the review overlay after a frame removal event or after timeout.
+            final int timeout;
+            if (mTriggerMode == TRIGGER_MODE_BURST) {
+                timeout = REVIEW_OVERLAY_WAIT_DURATION_BURST;
+            } else {
+                timeout = REVIEW_OVERLAY_WAIT_DURATION;
+            }
+
             final CountDownLatch latch = new CountDownLatch(1);
             if (mTimer != null) {
                 mTimer.schedule(new TimerTask() {
@@ -508,7 +546,7 @@ public class CaptureFragment extends Fragment {
                         synchronized (latch) {
                             try {
                                 // Wait for user input or a fixed timeout.
-                                latch.await(REVIEW_OVERLAY_WAIT_DURATION, TimeUnit.MILLISECONDS);
+                                latch.await(timeout, TimeUnit.MILLISECONDS);
 
                                 // Post task to ui thread to prepare for next capture.
                                 final Activity activity = getActivity();
@@ -719,6 +757,31 @@ public class CaptureFragment extends Fragment {
     }
 
     /**
+     * Kicks off capture in burst mode, which is basically capturing without auto-focus.
+     */
+    private void kickoffBurstCapture() {
+        mTimer.schedule(new TimerTask() {
+
+            @Override
+            public void run() {
+                final Activity activity = getActivity();
+                if (activity != null && !activity.isFinishing()) {
+                    activity.runOnUiThread(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            // Capture frame.
+                            if (mCamera != null) {
+                                mCamera.takePicture(null, null, new JpegPictureCallback());
+                            }
+                        }
+                    });
+                }
+            }
+        }, BURST_DELAY);
+    }
+
+    /**
      * Checks whether the camera image is reflected.
      * 
      * @return true if the camera image is reflected; false otherwise.
@@ -768,12 +831,14 @@ public class CaptureFragment extends Fragment {
                     mReviewImage.setImageBitmap(null);
 
                     // Capture next frames.
-                    if (mUseManualTrigger) {
+                    if (mTriggerMode == TRIGGER_MODE_COUNTDOWN) {
+                        kickoffCountdownCapture();
+                    } else if (mTriggerMode == TRIGGER_MODE_BURST) {
+                        kickoffBurstCapture();
+                    } else {
                         // Enable start button.
                         mStartButton.setEnabled(true);
                         mStartButton.setVisibility(View.VISIBLE);
-                    } else {
-                        kickoffCountdownCapture();
                     }
                 }
             });
