@@ -47,8 +47,8 @@ public class LaunchActivity extends FragmentActivity {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         boolean cameraPref = preferences.getBoolean(getString(R.string.pref__camera_key), true);
 
-        // Start with capture fragment.
-        addFragment(CaptureFragment.newInstance(cameraPref), false);
+        // Start with capture fragment. Use replaceFragment() to ensure only one instance of CaptureFragment is added.
+        replaceFragment(CaptureFragment.newInstance(cameraPref), false, true);
     }
 
     @Override
