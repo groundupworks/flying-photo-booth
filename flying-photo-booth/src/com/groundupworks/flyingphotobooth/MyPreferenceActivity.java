@@ -47,6 +47,7 @@ public class MyPreferenceActivity extends PreferenceActivity {
             public boolean onPreferenceClick(Preference arg0) {
                 Uri uri = Uri.parse(GOOGLE_PLAY_BASE_URI + getPackageName());
                 Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
                 try {
                     startActivity(intent);
                 } catch (ActivityNotFoundException e) {
