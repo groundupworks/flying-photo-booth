@@ -506,8 +506,8 @@ public class CaptureFragment extends Fragment {
             mStatus.setText("");
 
             // Capture frame.
-            if (mTriggerMode == TRIGGER_MODE_MANUAL && mCamera != null) {
-                mCamera.takePicture(null, null, new JpegPictureCallback());
+            if (mTriggerMode == TRIGGER_MODE_MANUAL) {
+                takePicture();
             }
         }
     }
@@ -629,6 +629,25 @@ public class CaptureFragment extends Fragment {
     //
 
     /**
+     * Takes picture.
+     */
+    private void takePicture() {
+        if (mCamera != null) {
+            try {
+                mCamera.takePicture(null, null, new JpegPictureCallback());
+            } catch (RuntimeException e) {
+                // The native camera crashes occasionally. Self-recover by relaunching fragment.
+                LaunchActivity activity = (LaunchActivity) getActivity();
+                if (activity != null) {
+                    Toast.makeText(activity, getString(R.string.capture__error_camera_crash), Toast.LENGTH_SHORT)
+                            .show();
+                    activity.replaceFragment(CaptureFragment.newInstance(mUseFrontFacing), false, true);
+                }
+            }
+        }
+    }
+
+    /**
      * Resets countdown timer.
      */
     private void resetCountdownTimer() {
@@ -745,9 +764,7 @@ public class CaptureFragment extends Fragment {
                                 resetCountdownTimer();
 
                                 // Capture frame.
-                                if (mCamera != null) {
-                                    mCamera.takePicture(null, null, new JpegPictureCallback());
-                                }
+                                takePicture();
                             }
                         });
                     }
@@ -772,7 +789,7 @@ public class CaptureFragment extends Fragment {
                         public void run() {
                             // Capture frame.
                             if (mCamera != null) {
-                                mCamera.takePicture(null, null, new JpegPictureCallback());
+                                takePicture();
                             }
                         }
                     });

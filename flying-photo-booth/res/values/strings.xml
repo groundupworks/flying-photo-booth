@@ -63,6 +63,7 @@
     <string name="capture__review_discarded">Discarded</string>
     <string name="capture__error_no_camera">No camera available</string>
     <string name="capture__error_camera_in_use">Camera in use by another application</string>
+    <string name="capture__error_camera_crash">Restarting confused camera</string>
 
     <!-- Share Fragment -->
     <string name="share__beam_toast">Tap compatible device to send with Android Beam, long press icon for details</string>
