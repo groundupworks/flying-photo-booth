@@ -154,9 +154,9 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
          */
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(activity.getApplicationContext());
         String filterPref = preferences.getString(getString(R.string.pref__filter_key),
-                getString(R.string.pref__filter_none));
+                getString(R.string.pref__filter_default));
         String arrangementPref = preferences.getString(getString(R.string.pref__arrangement_key),
-                getString(R.string.pref__arrangement_vertical));
+                getString(R.string.pref__arrangement_default));
 
         /*
          * Inflate view stub.

@@ -343,7 +343,7 @@ public class CaptureFragment extends Fragment {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity()
                 .getApplicationContext());
         String triggerPref = preferences.getString(getString(R.string.pref__trigger_key),
-                getString(R.string.pref__trigger_countdown));
+                getString(R.string.pref__trigger_default));
         if (triggerPref.equals(getString(R.string.pref__trigger_countdown))) {
             mTriggerMode = TRIGGER_MODE_COUNTDOWN;
         } else if (triggerPref.equals(getString(R.string.pref__trigger_burst))) {

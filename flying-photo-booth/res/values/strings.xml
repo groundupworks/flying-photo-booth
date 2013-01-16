@@ -3,26 +3,49 @@
 
     <string name="app_name">Flying PhotoBooth</string>
 
-    <!-- Preferences -->
+    <!-- Camera Preferences -->
     <string name="pref__camera_key">pref__camera</string>
+
+    <!-- Arrangement Preferences -->
     <string name="pref__arrangement_key">pref__arrangement</string>
     <string name="pref__arrangement_title">Arrangement</string>
+    <string name="pref__arrangement_default">Vertical</string>
     <string name="pref__arrangement_vertical">Vertical</string>
     <string name="pref__arrangement_horizontal">Horizontal</string>
     <string name="pref__arrangement_box">Box</string>
+    <string name="pref__arrangement_vertical_summary">Vertical arrangement of 4 photos</string>
+    <string name="pref__arrangement_horizontal_summary">Horizontal arrangement of 4 photos</string>
+    <string name="pref__arrangement_box_summary">Box arrangement of 4 photos</string>
+
+    <!-- Filter Preferences -->
     <string name="pref__filter_key">pref__filter</string>
     <string name="pref__filter_title">Filter</string>
+    <string name="pref__filter_default">None</string>
     <string name="pref__filter_none">None</string>
     <string name="pref__filter_bw">Black &amp; White</string>
     <string name="pref__filter_bw_mixed">Mixed Black &amp; White</string>
     <string name="pref__filter_sepia">Sepia</string>
     <string name="pref__filter_sepia_mixed">Mixed Sepia</string>
     <string name="pref__filter_line_art">Line Art</string>
+    <string name="pref__filter_none_summary">None</string>
+    <string name="pref__filter_bw_summary">Black &amp; White effect</string>
+    <string name="pref__filter_bw_mixed_summary">Black &amp; White effect on alternate photos</string>
+    <string name="pref__filter_sepia_summary">Sepia effect</string>
+    <string name="pref__filter_sepia_mixed_summary">Sepia effect on alternate photos</string>
+    <string name="pref__filter_line_art_summary">Line Art effect</string>
+
+    <!-- Trigger Preferences -->
     <string name="pref__trigger_key">pref__trigger</string>
     <string name="pref__trigger_title">Trigger</string>
+    <string name="pref__trigger_default">Manual</string>
     <string name="pref__trigger_manual">Manual</string>
     <string name="pref__trigger_countdown">Countdown</string>
     <string name="pref__trigger_burst">Burst</string>
+    <string name="pref__trigger_manual_summary">Manual button to trigger each capture</string>
+    <string name="pref__trigger_countdown_summary">Countdown 3s to trigger each capture</string>
+    <string name="pref__trigger_burst_summary">Burst captures 1s apart</string>
+
+    <!-- Rate Preferences -->
     <string name="pref__rate_key">pref__rate</string>
     <string name="pref__rate_title">What do you think?</string>
     <string name="pref__rate_summary">Your feedback is appreciated</string>

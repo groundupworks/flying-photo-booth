@@ -2,21 +2,21 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <ListPreference
-        android:defaultValue="@string/pref__arrangement_vertical"
+        android:defaultValue="@string/pref__arrangement_default"
         android:dialogTitle="@string/pref__arrangement_title"
         android:entries="@array/pref__arrangement_options"
         android:entryValues="@array/pref__arrangement_options"
         android:key="@string/pref__arrangement_key"
         android:title="@string/pref__arrangement_title" />
     <ListPreference
-        android:defaultValue="@string/pref__filter_none"
+        android:defaultValue="@string/pref__filter_default"
         android:dialogTitle="@string/pref__filter_title"
         android:entries="@array/pref__filter_options"
         android:entryValues="@array/pref__filter_options"
         android:key="@string/pref__filter_key"
         android:title="@string/pref__filter_title" />
     <ListPreference
-        android:defaultValue="@string/pref__trigger_manual"
+        android:defaultValue="@string/pref__trigger_default"
         android:dialogTitle="@string/pref__trigger_title"
         android:entries="@array/pref__trigger_options"
         android:entryValues="@array/pref__trigger_options"
