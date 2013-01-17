@@ -519,31 +519,31 @@ public class CaptureFragment extends Fragment {
 
         @Override
         public void onPictureTaken(byte[] data, Camera camera) {
-            // Save Jpeg frame in memory.
-            mFramesData[mFrameIndex] = data;
+            if (isActivityAlive()) {
+                // Save Jpeg frame in memory.
+                mFramesData[mFrameIndex] = data;
 
-            // Setup review overlay for user to review captured frame.
-            mReviewStatus.setText(getString(R.string.capture__review_instructions));
-            mReviewStatus.setTextColor(getResources().getColor(R.color.lt_text_color));
-            Bitmap bitmap = ImageHelper.createImage(data, mPreviewDisplayOrientation, mIsReflected, null);
-            mReviewImage.setImageBitmap(bitmap);
-            mReviewOverlay.setVisibility(View.VISIBLE);
+                // Setup review overlay for user to review captured frame.
+                mReviewStatus.setText(getString(R.string.capture__review_instructions));
+                mReviewStatus.setTextColor(getResources().getColor(R.color.lt_text_color));
+                Bitmap bitmap = ImageHelper.createImage(data, mPreviewDisplayOrientation, mIsReflected, null);
+                mReviewImage.setImageBitmap(bitmap);
+                mReviewOverlay.setVisibility(View.VISIBLE);
 
-            // Setup task to clear the review overlay after a frame removal event or after timeout.
-            final int timeout;
-            if (mTriggerMode == TRIGGER_MODE_BURST) {
-                timeout = REVIEW_OVERLAY_WAIT_DURATION_BURST;
-            } else {
-                timeout = REVIEW_OVERLAY_WAIT_DURATION;
-            }
+                // Setup task to clear the review overlay after a frame removal event or after timeout.
+                final int timeout;
+                if (mTriggerMode == TRIGGER_MODE_BURST) {
+                    timeout = REVIEW_OVERLAY_WAIT_DURATION_BURST;
+                } else {
+                    timeout = REVIEW_OVERLAY_WAIT_DURATION;
+                }
 
-            final CountDownLatch latch = new CountDownLatch(1);
-            if (mTimer != null) {
-                mTimer.schedule(new TimerTask() {
+                final CountDownLatch latch = new CountDownLatch(1);
+                if (mTimer != null) {
+                    mTimer.schedule(new TimerTask() {
 
-                    @Override
-                    public void run() {
-                        synchronized (latch) {
+                        @Override
+                        public void run() {
                             try {
                                 // Wait for user input or a fixed timeout.
                                 latch.await(timeout, TimeUnit.MILLISECONDS);
@@ -554,7 +554,7 @@ public class CaptureFragment extends Fragment {
                                     activity.runOnUiThread(new Runnable() {
                                         @Override
                                         public void run() {
-                                            prepareNextCapture(activity.getApplicationContext());
+                                            prepareNextCapture();
                                         }
                                     });
                                 }
@@ -562,10 +562,10 @@ public class CaptureFragment extends Fragment {
                                 // Do nothing.
                             }
                         }
-                    }
-                }, 0);
+                    }, 0);
+                }
+                mReviewOverlay.setOnTouchListener(new ReviewOverlayOnTouchListener(latch));
             }
-            mReviewOverlay.setOnTouchListener(new ReviewOverlayOnTouchListener(latch));
         }
     }
 
@@ -629,20 +629,29 @@ public class CaptureFragment extends Fragment {
     //
 
     /**
+     * Checks whether the {@link Activity} is attached and not finishing. This should be used as a validation check in a
+     * runnable posted to the ui thread, and the {@link Activity} may be have detached by the time the runnable
+     * executes. This method should be called on the ui thread.
+     * 
+     * @return true if {@link Activity} is still alive; false otherwise.
+     */
+    private boolean isActivityAlive() {
+        Activity activity = getActivity();
+        return activity != null && !activity.isFinishing();
+    }
+
+    /**
      * Takes picture.
      */
     private void takePicture() {
-        if (mCamera != null) {
+        if (isActivityAlive() && mCamera != null) {
             try {
                 mCamera.takePicture(null, null, new JpegPictureCallback());
             } catch (RuntimeException e) {
                 // The native camera crashes occasionally. Self-recover by relaunching fragment.
-                LaunchActivity activity = (LaunchActivity) getActivity();
-                if (activity != null) {
-                    Toast.makeText(activity, getString(R.string.capture__error_camera_crash), Toast.LENGTH_SHORT)
-                            .show();
-                    activity.replaceFragment(CaptureFragment.newInstance(mUseFrontFacing), false, true);
-                }
+                final LaunchActivity activity = (LaunchActivity) getActivity();
+                Toast.makeText(activity, getString(R.string.capture__error_camera_crash), Toast.LENGTH_SHORT).show();
+                activity.replaceFragment(CaptureFragment.newInstance(mUseFrontFacing), false, true);
             }
         }
     }
@@ -694,17 +703,19 @@ public class CaptureFragment extends Fragment {
 
                             @Override
                             public void run() {
-                                if (mCountdownThree != null) {
-                                    mCountdownThree.setTextColor(getResources().getColor(R.color.selection_color));
-                                }
+                                if (isActivityAlive()) {
+                                    if (mCountdownThree != null) {
+                                        mCountdownThree.setTextColor(getResources().getColor(R.color.selection_color));
+                                    }
 
-                                // Kick off auto-focus and indicate status.
-                                if (mStatus != null) {
-                                    mStatus.setText(String.format(getString(R.string.capture__status_focusing)));
-                                }
+                                    // Kick off auto-focus and indicate status.
+                                    if (mStatus != null) {
+                                        mStatus.setText(String.format(getString(R.string.capture__status_focusing)));
+                                    }
 
-                                if (mCamera != null) {
-                                    mCamera.autoFocus(new MyAutoFocusCallback());
+                                    if (mCamera != null) {
+                                        mCamera.autoFocus(new MyAutoFocusCallback());
+                                    }
                                 }
                             }
                         });
@@ -722,8 +733,10 @@ public class CaptureFragment extends Fragment {
 
                             @Override
                             public void run() {
-                                if (mCountdownTwo != null) {
-                                    mCountdownTwo.setTextColor(getResources().getColor(R.color.selection_color));
+                                if (isActivityAlive()) {
+                                    if (mCountdownTwo != null) {
+                                        mCountdownTwo.setTextColor(getResources().getColor(R.color.selection_color));
+                                    }
                                 }
                             }
                         });
@@ -741,8 +754,10 @@ public class CaptureFragment extends Fragment {
 
                             @Override
                             public void run() {
-                                if (mCountdownOne != null) {
-                                    mCountdownOne.setTextColor(getResources().getColor(R.color.selection_color));
+                                if (isActivityAlive()) {
+                                    if (mCountdownOne != null) {
+                                        mCountdownOne.setTextColor(getResources().getColor(R.color.selection_color));
+                                    }
                                 }
                             }
                         });
@@ -760,11 +775,13 @@ public class CaptureFragment extends Fragment {
 
                             @Override
                             public void run() {
-                                // Reset countdown timer to initial state.
-                                resetCountdownTimer();
+                                if (isActivityAlive()) {
+                                    // Reset countdown timer to initial state.
+                                    resetCountdownTimer();
 
-                                // Capture frame.
-                                takePicture();
+                                    // Capture frame.
+                                    takePicture();
+                                }
                             }
                         });
                     }
@@ -787,10 +804,7 @@ public class CaptureFragment extends Fragment {
 
                         @Override
                         public void run() {
-                            // Capture frame.
-                            if (mCamera != null) {
-                                takePicture();
-                            }
+                            takePicture();
                         }
                     });
                 }
@@ -810,62 +824,64 @@ public class CaptureFragment extends Fragment {
     /**
      * Prepares for the next capture or jump to next fragment if all frames have been collected.
      */
-    private void prepareNextCapture(Context context) {
-        // Cancel review overlay touch listener.
-        mReviewOverlay.setOnTouchListener(null);
+    private void prepareNextCapture() {
+        if (isActivityAlive()) {
+            // Cancel review overlay touch listener.
+            mReviewOverlay.setOnTouchListener(null);
 
-        // Increment frame index.
-        mFrameIndex++;
+            // Increment frame index.
+            mFrameIndex++;
 
-        // Check if we need more frames.
-        if (mFrameIndex < TOTAL_FRAMES_TO_CAPTURE) {
-            // Update title.
-            mTitle.setText(String.format(getString(R.string.capture__title_frame), mFrameIndex + 1));
+            // Check if we need more frames.
+            if (mFrameIndex < TOTAL_FRAMES_TO_CAPTURE) {
+                // Update title.
+                mTitle.setText(String.format(getString(R.string.capture__title_frame), mFrameIndex + 1));
 
-            // Restart preview.
-            if (mCamera != null && mPreview != null) {
-                mPreview.start();
-            }
-
-            // Fade out review overlay.
-            Animation animation = AnimationUtils.loadAnimation(context, R.anim.fade_out);
-            animation.setAnimationListener(new AnimationListener() {
-
-                @Override
-                public void onAnimationStart(Animation animation) {
-                    // Do nothing.
+                // Restart preview.
+                if (mCamera != null && mPreview != null) {
+                    mPreview.start();
                 }
 
-                @Override
-                public void onAnimationRepeat(Animation animation) {
-                    // Do nothing.
-                }
+                // Fade out review overlay.
+                Animation animation = AnimationUtils.loadAnimation(getActivity(), R.anim.fade_out);
+                animation.setAnimationListener(new AnimationListener() {
 
-                @Override
-                public void onAnimationEnd(Animation animation) {
-                    // Hide the review overlay.
-                    mReviewOverlay.setVisibility(View.GONE);
-                    mReviewImage.setImageBitmap(null);
-
-                    // Capture next frames.
-                    if (mTriggerMode == TRIGGER_MODE_COUNTDOWN) {
-                        kickoffCountdownCapture();
-                    } else if (mTriggerMode == TRIGGER_MODE_BURST) {
-                        kickoffBurstCapture();
-                    } else {
-                        // Enable start button.
-                        mStartButton.setEnabled(true);
-                        mStartButton.setVisibility(View.VISIBLE);
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+                        // Do nothing.
                     }
-                }
-            });
-            mReviewOverlay.startAnimation(animation);
-        } else {
-            // Set flag to indicate capture sequence is no longer running.
-            mIsCaptureSequenceRunning = false;
 
-            // Transition to next fragment since enough frames have been captured.
-            nextFragment();
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+                        // Do nothing.
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        // Hide the review overlay.
+                        mReviewOverlay.setVisibility(View.GONE);
+                        mReviewImage.setImageBitmap(null);
+
+                        // Capture next frames.
+                        if (mTriggerMode == TRIGGER_MODE_COUNTDOWN) {
+                            kickoffCountdownCapture();
+                        } else if (mTriggerMode == TRIGGER_MODE_BURST) {
+                            kickoffBurstCapture();
+                        } else {
+                            // Enable start button.
+                            mStartButton.setEnabled(true);
+                            mStartButton.setVisibility(View.VISIBLE);
+                        }
+                    }
+                });
+                mReviewOverlay.startAnimation(animation);
+            } else {
+                // Set flag to indicate capture sequence is no longer running.
+                mIsCaptureSequenceRunning = false;
+
+                // Transition to next fragment since enough frames have been captured.
+                nextFragment();
+            }
         }
     }
 
