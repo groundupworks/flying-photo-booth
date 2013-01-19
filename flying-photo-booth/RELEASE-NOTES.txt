@@ -2,6 +2,7 @@ VERSION 2.3
 
 Flying PhotoBooth allows you to create 4-pane photo strips from your device cameras. You will be able to create, save and share your captured moments all in less than 30 seconds.
 
+
 FEATURES
 
 Create your photo strip:
@@ -16,20 +17,26 @@ Share with friends:
 • Photo strips are auto-saved and added to the Gallery
 • Beam to compatible devices using Android Beam
 • Share through Facebook, Twitter, WhatsApp, Email, etc.
+
     
 INTERVIEW WITH MYSELF
 
-Me:     How is Flying Photobooth different from other photo booth apps or photo strip creation tools?
+Me: How is Flying Photobooth different from other photo booth apps or photo strip creation tools?
+
 Myself: The goal is to help you put together and share a photo strip in the least amount of time possible, hence the "Flying" before the Photobooth. This is achieved through a minimal and responsive UI, and a streamlined work flow that includes: capture, review, save and share. I spend my time on polishing this work flow to require one less click, or to build-in and automate one more sharing option. This goal is different from most photo strip building tools that focus on offering extensive photo editing capabilities. 
 
-Me:     What are some cool features?
+Me: What are some cool features?
+
 Myself: The swipe-to-retake feature is a unique picture review process that fits really well into the work flow. Android Beam support is another unique feature among photo apps. I initially added the functionality for fun, but it turns out to be a very convenient way to share. You can beam a photo strip to your friend's device in a single click even while without a network connection!
 
-Me:     Will your app work on my device?
+Me: Will your app work on my device?
+
 Myself: Yes. As long as your phone or tablet has a camera, this photo booth will make photo strips and it will not crash or "force close". The app is very stable across devices. If you have read this far, you may as well give it a try?
 
-Me:     Well, is it free?
+Me: Well, is it free?
+
 Myself: Absolutely, and also free of ads.
+
 
 NEW FEATURES
 
