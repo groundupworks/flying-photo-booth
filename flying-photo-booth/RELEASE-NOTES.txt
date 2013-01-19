@@ -31,6 +31,11 @@ Myself: Yes. As long as your phone or tablet has a camera, this photo booth will
 Me:     Well, is it free?
 Myself: Absolutely, and also free of ads.
 
+NEW FEATURES
+
+• Burst mode to trigger captures 1 second apart
+• Improved Settings screen
+
 VERSION 2.2
 
 Flying PhotoBooth allows you to create 4-pane photo strips from your device cameras. You will be able to create, save and share your captured moments all in less than 30 seconds.
