@@ -528,7 +528,6 @@ public class CaptureFragment extends Fragment {
                 mReviewStatus.setTextColor(getResources().getColor(R.color.lt_text_color));
                 Bitmap bitmap = ImageHelper.createImage(data, mPreviewDisplayOrientation, mIsReflected, null);
                 mReviewImage.setImageBitmap(bitmap);
-                mReviewOverlay.setVisibility(View.VISIBLE);
 
                 // Setup task to clear the review overlay after a frame removal event or after timeout.
                 final int timeout;
@@ -564,7 +563,9 @@ public class CaptureFragment extends Fragment {
                         }
                     }, 0);
                 }
+
                 mReviewOverlay.setOnTouchListener(new ReviewOverlayOnTouchListener(latch));
+                mReviewOverlay.setVisibility(View.VISIBLE);
             }
         }
     }
@@ -579,9 +580,9 @@ public class CaptureFragment extends Fragment {
 
         private boolean isEnabled = true;
 
-        private float mDownX = 0f;
+        private float mDownX = -1f;
 
-        private float mDownY = 0f;
+        private float mDownY = -1f;
 
         /**
          * Constructor.
@@ -598,23 +599,31 @@ public class CaptureFragment extends Fragment {
             if (isEnabled) {
                 int action = event.getAction();
                 if (action == MotionEvent.ACTION_DOWN) {
+                    // Set anchor.
                     mDownX = event.getX();
                     mDownY = event.getY();
                 } else if (action == MotionEvent.ACTION_MOVE) {
-                    float distance = Math.abs(event.getX() - mDownX) + Math.abs(event.getY() - mDownY);
-                    if (distance > REVIEW_REMOVE_GESTURE_THRESHOLD) {
-                        // Disable listener.
-                        isEnabled = false;
+                    if (mDownX == -1f && mDownY == -1f) {
+                        // Set anchor.
+                        mDownX = event.getX();
+                        mDownY = event.getY();
+                    } else {
+                        // Check swipe distance for discard gesture recognition.
+                        float distance = Math.abs(event.getX() - mDownX) + Math.abs(event.getY() - mDownY);
+                        if (distance > REVIEW_REMOVE_GESTURE_THRESHOLD) {
+                            // Disable listener.
+                            isEnabled = false;
 
-                        // Remove frame by decrementing index.
-                        mFrameIndex--;
+                            // Remove frame by decrementing index.
+                            mFrameIndex--;
 
-                        // Indicate removed status.
-                        mReviewStatus.setText(getString(R.string.capture__review_discarded));
-                        mReviewStatus.setTextColor(getResources().getColor(R.color.selection_color));
+                            // Indicate removed status.
+                            mReviewStatus.setText(getString(R.string.capture__review_discarded));
+                            mReviewStatus.setTextColor(getResources().getColor(R.color.selection_color));
 
-                        // Notify latch to proceed with capture sequence.
-                        mReviewLatch.countDown();
+                            // Notify latch to proceed with capture sequence.
+                            mReviewLatch.countDown();
+                        }
                     }
                 }
             }
