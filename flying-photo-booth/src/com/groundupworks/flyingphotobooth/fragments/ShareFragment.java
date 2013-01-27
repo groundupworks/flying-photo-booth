@@ -101,6 +101,8 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
 
     public static final String MESSAGE_BUNDLE_KEY_ARRANGEMENT = "arrangement";
 
+    public static final String MESSAGE_BUNDLE_KEY_THUMB_SIZE = "thumbSize";
+
     /**
      * The uri to the Jpeg stored in the file system.
      */
@@ -216,6 +218,7 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
         bundle.putBoolean(MESSAGE_BUNDLE_KEY_REFLECTION, reflection);
         bundle.putString(MESSAGE_BUNDLE_KEY_FILTER, filterPref);
         bundle.putString(MESSAGE_BUNDLE_KEY_ARRANGEMENT, arrangementPref);
+        bundle.putInt(MESSAGE_BUNDLE_KEY_THUMB_SIZE, ImageHelper.getThumbSize(getResources()));
         msg.setData(bundle);
         sendEvent(msg);
     }
@@ -251,7 +254,7 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
             case ShareController.ERROR_OCCURRED:
                 Toast.makeText(activity, getString(R.string.share__error_generic), Toast.LENGTH_LONG).show();
                 break;
-            case ShareController.BITMAP_READY:
+            case ShareController.THUMB_READY:
                 mImage.setImageBitmap((Bitmap) msg.obj);
                 break;
             case ShareController.JPEG_SAVED:

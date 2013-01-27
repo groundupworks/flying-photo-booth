@@ -16,11 +16,13 @@
 package com.groundupworks.flyingphotobooth.helpers;
 
 import java.io.OutputStream;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.util.DisplayMetrics;
 
 /**
  * A helper class containing image processing-related methods and configurations.
@@ -55,12 +57,6 @@ public class ImageHelper {
     public static final int IMAGE_SIZE = 600;
 
     /**
-     * The scaling factor applied to an image to create its thumbnail. The thumbnail is used to show the image on
-     * screen.
-     */
-    public static final float THUMB_SCALING_FACTOR = 0.5f;
-
-    /**
      * Bitmap configuration.
      */
     public static final Bitmap.Config BITMAP_CONFIG = Config.ARGB_8888;
@@ -78,6 +74,20 @@ public class ImageHelper {
     //
     // Public methods.
     //
+
+    /**
+     * Gets the size for the short dimension of the thumbnails.
+     * 
+     * @param res
+     *            the {@link Resources}.
+     * @return the dimension in pixels.
+     */
+    public static int getThumbSize(Resources res) {
+        DisplayMetrics displayMetrics = res.getDisplayMetrics();
+        int width = displayMetrics.widthPixels;
+
+        return Math.min(width, IMAGE_SIZE);
+    }
 
     /**
      * Gets the path to the writable captured image directory.

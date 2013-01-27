@@ -14,7 +14,6 @@
     <ViewStub
         android:id="@+id/scrollview_stub"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_margin="12dip" />
+        android:layout_height="match_parent" />
 
 </LinearLayout>
