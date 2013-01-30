@@ -28,7 +28,7 @@ import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewStub;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -112,13 +112,11 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
     // Views.
     //
 
-    private ViewStub mScrollViewStub;
-
     private ImageButton mShareButton;
 
     private ImageButton mBeamButton;
 
-    private ImageView mImage;
+    private FrameLayout mPhotoStripContainer;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -127,9 +125,9 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
          */
         View view = inflater.inflate(R.layout.fragment_share, container, false);
 
-        mScrollViewStub = (ViewStub) view.findViewById(R.id.scrollview_stub);
         mShareButton = (ImageButton) view.findViewById(R.id.share_button);
         mBeamButton = (ImageButton) view.findViewById(R.id.beam_button);
+        mPhotoStripContainer = (FrameLayout) view.findViewById(R.id.photostrip_container);
 
         return view;
     }
@@ -159,20 +157,6 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
                 getString(R.string.pref__filter_default));
         String arrangementPref = preferences.getString(getString(R.string.pref__arrangement_key),
                 getString(R.string.pref__arrangement_default));
-
-        /*
-         * Inflate view stub.
-         */
-        if (arrangementPref.equals(getString(R.string.pref__arrangement_horizontal))) {
-            mScrollViewStub.setLayoutResource(R.layout.fragment_share_horizontal);
-        } else if (arrangementPref.equals(getString(R.string.pref__arrangement_box))) {
-            mScrollViewStub.setLayoutResource(R.layout.fragment_share_box);
-        } else {
-            mScrollViewStub.setLayoutResource(R.layout.fragment_share_vertical);
-        }
-
-        View view = mScrollViewStub.inflate();
-        mImage = (ImageView) view.findViewById(R.id.image);
 
         /*
          * Functionalize views.
@@ -255,7 +239,30 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
                 Toast.makeText(activity, getString(R.string.share__error_generic), Toast.LENGTH_LONG).show();
                 break;
             case ShareController.THUMB_READY:
-                mImage.setImageBitmap((Bitmap) msg.obj);
+                Bitmap thumbBitmap = (Bitmap) msg.obj;
+
+                int bitmapWidth = thumbBitmap.getWidth();
+                int bitmapHeight = thumbBitmap.getHeight();
+                int containerWidth = mPhotoStripContainer.getWidth();
+                int containerHeight = mPhotoStripContainer.getHeight();
+
+                // Select scroll view based on bitmap and container size.
+                int scrollViewResource = R.layout.fragment_share_scroll_none;
+                if (bitmapWidth > containerWidth && bitmapHeight > containerHeight) {
+                    // Bitmap needs scroll in both directions.
+                    scrollViewResource = R.layout.fragment_share_scroll_box;
+                } else if (bitmapWidth > containerWidth) {
+                    // Bitmap needs scroll in x.
+                    scrollViewResource = R.layout.fragment_share_scroll_horizontal;
+                } else if (bitmapHeight > containerHeight) {
+                    // Bitmap needs scroll in y.
+                    scrollViewResource = R.layout.fragment_share_scroll_vertical;
+                }
+
+                // Inflate container and thumbnail to view.
+                LayoutInflater.from(getActivity()).inflate(scrollViewResource, mPhotoStripContainer, true);
+                ImageView imageView = (ImageView) mPhotoStripContainer.findViewById(R.id.image);
+                imageView.setImageBitmap(thumbBitmap);
                 break;
             case ShareController.JPEG_SAVED:
                 mShareButton.setVisibility(View.VISIBLE);
