@@ -20,6 +20,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.Point;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Bundle;
@@ -101,7 +102,9 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
 
     public static final String MESSAGE_BUNDLE_KEY_ARRANGEMENT = "arrangement";
 
-    public static final String MESSAGE_BUNDLE_KEY_THUMB_SIZE = "thumbSize";
+    public static final String MESSAGE_BUNDLE_KEY_MAX_THUMB_WIDTH = "maxThumbWidth";
+
+    public static final String MESSAGE_BUNDLE_KEY_MAX_THUMB_HEIGHT = "maxThumbHeight";
 
     /**
      * The uri to the Jpeg stored in the file system.
@@ -190,6 +193,9 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
             }
         });
 
+        // Get the max thumbnail size the view can hold.
+        Point maxThumbSize = ImageHelper.getMaxThumbSize(getResources(), arrangementPref);
+
         // Notify controller the image view is ready.
         Message msg = Message.obtain();
         msg.what = IMAGE_VIEW_READY;
@@ -202,7 +208,8 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
         bundle.putBoolean(MESSAGE_BUNDLE_KEY_REFLECTION, reflection);
         bundle.putString(MESSAGE_BUNDLE_KEY_FILTER, filterPref);
         bundle.putString(MESSAGE_BUNDLE_KEY_ARRANGEMENT, arrangementPref);
-        bundle.putInt(MESSAGE_BUNDLE_KEY_THUMB_SIZE, ImageHelper.getThumbSize(getResources()));
+        bundle.putInt(MESSAGE_BUNDLE_KEY_MAX_THUMB_WIDTH, maxThumbSize.x);
+        bundle.putInt(MESSAGE_BUNDLE_KEY_MAX_THUMB_HEIGHT, maxThumbSize.y);
         msg.setData(bundle);
         sendEvent(msg);
     }

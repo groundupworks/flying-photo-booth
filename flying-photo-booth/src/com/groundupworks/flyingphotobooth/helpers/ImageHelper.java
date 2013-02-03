@@ -21,8 +21,11 @@ import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Matrix;
+import android.graphics.Point;
 import android.util.DisplayMetrics;
+import com.groundupworks.flyingphotobooth.R;
 
 /**
  * A helper class containing image processing-related methods and configurations.
@@ -30,21 +33,6 @@ import android.util.DisplayMetrics;
  * @author Benedict Lau
  */
 public class ImageHelper {
-
-    /**
-     * Saved image directory.
-     */
-    private static final String IMAGE_FOLDER = "/FlyingPhotoBooth";
-
-    /**
-     * The prefix for the saved Jpeg filename.
-     */
-    private static final String JPEG_FILENAME_PREFIX = "fpb";
-
-    /**
-     * The Jpeg extension.
-     */
-    private static final String JPEG_EXTENSION = ".jpg";
 
     /**
      * Jpeg mime type.
@@ -62,6 +50,26 @@ public class ImageHelper {
     public static final Bitmap.Config BITMAP_CONFIG = Config.ARGB_8888;
 
     /**
+     * Saved image directory.
+     */
+    private static final String IMAGE_FOLDER = "/FlyingPhotoBooth";
+
+    /**
+     * The prefix for the saved Jpeg filename.
+     */
+    private static final String JPEG_FILENAME_PREFIX = "fpb";
+
+    /**
+     * The Jpeg extension.
+     */
+    private static final String JPEG_EXTENSION = ".jpg";
+
+    /**
+     * OpenGL texture size limit. This sets a limit on the maximum bitmap size that can be used in a {@link Canvas}.
+     */
+    private static final int GL_TEXTURE_SIZE_LIMIT = 2048;
+
+    /**
      * The default Jpeg quality.
      */
     private static final int JPEG_COMPRESSION = 100;
@@ -76,17 +84,65 @@ public class ImageHelper {
     //
 
     /**
-     * Gets the size for the short dimension of the thumbnails.
+     * Gets the max thumbnail size based on the arrangement.
      * 
      * @param res
      *            the {@link Resources}.
-     * @return the dimension in pixels.
+     * @param arrangementPref
+     *            the bitmap arrangement preference.
+     * @return a {@link Point} where the (x, y) corresponds to the (width, height) of the max thumbnail size.
      */
-    public static int getThumbSize(Resources res) {
-        DisplayMetrics displayMetrics = res.getDisplayMetrics();
-        int width = displayMetrics.widthPixels;
+    public static Point getMaxThumbSize(Resources res, String arrangementPref) {
+        int width = 0;
+        int height = 0;
 
-        return Math.min(width, IMAGE_SIZE);
+        DisplayMetrics displayMetrics = res.getDisplayMetrics();
+        int shortEdge = Math.min(displayMetrics.widthPixels, IMAGE_SIZE);
+
+        if (res.getString(R.string.pref__arrangement_horizontal).equals(arrangementPref)) {
+            height = shortEdge;
+            width = GL_TEXTURE_SIZE_LIMIT;
+        } else if (res.getString(R.string.pref__arrangement_box).equals(arrangementPref)) {
+            width = shortEdge * 2;
+            height = width;
+        } else {
+            width = shortEdge;
+            height = GL_TEXTURE_SIZE_LIMIT;
+        }
+
+        return new Point(width, height);
+    }
+
+    /**
+     * Gets the size of content fitted inside a container while maintaining its aspect ratio.
+     * 
+     * @param containerWidth
+     *            width of the container.
+     * @param containerHeight
+     *            height of the container.
+     * @param contentWidth
+     *            width of the content.
+     * @param contentHeight
+     *            height of the content.
+     * @return a {@link Point} where the (x, y) corresponds to the (width, height) of the content fitted inside the
+     *         container.
+     */
+    public static Point getAspectFitSize(int containerWidth, int containerHeight, int contentWidth, int contentHeight) {
+        int fittedContentWidth = containerWidth;
+        int fittedContentHeight = containerHeight;
+
+        // Compare parent and child aspect ratio.
+        if (containerWidth * contentHeight > containerHeight * contentWidth) {
+            // Max out the height. Calculate width while maintaining the aspect ratio.
+            fittedContentWidth = contentWidth * containerHeight / contentHeight;
+            fittedContentHeight = containerHeight;
+        } else {
+            // Max out the width. Calculate height while maintaining the aspect ratio.
+            fittedContentWidth = containerWidth;
+            fittedContentHeight = contentHeight * containerWidth / contentWidth;
+        }
+
+        return new Point(fittedContentWidth, fittedContentHeight);
     }
 
     /**

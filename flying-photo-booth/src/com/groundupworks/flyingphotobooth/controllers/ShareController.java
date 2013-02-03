@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Message;
 import com.groundupworks.flyingphotobooth.MyApplication;
@@ -81,7 +82,8 @@ public class ShareController extends BaseController {
                 boolean reflection = bundle.getBoolean(ShareFragment.MESSAGE_BUNDLE_KEY_REFLECTION);
                 String filterPref = bundle.getString(ShareFragment.MESSAGE_BUNDLE_KEY_FILTER);
                 String arrangementPref = bundle.getString(ShareFragment.MESSAGE_BUNDLE_KEY_ARRANGEMENT);
-                int thumbSize = bundle.getInt(ShareFragment.MESSAGE_BUNDLE_KEY_THUMB_SIZE);
+                int thumbMaxWidth = bundle.getInt(ShareFragment.MESSAGE_BUNDLE_KEY_MAX_THUMB_WIDTH);
+                int thumbMaxHeight = bundle.getInt(ShareFragment.MESSAGE_BUNDLE_KEY_MAX_THUMB_HEIGHT);
 
                 // Select filter.
                 ImageFilter filter0 = null;
@@ -150,25 +152,10 @@ public class ShareController extends BaseController {
 
                 // Notify ui.
                 if (mBitmap != null) {
-                    // Calculate thumbnail dimensions based on the arrangement.
-                    int thumbWidth = 0;
-                    int thumbHeight = 0;
-                    if (arrangementPref.equals(context.getString(R.string.pref__arrangement_horizontal))) {
-                        thumbHeight = thumbSize;
-                        float scalingFactor = ((float) thumbHeight) / (float) (mBitmap.getHeight());
-                        thumbWidth = (int) (((float) (mBitmap.getWidth())) * scalingFactor);
-                    } else if (arrangementPref.equals(context.getString(R.string.pref__arrangement_box))) {
-                        thumbWidth = thumbSize * 2;
-                        float scalingFactor = ((float) thumbWidth) / (float) (mBitmap.getWidth());
-                        thumbHeight = (int) (((float) (mBitmap.getHeight())) * scalingFactor);
-                    } else {
-                        thumbWidth = thumbSize;
-                        float scalingFactor = ((float) thumbWidth) / (float) (mBitmap.getWidth());
-                        thumbHeight = (int) (((float) (mBitmap.getHeight())) * scalingFactor);
-                    }
-
                     // Create thumbnail.
-                    mThumb = Bitmap.createScaledBitmap(mBitmap, thumbWidth, thumbHeight, true);
+                    Point fittedSize = ImageHelper.getAspectFitSize(thumbMaxWidth, thumbMaxHeight, mBitmap.getWidth(),
+                            mBitmap.getHeight());
+                    mThumb = Bitmap.createScaledBitmap(mBitmap, fittedSize.x, fittedSize.y, true);
                     if (mThumb != null) {
                         // Thumbnail bitmap is ready.
                         Message uiMsg = Message.obtain();

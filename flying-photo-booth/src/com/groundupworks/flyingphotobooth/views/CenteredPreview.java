@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.util.List;
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.hardware.Camera;
@@ -30,6 +31,7 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
 import com.groundupworks.flyingphotobooth.helpers.CameraHelper;
+import com.groundupworks.flyingphotobooth.helpers.ImageHelper;
 
 /**
  * Layout containing a centered preview resized to fit inside the layout while preserving the aspect ratio. The view
@@ -198,19 +200,9 @@ public class CenteredPreview extends ViewGroup implements SurfaceHolder.Callback
         /*
          * Layout children views.
          */
-        int previewSurfaceWidth = parentWidth;
-        int previewSurfaceHeight = parentHeight;
-
-        // Compare parent and child aspect ratio.
-        if (parentWidth * previewHeight > parentHeight * previewWidth) {
-            // Max out the height. Center horizontally.
-            previewSurfaceWidth = previewWidth * parentHeight / previewHeight;
-            previewSurfaceHeight = parentHeight;
-        } else {
-            // Max out the width. Center vertically.
-            previewSurfaceWidth = parentWidth;
-            previewSurfaceHeight = previewHeight * parentWidth / previewWidth;
-        }
+        Point previewSurfaceSize = ImageHelper.getAspectFitSize(parentWidth, parentHeight, previewWidth, previewHeight);
+        int previewSurfaceWidth = previewSurfaceSize.x;
+        int previewSurfaceHeight = previewSurfaceSize.y;
 
         // Ensure preview dimensions are multiples of a preview size factor.
         previewSurfaceWidth -= previewSurfaceWidth % PREVIEW_SIZE_BLOCK;
