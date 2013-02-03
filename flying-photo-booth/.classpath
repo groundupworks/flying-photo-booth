@@ -4,5 +4,13 @@
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="gen"/>
+	<classpathentry kind="lib" path="/Users/ben/Dev/projects/github/flying-photo-booth/third-party/dropbox-android-sdk-1.5.3/lib/commons-logging-1.1.1.jar"/>
+	<classpathentry kind="lib" path="/Users/ben/Dev/projects/github/flying-photo-booth/third-party/dropbox-android-sdk-1.5.3/lib/dropbox-android-sdk-1.5.3.jar"/>
+	<classpathentry kind="lib" path="/Users/ben/Dev/projects/github/flying-photo-booth/third-party/dropbox-android-sdk-1.5.3/lib/httpclient-4.0.3.jar"/>
+	<classpathentry kind="lib" path="/Users/ben/Dev/projects/github/flying-photo-booth/third-party/dropbox-android-sdk-1.5.3/lib/httpcore-4.0.1.jar"/>
+	<classpathentry kind="lib" path="/Users/ben/Dev/projects/github/flying-photo-booth/third-party/dropbox-android-sdk-1.5.3/lib/httpmime-4.0.3.jar"/>
+	<classpathentry kind="lib" path="/Users/ben/Dev/projects/github/flying-photo-booth/third-party/dropbox-android-sdk-1.5.3/lib/json_simple-1.1.jar"/>
+	<classpathentry kind="lib" path="/Users/ben/Dev/projects/github/flying-photo-booth/third-party/dropbox-android-sdk-1.5.3/lib/extra/android.jar"/>
+	<classpathentry kind="lib" path="/Users/ben/Dev/projects/github/flying-photo-booth/third-party/dropbox-android-sdk-1.5.3/lib/test/junit-4.10.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>
