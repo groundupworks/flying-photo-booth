@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.groundupworks.flyingphotobooth"
-    android:versionCode="7"
-    android:versionName="2.4" >
+    android:versionCode="8"
+    android:versionName="2.5" >
 
     <uses-sdk
         android:minSdkVersion="9"
-        android:targetSdkVersion="16" />
+        android:targetSdkVersion="17" />
 
     <uses-feature
         android:name="android.hardware.screen.portrait"
@@ -31,6 +31,7 @@
 
     <application
         android:name=".MyApplication"
+        android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name" >
 
