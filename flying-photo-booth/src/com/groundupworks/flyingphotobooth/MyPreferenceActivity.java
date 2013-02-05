@@ -23,6 +23,7 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
@@ -55,6 +56,14 @@ public class MyPreferenceActivity extends PreferenceActivity {
 
     private String mTriggerKey;
 
+    private String mFacebookLinkKey;
+
+    private String mFacebookAutoShareKey;
+
+    private String mDropboxLinkKey;
+
+    private String mDropboxAutoShareKey;
+
     //
     // Preferences.
     //
@@ -65,6 +74,10 @@ public class MyPreferenceActivity extends PreferenceActivity {
 
     private ListPreference mTriggerPref;
 
+    private CheckBoxPreference mFacebookLinkPref;
+
+    private CheckBoxPreference mDropboxLinkPref;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,22 +87,25 @@ public class MyPreferenceActivity extends PreferenceActivity {
         mArrangementKey = getString(R.string.pref__arrangement_key);
         mFilterKey = getString(R.string.pref__filter_key);
         mTriggerKey = getString(R.string.pref__trigger_key);
+        mFacebookLinkKey = getString(R.string.pref__facebook_link_key);
+        mFacebookAutoShareKey = getString(R.string.pref__facebook_auto_share_key);
+        mDropboxLinkKey = getString(R.string.pref__dropbox_link_key);
+        mDropboxAutoShareKey = getString(R.string.pref__dropbox_auto_share_key);
 
         // Get preferences.
         mArrangementPref = (ListPreference) findPreference(mArrangementKey);
         mFilterPref = (ListPreference) findPreference(mFilterKey);
         mTriggerPref = (ListPreference) findPreference(mTriggerKey);
-
-        // Get selected options.
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        String arrangement = preferences.getString(mArrangementKey, getString(R.string.pref__arrangement_default));
-        String filter = preferences.getString(mFilterKey, getString(R.string.pref__filter_default));
-        String trigger = preferences.getString(mTriggerKey, getString(R.string.pref__trigger_default));
+        mFacebookLinkPref = (CheckBoxPreference) findPreference(mFacebookLinkKey);
+        mDropboxLinkPref = (CheckBoxPreference) findPreference(mDropboxLinkKey);
 
         // Set summaries associated with selected options.
-        mArrangementPref.setSummary(getArrangementSummary(arrangement));
-        mFilterPref.setSummary(getFilterSummary(filter));
-        mTriggerPref.setSummary(getTriggerSummary(trigger));
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        mArrangementPref.setSummary(getArrangementSummary(preferences));
+        mFilterPref.setSummary(getFilterSummary(preferences));
+        mTriggerPref.setSummary(getTriggerSummary(preferences));
+        mFacebookLinkPref.setSummary(getFacebookSummary(preferences));
+        mDropboxLinkPref.setSummary(getDropboxSummary(preferences));
 
         // Launch rating page on Google Play when clicked.
         Preference button = (Preference) findPreference(getString(R.string.pref__rate_key));
@@ -135,15 +151,15 @@ public class MyPreferenceActivity extends PreferenceActivity {
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
             if (key.equals(mArrangementKey)) {
-                String arrangement = sharedPreferences.getString(mArrangementKey,
-                        getString(R.string.pref__arrangement_default));
-                mArrangementPref.setSummary(getArrangementSummary(arrangement));
+                mArrangementPref.setSummary(getArrangementSummary(sharedPreferences));
             } else if (key.equals(mFilterKey)) {
-                String filter = sharedPreferences.getString(mFilterKey, getString(R.string.pref__filter_default));
-                mFilterPref.setSummary(getFilterSummary(filter));
+                mFilterPref.setSummary(getFilterSummary(sharedPreferences));
             } else if (key.equals(mTriggerKey)) {
-                String trigger = sharedPreferences.getString(mTriggerKey, getString(R.string.pref__trigger_default));
-                mTriggerPref.setSummary(getTriggerSummary(trigger));
+                mTriggerPref.setSummary(getTriggerSummary(sharedPreferences));
+            } else if (key.equals(mFacebookLinkKey) || key.equals(mFacebookAutoShareKey)) {
+                mFacebookLinkPref.setSummary(getFacebookSummary(sharedPreferences));
+            } else if (key.equals(mDropboxLinkKey) || key.equals(mDropboxAutoShareKey)) {
+                mDropboxLinkPref.setSummary(getDropboxSummary(sharedPreferences));
             }
         }
     }
@@ -155,13 +171,15 @@ public class MyPreferenceActivity extends PreferenceActivity {
     /**
      * Gets the summary for the arrangement preference.
      * 
-     * @param selectedOption
-     *            the selected option.
+     * @param preferences
+     *            the {@link SharedPreferences} storing the preference.
      * @return the summary of the selected option; or an empty string if not found.
      */
-    private String getArrangementSummary(String selectedOption) {
+    private String getArrangementSummary(SharedPreferences preferences) {
         String returnSummary = "";
         Resources res = getResources();
+        String selectedOption = preferences.getString(mArrangementKey, getString(R.string.pref__arrangement_default));
+
         String[] options = res.getStringArray(R.array.pref__arrangement_options);
         int index = findIndex(selectedOption, options);
         if (index != -1) {
@@ -174,13 +192,15 @@ public class MyPreferenceActivity extends PreferenceActivity {
     /**
      * Gets the summary for the filter preference.
      * 
-     * @param selectedOption
-     *            the selected option.
+     * @param preferences
+     *            the {@link SharedPreferences} storing the preference.
      * @return the summary of the selected option; or an empty string if not found.
      */
-    private String getFilterSummary(String selectedOption) {
+    private String getFilterSummary(SharedPreferences preferences) {
         String returnSummary = "";
         Resources res = getResources();
+        String selectedOption = preferences.getString(mFilterKey, getString(R.string.pref__filter_default));
+
         String[] options = res.getStringArray(R.array.pref__filter_options);
         int index = findIndex(selectedOption, options);
         if (index != -1) {
@@ -193,19 +213,89 @@ public class MyPreferenceActivity extends PreferenceActivity {
     /**
      * Gets the summary for the trigger preference.
      * 
-     * @param selectedOption
-     *            the selected option.
+     * @param preferences
+     *            the {@link SharedPreferences} storing the preference.
      * @return the summary of the selected option; or an empty string if not found.
      */
-    private String getTriggerSummary(String selectedOption) {
+    private String getTriggerSummary(SharedPreferences preferences) {
         String returnSummary = "";
         Resources res = getResources();
+        String selectedOption = preferences.getString(mTriggerKey, getString(R.string.pref__trigger_default));
+
         String[] options = res.getStringArray(R.array.pref__trigger_options);
         int index = findIndex(selectedOption, options);
         if (index != -1) {
             String[] summaries = res.getStringArray(R.array.pref__trigger_options_summaries);
             returnSummary = summaries[index];
         }
+        return returnSummary;
+    }
+
+    /**
+     * Gets the summary for the Facebook preference.
+     * 
+     * @param preferences
+     *            the {@link SharedPreferences} storing the preference.
+     * @return the summary of the preference.
+     */
+    private String getFacebookSummary(SharedPreferences preferences) {
+        String returnSummary = getString(R.string.pref__facebook_link_summary_default);
+        boolean isLinked = preferences.getBoolean(mFacebookLinkKey, false);
+
+        // Check if linked to Facebook account.
+        if (isLinked) {
+            // Get account information.
+            String accountName = preferences.getString(getString(R.string.pref__facebook_account_name_key), null);
+            String path = preferences.getString(getString(R.string.pref__facebook_path_key), null);
+            if (accountName != null && accountName.length() > 0 && path != null && path.length() > 0) {
+                // Check if auto share is enabled.
+                boolean isAutoShared = preferences.getBoolean(mFacebookAutoShareKey, false);
+                if (isAutoShared) {
+                    // Build auto share string.
+                    returnSummary = getString(R.string.pref__facebook_link_summary_linked_auto_share, accountName, path);
+                } else {
+                    // Build on
+                    returnSummary = getString(R.string.pref__facebook_link_summary_linked_one_click_share, accountName,
+                            path);
+                }
+            }
+
+        }
+
+        return returnSummary;
+    }
+
+    /**
+     * Gets the summary for the Dropbox preference.
+     * 
+     * @param preferences
+     *            the {@link SharedPreferences} storing the preference.
+     * @return the summary of the preference.
+     */
+    private String getDropboxSummary(SharedPreferences preferences) {
+        String returnSummary = getString(R.string.pref__dropbox_link_summary_default);
+        boolean isLinked = preferences.getBoolean(mDropboxLinkKey, false);
+
+        // Check if linked to Dropbox account.
+        if (isLinked) {
+            // Get account information.
+            String accountName = preferences.getString(getString(R.string.pref__dropbox_account_name_key), null);
+            String path = preferences.getString(getString(R.string.pref__dropbox_path_key), null);
+            if (accountName != null && accountName.length() > 0 && path != null && path.length() > 0) {
+                // Check if auto share is enabled.
+                boolean isAutoShared = preferences.getBoolean(mDropboxAutoShareKey, false);
+                if (isAutoShared) {
+                    // Build auto share string.
+                    returnSummary = getString(R.string.pref__dropbox_link_summary_linked_auto_share, accountName, path);
+                } else {
+                    // Build one-click share string.
+                    returnSummary = getString(R.string.pref__dropbox_link_summary_linked_one_click_share, accountName,
+                            path);
+                }
+            }
+
+        }
+
         return returnSummary;
     }
 
