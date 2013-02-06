@@ -22,6 +22,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.res.Resources;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
@@ -35,6 +36,18 @@ import android.preference.PreferenceManager;
  * @author Benedict Lau
  */
 public class MyPreferenceActivity extends PreferenceActivity {
+
+    //
+    // FIXME Mock data.
+    //
+
+    private static final String MOCK_FACEBOOK_ACCOUNT_NAME = "Benedict";
+
+    private static final String MOCK_FACEBOOK_PATH = "Wall";
+
+    private static final String MOCK_DROPBOX_ACCOUNT_NAME = "ben.hy.lau@gmail.com";
+
+    private static final String MOCK_DROPBOX_PATH = "Public/Photos/";
 
     /**
      * Base uri for Google Play.
@@ -79,6 +92,16 @@ public class MyPreferenceActivity extends PreferenceActivity {
     private CheckBoxPreference mDropboxLinkPref;
 
     @Override
+    protected void onApplyThemeResource(Resources.Theme theme, int resid, boolean first) {
+        // android.R.style.Theme_DeviceDefault_Light only available in ICS and above.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+            theme.applyStyle(android.R.style.Theme_DeviceDefault_Light, true);
+        } else {
+            super.onApplyThemeResource(theme, resid, first);
+        }
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.preferences);
@@ -101,11 +124,11 @@ public class MyPreferenceActivity extends PreferenceActivity {
 
         // Set summaries associated with selected options.
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        mArrangementPref.setSummary(getArrangementSummary(preferences));
-        mFilterPref.setSummary(getFilterSummary(preferences));
-        mTriggerPref.setSummary(getTriggerSummary(preferences));
-        mFacebookLinkPref.setSummary(getFacebookSummary(preferences));
-        mDropboxLinkPref.setSummary(getDropboxSummary(preferences));
+        updateArrangementPref(preferences);
+        updateFilterPref(preferences);
+        updateTriggerPref(preferences);
+        updateFacebookPref(preferences);
+        updateDropboxPref(preferences);
 
         // Launch rating page on Google Play when clicked.
         Preference button = (Preference) findPreference(getString(R.string.pref__rate_key));
@@ -151,15 +174,15 @@ public class MyPreferenceActivity extends PreferenceActivity {
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
             if (key.equals(mArrangementKey)) {
-                mArrangementPref.setSummary(getArrangementSummary(sharedPreferences));
+                updateArrangementPref(sharedPreferences);
             } else if (key.equals(mFilterKey)) {
-                mFilterPref.setSummary(getFilterSummary(sharedPreferences));
+                updateFilterPref(sharedPreferences);
             } else if (key.equals(mTriggerKey)) {
-                mTriggerPref.setSummary(getTriggerSummary(sharedPreferences));
+                updateTriggerPref(sharedPreferences);
             } else if (key.equals(mFacebookLinkKey) || key.equals(mFacebookAutoShareKey)) {
-                mFacebookLinkPref.setSummary(getFacebookSummary(sharedPreferences));
+                updateFacebookPref(sharedPreferences);
             } else if (key.equals(mDropboxLinkKey) || key.equals(mDropboxAutoShareKey)) {
-                mDropboxLinkPref.setSummary(getDropboxSummary(sharedPreferences));
+                updateDropboxPref(sharedPreferences);
             }
         }
     }
@@ -169,14 +192,13 @@ public class MyPreferenceActivity extends PreferenceActivity {
     //
 
     /**
-     * Gets the summary for the arrangement preference.
+     * Updates the summary for the arrangement preference.
      * 
      * @param preferences
      *            the {@link SharedPreferences} storing the preference.
-     * @return the summary of the selected option; or an empty string if not found.
      */
-    private String getArrangementSummary(SharedPreferences preferences) {
-        String returnSummary = "";
+    private void updateArrangementPref(SharedPreferences preferences) {
+        String summary = "";
         Resources res = getResources();
         String selectedOption = preferences.getString(mArrangementKey, getString(R.string.pref__arrangement_default));
 
@@ -184,20 +206,20 @@ public class MyPreferenceActivity extends PreferenceActivity {
         int index = findIndex(selectedOption, options);
         if (index != -1) {
             String[] summaries = res.getStringArray(R.array.pref__arrangement_options_summaries);
-            returnSummary = summaries[index];
+            summary = summaries[index];
         }
-        return returnSummary;
+
+        mArrangementPref.setSummary(summary);
     }
 
     /**
-     * Gets the summary for the filter preference.
+     * Updates the summary for the filter preference.
      * 
      * @param preferences
      *            the {@link SharedPreferences} storing the preference.
-     * @return the summary of the selected option; or an empty string if not found.
      */
-    private String getFilterSummary(SharedPreferences preferences) {
-        String returnSummary = "";
+    private void updateFilterPref(SharedPreferences preferences) {
+        String summary = "";
         Resources res = getResources();
         String selectedOption = preferences.getString(mFilterKey, getString(R.string.pref__filter_default));
 
@@ -205,20 +227,20 @@ public class MyPreferenceActivity extends PreferenceActivity {
         int index = findIndex(selectedOption, options);
         if (index != -1) {
             String[] summaries = res.getStringArray(R.array.pref__filter_options_summaries);
-            returnSummary = summaries[index];
+            summary = summaries[index];
         }
-        return returnSummary;
+
+        mFilterPref.setSummary(summary);
     }
 
     /**
-     * Gets the summary for the trigger preference.
+     * Updates the summary for the trigger preference.
      * 
      * @param preferences
      *            the {@link SharedPreferences} storing the preference.
-     * @return the summary of the selected option; or an empty string if not found.
      */
-    private String getTriggerSummary(SharedPreferences preferences) {
-        String returnSummary = "";
+    private void updateTriggerPref(SharedPreferences preferences) {
+        String summary = "";
         Resources res = getResources();
         String selectedOption = preferences.getString(mTriggerKey, getString(R.string.pref__trigger_default));
 
@@ -226,77 +248,92 @@ public class MyPreferenceActivity extends PreferenceActivity {
         int index = findIndex(selectedOption, options);
         if (index != -1) {
             String[] summaries = res.getStringArray(R.array.pref__trigger_options_summaries);
-            returnSummary = summaries[index];
+            summary = summaries[index];
         }
-        return returnSummary;
+
+        mTriggerPref.setSummary(summary);
     }
 
     /**
-     * Gets the summary for the Facebook preference.
+     * Updates the title, summary, and check box for the Facebook preference.
      * 
      * @param preferences
      *            the {@link SharedPreferences} storing the preference.
-     * @return the summary of the preference.
      */
-    private String getFacebookSummary(SharedPreferences preferences) {
-        String returnSummary = getString(R.string.pref__facebook_link_summary_default);
+    private void updateFacebookPref(SharedPreferences preferences) {
+        int titleRes = R.string.pref__facebook_link_title_default;
+        String summary = getString(R.string.pref__facebook_link_summary_default);
+        int widgetRes = R.layout.pref_facebook_checkbox_unselected;
         boolean isLinked = preferences.getBoolean(mFacebookLinkKey, false);
 
         // Check if linked to Facebook account.
         if (isLinked) {
             // Get account information.
-            String accountName = preferences.getString(getString(R.string.pref__facebook_account_name_key), null);
-            String path = preferences.getString(getString(R.string.pref__facebook_path_key), null);
+            String accountName = preferences.getString(getString(R.string.pref__facebook_account_name_key),
+                    MOCK_FACEBOOK_ACCOUNT_NAME);
+            String path = preferences.getString(getString(R.string.pref__facebook_path_key), MOCK_FACEBOOK_PATH);
             if (accountName != null && accountName.length() > 0 && path != null && path.length() > 0) {
+                // Select linked title and widget resource.
+                titleRes = R.string.pref__facebook_link_title_linked;
+                widgetRes = R.layout.pref_facebook_checkbox_selected;
+
                 // Check if auto share is enabled.
                 boolean isAutoShared = preferences.getBoolean(mFacebookAutoShareKey, false);
                 if (isAutoShared) {
                     // Build auto share string.
-                    returnSummary = getString(R.string.pref__facebook_link_summary_linked_auto_share, accountName, path);
+                    summary = getString(R.string.pref__facebook_link_summary_linked_auto_share, accountName, path);
                 } else {
                     // Build on
-                    returnSummary = getString(R.string.pref__facebook_link_summary_linked_one_click_share, accountName,
-                            path);
+                    summary = getString(R.string.pref__facebook_link_summary_linked_one_click_share, accountName, path);
                 }
             }
 
         }
 
-        return returnSummary;
+        mFacebookLinkPref.setTitle(titleRes);
+        mFacebookLinkPref.setSummary(summary);
+        mFacebookLinkPref.setWidgetLayoutResource(widgetRes);
     }
 
     /**
-     * Gets the summary for the Dropbox preference.
+     * Updates the title, summary, and check box for the Dropbox preference.
      * 
      * @param preferences
      *            the {@link SharedPreferences} storing the preference.
-     * @return the summary of the preference.
      */
-    private String getDropboxSummary(SharedPreferences preferences) {
-        String returnSummary = getString(R.string.pref__dropbox_link_summary_default);
+    private void updateDropboxPref(SharedPreferences preferences) {
+        int titleRes = R.string.pref__dropbox_link_title_default;
+        String summary = getString(R.string.pref__dropbox_link_summary_default);
+        int widgetRes = R.layout.pref_dropbox_checkbox_unselected;
         boolean isLinked = preferences.getBoolean(mDropboxLinkKey, false);
 
         // Check if linked to Dropbox account.
         if (isLinked) {
             // Get account information.
-            String accountName = preferences.getString(getString(R.string.pref__dropbox_account_name_key), null);
-            String path = preferences.getString(getString(R.string.pref__dropbox_path_key), null);
+            String accountName = preferences.getString(getString(R.string.pref__dropbox_account_name_key),
+                    MOCK_DROPBOX_ACCOUNT_NAME);
+            String path = preferences.getString(getString(R.string.pref__dropbox_path_key), MOCK_DROPBOX_PATH);
             if (accountName != null && accountName.length() > 0 && path != null && path.length() > 0) {
+                // Select linked title and widget resource.
+                titleRes = R.string.pref__dropbox_link_title_linked;
+                widgetRes = R.layout.pref_dropbox_checkbox_selected;
+
                 // Check if auto share is enabled.
                 boolean isAutoShared = preferences.getBoolean(mDropboxAutoShareKey, false);
                 if (isAutoShared) {
                     // Build auto share string.
-                    returnSummary = getString(R.string.pref__dropbox_link_summary_linked_auto_share, accountName, path);
+                    summary = getString(R.string.pref__dropbox_link_summary_linked_auto_share, accountName, path);
                 } else {
                     // Build one-click share string.
-                    returnSummary = getString(R.string.pref__dropbox_link_summary_linked_one_click_share, accountName,
-                            path);
+                    summary = getString(R.string.pref__dropbox_link_summary_linked_one_click_share, accountName, path);
                 }
             }
 
         }
 
-        return returnSummary;
+        mDropboxLinkPref.setTitle(titleRes);
+        mDropboxLinkPref.setSummary(summary);
+        mDropboxLinkPref.setWidgetLayoutResource(widgetRes);
     }
 
     /**

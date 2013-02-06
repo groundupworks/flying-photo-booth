@@ -1,32 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:title="@string/pref__preference_screen_title" >
 
-    <ListPreference
-        android:defaultValue="@string/pref__arrangement_default"
-        android:dialogTitle="@string/pref__arrangement_title"
-        android:entries="@array/pref__arrangement_options"
-        android:entryValues="@array/pref__arrangement_options"
-        android:key="@string/pref__arrangement_key"
-        android:title="@string/pref__arrangement_title" />
-    <ListPreference
-        android:defaultValue="@string/pref__filter_default"
-        android:dialogTitle="@string/pref__filter_title"
-        android:entries="@array/pref__filter_options"
-        android:entryValues="@array/pref__filter_options"
-        android:key="@string/pref__filter_key"
-        android:title="@string/pref__filter_title" />
-    <ListPreference
-        android:defaultValue="@string/pref__trigger_default"
-        android:dialogTitle="@string/pref__trigger_title"
-        android:entries="@array/pref__trigger_options"
-        android:entryValues="@array/pref__trigger_options"
-        android:key="@string/pref__trigger_key"
-        android:title="@string/pref__trigger_title" />
-
-    <Preference
-        android:key="@string/pref__rate_key"
-        android:summary="@string/pref__rate_summary"
-        android:title="@string/pref__rate_title" />
+    <!-- Photo Booth -->
+    <PreferenceCategory
+        android:key="@string/pref__photo_booth_category_key"
+        android:title="@string/pref__photo_booth_category_title" >
+        <ListPreference
+            android:defaultValue="@string/pref__arrangement_default"
+            android:dialogTitle="@string/pref__arrangement_title"
+            android:entries="@array/pref__arrangement_options"
+            android:entryValues="@array/pref__arrangement_options"
+            android:key="@string/pref__arrangement_key"
+            android:title="@string/pref__arrangement_title" />
+        <ListPreference
+            android:defaultValue="@string/pref__filter_default"
+            android:dialogTitle="@string/pref__filter_title"
+            android:entries="@array/pref__filter_options"
+            android:entryValues="@array/pref__filter_options"
+            android:key="@string/pref__filter_key"
+            android:title="@string/pref__filter_title" />
+        <ListPreference
+            android:defaultValue="@string/pref__trigger_default"
+            android:dialogTitle="@string/pref__trigger_title"
+            android:entries="@array/pref__trigger_options"
+            android:entryValues="@array/pref__trigger_options"
+            android:key="@string/pref__trigger_key"
+            android:title="@string/pref__trigger_title" />
+    </PreferenceCategory>
 
     <!-- Facebook -->
     <PreferenceCategory
@@ -36,8 +37,8 @@
             android:defaultValue="false"
             android:key="@string/pref__facebook_link_key"
             android:summary="@string/pref__facebook_link_summary_default"
-            android:title="@string/pref__facebook_link_title"
-            android:widgetLayout="@null" />
+            android:title="@string/pref__facebook_link_title_default"
+            android:widgetLayout="@layout/pref_facebook_checkbox_unselected" />
         <CheckBoxPreference
             android:defaultValue="false"
             android:dependency="@string/pref__facebook_link_key"
@@ -53,13 +54,23 @@
             android:defaultValue="false"
             android:key="@string/pref__dropbox_link_key"
             android:summary="@string/pref__dropbox_link_summary_default"
-            android:title="@string/pref__dropbox_link_title"
-            android:widgetLayout="@null" />
+            android:title="@string/pref__dropbox_link_title_default"
+            android:widgetLayout="@layout/pref_dropbox_checkbox_unselected" />
         <CheckBoxPreference
             android:defaultValue="false"
             android:dependency="@string/pref__dropbox_link_key"
             android:key="@string/pref__dropbox_auto_share_key"
             android:title="@string/pref__dropbox_auto_share_title" />
+    </PreferenceCategory>
+
+    <!-- About -->
+    <PreferenceCategory
+        android:key="@string/pref__about_category_key"
+        android:title="@string/pref__about_category_title" >
+        <Preference
+            android:key="@string/pref__rate_key"
+            android:summary="@string/pref__rate_summary"
+            android:title="@string/pref__rate_title" />
     </PreferenceCategory>
 
 </PreferenceScreen>

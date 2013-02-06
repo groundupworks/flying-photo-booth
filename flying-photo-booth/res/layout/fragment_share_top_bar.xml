@@ -17,12 +17,36 @@
         android:visibility="gone" />
 
     <ImageButton
-        android:id="@+id/beam_button"
+        android:id="@+id/dropbox_button"
         style="@style/TitleText.Button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_toLeftOf="@id/share_button"
+        android:background="@drawable/selector_titlebar_button"
+        android:padding="12dip"
+        android:src="@drawable/selector_button_facebook"
+        android:visibility="gone" />
+
+    <ImageButton
+        android:id="@+id/facebook_button"
+        style="@style/TitleText.Button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_toLeftOf="@id/dropbox_button"
+        android:background="@drawable/selector_titlebar_button"
+        android:padding="12dip"
+        android:src="@drawable/selector_button_dropbox"
+        android:visibility="gone" />
+
+    <ImageButton
+        android:id="@+id/beam_button"
+        style="@style/TitleText.Button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_toLeftOf="@id/facebook_button"
         android:background="@drawable/selector_titlebar_button"
         android:padding="12dip"
         android:src="@drawable/ic_menu_cc"

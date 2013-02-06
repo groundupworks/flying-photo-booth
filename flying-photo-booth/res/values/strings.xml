@@ -6,6 +6,17 @@
     <!-- Camera Preferences -->
     <string name="pref__camera_key">pref__camera</string>
 
+    <!-- Preferences -->
+    <string name="pref__preference_screen_title">Preferences</string>
+    <string name="pref__photo_booth_category_key">pref__photo_booth</string>
+    <string name="pref__photo_booth_category_title">Photo Booth</string>
+    <string name="pref__facebook_category_key">pref__facebook</string>
+    <string name="pref__facebook_category_title">Facebook Sharing</string>
+    <string name="pref__dropbox_category_key">pref__dropbox</string>
+    <string name="pref__dropbox_category_title">Dropbox Sharing</string>
+    <string name="pref__about_category_key">pref__about</string>
+    <string name="pref__about_category_title">About</string>
+
     <!-- Arrangement Preferences -->
     <string name="pref__arrangement_key">pref__arrangement</string>
     <string name="pref__arrangement_title">Arrangement</string>
@@ -51,10 +62,9 @@
     <string name="pref__rate_summary">Your feedback is appreciated</string>
 
     <!-- Facebook Preferences -->
-    <string name="pref__facebook_category_key">pref__facebook</string>
-    <string name="pref__facebook_category_title">Facebook</string>
     <string name="pref__facebook_link_key">pref__facebook_link</string>
-    <string name="pref__facebook_link_title">Link&#8230;</string>
+    <string name="pref__facebook_link_title_default">Link&#8230;</string>
+    <string name="pref__facebook_link_title_linked">Unlink</string>
     <string name="pref__facebook_link_summary_default">Enable one-click or auto share</string>
     <string name="pref__facebook_link_summary_linked_one_click_share">One-click share to %1$s\'s %2$s</string>
     <string name="pref__facebook_link_summary_linked_auto_share">Auto share to %1$s\'s %2$s</string>
@@ -64,10 +74,9 @@
     <string name="pref__facebook_path_key">pref__facebook_path</string>
 
     <!-- Dropbox Preferences -->
-    <string name="pref__dropbox_category_key">pref__dropbox</string>
-    <string name="pref__dropbox_category_title">Dropbox</string>
     <string name="pref__dropbox_link_key">pref__dropbox_link</string>
-    <string name="pref__dropbox_link_title">Link&#8230;</string>
+    <string name="pref__dropbox_link_title_default">Link&#8230;</string>
+    <string name="pref__dropbox_link_title_linked">Unlink</string>
     <string name="pref__dropbox_link_summary_default">Enable one-click or auto share</string>
     <string name="pref__dropbox_link_summary_linked_one_click_share">One-click share to %1$s\'s %2$s</string>
     <string name="pref__dropbox_link_summary_linked_auto_share">Auto share to %1$s\'s %2$s</string>

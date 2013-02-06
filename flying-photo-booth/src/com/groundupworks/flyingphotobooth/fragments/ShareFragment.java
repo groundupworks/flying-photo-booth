@@ -117,6 +117,10 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
 
     private ImageButton mShareButton;
 
+    private ImageButton mDropboxButton;
+
+    private ImageButton mFacebookButton;
+
     private ImageButton mBeamButton;
 
     private FrameLayout mPhotoStripContainer;
@@ -129,6 +133,8 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
         View view = inflater.inflate(R.layout.fragment_share, container, false);
 
         mShareButton = (ImageButton) view.findViewById(R.id.share_button);
+        mDropboxButton = (ImageButton) view.findViewById(R.id.dropbox_button);
+        mFacebookButton = (ImageButton) view.findViewById(R.id.facebook_button);
         mBeamButton = (ImageButton) view.findViewById(R.id.beam_button);
         mPhotoStripContainer = (FrameLayout) view.findViewById(R.id.photostrip_container);
 
@@ -175,6 +181,24 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
                     sharingIntent.putExtra(Intent.EXTRA_STREAM, jpegUri);
                     startActivity(Intent.createChooser(sharingIntent, getString(R.string.share__share_chooser_title)));
                 }
+            }
+        });
+
+        // FIXME
+        mDropboxButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                v.setSelected(!v.isSelected());
+            }
+        });
+
+        // FIXME
+        mFacebookButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                v.setSelected(!v.isSelected());
             }
         });
 
@@ -273,6 +297,8 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
                 break;
             case ShareController.JPEG_SAVED:
                 mShareButton.setVisibility(View.VISIBLE);
+                mDropboxButton.setVisibility(View.VISIBLE);
+                mFacebookButton.setVisibility(View.VISIBLE);
                 if (BeamHelper.supportsBeam(appContext)) {
                     mBeamButton.setVisibility(View.VISIBLE);
                 }
