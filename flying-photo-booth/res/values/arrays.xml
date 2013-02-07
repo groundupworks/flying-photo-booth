@@ -7,6 +7,12 @@
         <item>@string/pref__arrangement_horizontal</item>
         <item>@string/pref__arrangement_box</item>
     </array>
+    <array name="pref__number_of_photos_options">
+        <item>@string/pref__number_of_photos_one</item>
+        <item>@string/pref__number_of_photos_two</item>
+        <item>@string/pref__number_of_photos_three</item>
+        <item>@string/pref__number_of_photos_four</item>
+    </array>
     <array name="pref__filter_options">
         <item>@string/pref__filter_none</item>
         <item>@string/pref__filter_bw</item>
@@ -25,6 +31,12 @@
         <item>@string/pref__arrangement_vertical_summary</item>
         <item>@string/pref__arrangement_horizontal_summary</item>
         <item>@string/pref__arrangement_box_summary</item>
+    </array>
+    <array name="pref__number_of_photos_options_summaries">
+        <item>@string/pref__number_of_photos_one_summary</item>
+        <item>@string/pref__number_of_photos_two_summary</item>
+        <item>@string/pref__number_of_photos_three_summary</item>
+        <item>@string/pref__number_of_photos_four_summary</item>
     </array>
     <array name="pref__filter_options_summaries">
         <item>@string/pref__filter_none_summary</item>

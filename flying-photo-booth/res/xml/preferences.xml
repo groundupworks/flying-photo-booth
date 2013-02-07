@@ -14,6 +14,14 @@
             android:key="@string/pref__arrangement_key"
             android:title="@string/pref__arrangement_title" />
         <ListPreference
+            android:defaultValue="@string/pref__number_of_photos_default"
+            android:dependency="@string/pref__arrangement_key"
+            android:dialogTitle="@string/pref__number_of_photos_title"
+            android:entries="@array/pref__number_of_photos_options"
+            android:entryValues="@array/pref__number_of_photos_options"
+            android:key="@string/pref__number_of_photos_key"
+            android:title="@string/pref__number_of_photos_title" />
+        <ListPreference
             android:defaultValue="@string/pref__filter_default"
             android:dialogTitle="@string/pref__filter_title"
             android:entries="@array/pref__filter_options"

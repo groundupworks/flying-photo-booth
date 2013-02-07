@@ -89,11 +89,6 @@ public class CaptureFragment extends Fragment {
     private static final int INVALID_CAMERA_ID = -1;
 
     /**
-     * The number of frames to capture.
-     */
-    private static final int TOTAL_FRAMES_TO_CAPTURE = 4;
-
-    /**
      * Delay between countdown steps in milliseconds.
      */
     private static final int COUNTDOWN_STEP_DELAY = 1000;
@@ -172,6 +167,11 @@ public class CaptureFragment extends Fragment {
      * Flag to indicate whether the camera image is reflected.
      */
     private boolean mIsReflected = false;
+
+    /**
+     * The total number of frames to capture.
+     */
+    private int mFramesTotal = 0;
 
     /**
      * The current frame index.
@@ -283,12 +283,16 @@ public class CaptureFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
         final LaunchActivity activity = (LaunchActivity) getActivity();
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(activity.getApplicationContext());
 
         /*
          * Reset frames.
          */
+        String numPhotosPref = preferences.getString(getString(R.string.pref__number_of_photos_key),
+                getString(R.string.pref__number_of_photos_default));
+        mFramesTotal = Integer.parseInt(numPhotosPref);
         mFrameIndex = 0;
-        mFramesData = new byte[TOTAL_FRAMES_TO_CAPTURE][];
+        mFramesData = new byte[mFramesTotal][];
 
         /*
          * Set handler for back pressed event.
@@ -340,8 +344,6 @@ public class CaptureFragment extends Fragment {
         }
 
         // Get trigger mode preference.
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity()
-                .getApplicationContext());
         String triggerPref = preferences.getString(getString(R.string.pref__trigger_key),
                 getString(R.string.pref__trigger_default));
         if (triggerPref.equals(getString(R.string.pref__trigger_countdown))) {
@@ -355,7 +357,7 @@ public class CaptureFragment extends Fragment {
         // Configure title and start button text.
         if (mTriggerMode == TRIGGER_MODE_MANUAL) {
             // Update title.
-            mTitle.setText(String.format(getString(R.string.capture__title_frame), mFrameIndex + 1));
+            mTitle.setText(String.format(getString(R.string.capture__title_frame), mFrameIndex + 1, mFramesTotal));
             mStartButton.setText(getString(R.string.capture__start_manual_button_text));
         } else {
             mStartButton.setText(getString(R.string.capture__start_countdown_button_text));
@@ -379,7 +381,8 @@ public class CaptureFragment extends Fragment {
                         kickoffManualCapture();
                     } else {
                         // Update title.
-                        mTitle.setText(String.format(getString(R.string.capture__title_frame), mFrameIndex + 1));
+                        mTitle.setText(String.format(getString(R.string.capture__title_frame), mFrameIndex + 1,
+                                mFramesTotal));
 
                         kickoffCountdownCapture();
                     }
@@ -842,9 +845,9 @@ public class CaptureFragment extends Fragment {
             mFrameIndex++;
 
             // Check if we need more frames.
-            if (mFrameIndex < TOTAL_FRAMES_TO_CAPTURE) {
+            if (mFrameIndex < mFramesTotal) {
                 // Update title.
-                mTitle.setText(String.format(getString(R.string.capture__title_frame), mFrameIndex + 1));
+                mTitle.setText(String.format(getString(R.string.capture__title_frame), mFrameIndex + 1, mFramesTotal));
 
                 // Restart preview.
                 if (mCamera != null && mPreview != null) {

@@ -74,10 +74,21 @@ public class ShareController extends BaseController {
                  * Create an image bitmap from Jpeg data.
                  */
                 Bundle bundle = msg.getData();
-                byte[] jpegData0 = bundle.getByteArray(ShareFragment.MESSAGE_BUNDLE_KEY_JPEG_DATA_0);
-                byte[] jpegData1 = bundle.getByteArray(ShareFragment.MESSAGE_BUNDLE_KEY_JPEG_DATA_1);
-                byte[] jpegData2 = bundle.getByteArray(ShareFragment.MESSAGE_BUNDLE_KEY_JPEG_DATA_2);
-                byte[] jpegData3 = bundle.getByteArray(ShareFragment.MESSAGE_BUNDLE_KEY_JPEG_DATA_3);
+
+                int jpegDataLength = 0;
+                for (int i = 0; i < ShareFragment.MESSAGE_BUNDLE_KEY_JPEG_DATA.length; i++) {
+                    if (bundle.containsKey(ShareFragment.MESSAGE_BUNDLE_KEY_JPEG_DATA[i])) {
+                        jpegDataLength++;
+                    } else {
+                        break;
+                    }
+                }
+
+                byte[][] jpegData = new byte[jpegDataLength][];
+                for (int i = 0; i < jpegDataLength; i++) {
+                    jpegData[i] = bundle.getByteArray(ShareFragment.MESSAGE_BUNDLE_KEY_JPEG_DATA[i]);
+                }
+
                 float rotation = bundle.getFloat(ShareFragment.MESSAGE_BUNDLE_KEY_ROTATION);
                 boolean reflection = bundle.getBoolean(ShareFragment.MESSAGE_BUNDLE_KEY_REFLECTION);
                 String filterPref = bundle.getString(ShareFragment.MESSAGE_BUNDLE_KEY_FILTER);
@@ -86,41 +97,38 @@ public class ShareController extends BaseController {
                 int thumbMaxHeight = bundle.getInt(ShareFragment.MESSAGE_BUNDLE_KEY_MAX_THUMB_HEIGHT);
 
                 // Select filter.
-                ImageFilter filter0 = null;
-                ImageFilter filter1 = null;
-                ImageFilter filter2 = null;
-                ImageFilter filter3 = null;
+                ImageFilter[] filters = new ImageFilter[ShareFragment.MESSAGE_BUNDLE_KEY_JPEG_DATA.length];
                 if (filterPref.equals(context.getString(R.string.pref__filter_bw))) {
-                    filter0 = new BlackAndWhiteFilter();
-                    filter1 = new BlackAndWhiteFilter();
-                    filter2 = new BlackAndWhiteFilter();
-                    filter3 = new BlackAndWhiteFilter();
+                    filters[0] = new BlackAndWhiteFilter();
+                    filters[1] = new BlackAndWhiteFilter();
+                    filters[2] = new BlackAndWhiteFilter();
+                    filters[3] = new BlackAndWhiteFilter();
                 } else if (filterPref.equals(context.getString(R.string.pref__filter_bw_mixed))) {
                     if (arrangementPref.equals(context.getString(R.string.pref__arrangement_box))) {
-                        filter1 = new BlackAndWhiteFilter();
-                        filter2 = new BlackAndWhiteFilter();
+                        filters[1] = new BlackAndWhiteFilter();
+                        filters[2] = new BlackAndWhiteFilter();
                     } else {
-                        filter1 = new BlackAndWhiteFilter();
-                        filter3 = new BlackAndWhiteFilter();
+                        filters[1] = new BlackAndWhiteFilter();
+                        filters[3] = new BlackAndWhiteFilter();
                     }
                 } else if (filterPref.equals(context.getString(R.string.pref__filter_sepia))) {
-                    filter0 = new SepiaFilter();
-                    filter1 = new SepiaFilter();
-                    filter2 = new SepiaFilter();
-                    filter3 = new SepiaFilter();
+                    filters[0] = new SepiaFilter();
+                    filters[1] = new SepiaFilter();
+                    filters[2] = new SepiaFilter();
+                    filters[3] = new SepiaFilter();
                 } else if (filterPref.equals(context.getString(R.string.pref__filter_sepia_mixed))) {
                     if (arrangementPref.equals(context.getString(R.string.pref__arrangement_box))) {
-                        filter1 = new SepiaFilter();
-                        filter2 = new SepiaFilter();
+                        filters[1] = new SepiaFilter();
+                        filters[2] = new SepiaFilter();
                     } else {
-                        filter1 = new SepiaFilter();
-                        filter3 = new SepiaFilter();
+                        filters[1] = new SepiaFilter();
+                        filters[3] = new SepiaFilter();
                     }
                 } else if (filterPref.equals(context.getString(R.string.pref__filter_line_art))) {
-                    filter0 = new LineArtFilter();
-                    filter1 = new LineArtFilter();
-                    filter2 = new LineArtFilter();
-                    filter3 = new LineArtFilter();
+                    filters[0] = new LineArtFilter();
+                    filters[1] = new LineArtFilter();
+                    filters[2] = new LineArtFilter();
+                    filters[3] = new LineArtFilter();
                 } else {
                     // No filter. Keep filter as null.
                 }
@@ -136,11 +144,10 @@ public class ShareController extends BaseController {
                 }
 
                 // Do the image processing.
-                Bitmap[] bitmaps = new Bitmap[4];
-                bitmaps[0] = ImageHelper.createImage(jpegData0, rotation, reflection, filter0);
-                bitmaps[1] = ImageHelper.createImage(jpegData1, rotation, reflection, filter1);
-                bitmaps[2] = ImageHelper.createImage(jpegData2, rotation, reflection, filter2);
-                bitmaps[3] = ImageHelper.createImage(jpegData3, rotation, reflection, filter3);
+                Bitmap[] bitmaps = new Bitmap[jpegDataLength];
+                for (int i = 0; i < jpegDataLength; i++) {
+                    bitmaps[i] = ImageHelper.createImage(jpegData[i], rotation, reflection, filters[i]);
+                }
 
                 mBitmap = ImageHelper.createPhotoStrip(bitmaps, arrangement);
 

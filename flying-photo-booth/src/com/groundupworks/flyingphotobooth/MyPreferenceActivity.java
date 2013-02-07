@@ -65,6 +65,8 @@ public class MyPreferenceActivity extends PreferenceActivity {
 
     private String mArrangementKey;
 
+    private String mNumPhotosKey;
+
     private String mFilterKey;
 
     private String mTriggerKey;
@@ -82,6 +84,8 @@ public class MyPreferenceActivity extends PreferenceActivity {
     //
 
     private ListPreference mArrangementPref;
+
+    private ListPreference mNumPhotosPref;
 
     private ListPreference mFilterPref;
 
@@ -108,6 +112,7 @@ public class MyPreferenceActivity extends PreferenceActivity {
 
         // Get preference keys.
         mArrangementKey = getString(R.string.pref__arrangement_key);
+        mNumPhotosKey = getString(R.string.pref__number_of_photos_key);
         mFilterKey = getString(R.string.pref__filter_key);
         mTriggerKey = getString(R.string.pref__trigger_key);
         mFacebookLinkKey = getString(R.string.pref__facebook_link_key);
@@ -117,6 +122,7 @@ public class MyPreferenceActivity extends PreferenceActivity {
 
         // Get preferences.
         mArrangementPref = (ListPreference) findPreference(mArrangementKey);
+        mNumPhotosPref = (ListPreference) findPreference(mNumPhotosKey);
         mFilterPref = (ListPreference) findPreference(mFilterKey);
         mTriggerPref = (ListPreference) findPreference(mTriggerKey);
         mFacebookLinkPref = (CheckBoxPreference) findPreference(mFacebookLinkKey);
@@ -124,7 +130,8 @@ public class MyPreferenceActivity extends PreferenceActivity {
 
         // Set summaries associated with selected options.
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        updateArrangementPref(preferences);
+        updateArrangementPrefAndDependents(preferences);
+        updateNumPhotosPref(preferences);
         updateFilterPref(preferences);
         updateTriggerPref(preferences);
         updateFacebookPref(preferences);
@@ -174,7 +181,9 @@ public class MyPreferenceActivity extends PreferenceActivity {
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
             if (key.equals(mArrangementKey)) {
-                updateArrangementPref(sharedPreferences);
+                updateArrangementPrefAndDependents(sharedPreferences);
+            } else if (key.equals(mNumPhotosKey)) {
+                updateNumPhotosPref(sharedPreferences);
             } else if (key.equals(mFilterKey)) {
                 updateFilterPref(sharedPreferences);
             } else if (key.equals(mTriggerKey)) {
@@ -192,12 +201,13 @@ public class MyPreferenceActivity extends PreferenceActivity {
     //
 
     /**
-     * Updates the summary for the arrangement preference.
+     * Updates the summary for the arrangement preference and the number of photos pref if the box arrangement is
+     * selected.
      * 
      * @param preferences
      *            the {@link SharedPreferences} storing the preference.
      */
-    private void updateArrangementPref(SharedPreferences preferences) {
+    private void updateArrangementPrefAndDependents(SharedPreferences preferences) {
         String summary = "";
         Resources res = getResources();
         String selectedOption = preferences.getString(mArrangementKey, getString(R.string.pref__arrangement_default));
@@ -210,6 +220,35 @@ public class MyPreferenceActivity extends PreferenceActivity {
         }
 
         mArrangementPref.setSummary(summary);
+
+        // If the box arrangement is selected, disable number of photos pref and set its value to 4.
+        boolean isBoxArrangement = selectedOption.equals(getString(R.string.pref__arrangement_box));
+        mArrangementPref.notifyDependencyChange(isBoxArrangement);
+        if (isBoxArrangement) {
+            mNumPhotosPref.setValue(getString(R.string.pref__number_of_photos_four));
+        }
+    }
+
+    /**
+     * Updates the summary for the number of photos preference.
+     * 
+     * @param preferences
+     *            the {@link SharedPreferences} storing the preference.
+     */
+    private void updateNumPhotosPref(SharedPreferences preferences) {
+        String summary = "";
+        Resources res = getResources();
+        String selectedOption = preferences
+                .getString(mNumPhotosKey, getString(R.string.pref__number_of_photos_default));
+
+        String[] options = res.getStringArray(R.array.pref__number_of_photos_options);
+        int index = findIndex(selectedOption, options);
+        if (index != -1) {
+            String[] summaries = res.getStringArray(R.array.pref__number_of_photos_options_summaries);
+            summary = summaries[index];
+        }
+
+        mNumPhotosPref.setSummary(summary);
     }
 
     /**

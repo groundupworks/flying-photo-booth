@@ -24,9 +24,22 @@
     <string name="pref__arrangement_vertical">Vertical</string>
     <string name="pref__arrangement_horizontal">Horizontal</string>
     <string name="pref__arrangement_box">Box</string>
-    <string name="pref__arrangement_vertical_summary">Vertical arrangement of 4 photos</string>
-    <string name="pref__arrangement_horizontal_summary">Horizontal arrangement of 4 photos</string>
-    <string name="pref__arrangement_box_summary">Box arrangement of 4 photos</string>
+    <string name="pref__arrangement_vertical_summary">Vertical photo strip</string>
+    <string name="pref__arrangement_horizontal_summary">Horizontal photo strip</string>
+    <string name="pref__arrangement_box_summary">Box photo strip</string>
+
+    <!-- Number of Photos Preference -->
+    <string name="pref__number_of_photos_key">pref__number_of_photos</string>
+    <string name="pref__number_of_photos_title">Number of photos</string>
+    <string name="pref__number_of_photos_default">4</string>
+    <string name="pref__number_of_photos_one">1</string>
+    <string name="pref__number_of_photos_two">2</string>
+    <string name="pref__number_of_photos_three">3</string>
+    <string name="pref__number_of_photos_four">4</string>
+    <string name="pref__number_of_photos_one_summary">Single photo</string>
+    <string name="pref__number_of_photos_two_summary">2 photos in a photo strip</string>
+    <string name="pref__number_of_photos_three_summary">3 photos in a photo strip</string>
+    <string name="pref__number_of_photos_four_summary">4 photos in a photo strip</string>
 
     <!-- Filter Preferences -->
     <string name="pref__filter_key">pref__filter</string>
@@ -86,7 +99,7 @@
     <string name="pref__dropbox_path_key">pref__dropbox_path</string>
 
     <!-- Capture Fragment -->
-    <string name="capture__title_frame">PHOTO %1$d OF 4</string>
+    <string name="capture__title_frame">PHOTO %1$d OF %2$d</string>
     <string name="capture__status_focusing">FOCUSING</string>
     <string name="capture__start_countdown_button_text">PRESS TO BEGIN</string>
     <string name="capture__start_manual_button_text">CAPTURE</string>

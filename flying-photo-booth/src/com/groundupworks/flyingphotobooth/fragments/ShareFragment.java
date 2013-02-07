@@ -50,29 +50,12 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
     // Fragment bundle keys.
     //
 
-    private static final String FRAGMENT_BUNDLE_KEY_JPEG_DATA_0 = "jpeg_data_0";
-
-    private static final String FRAGMENT_BUNDLE_KEY_JPEG_DATA_1 = "jpeg_data_1";
-
-    private static final String FRAGMENT_BUNDLE_KEY_JPEG_DATA_2 = "jpeg_data_2";
-
-    private static final String FRAGMENT_BUNDLE_KEY_JPEG_DATA_3 = "jpeg_data_3";
+    private static final String[] FRAGMENT_BUNDLE_KEY_JPEG_DATA = { "jpeg_data_0", "jpeg_data_1", "jpeg_data_2",
+            "jpeg_data_3" };
 
     private static final String FRAGMENT_BUNDLE_KEY_ROTATION = "rotation";
 
     private static final String FRAGMENT_BUNDLE_KEY_REFLECTION = "reflection";
-
-    //
-    // Jpeg data indices.
-    //
-
-    private static final int JPEG_DATA_INDEX_0 = 0;
-
-    private static final int JPEG_DATA_INDEX_1 = 1;
-
-    private static final int JPEG_DATA_INDEX_2 = 2;
-
-    private static final int JPEG_DATA_INDEX_3 = 3;
 
     //
     // Ui events. The controller should be notified of these events.
@@ -86,13 +69,7 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
     // Message bundle keys.
     //
 
-    public static final String MESSAGE_BUNDLE_KEY_JPEG_DATA_0 = FRAGMENT_BUNDLE_KEY_JPEG_DATA_0;
-
-    public static final String MESSAGE_BUNDLE_KEY_JPEG_DATA_1 = FRAGMENT_BUNDLE_KEY_JPEG_DATA_1;
-
-    public static final String MESSAGE_BUNDLE_KEY_JPEG_DATA_2 = FRAGMENT_BUNDLE_KEY_JPEG_DATA_2;
-
-    public static final String MESSAGE_BUNDLE_KEY_JPEG_DATA_3 = FRAGMENT_BUNDLE_KEY_JPEG_DATA_3;
+    public static final String[] MESSAGE_BUNDLE_KEY_JPEG_DATA = FRAGMENT_BUNDLE_KEY_JPEG_DATA;
 
     public static final String MESSAGE_BUNDLE_KEY_ROTATION = FRAGMENT_BUNDLE_KEY_ROTATION;
 
@@ -151,10 +128,21 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
          * Get params.
          */
         Bundle args = getArguments();
-        byte[] jpegData0 = args.getByteArray(FRAGMENT_BUNDLE_KEY_JPEG_DATA_0);
-        byte[] jpegData1 = args.getByteArray(FRAGMENT_BUNDLE_KEY_JPEG_DATA_1);
-        byte[] jpegData2 = args.getByteArray(FRAGMENT_BUNDLE_KEY_JPEG_DATA_2);
-        byte[] jpegData3 = args.getByteArray(FRAGMENT_BUNDLE_KEY_JPEG_DATA_3);
+
+        int jpegDataLength = 0;
+        for (int i = 0; i < FRAGMENT_BUNDLE_KEY_JPEG_DATA.length; i++) {
+            if (args.containsKey(FRAGMENT_BUNDLE_KEY_JPEG_DATA[i])) {
+                jpegDataLength++;
+            } else {
+                break;
+            }
+        }
+
+        byte[][] jpegData = new byte[jpegDataLength][];
+        for (int i = 0; i < jpegDataLength; i++) {
+            jpegData[i] = args.getByteArray(FRAGMENT_BUNDLE_KEY_JPEG_DATA[i]);
+        }
+
         float rotation = args.getFloat(FRAGMENT_BUNDLE_KEY_ROTATION);
         boolean reflection = args.getBoolean(FRAGMENT_BUNDLE_KEY_REFLECTION);
 
@@ -224,10 +212,9 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
         Message msg = Message.obtain();
         msg.what = IMAGE_VIEW_READY;
         Bundle bundle = new Bundle();
-        bundle.putByteArray(MESSAGE_BUNDLE_KEY_JPEG_DATA_0, jpegData0);
-        bundle.putByteArray(MESSAGE_BUNDLE_KEY_JPEG_DATA_1, jpegData1);
-        bundle.putByteArray(MESSAGE_BUNDLE_KEY_JPEG_DATA_2, jpegData2);
-        bundle.putByteArray(MESSAGE_BUNDLE_KEY_JPEG_DATA_3, jpegData3);
+        for (int i = 0; i < jpegDataLength; i++) {
+            bundle.putByteArray(MESSAGE_BUNDLE_KEY_JPEG_DATA[i], jpegData[i]);
+        }
         bundle.putFloat(MESSAGE_BUNDLE_KEY_ROTATION, rotation);
         bundle.putBoolean(MESSAGE_BUNDLE_KEY_REFLECTION, reflection);
         bundle.putString(MESSAGE_BUNDLE_KEY_FILTER, filterPref);
@@ -334,10 +321,9 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
         ShareFragment fragment = new ShareFragment();
 
         Bundle args = new Bundle();
-        args.putByteArray(FRAGMENT_BUNDLE_KEY_JPEG_DATA_0, jpegData[JPEG_DATA_INDEX_0]);
-        args.putByteArray(FRAGMENT_BUNDLE_KEY_JPEG_DATA_1, jpegData[JPEG_DATA_INDEX_1]);
-        args.putByteArray(FRAGMENT_BUNDLE_KEY_JPEG_DATA_2, jpegData[JPEG_DATA_INDEX_2]);
-        args.putByteArray(FRAGMENT_BUNDLE_KEY_JPEG_DATA_3, jpegData[JPEG_DATA_INDEX_3]);
+        for (int i = 0; i < jpegData.length; i++) {
+            args.putByteArray(FRAGMENT_BUNDLE_KEY_JPEG_DATA[i], jpegData[i]);
+        }
         args.putFloat(FRAGMENT_BUNDLE_KEY_ROTATION, rotation);
         args.putBoolean(FRAGMENT_BUNDLE_KEY_REFLECTION, reflection);
         fragment.setArguments(args);
