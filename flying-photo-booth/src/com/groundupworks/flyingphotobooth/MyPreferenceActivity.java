@@ -201,8 +201,7 @@ public class MyPreferenceActivity extends PreferenceActivity {
     //
 
     /**
-     * Updates the summary for the arrangement preference and the number of photos pref if the box arrangement is
-     * selected.
+     * Updates the summary for the arrangement and the number of photos preferences.
      * 
      * @param preferences
      *            the {@link SharedPreferences} storing the preference.
@@ -223,7 +222,7 @@ public class MyPreferenceActivity extends PreferenceActivity {
 
         // If the box arrangement is selected, disable number of photos pref and set its value to 4.
         boolean isBoxArrangement = selectedOption.equals(getString(R.string.pref__arrangement_box));
-        mArrangementPref.notifyDependencyChange(isBoxArrangement);
+        mNumPhotosPref.setEnabled(!isBoxArrangement);
         if (isBoxArrangement) {
             mNumPhotosPref.setValue(getString(R.string.pref__number_of_photos_four));
         }

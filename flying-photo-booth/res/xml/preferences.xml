@@ -15,7 +15,6 @@
             android:title="@string/pref__arrangement_title" />
         <ListPreference
             android:defaultValue="@string/pref__number_of_photos_default"
-            android:dependency="@string/pref__arrangement_key"
             android:dialogTitle="@string/pref__number_of_photos_title"
             android:entries="@array/pref__number_of_photos_options"
             android:entryValues="@array/pref__number_of_photos_options"
