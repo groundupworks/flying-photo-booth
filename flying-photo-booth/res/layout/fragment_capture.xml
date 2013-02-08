@@ -14,22 +14,10 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/titlebar_color" >
-
-            <TextView
-                android:id="@+id/status"
-                style="@style/TitleText.Button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:ellipsize="end"
-                android:padding="12dip"
-                android:singleLine="true" />
+            android:background="@color/background_color" >
 
             <ImageButton
                 android:id="@+id/preferences_button"
-                style="@style/TitleText.Button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
@@ -40,7 +28,6 @@
 
             <ImageButton
                 android:id="@+id/switch_button"
-                style="@style/TitleText.Button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
@@ -52,12 +39,12 @@
 
             <TextView
                 android:id="@+id/title"
-                style="@style/TitleText"
+                style="@style/Text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
-                android:layout_toLeftOf="@id/status"
+                android:layout_toLeftOf="@id/switch_button"
                 android:ellipsize="end"
                 android:padding="12dip"
                 android:singleLine="true" />
@@ -85,7 +72,7 @@
 
                 <TextView
                     android:id="@+id/countdown_three"
-                    style="@style/CountdownText"
+                    style="@style/Text.Countdown"
                     android:layout_width="0dip"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -93,7 +80,7 @@
                     android:text="@string/capture__countdown_three" />
 
                 <TextView
-                    style="@style/CountdownText"
+                    style="@style/Text.Countdown"
                     android:layout_width="0dip"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -102,7 +89,7 @@
 
                 <TextView
                     android:id="@+id/countdown_two"
-                    style="@style/CountdownText"
+                    style="@style/Text.Countdown"
                     android:layout_width="0dip"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -110,7 +97,7 @@
                     android:text="@string/capture__countdown_two" />
 
                 <TextView
-                    style="@style/CountdownText"
+                    style="@style/Text.Countdown"
                     android:layout_width="0dip"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -119,7 +106,7 @@
 
                 <TextView
                     android:id="@+id/countdown_one"
-                    style="@style/CountdownText"
+                    style="@style/Text.Countdown"
                     android:layout_width="0dip"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -131,7 +118,7 @@
 
             <Button
                 android:id="@+id/start_button"
-                style="@style/Button"
+                style="@style/Text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
@@ -162,7 +149,7 @@
 
         <TextView
             android:id="@+id/review_status"
-            style="@style/DefaultText.Lt.Large"
+            style="@style/Text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"

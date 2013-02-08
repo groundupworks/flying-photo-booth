@@ -189,8 +189,6 @@ public class CaptureFragment extends Fragment {
 
     private TextView mTitle;
 
-    private TextView mStatus;
-
     private ImageButton mPreferencesButton;
 
     private ImageButton mSwitchButton;
@@ -262,7 +260,6 @@ public class CaptureFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_capture, container, false);
 
         mTitle = (TextView) view.findViewById(R.id.title);
-        mStatus = (TextView) view.findViewById(R.id.status);
         mPreferencesButton = (ImageButton) view.findViewById(R.id.preferences_button);
         mSwitchButton = (ImageButton) view.findViewById(R.id.switch_button);
         mPreview = (CenteredPreview) view.findViewById(R.id.preview);
@@ -506,8 +503,6 @@ public class CaptureFragment extends Fragment {
 
         @Override
         public void onAutoFocus(boolean success, Camera camera) {
-            mStatus.setText("");
-
             // Capture frame.
             if (mTriggerMode == TRIGGER_MODE_MANUAL) {
                 takePicture();
@@ -528,7 +523,7 @@ public class CaptureFragment extends Fragment {
 
                 // Setup review overlay for user to review captured frame.
                 mReviewStatus.setText(getString(R.string.capture__review_instructions));
-                mReviewStatus.setTextColor(getResources().getColor(R.color.lt_text_color));
+                mReviewStatus.setTextColor(getResources().getColor(R.color.text_color));
                 Bitmap bitmap = ImageHelper.createImage(data, mPreviewDisplayOrientation, mIsReflected, null);
                 mReviewImage.setImageBitmap(bitmap);
 
@@ -676,7 +671,7 @@ public class CaptureFragment extends Fragment {
             mCountdown.setVisibility(View.INVISIBLE);
 
             // Reset colors.
-            int color = getResources().getColor(R.color.lt_text_color);
+            int color = getResources().getColor(R.color.text_color);
             mCountdownOne.setTextColor(color);
             mCountdownTwo.setTextColor(color);
             mCountdownThree.setTextColor(color);
@@ -688,10 +683,6 @@ public class CaptureFragment extends Fragment {
      */
     private void kickoffManualCapture() {
         // Kick off auto-focus and indicate status.
-        if (mStatus != null) {
-            mStatus.setText(String.format(getString(R.string.capture__status_focusing)));
-        }
-
         if (mCamera != null) {
             mCamera.autoFocus(new MyAutoFocusCallback());
         }
@@ -721,10 +712,6 @@ public class CaptureFragment extends Fragment {
                                     }
 
                                     // Kick off auto-focus and indicate status.
-                                    if (mStatus != null) {
-                                        mStatus.setText(String.format(getString(R.string.capture__status_focusing)));
-                                    }
-
                                     if (mCamera != null) {
                                         mCamera.autoFocus(new MyAutoFocusCallback());
                                     }
