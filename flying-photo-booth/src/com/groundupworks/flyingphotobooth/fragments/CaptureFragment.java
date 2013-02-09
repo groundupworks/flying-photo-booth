@@ -352,9 +352,9 @@ public class CaptureFragment extends Fragment {
         }
 
         // Configure title and start button text.
+        mTitle.setText(String.format(getString(R.string.capture__title_frame), mFrameIndex + 1, mFramesTotal));
         if (mTriggerMode == TRIGGER_MODE_MANUAL) {
             // Update title.
-            mTitle.setText(String.format(getString(R.string.capture__title_frame), mFrameIndex + 1, mFramesTotal));
             mStartButton.setText(getString(R.string.capture__start_manual_button_text));
         } else {
             mStartButton.setText(getString(R.string.capture__start_countdown_button_text));
@@ -377,10 +377,6 @@ public class CaptureFragment extends Fragment {
                     if (mTriggerMode == TRIGGER_MODE_MANUAL) {
                         kickoffManualCapture();
                     } else {
-                        // Update title.
-                        mTitle.setText(String.format(getString(R.string.capture__title_frame), mFrameIndex + 1,
-                                mFramesTotal));
-
                         kickoffCountdownCapture();
                     }
                 }

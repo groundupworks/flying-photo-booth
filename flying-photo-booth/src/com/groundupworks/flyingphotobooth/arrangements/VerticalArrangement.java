@@ -18,7 +18,6 @@ package com.groundupworks.flyingphotobooth.arrangements;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Paint;
 import com.groundupworks.flyingphotobooth.helpers.ImageHelper;
 
 /**
@@ -41,9 +40,10 @@ public class VerticalArrangement extends BaseArrangement {
 
         returnBitmap = Bitmap.createBitmap(returnBitmapWidth, returnBitmapHeight, ImageHelper.BITMAP_CONFIG);
         if (returnBitmap != null) {
-            // Create canvas to draw on return bitmap.
+            // Create canvas and draw photo strip.
             Canvas canvas = new Canvas(returnBitmap);
             canvas.drawColor(Color.WHITE);
+            drawPhotoStripBorders(canvas, 0, 0, returnBitmapWidth - 1, returnBitmapHeight - 1);
 
             // Draw each bitmap.
             int i = 0;
@@ -53,17 +53,9 @@ public class VerticalArrangement extends BaseArrangement {
                 int right = left + srcBitmapWidth - 1;
                 int bottom = top + srcBitmapHeight - 1;
 
-                // Draw bitmaps.
+                // Draw panel.
                 canvas.drawBitmap(bitmap, left, top, null);
-
-                // Draw panel borders.
-                Paint paint = new Paint();
-
-                paint.setColor(Color.DKGRAY);
-                drawRectOutline(canvas, left, top, right, bottom, paint);
-
-                paint.setColor(Color.LTGRAY);
-                drawRectOutline(canvas, left - 1, top - 1, right + 1, bottom + 1, paint);
+                drawPanelBorders(canvas, left, top, right, bottom);
 
                 i++;
             }

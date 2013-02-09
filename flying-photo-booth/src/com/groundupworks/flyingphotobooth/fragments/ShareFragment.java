@@ -158,6 +158,7 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
         /*
          * Functionalize views.
          */
+        mShareButton.setEnabled(false);
         mShareButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -283,7 +284,7 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
                 imageView.setImageBitmap(thumbBitmap);
                 break;
             case ShareController.JPEG_SAVED:
-                mShareButton.setVisibility(View.VISIBLE);
+                mShareButton.setEnabled(true);
                 mDropboxButton.setVisibility(View.VISIBLE);
                 mFacebookButton.setVisibility(View.VISIBLE);
                 if (BeamHelper.supportsBeam(appContext)) {

@@ -16,6 +16,7 @@
 package com.groundupworks.flyingphotobooth.arrangements;
 
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import com.groundupworks.flyingphotobooth.helpers.ImageHelper.Arrangement;
 
@@ -34,6 +35,50 @@ public abstract class BaseArrangement implements Arrangement {
     //
     // Private methods.
     //
+
+    /**
+     * Draws the border for the photo strip.
+     * 
+     * @param canvas
+     *            the canvas to draw on.
+     * @param left
+     *            the left side of the photo strip.
+     * @param top
+     *            the top of the photo strip.
+     * @param right
+     *            the right side of the photo strip.
+     * @param bottom
+     *            the bottom of the photo strip.
+     */
+    protected static void drawPhotoStripBorders(Canvas canvas, float left, float top, float right, float bottom) {
+        Paint paint = new Paint();
+        paint.setColor(Color.DKGRAY);
+        drawRectOutline(canvas, left, top, right, bottom, paint);
+    }
+
+    /**
+     * Draws the border for a panel.
+     * 
+     * @param canvas
+     *            the canvas to draw on.
+     * @param left
+     *            the left side of the panel.
+     * @param top
+     *            the top of the panel.
+     * @param right
+     *            the right side of the panel.
+     * @param bottom
+     *            the bottom of the panel.
+     */
+    protected static void drawPanelBorders(Canvas canvas, float left, float top, float right, float bottom) {
+        Paint paint = new Paint();
+
+        paint.setColor(Color.DKGRAY);
+        drawRectOutline(canvas, left, top, right, bottom, paint);
+
+        paint.setColor(Color.LTGRAY);
+        drawRectOutline(canvas, left - 1, top - 1, right + 1, bottom + 1, paint);
+    }
 
     /**
      * Draws the outline of a rectangle.

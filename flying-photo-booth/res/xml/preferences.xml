@@ -16,6 +16,7 @@
         <ListPreference
             android:defaultValue="@string/pref__number_of_photos_default"
             android:dialogTitle="@string/pref__number_of_photos_title"
+            android:enabled="false"
             android:entries="@array/pref__number_of_photos_options"
             android:entryValues="@array/pref__number_of_photos_options"
             android:key="@string/pref__number_of_photos_key"
