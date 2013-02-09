@@ -26,7 +26,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import com.groundupworks.flyingphotobooth.fragments.CaptureFragment;
-import com.groundupworks.flyingphotobooth.fragments.StorageErrorDialogFragment;
+import com.groundupworks.flyingphotobooth.fragments.ErrorDialogFragment;
 import com.groundupworks.flyingphotobooth.helpers.StorageHelper;
 
 /**
@@ -49,7 +49,7 @@ public class LaunchActivity extends FragmentActivity {
     /**
      * Reference to the storage error dialog if shown.
      */
-    private StorageErrorDialogFragment mStorageError = null;
+    private ErrorDialogFragment mStorageError = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,8 +76,17 @@ public class LaunchActivity extends FragmentActivity {
             @Override
             public void run() {
                 if (!StorageHelper.isExternalStorageAvailable()) {
-                    mStorageError = StorageErrorDialogFragment.newInstance();
-                    showDialogFragment(mStorageError);
+                    runOnUiThread(new Runnable() {
+                        public void run() {
+                            if (!isFinishing()) {
+                                String title = getString(R.string.launch__error_storage_dialog_title);
+                                String message = getString(R.string.launch__error_storage_dialog_message);
+
+                                mStorageError = ErrorDialogFragment.newInstance(title, message);
+                                showDialogFragment(mStorageError);
+                            }
+                        }
+                    });
                 }
             }
         });

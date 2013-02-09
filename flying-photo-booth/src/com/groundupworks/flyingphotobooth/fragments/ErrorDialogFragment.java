@@ -26,15 +26,23 @@ import android.support.v4.app.DialogFragment;
 import com.groundupworks.flyingphotobooth.R;
 
 /**
- * Storage error dialog.
+ * A blocking error dialog that requires the user to exit the application.
  * 
  * @author Benedict Lau
  */
-public class StorageErrorDialogFragment extends DialogFragment {
+public class ErrorDialogFragment extends DialogFragment {
+
+    private static final String FRAGMENT_BUNDLE_KEY_TITLE = "title";
+
+    private static final String FRAGMENT_BUNDLE_KEY_MESSAGE = "message";
 
     @SuppressLint("NewApi")
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+        Bundle args = getArguments();
+        String title = args.getString(FRAGMENT_BUNDLE_KEY_TITLE);
+        String message = args.getString(FRAGMENT_BUNDLE_KEY_MESSAGE);
+
         AlertDialog.Builder dialogBuilder = null;
 
         // AlertDialog.THEME_DEVICE_DEFAULT_LIGHT only available in ICS and above.
@@ -44,9 +52,8 @@ public class StorageErrorDialogFragment extends DialogFragment {
             dialogBuilder = new AlertDialog.Builder(getActivity());
         }
 
-        return dialogBuilder.setTitle(getString(R.string.storage_error__dialog_title))
-                .setMessage(R.string.storage_error__dialog_message)
-                .setPositiveButton(R.string.storage_error__dialog_button_text, new DialogInterface.OnClickListener() {
+        return dialogBuilder.setTitle(title).setMessage(message)
+                .setPositiveButton(R.string.error__dialog_button_text, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int whichButton) {
                         Activity activity = getActivity();
@@ -62,13 +69,23 @@ public class StorageErrorDialogFragment extends DialogFragment {
     //
 
     /**
-     * Creates a new {@link StorageErrorDialogFragment} instance.
+     * Creates a new {@link ErrorDialogFragment} instance.
      * 
-     * @return the new {@link StorageErrorDialogFragment} instance.
+     * @param title
+     *            the title of the error dialog.
+     * @param message
+     *            the message of the error dialog.
+     * @return the new {@link ErrorDialogFragment} instance.
      */
-    public static StorageErrorDialogFragment newInstance() {
-        StorageErrorDialogFragment fragment = new StorageErrorDialogFragment();
+    public static ErrorDialogFragment newInstance(String title, String message) {
+        ErrorDialogFragment fragment = new ErrorDialogFragment();
         fragment.setCancelable(false);
+
+        Bundle args = new Bundle();
+        args.putString(FRAGMENT_BUNDLE_KEY_TITLE, title);
+        args.putString(FRAGMENT_BUNDLE_KEY_MESSAGE, message);
+        fragment.setArguments(args);
+
         return fragment;
     }
 }

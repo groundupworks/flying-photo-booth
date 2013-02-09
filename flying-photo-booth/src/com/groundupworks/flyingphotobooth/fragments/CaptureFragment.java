@@ -396,9 +396,10 @@ public class CaptureFragment extends Fragment {
         /*
          * Reload the fragment if resuming from onPause().
          */
+        LaunchActivity activity = (LaunchActivity) getActivity();
         if (mOnPauseCalled) {
             // Relaunch fragment with new camera.
-            ((LaunchActivity) getActivity()).replaceFragment(CaptureFragment.newInstance(mUseFrontFacing), false, true);
+            activity.replaceFragment(CaptureFragment.newInstance(mUseFrontFacing), false, true);
         } else {
             if (mCameraId != INVALID_CAMERA_ID) {
                 try {
@@ -452,16 +453,18 @@ public class CaptureFragment extends Fragment {
                     /*
                      * Setup preview.
                      */
-                    Activity activity = getActivity();
                     mPreviewDisplayOrientation = CameraHelper.getCameraScreenOrientation(activity, mCameraId);
                     mCamera.setDisplayOrientation(mPreviewDisplayOrientation);
                     mPreview.setCamera(mCamera, mPreviewDisplayOrientation);
                 } catch (RuntimeException e) {
-                    Toast.makeText(getActivity(), getString(R.string.capture__error_camera_in_use), Toast.LENGTH_SHORT)
-                            .show();
+                    String title = getString(R.string.capture__error_camera_dialog_title);
+                    String message = getString(R.string.capture__error_camera_dialog_message_in_use);
+                    activity.showDialogFragment(ErrorDialogFragment.newInstance(title, message));
                 }
             } else {
-                Toast.makeText(getActivity(), getString(R.string.capture__error_no_camera), Toast.LENGTH_SHORT).show();
+                String title = getString(R.string.capture__error_camera_dialog_title);
+                String message = getString(R.string.capture__error_camera_dialog_message_none);
+                activity.showDialogFragment(ErrorDialogFragment.newInstance(title, message));
             }
         }
     }
