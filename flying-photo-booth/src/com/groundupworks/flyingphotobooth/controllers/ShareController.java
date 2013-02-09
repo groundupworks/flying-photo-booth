@@ -56,8 +56,6 @@ public class ShareController extends BaseController {
 
     public static final int JPEG_SAVED = 1;
 
-    private Bitmap mBitmap = null;
-
     private Bitmap mThumb = null;
 
     //
@@ -149,7 +147,7 @@ public class ShareController extends BaseController {
                     bitmaps[i] = ImageHelper.createImage(jpegData[i], rotation, reflection, filters[i]);
                 }
 
-                mBitmap = ImageHelper.createPhotoStrip(bitmaps, arrangement);
+                Bitmap photoStrip = ImageHelper.createPhotoStrip(bitmaps, arrangement);
 
                 // Recycle original bitmaps.
                 for (Bitmap bitmap : bitmaps) {
@@ -158,11 +156,11 @@ public class ShareController extends BaseController {
                 bitmaps = null;
 
                 // Notify ui.
-                if (mBitmap != null) {
+                if (photoStrip != null) {
                     // Create thumbnail.
-                    Point fittedSize = ImageHelper.getAspectFitSize(thumbMaxWidth, thumbMaxHeight, mBitmap.getWidth(),
-                            mBitmap.getHeight());
-                    mThumb = Bitmap.createScaledBitmap(mBitmap, fittedSize.x, fittedSize.y, true);
+                    Point fittedSize = ImageHelper.getAspectFitSize(thumbMaxWidth, thumbMaxHeight,
+                            photoStrip.getWidth(), photoStrip.getHeight());
+                    mThumb = Bitmap.createScaledBitmap(photoStrip, fittedSize.x, fittedSize.y, true);
                     if (mThumb != null) {
                         // Thumbnail bitmap is ready.
                         Message uiMsg = Message.obtain();
@@ -189,7 +187,7 @@ public class ShareController extends BaseController {
                         final OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(file));
 
                         // Convert to Jpeg and writes to file.
-                        boolean isSuccessful = ImageHelper.toJpegOutputStream(mBitmap, outputStream);
+                        boolean isSuccessful = ImageHelper.toJpegOutputStream(photoStrip, outputStream);
                         outputStream.flush();
                         outputStream.close();
 
@@ -211,15 +209,20 @@ public class ShareController extends BaseController {
                 } catch (IOException e) {
                     reportError();
                 }
+
+                /*
+                 * Recycle photo strip bitmap.
+                 */
+                if (photoStrip != null) {
+                    photoStrip.recycle();
+                    photoStrip = null;
+                }
+
                 break;
             case ShareFragment.FRAGMENT_DESTROYED:
                 /*
-                 * Recycle bitmaps.
+                 * Recycle thumb bitmap.
                  */
-                if (mBitmap != null) {
-                    mBitmap.recycle();
-                    mBitmap = null;
-                }
                 if (mThumb != null) {
                     mThumb.recycle();
                     mThumb = null;
