@@ -22,7 +22,7 @@
         android:layout_toLeftOf="@id/share_button"
         android:background="@drawable/selector_titlebar_button"
         android:padding="12dip"
-        android:src="@drawable/selector_button_facebook"
+        android:src="@drawable/selector_button_dropbox"
         android:visibility="gone" />
 
     <ImageButton
@@ -33,7 +33,7 @@
         android:layout_toLeftOf="@id/dropbox_button"
         android:background="@drawable/selector_titlebar_button"
         android:padding="12dip"
-        android:src="@drawable/selector_button_dropbox"
+        android:src="@drawable/selector_button_facebook"
         android:visibility="gone" />
 
     <ImageButton
