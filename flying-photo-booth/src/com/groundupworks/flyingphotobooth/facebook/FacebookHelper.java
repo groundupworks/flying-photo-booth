@@ -15,6 +15,11 @@
  */
 package com.groundupworks.flyingphotobooth.facebook;
 
+/**
+ * A helper class for using functionalities from the Facebook SDK.
+ * 
+ * @author Benedict Lau
+ */
 public class FacebookHelper {
     // Facebook.
     // Session session = Session.getActiveSession();

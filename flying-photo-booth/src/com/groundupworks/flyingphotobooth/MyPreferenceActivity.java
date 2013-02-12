@@ -17,6 +17,7 @@ package com.groundupworks.flyingphotobooth;
 
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
@@ -29,6 +30,7 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
+import com.groundupworks.flyingphotobooth.dropbox.DropboxHelper;
 
 /**
  * The {@link Activity} to configure user preferences.
@@ -45,14 +47,15 @@ public class MyPreferenceActivity extends PreferenceActivity {
 
     private static final String MOCK_FACEBOOK_PATH = "Wall";
 
-    private static final String MOCK_DROPBOX_ACCOUNT_NAME = "ben.hy.lau@gmail.com";
-
-    private static final String MOCK_DROPBOX_PATH = "Public/Photos/";
-
     /**
      * Base uri for Google Play.
      */
     private static final String GOOGLE_PLAY_BASE_URI = "market://details?id=";
+
+    /**
+     * A {@link DropboxHelper}.
+     */
+    private DropboxHelper mDropboxHelper = new DropboxHelper();
 
     /**
      * Listener for changes in preferences.
@@ -137,6 +140,22 @@ public class MyPreferenceActivity extends PreferenceActivity {
         updateFacebookPref(preferences);
         updateDropboxPref(preferences);
 
+        // Launch Dropbox link request when clicked.
+        mDropboxLinkPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference arg0) {
+                Context context = MyPreferenceActivity.this;
+                if (mDropboxHelper.isLinked(context)) {
+                    // Unlink from Dropbox.
+                    mDropboxHelper.unlink(context);
+                } else {
+                    // Start Dropbox link request.
+                    mDropboxHelper.startLinkRequest(context);
+                }
+                return false;
+            }
+        });
+
         // Launch rating page on Google Play when clicked.
         Preference button = (Preference) findPreference(getString(R.string.pref__rate_key));
         button.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
@@ -158,14 +177,24 @@ public class MyPreferenceActivity extends PreferenceActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        PreferenceManager.getDefaultSharedPreferences(getApplicationContext())
-                .registerOnSharedPreferenceChangeListener(mPrefChangeListener);
+
+        // Register listener to shared preferences.
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        preferences.registerOnSharedPreferenceChangeListener(mPrefChangeListener);
+
+        // Finish link request, if a link request was started.
+        if (mDropboxHelper.finishLinkRequest(this)) {
+            updateDropboxPref(preferences);
+        }
     }
 
     @Override
     protected void onPause() {
+
+        // Unregister listener to shared preferences.
         PreferenceManager.getDefaultSharedPreferences(getApplicationContext())
                 .unregisterOnSharedPreferenceChangeListener(mPrefChangeListener);
+
         super.onPause();
     }
 
@@ -191,6 +220,9 @@ public class MyPreferenceActivity extends PreferenceActivity {
             } else if (key.equals(mFacebookLinkKey) || key.equals(mFacebookAutoShareKey)) {
                 updateFacebookPref(sharedPreferences);
             } else if (key.equals(mDropboxLinkKey) || key.equals(mDropboxAutoShareKey)) {
+                updateDropboxPref(sharedPreferences);
+            } else if (key.equals(getString(R.string.dropbox__account_name_key))
+                    || key.equals(getString(R.string.dropbox__share_url_key))) {
                 updateDropboxPref(sharedPreferences);
             }
         }
@@ -348,9 +380,8 @@ public class MyPreferenceActivity extends PreferenceActivity {
         // Check if linked to Dropbox account.
         if (isLinked) {
             // Get account information.
-            String accountName = preferences.getString(getString(R.string.pref__dropbox_account_name_key),
-                    MOCK_DROPBOX_ACCOUNT_NAME);
-            String path = preferences.getString(getString(R.string.pref__dropbox_path_key), MOCK_DROPBOX_PATH);
+            String accountName = preferences.getString(getString(R.string.dropbox__account_name_key), null);
+            String path = preferences.getString(getString(R.string.dropbox__share_url_key), null);
             if (accountName != null && accountName.length() > 0 && path != null && path.length() > 0) {
                 // Select linked title and widget resource.
                 titleRes = R.string.pref__dropbox_link_title_linked;

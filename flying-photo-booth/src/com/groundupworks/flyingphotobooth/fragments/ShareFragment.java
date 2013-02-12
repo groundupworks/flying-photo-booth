@@ -15,6 +15,7 @@
  */
 package com.groundupworks.flyingphotobooth.fragments;
 
+import java.io.File;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -24,6 +25,7 @@ import android.graphics.Point;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
@@ -34,8 +36,10 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 import com.groundupworks.flyingphotobooth.LaunchActivity;
+import com.groundupworks.flyingphotobooth.MyApplication;
 import com.groundupworks.flyingphotobooth.R;
 import com.groundupworks.flyingphotobooth.controllers.ShareController;
+import com.groundupworks.flyingphotobooth.dropbox.DropboxHelper;
 import com.groundupworks.flyingphotobooth.helpers.BeamHelper;
 import com.groundupworks.flyingphotobooth.helpers.ImageHelper;
 
@@ -63,7 +67,11 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
 
     public static final int IMAGE_VIEW_READY = 0;
 
-    public static final int FRAGMENT_DESTROYED = 1;
+    public static final int FACEBOOK_SHARE_CLICKED = 1;
+
+    public static final int DROPBOX_SHARE_CLICKED = 2;
+
+    public static final int FRAGMENT_DESTROYED = 3;
 
     //
     // Message bundle keys.
@@ -173,21 +181,25 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
             }
         });
 
-        // FIXME
         mDropboxButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                v.setSelected(!v.isSelected());
+                // Notify controller the Dropbox share button is clicked.
+                Message msg = Message.obtain();
+                msg.what = DROPBOX_SHARE_CLICKED;
+                sendEvent(msg);
             }
         });
 
-        // FIXME
         mFacebookButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                v.setSelected(!v.isSelected());
+                // Notify controller the Facebook share button is clicked.
+                Message msg = Message.obtain();
+                msg.what = FACEBOOK_SHARE_CLICKED;
+                sendEvent(msg);
             }
         });
 
@@ -298,6 +310,19 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
                 // Request adding Jpeg to Android Gallery.
                 MediaScannerConnection.scanFile(appContext, new String[] { mJpegUri.getPath() },
                         new String[] { ImageHelper.JPEG_MIME_TYPE }, null);
+            case ShareController.FACEBOOK_SHARE_MARKED:
+                // TODO Kick off share service.
+                break;
+            case ShareController.DROPBOX_SHARE_MARKED:
+                // TODO Kick off share service.
+                Handler handler = new Handler(MyApplication.getWorkerLooper());
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        new DropboxHelper().share(getActivity().getApplicationContext(), new File(mJpegUri.getPath()));
+                    }
+                });
+                break;
             default:
                 break;
         }

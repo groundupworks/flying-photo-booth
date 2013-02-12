@@ -899,7 +899,7 @@ public class CaptureFragment extends Fragment {
      */
     private void saveCameraPreference(Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
-        preferences.edit().putBoolean(getString(R.string.pref__camera_key), mUseFrontFacing).commit();
+        preferences.edit().putBoolean(getString(R.string.pref__camera_key), mUseFrontFacing).apply();
     }
 
     //

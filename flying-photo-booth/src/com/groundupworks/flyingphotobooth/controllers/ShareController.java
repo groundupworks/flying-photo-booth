@@ -56,6 +56,10 @@ public class ShareController extends BaseController {
 
     public static final int JPEG_SAVED = 1;
 
+    public static final int FACEBOOK_SHARE_MARKED = 2;
+
+    public static final int DROPBOX_SHARE_MARKED = 3;
+
     private Bitmap mThumb = null;
 
     //
@@ -218,6 +222,30 @@ public class ShareController extends BaseController {
                     photoStrip = null;
                 }
 
+                break;
+            case ShareFragment.FACEBOOK_SHARE_CLICKED:
+                // TODO Mark in database.
+                boolean isFacebookShareMarked = true;
+                if (isFacebookShareMarked) {
+                    // Notify ui.
+                    Message uiMsg = Message.obtain();
+                    uiMsg.what = FACEBOOK_SHARE_MARKED;
+                    sendUiUpdate(uiMsg);
+                } else {
+                    reportError();
+                }
+                break;
+            case ShareFragment.DROPBOX_SHARE_CLICKED:
+                // TODO Mark in database.
+                boolean isDropboxShareMarked = true;
+                if (isDropboxShareMarked) {
+                    // Notify ui.
+                    Message uiMsg = Message.obtain();
+                    uiMsg.what = DROPBOX_SHARE_MARKED;
+                    sendUiUpdate(uiMsg);
+                } else {
+                    reportError();
+                }
                 break;
             case ShareFragment.FRAGMENT_DESTROYED:
                 /*
