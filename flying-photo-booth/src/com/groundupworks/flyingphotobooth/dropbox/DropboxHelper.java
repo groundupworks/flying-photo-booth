@@ -22,7 +22,9 @@ import java.io.IOException;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.widget.Toast;
 import com.dropbox.client2.DropboxAPI;
 import com.dropbox.client2.android.AndroidAuthSession;
 import com.dropbox.client2.exception.DropboxException;
@@ -30,6 +32,7 @@ import com.dropbox.client2.exception.DropboxUnlinkedException;
 import com.dropbox.client2.session.AccessTokenPair;
 import com.dropbox.client2.session.AppKeyPair;
 import com.dropbox.client2.session.Session.AccessType;
+import com.groundupworks.flyingphotobooth.MyApplication;
 import com.groundupworks.flyingphotobooth.R;
 
 /**
@@ -55,9 +58,18 @@ public class DropboxHelper {
     final static private AccessType ACCESS_TYPE = AccessType.APP_FOLDER;
 
     /**
-     * The Dropbox API.
+     * A lock object used to synchronize access on {@link #mDropboxApi}.
+     */
+    private Object mDropboxApiLock = new Object();
+
+    /**
+     * The Dropbox API. Access is synchronized on the {@link #mDropboxApiLock}.
      */
     private DropboxAPI<AndroidAuthSession> mDropboxApi = null;
+
+    //
+    // Private methods.
+    //
 
     /**
      * Requests the linked account name.
@@ -119,6 +131,9 @@ public class DropboxHelper {
         editor.putString(appContext.getString(R.string.dropbox__share_url_key), shareUrl);
         editor.putString(appContext.getString(R.string.dropbox__access_token_key_key), accessTokenKey);
         editor.putString(appContext.getString(R.string.dropbox__access_token_secret_key), accessTokenSecret);
+
+        // Set preference to linked.
+        editor.putBoolean(appContext.getString(R.string.pref__dropbox_link_key), true);
         editor.apply();
     }
 
@@ -135,6 +150,9 @@ public class DropboxHelper {
         editor.remove(appContext.getString(R.string.dropbox__share_url_key));
         editor.remove(appContext.getString(R.string.dropbox__access_token_key_key));
         editor.remove(appContext.getString(R.string.dropbox__access_token_secret_key));
+
+        // Set preference to unlinked.
+        editor.putBoolean(appContext.getString(R.string.pref__dropbox_link_key), false);
         editor.apply();
     }
 
@@ -171,12 +189,15 @@ public class DropboxHelper {
     public void startLinkRequest(Context context) {
         AppKeyPair appKeyPair = new AppKeyPair(APP_KEY, APP_SECRET);
         AndroidAuthSession session = new AndroidAuthSession(appKeyPair, ACCESS_TYPE);
-        mDropboxApi = new DropboxAPI<AndroidAuthSession>(session);
-        mDropboxApi.getSession().startAuthentication(context);
+        synchronized (mDropboxApiLock) {
+            mDropboxApi = new DropboxAPI<AndroidAuthSession>(session);
+            mDropboxApi.getSession().startAuthentication(context);
+        }
     }
 
     /**
-     * Finishes a link request. If successful, the Dropbox account params will be persisted.
+     * Finishes a link request.
+     * 
      * 
      * @param context
      *            the {@link Context}.
@@ -184,28 +205,63 @@ public class DropboxHelper {
      */
     public boolean finishLinkRequest(Context context) {
         boolean isSuccessful = false;
-        if (mDropboxApi != null) {
-            AndroidAuthSession session = mDropboxApi.getSession();
-            if (session.authenticationSuccessful()) {
-                try {
-                    // Set access token on the session.
-                    session.finishAuthentication();
 
-                    // Get account params.
-                    String accountName = requestAccountName(mDropboxApi);
-                    String shareUrl = requestShareUrl(mDropboxApi);
-                    AccessTokenPair accessTokenPair = session.getAccessTokenPair();
-                    if (accountName != null && shareUrl != null && accessTokenPair != null) {
-                        // Persist account params.
-                        storeAccountParams(context, accountName, shareUrl, accessTokenPair.key, accessTokenPair.secret);
+        synchronized (mDropboxApiLock) {
+            if (mDropboxApi != null) {
+                AndroidAuthSession session = mDropboxApi.getSession();
+                if (session.authenticationSuccessful()) {
+                    try {
+                        // Set access token on the session.
+                        session.finishAuthentication();
                         isSuccessful = true;
+                    } catch (IllegalStateException e) {
+                        // Do nothing.
                     }
-                } catch (IllegalStateException e) {
-                    // Do nothing.
                 }
             }
         }
         return isSuccessful;
+    }
+
+    /**
+     * Links an account in a background thread.
+     * 
+     * @param context
+     *            the {@link Context}.
+     */
+    public void link(Context context) {
+        synchronized (mDropboxApiLock) {
+            if (mDropboxApi != null) {
+                final Context appContext = context;
+                final DropboxAPI<AndroidAuthSession> dropboxApi = mDropboxApi;
+
+                Handler workerHandler = new Handler(MyApplication.getWorkerLooper());
+                workerHandler.post(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        String accountName = null;
+                        String shareUrl = null;
+                        AccessTokenPair accessTokenPair = null;
+
+                        // Request params.
+                        synchronized (mDropboxApiLock) {
+                            // Get account params.
+                            accountName = requestAccountName(dropboxApi);
+                            shareUrl = requestShareUrl(dropboxApi);
+                            accessTokenPair = dropboxApi.getSession().getAccessTokenPair();
+                        }
+
+                        // Persist account params.
+                        if (accountName != null && shareUrl != null && accessTokenPair != null) {
+                            storeAccountParams(appContext, accountName, shareUrl, accessTokenPair.key,
+                                    accessTokenPair.secret);
+                        }
+
+                    }
+                });
+            }
+        }
     }
 
     /**
@@ -219,13 +275,25 @@ public class DropboxHelper {
         removeAccountParams(context);
 
         // Unlink any current session.
-        if (mDropboxApi != null) {
-            AndroidAuthSession session = mDropboxApi.getSession();
-            if (session.isLinked()) {
-                session.unlink();
-                mDropboxApi = null;
+        synchronized (mDropboxApiLock) {
+            if (mDropboxApi != null) {
+                AndroidAuthSession session = mDropboxApi.getSession();
+                if (session.isLinked()) {
+                    session.unlink();
+                    mDropboxApi = null;
+                }
             }
         }
+    }
+
+    /**
+     * Displays the link error message.
+     * 
+     * @param context
+     *            the {@link Context}.
+     */
+    public void showLinkError(Context context) {
+        Toast.makeText(context, context.getString(R.string.dropbox__error_link), Toast.LENGTH_SHORT).show();
     }
 
     /**

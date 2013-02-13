@@ -96,6 +96,16 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
      */
     private Uri mJpegUri = null;
 
+    /**
+     * A {@link DropboxHelper}.
+     */
+    private DropboxHelper mDropboxHelper = new DropboxHelper();
+
+    /**
+     * Flag to track if a Dropbox link request is started.
+     */
+    private boolean mIsDropboxLinkRequested = false;
+
     //
     // Views.
     //
@@ -239,6 +249,26 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+
+        // Finish link request.
+        if (mIsDropboxLinkRequested) {
+            // Reset flag.
+            mIsDropboxLinkRequested = false;
+
+            // Check if link request was successful.
+            final Context appContext = getActivity().getApplicationContext();
+            if (mDropboxHelper.finishLinkRequest(appContext)) {
+                // Link account.
+                mDropboxHelper.link(appContext);
+            } else {
+                mDropboxHelper.showLinkError(appContext);
+            }
+        }
+    }
+
+    @Override
     public void onDestroy() {
         // Notify controller the image is discarded.
         Message msg = Message.obtain();
@@ -263,7 +293,7 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
     @Override
     public void handleUiUpdate(Message msg) {
         Activity activity = getActivity();
-        Context appContext = activity.getApplicationContext();
+        final Context appContext = activity.getApplicationContext();
 
         switch (msg.what) {
             case ShareController.ERROR_OCCURRED:
@@ -315,13 +345,20 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
                 break;
             case ShareController.DROPBOX_SHARE_MARKED:
                 // TODO Kick off share service.
-                Handler handler = new Handler(MyApplication.getWorkerLooper());
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        new DropboxHelper().share(getActivity().getApplicationContext(), new File(mJpegUri.getPath()));
-                    }
-                });
+                if (mDropboxHelper.isLinked(appContext)) {
+                    Handler handler = new Handler(MyApplication.getWorkerLooper());
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            mDropboxHelper.share(appContext, new File(mJpegUri.getPath()));
+                        }
+                    });
+                } else {
+                    mIsDropboxLinkRequested = true;
+
+                    // Start Dropbox link request.
+                    mDropboxHelper.startLinkRequest(appContext);
+                }
                 break;
             default:
                 break;
