@@ -19,11 +19,13 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.support.v4.app.Fragment;
 import android.widget.Toast;
 import com.dropbox.client2.DropboxAPI;
 import com.dropbox.client2.android.AndroidAuthSession;
@@ -36,7 +38,7 @@ import com.groundupworks.flyingphotobooth.MyApplication;
 import com.groundupworks.flyingphotobooth.R;
 
 /**
- * A helper class for using functionalities from the Dropbox SDK.
+ * A helper class for linking and sharing to Dropbox.
  * 
  * @author Benedict Lau
  */
@@ -67,9 +69,98 @@ public class DropboxHelper {
      */
     private DropboxAPI<AndroidAuthSession> mDropboxApi = null;
 
+    /**
+     * Flag to track if a link request is started.
+     */
+    private boolean mIsLinkRequested = false;
+
     //
     // Private methods.
     //
+
+    /**
+     * Finishes a link request. Does nothing if {@link #isLinkRequested()} is false prior to this call.
+     * 
+     * 
+     * @param context
+     *            the {@link Context}.
+     * @return true if linking is successful; false otherwise.
+     */
+    private boolean finishLinkRequest(Context context) {
+        boolean isSuccessful = false;
+
+        if (mIsLinkRequested) {
+            synchronized (mDropboxApiLock) {
+                if (mDropboxApi != null) {
+                    AndroidAuthSession session = mDropboxApi.getSession();
+                    if (session.authenticationSuccessful()) {
+                        try {
+                            // Set access token on the session.
+                            session.finishAuthentication();
+                            isSuccessful = true;
+                        } catch (IllegalStateException e) {
+                            // Do nothing.
+                        }
+                    }
+                }
+            }
+
+            // Reset flag.
+            mIsLinkRequested = false;
+        }
+        return isSuccessful;
+    }
+
+    /**
+     * Links an account in a background thread.
+     * 
+     * @param context
+     *            the {@link Context}.
+     */
+    private void link(Context context) {
+        synchronized (mDropboxApiLock) {
+            if (mDropboxApi != null) {
+                final Context appContext = context;
+                final DropboxAPI<AndroidAuthSession> dropboxApi = mDropboxApi;
+
+                Handler workerHandler = new Handler(MyApplication.getWorkerLooper());
+                workerHandler.post(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        String accountName = null;
+                        String shareUrl = null;
+                        AccessTokenPair accessTokenPair = null;
+
+                        // Request params.
+                        synchronized (mDropboxApiLock) {
+                            // Get account params.
+                            accountName = requestAccountName(dropboxApi);
+                            shareUrl = requestShareUrl(dropboxApi);
+                            accessTokenPair = dropboxApi.getSession().getAccessTokenPair();
+                        }
+
+                        // Persist account params.
+                        if (accountName != null && shareUrl != null && accessTokenPair != null) {
+                            storeAccountParams(appContext, accountName, shareUrl, accessTokenPair.key,
+                                    accessTokenPair.secret);
+                        }
+
+                    }
+                });
+            }
+        }
+    }
+
+    /**
+     * Displays the link error message.
+     * 
+     * @param context
+     *            the {@link Context}.
+     */
+    private void showLinkError(Context context) {
+        Toast.makeText(context, context.getString(R.string.dropbox__error_link), Toast.LENGTH_SHORT).show();
+    }
 
     /**
      * Requests the linked account name.
@@ -187,80 +278,13 @@ public class DropboxHelper {
      *            the {@link Context}.
      */
     public void startLinkRequest(Context context) {
+        mIsLinkRequested = true;
+
         AppKeyPair appKeyPair = new AppKeyPair(APP_KEY, APP_SECRET);
         AndroidAuthSession session = new AndroidAuthSession(appKeyPair, ACCESS_TYPE);
         synchronized (mDropboxApiLock) {
             mDropboxApi = new DropboxAPI<AndroidAuthSession>(session);
             mDropboxApi.getSession().startAuthentication(context);
-        }
-    }
-
-    /**
-     * Finishes a link request.
-     * 
-     * 
-     * @param context
-     *            the {@link Context}.
-     * @return true if linking is successful; false otherwise.
-     */
-    public boolean finishLinkRequest(Context context) {
-        boolean isSuccessful = false;
-
-        synchronized (mDropboxApiLock) {
-            if (mDropboxApi != null) {
-                AndroidAuthSession session = mDropboxApi.getSession();
-                if (session.authenticationSuccessful()) {
-                    try {
-                        // Set access token on the session.
-                        session.finishAuthentication();
-                        isSuccessful = true;
-                    } catch (IllegalStateException e) {
-                        // Do nothing.
-                    }
-                }
-            }
-        }
-        return isSuccessful;
-    }
-
-    /**
-     * Links an account in a background thread.
-     * 
-     * @param context
-     *            the {@link Context}.
-     */
-    public void link(Context context) {
-        synchronized (mDropboxApiLock) {
-            if (mDropboxApi != null) {
-                final Context appContext = context;
-                final DropboxAPI<AndroidAuthSession> dropboxApi = mDropboxApi;
-
-                Handler workerHandler = new Handler(MyApplication.getWorkerLooper());
-                workerHandler.post(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        String accountName = null;
-                        String shareUrl = null;
-                        AccessTokenPair accessTokenPair = null;
-
-                        // Request params.
-                        synchronized (mDropboxApiLock) {
-                            // Get account params.
-                            accountName = requestAccountName(dropboxApi);
-                            shareUrl = requestShareUrl(dropboxApi);
-                            accessTokenPair = dropboxApi.getSession().getAccessTokenPair();
-                        }
-
-                        // Persist account params.
-                        if (accountName != null && shareUrl != null && accessTokenPair != null) {
-                            storeAccountParams(appContext, accountName, shareUrl, accessTokenPair.key,
-                                    accessTokenPair.secret);
-                        }
-
-                    }
-                });
-            }
         }
     }
 
@@ -287,23 +311,35 @@ public class DropboxHelper {
     }
 
     /**
-     * Displays the link error message.
-     * 
-     * @param context
-     *            the {@link Context}.
-     */
-    public void showLinkError(Context context) {
-        Toast.makeText(context, context.getString(R.string.dropbox__error_link), Toast.LENGTH_SHORT).show();
-    }
-
-    /**
      * Checks if the user is linked to Dropbox.
      * 
      * @param context
      *            the {@link Context}.
      */
     public boolean isLinked(Context context) {
-        return getLinkedAccessToken(context) != null;
+        Context appContext = context.getApplicationContext();
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(appContext);
+        return preferences.getBoolean(appContext.getString(R.string.pref__dropbox_link_key), false);
+    }
+
+    /**
+     * A convenience method to be called in the onResume() of any {@link Activity} or {@link Fragment} that uses
+     * {@link #startLinkRequest(Context)}.
+     * 
+     * @param context
+     *            the {@link Context}.
+     */
+    public void onResumeImpl(Context context) {
+        if (mIsLinkRequested) {
+            // Check if link request was successful.
+            final Context appContext = context.getApplicationContext();
+            if (finishLinkRequest(appContext)) {
+                // Link account.
+                link(appContext);
+            } else {
+                showLinkError(appContext);
+            }
+        }
     }
 
     /**

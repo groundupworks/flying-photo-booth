@@ -40,6 +40,7 @@ import com.groundupworks.flyingphotobooth.MyApplication;
 import com.groundupworks.flyingphotobooth.R;
 import com.groundupworks.flyingphotobooth.controllers.ShareController;
 import com.groundupworks.flyingphotobooth.dropbox.DropboxHelper;
+import com.groundupworks.flyingphotobooth.facebook.FacebookHelper;
 import com.groundupworks.flyingphotobooth.helpers.BeamHelper;
 import com.groundupworks.flyingphotobooth.helpers.ImageHelper;
 
@@ -97,14 +98,14 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
     private Uri mJpegUri = null;
 
     /**
+     * A {@link FacebookHelper}.
+     */
+    private FacebookHelper mFacebookHelper = new FacebookHelper();
+
+    /**
      * A {@link DropboxHelper}.
      */
     private DropboxHelper mDropboxHelper = new DropboxHelper();
-
-    /**
-     * Flag to track if a Dropbox link request is started.
-     */
-    private boolean mIsDropboxLinkRequested = false;
 
     //
     // Views.
@@ -249,23 +250,19 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
     }
 
     @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        // Finish Facebook link request.
+        mFacebookHelper.onActivityResultImpl(getActivity(), requestCode, resultCode, data);
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
 
-        // Finish link request.
-        if (mIsDropboxLinkRequested) {
-            // Reset flag.
-            mIsDropboxLinkRequested = false;
-
-            // Check if link request was successful.
-            final Context appContext = getActivity().getApplicationContext();
-            if (mDropboxHelper.finishLinkRequest(appContext)) {
-                // Link account.
-                mDropboxHelper.link(appContext);
-            } else {
-                mDropboxHelper.showLinkError(appContext);
-            }
-        }
+        // Finish Dropbox link request.
+        mDropboxHelper.onResumeImpl(getActivity().getApplicationContext());
     }
 
     @Override
@@ -340,8 +337,21 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
                 // Request adding Jpeg to Android Gallery.
                 MediaScannerConnection.scanFile(appContext, new String[] { mJpegUri.getPath() },
                         new String[] { ImageHelper.JPEG_MIME_TYPE }, null);
+                break;
             case ShareController.FACEBOOK_SHARE_MARKED:
                 // TODO Kick off share service.
+                if (mFacebookHelper.isLinked(appContext)) {
+                    Handler handler = new Handler(MyApplication.getWorkerLooper());
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            mFacebookHelper.share(appContext, new File(mJpegUri.getPath()));
+                        }
+                    });
+                } else {
+                    // Start Dropbox link request.
+                    mFacebookHelper.startLinkRequest(activity);
+                }
                 break;
             case ShareController.DROPBOX_SHARE_MARKED:
                 // TODO Kick off share service.
@@ -354,8 +364,6 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
                         }
                     });
                 } else {
-                    mIsDropboxLinkRequested = true;
-
                     // Start Dropbox link request.
                     mDropboxHelper.startLinkRequest(appContext);
                 }
