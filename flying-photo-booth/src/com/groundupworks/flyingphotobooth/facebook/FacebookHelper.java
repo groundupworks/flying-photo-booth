@@ -159,13 +159,19 @@ public class FacebookHelper {
                         // Persist account params.
                         String accountName = user.getFirstName() + " " + user.getLastName();
                         storeAccountParams(appContext, accountName, DEFAULT_ALBUM_NAME, DEFAULT_ALBUM_GRAPH_PATH);
+
+                        // End link request, but persist link tokens.
+                        mLinkRequestState = LINK_REQUEST_STATE_NONE;
+                        Session session = Session.getActiveSession();
+                        if (session != null && !session.isClosed()) {
+                            session.close();
+                        }
                     } else {
                         showLinkError(appContext);
-                    }
 
-                    // End link request.
-                    mLinkRequestState = LINK_REQUEST_STATE_NONE;
-                    Session.getActiveSession().close();
+                        // Unlink account to ensure proper reset.
+                        unlink(appContext);
+                    }
                 }
             });
         }
@@ -294,6 +300,7 @@ public class FacebookHelper {
         removeAccountParams(context);
 
         // Unlink any current session.
+        mLinkRequestState = LINK_REQUEST_STATE_NONE;
         Session session = Session.getActiveSession();
         if (session != null && !session.isClosed()) {
             session.closeAndClearTokenInformation();
@@ -328,23 +335,22 @@ public class FacebookHelper {
      *            "extras").
      */
     public void onActivityResultImpl(Activity activity, int requestCode, int resultCode, Intent data) {
+        Context appContext = activity.getApplicationContext();
         if (mLinkRequestState == LINK_REQUEST_STATE_OPENING
                 && !finishOpenSessionRequest(activity, requestCode, resultCode, data)) {
-            showLinkError(activity.getApplicationContext());
+            showLinkError(appContext);
 
-            // End link request.
-            mLinkRequestState = LINK_REQUEST_STATE_NONE;
-            Session.getActiveSession().closeAndClearTokenInformation();
+            // Unlink account to ensure proper reset.
+            unlink(appContext);
         } else if (mLinkRequestState == LINK_REQUEST_STATE_OPENED) {
             if (finishPublishPermissionsRequest(activity, requestCode, resultCode, data)) {
                 // Link account.
-                link(activity.getApplicationContext());
+                link(appContext);
             } else {
-                showLinkError(activity.getApplicationContext());
+                showLinkError(appContext);
 
-                // End link request.
-                mLinkRequestState = LINK_REQUEST_STATE_NONE;
-                Session.getActiveSession().closeAndClearTokenInformation();
+                // Unlink account to ensure proper reset.
+                unlink(appContext);
             }
         }
     }

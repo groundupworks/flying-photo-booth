@@ -338,6 +338,9 @@ public class DropboxHelper {
                 link(appContext);
             } else {
                 showLinkError(appContext);
+
+                // Unlink account to ensure proper reset.
+                unlink(appContext);
             }
         }
     }

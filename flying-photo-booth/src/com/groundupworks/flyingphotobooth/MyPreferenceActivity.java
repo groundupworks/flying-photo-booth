@@ -30,7 +30,6 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import com.groundupworks.flyingphotobooth.dropbox.DropboxHelper;
 import com.groundupworks.flyingphotobooth.facebook.FacebookHelper;
 
