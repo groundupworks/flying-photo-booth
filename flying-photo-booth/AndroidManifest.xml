@@ -60,6 +60,9 @@
         <activity
             android:name=".MyPreferenceActivity"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".facebook.AccountSettingsActivity"
+            android:screenOrientation="portrait" />
 
         <!-- Required by Facebook -->
         <activity

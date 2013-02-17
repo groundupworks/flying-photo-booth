@@ -24,6 +24,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Handler;
+import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.widget.Toast;
@@ -112,7 +113,8 @@ public class DropboxHelper {
     }
 
     /**
-     * Links an account in a background thread.
+     * Links an account in a background thread. If unsuccessful, the link error is handled on a ui thread and a
+     * {@link Toast} will be displayed.
      * 
      * @param context
      *            the {@link Context}.
@@ -120,7 +122,7 @@ public class DropboxHelper {
     private void link(Context context) {
         synchronized (mDropboxApiLock) {
             if (mDropboxApi != null) {
-                final Context appContext = context;
+                final Context appContext = context.getApplicationContext();
                 final DropboxAPI<AndroidAuthSession> dropboxApi = mDropboxApi;
 
                 Handler workerHandler = new Handler(MyApplication.getWorkerLooper());
@@ -140,16 +142,41 @@ public class DropboxHelper {
                             accessTokenPair = dropboxApi.getSession().getAccessTokenPair();
                         }
 
-                        // Persist account params.
-                        if (accountName != null && shareUrl != null && accessTokenPair != null) {
+                        // Validate account settings and store.
+                        if (accountName != null && accountName.length() > 0 && shareUrl != null
+                                && shareUrl.length() > 0 && accessTokenPair != null) {
                             storeAccountParams(appContext, accountName, shareUrl, accessTokenPair.key,
                                     accessTokenPair.secret);
+                        } else {
+                            // Handle error on ui thread.
+                            Handler uiHandler = new Handler(Looper.getMainLooper());
+                            uiHandler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    handleLinkError(appContext);
+                                }
+                            });
                         }
-
                     }
                 });
             }
         }
+    }
+
+    /**
+     * Handles an error case during the linking process.
+     * 
+     * @param context
+     *            the {@link Context}.
+     */
+    private void handleLinkError(Context context) {
+        Context appContext = context.getApplicationContext();
+
+        // Show toast to indicate error during linking.
+        showLinkError(appContext);
+
+        // Unlink account to ensure proper reset.
+        unlink(appContext);
     }
 
     /**
@@ -332,15 +359,10 @@ public class DropboxHelper {
     public void onResumeImpl(Context context) {
         if (mIsLinkRequested) {
             // Check if link request was successful.
-            final Context appContext = context.getApplicationContext();
-            if (finishLinkRequest(appContext)) {
-                // Link account.
-                link(appContext);
+            if (finishLinkRequest(context)) {
+                link(context);
             } else {
-                showLinkError(appContext);
-
-                // Unlink account to ensure proper reset.
-                unlink(appContext);
+                handleLinkError(context);
             }
         }
     }
@@ -372,7 +394,7 @@ public class DropboxHelper {
     }
 
     /**
-     * Shares an image to the linked account.
+     * Shares an image to the linked account. This should be called in a background thread.
      * 
      * @param context
      *            the {@link Context}.
@@ -380,13 +402,12 @@ public class DropboxHelper {
      *            the {@link File} to share.
      */
     public void share(Context context, File file) {
-        AppKeyPair appKeys = new AppKeyPair(APP_KEY, APP_SECRET);
-        AndroidAuthSession session = new AndroidAuthSession(appKeys, ACCESS_TYPE);
-
-        // Gets access token associated with the linked account.
+        // Get access token associated with the linked account.
         AccessTokenPair accessToken = getLinkedAccessToken(context);
         if (accessToken != null) {
             // Start new session with the persisted access token.
+            AppKeyPair appKeys = new AppKeyPair(APP_KEY, APP_SECRET);
+            AndroidAuthSession session = new AndroidAuthSession(appKeys, ACCESS_TYPE);
             session.setAccessTokenPair(accessToken);
             DropboxAPI<AndroidAuthSession> dropboxApi = new DropboxAPI<AndroidAuthSession>(session);
 
@@ -394,14 +415,17 @@ public class DropboxHelper {
             FileInputStream inputStream = null;
             try {
                 inputStream = new FileInputStream(file);
+
                 dropboxApi.putFile(file.getName(), inputStream, file.length(), null, null);
+
                 // TODO Mark file as sent in db.
+
             } catch (DropboxUnlinkedException e) {
-                // Do nothing.
+                // TODO Handle errors.
             } catch (DropboxException e) {
-                // Do nothing.
+                // TODO Handle errors.
             } catch (FileNotFoundException e) {
-                // Do nothing.
+                // TODO Handle errors.
             } finally {
                 if (inputStream != null) {
                     try {

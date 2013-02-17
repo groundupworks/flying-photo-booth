@@ -33,8 +33,6 @@ public class MyApplication extends Application {
 
     private static HandlerThread sWorkerThread = null;
 
-    private static Looper sUiLooper = null;
-
     @Override
     public void onCreate() {
         super.onCreate();
@@ -45,9 +43,6 @@ public class MyApplication extends Application {
         // Start a worker thread that has a {@link Looper} to execute background tasks.
         sWorkerThread = new HandlerThread(WORKER_THREAD_NAME);
         sWorkerThread.start();
-
-        // Get a static reference to the ui {@link Looper}.
-        sUiLooper = getMainLooper();
     }
 
     //
@@ -66,12 +61,5 @@ public class MyApplication extends Application {
      */
     public static Looper getWorkerLooper() {
         return sWorkerThread.getLooper();
-    }
-
-    /**
-     * @return the {@link Looper} to process ui updates.
-     */
-    public static Looper getUiLooper() {
-        return sUiLooper;
     }
 }

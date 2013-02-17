@@ -17,9 +17,9 @@ package com.groundupworks.flyingphotobooth.fragments;
 
 import android.app.Activity;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.support.v4.app.Fragment;
-import com.groundupworks.flyingphotobooth.MyApplication;
 import com.groundupworks.flyingphotobooth.controllers.BaseController;
 
 /**
@@ -41,7 +41,7 @@ public abstract class ControllerBackedFragment<T extends BaseController> extends
      */
     public ControllerBackedFragment() {
         super();
-        mUiHandler = new Handler(MyApplication.getUiLooper()) {
+        mUiHandler = new Handler(Looper.getMainLooper()) {
             @Override
             public void handleMessage(Message msg) {
                 handleUiUpdate(msg);

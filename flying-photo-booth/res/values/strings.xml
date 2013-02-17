@@ -129,6 +129,7 @@
     <!-- Facebook -->
     <string name="facebook__app_id">208629902615310</string>
     <string name="facebook__account_name_key">facebook__account_name_key</string>
+    <string name="facebook__photo_privacy_key">facebook__photo_privacy_key</string>
     <string name="facebook__album_name_key">facebook__album_name_key</string>
     <string name="facebook__album_graph_path_key">facebook__album_graph_path_key</string>
     <string name="facebook__error_link">Unable to link Facebook</string>

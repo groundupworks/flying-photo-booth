@@ -40,10 +40,6 @@ import com.groundupworks.flyingphotobooth.facebook.FacebookHelper;
  */
 public class MyPreferenceActivity extends PreferenceActivity {
 
-    //
-    // FIXME Mock data.
-    //
-
     /**
      * Base uri for Google Play.
      */
@@ -213,6 +209,9 @@ public class MyPreferenceActivity extends PreferenceActivity {
         // Register listener to shared preferences.
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         preferences.registerOnSharedPreferenceChangeListener(mPrefChangeListener);
+
+        // Refresh Facebook preference since it may have updated during onActivityResult() when the listener is off.
+        updateFacebookPref(preferences);
 
         // Finish Dropbox link request.
         mDropboxHelper.onResumeImpl(getApplicationContext());
