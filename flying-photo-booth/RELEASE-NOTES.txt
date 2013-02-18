@@ -1,3 +1,103 @@
+VERSION 3.0
+
+Create, review, save and share photo strips all in less than 30 seconds.
+
+
+FEATURES
+
+Create Photo Strip
+
+¥ Selection of photo strip arrangements and photo filters
+¥ Shoot up to 4 photos manually or use the photo booth style timer
+¥ Unique swipe-to-retake feature to quickly review each photo
+¥ Front- and back-facing camera support
+
+Basic Save and Share
+
+¥ Photo strips are auto-saved and added to the Gallery
+¥ Beam to compatible devices using Android Beam
+¥ Share through Facebook, Twitter, WhatsApp, Email, etc.
+
+Share with "Wings"
+
+¥ Link your Facebook or Dropbox account to enable one-click or auto share
+¥ Automatically schedule retries in the background if sharing fails
+¥ Share to any of your Facebook albums and control privacy level
+¥ Grant access to a dedicated app folder in your Dropbox and share to that folder
+
+Setup Your DIY Photo Booth
+
+With a little DIY spirit, you can now use Flying PhotoBooth to create a DIY photo booth that automatically prints every photo strip as they are captured!
+
+To get started, you will need:
+
+¥ A Dropbox account
+¥ A mobile device connected to the internet
+¥ A computer connected to the internet
+¥ A printer that the computer can print from
+
+Steps to setup your DIY photo booth:
+
+1. Install Flying PhotoBooth on your mobile device, link to Dropbox and enable auto share.
+
+2. Install the Dropbox Desktop Application on your computer.
+
+3. Configure your computer to monitor the "Flying PhotoBooth" folder in your Dropbox and print every file that gets added. Follow the below links, and in each case, you will have to replace "PrintQueue" with "Flying PhotoBooth" as the folder to monitor.
+
+For Macs, http://www.labnol.org/tech/print-files-on-remote-mac/17838/
+For Linux, http://www.labnol.org/software/print-files-on-linux/17841/
+For Windows, http://www.labnol.org/internet/print-from-mobile-phones/17827/ 
+
+Have fun!
+
+
+INTERVIEW WITH MYSELF
+
+Me: How is Flying PhotoBooth different from other photo booth apps or photo strip creation tools?
+
+Myself: My goal is to help you put together and share a photo strip in the least amount of time possible, hence the "Flying" before the PhotoBooth. This is achieved through a minimal and responsive UI, and a streamlined work flow that includes: CAPTURE, REVIEW, SAVE and SHARE. While most photo strip apps focus on photo editing capabilities, I spend my time polishing this work flow to get you through with the fewest clicks in the shortest time, as well as adding sharing options, such as Sharing with "Wings".
+
+Me: How is Sharing with Wings any different from the standard way we share via the Facebook app?
+
+Myself: "Wings" is the sharing engine that integrates with SDKs published by Facebook and Dropbox. It gives Flying PhotoBooth a lot more control throughout the sharing process. The one-click and auto share features allow you to share a photo strip without launching the Facebook or Dropbox app. If you decide to take photos in a tunnel without connectivity, Wings will queue up those share requests and try them later. Not only is Wings the faster and more reliable way to share, it also lets you share to any Facebook album and control the privacy level, thanks to the fine-grained control we have in the sharing process.
+
+Me: Are there some more cool features?
+
+Myself: The swipe-to-retake feature is a unique picture review process that fits really well into the work flow. Android Beam support is another unique feature among photo apps. I initially added the functionality for fun, but it turns out to be a very convenient way to share. You can beam a photo strip to your friend even without a network connection!
+
+Me: Will your app work on my device?
+
+Myself: Yes, as long as your phone or tablet has a camera. The app is very stable across devices, it will not crash or "force close". If you have read this far, you may as well give it a try?
+
+Me: Well, is it free?
+
+Myself: Absolutely, and also free of ads.
+
+
+TAGLINE
+
+Create and share photo strips!
+
+
+NEW FEATURES
+
+¥ New pretty UI
+¥ Configurable number of photos per photo strip
+¥ Wings, a smart sharing engine that supports one-click and auto share, and automatically schedules retries in the background if sharing fails
+¥ Facebook share with Wings supports sharing to any album and privacy level control
+¥ Dropbox share with Wings supports sharing to a dedicated app folder
+¥ Improved memory management
+
+
+FACEBOOK APP DETAILS PAGE - TERMS OF SERVICE
+
+This software is distributed on an "as is" basis, without warranties or conditions of any kind, either express or implied.
+
+
+FACEBOOK APP DETAILS PAGE - PRIVACY POLICY
+
+Before or at the time of collecting personal information, we will identify the purposes for which information is being collected. We collect only the information required to fulfill those purposes specified by us. The collected information is cached locally on your device to be displayed or used for communicating with Facebook, it is never reported to us.
+
 VERSION 2.5
 
 Flying PhotoBooth allows you to create 4-pane photo strips from your device cameras. You will be able to create, save and share your captured moments all in less than 30 seconds.
