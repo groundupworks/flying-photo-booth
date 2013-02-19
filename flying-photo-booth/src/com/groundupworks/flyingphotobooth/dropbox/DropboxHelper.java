@@ -421,11 +421,12 @@ public class DropboxHelper {
                 // TODO Mark file as sent in db.
 
             } catch (DropboxUnlinkedException e) {
-                // TODO Handle errors.
+                // Update account linking state to unlinked.
+                unlink(context);
             } catch (DropboxException e) {
-                // TODO Handle errors.
+                // Do nothing.
             } catch (FileNotFoundException e) {
-                // TODO Handle errors.
+                // Do nothing.
             } finally {
                 if (inputStream != null) {
                     try {

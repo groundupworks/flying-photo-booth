@@ -5,6 +5,32 @@ import android.content.Intent;
 
 public class AccountSettingsActivity extends Activity {
 
+    //
+    // Default album associated with the app.
+    //
+
+    /**
+     * The name of the default album to share to.
+     */
+    private static final String DEFAULT_ALBUM_NAME = "Flying PhotoBooth Photos";
+
+    /**
+     * The graph path of the default album to share to.
+     */
+    private static final String DEFAULT_ALBUM_GRAPH_PATH = "me/photos";
+
+    private static final String UPLOAD_PHOTO_PRIVACY_SELF = "Only Me";
+
+    private static final String UPLOAD_PHOTO_PRIVACY_FRIENDS = "Friends";
+
+    private static final String UPLOAD_PHOTO_PRIVACY_EVERYONE = "Public";
+
+    private static final String UPLOAD_PHOTO_PRIVACY_SELF_VALUE = "{'value':'SELF'}";
+
+    private static final String UPLOAD_PHOTO_PRIVACY_FRIENDS_VALUE = "{'value':'ALL_FRIENDS'}";
+
+    private static final String UPLOAD_PHOTO_PRIVACY_EVERYONE_VALUE = "{'value':'EVERYONE'}";
+
     @Override
     protected void onResume() {
         super.onResume();

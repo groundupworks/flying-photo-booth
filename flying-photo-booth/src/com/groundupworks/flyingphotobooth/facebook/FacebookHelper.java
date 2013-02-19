@@ -30,6 +30,8 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.widget.Toast;
+import com.facebook.FacebookRequestError;
+import com.facebook.FacebookRequestError.Category;
 import com.facebook.HttpMethod;
 import com.facebook.Request;
 import com.facebook.Request.Callback;
@@ -48,20 +50,6 @@ import com.groundupworks.flyingphotobooth.R;
  * @author Benedict Lau
  */
 public class FacebookHelper {
-
-    //
-    // Default album associated with the app.
-    //
-
-    /**
-     * The name of the default album to share to.
-     */
-    private static final String DEFAULT_ALBUM_NAME = "Flying PhotoBooth Photos";
-
-    /**
-     * The graph path of the default album to share to.
-     */
-    private static final String DEFAULT_ALBUM_GRAPH_PATH = "me/photos";
 
     //
     // Facebook permissions.
@@ -124,18 +112,6 @@ public class FacebookHelper {
     private static final String UPLOAD_PHOTO_KEY_PICTURE = "picture";
 
     private static final String UPLOAD_PHOTO_KEY_PRIVACY = "privacy";
-
-    private static final String UPLOAD_PHOTO_PRIVACY_SELF = "Only Me";
-
-    private static final String UPLOAD_PHOTO_PRIVACY_FRIENDS = "Friends";
-
-    private static final String UPLOAD_PHOTO_PRIVACY_EVERYONE = "Public";
-
-    private static final String UPLOAD_PHOTO_PRIVACY_SELF_VALUE = "{'value':'SELF'}";
-
-    private static final String UPLOAD_PHOTO_PRIVACY_FRIENDS_VALUE = "{'value':'ALL_FRIENDS'}";
-
-    private static final String UPLOAD_PHOTO_PRIVACY_EVERYONE_VALUE = "{'value':'EVERYONE'}";
 
     /**
      * Flag to track if a link request is started.
@@ -670,15 +646,22 @@ public class FacebookHelper {
                     Response response = request.executeAndWait();
 
                     // Process response.
-                    if (response != null && response.getError() == null) {
-                        // TODO Mark file as sent in db.
-                        Log.d("BEN", "Uploaded " + file);
-                    } else {
-                        // TODO Handle errors.
-                        Log.d("BEN", "Failed to upload " + file + " error=" + response.getError());
+                    if (response != null) {
+                        FacebookRequestError error = response.getError();
+                        if (error == null) {
+
+                            // TODO Mark file as sent in db.
+
+                        } else {
+                            Category category = error.getCategory();
+                            if (Category.AUTHENTICATION_RETRY.equals(category) || Category.PERMISSION.equals(category)) {
+                                // Update account linking state to unlinked.
+                                unlink(context);
+                            }
+                        }
                     }
                 } catch (FileNotFoundException e) {
-                    // TODO Handle errors.
+                    // Do nothing.
                 }
             }
         }
