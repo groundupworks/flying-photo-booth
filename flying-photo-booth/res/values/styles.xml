@@ -2,12 +2,14 @@
 <resources>
 
     <style name="Text">
-        <item name="android:textSize">24dp</item>
+        <item name="android:textSize">24dip</item>
         <item name="android:textColor">@color/text_color</item>
     </style>
 
     <style name="Text.Countdown">
-        <item name="android:textSize">64dp</item>
+        <item name="android:textSize">64dip</item>
     </style>
+
+    <style name="ThemeSelector" parent="android:Theme.Holo.Light" />
 
 </resources>

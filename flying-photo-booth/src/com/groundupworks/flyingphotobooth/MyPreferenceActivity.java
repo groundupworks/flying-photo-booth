@@ -101,16 +101,6 @@ public class MyPreferenceActivity extends PreferenceActivity {
     private CheckBoxPreference mDropboxAutoSharePref;
 
     @Override
-    protected void onApplyThemeResource(Resources.Theme theme, int resid, boolean first) {
-        // android.R.style.Theme_DeviceDefault_Light only available in ICS and above.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-            theme.applyStyle(android.R.style.Theme_DeviceDefault_Light, true);
-        } else {
-            super.onApplyThemeResource(theme, resid, first);
-        }
-    }
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.preferences);
@@ -134,15 +124,6 @@ public class MyPreferenceActivity extends PreferenceActivity {
         mFacebookAutoSharePref = (CheckBoxPreference) findPreference(mFacebookAutoShareKey);
         mDropboxLinkPref = findPreference(mDropboxLinkKey);
         mDropboxAutoSharePref = (CheckBoxPreference) findPreference(mDropboxAutoShareKey);
-
-        // Set summaries associated with selected options.
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        updateArrangementPrefAndDependents(preferences);
-        updateNumPhotosPref(preferences);
-        updateFilterPref(preferences);
-        updateTriggerPref(preferences);
-        updateFacebookPref(preferences);
-        updateDropboxPref(preferences);
 
         // Launch Facebook link request when clicked.
         mFacebookLinkPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
@@ -210,8 +191,13 @@ public class MyPreferenceActivity extends PreferenceActivity {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         preferences.registerOnSharedPreferenceChangeListener(mPrefChangeListener);
 
-        // Refresh Facebook preference since it may have updated during onActivityResult() when the listener is off.
+        // Refresh preferences.
+        updateArrangementPrefAndDependents(preferences);
+        updateNumPhotosPref(preferences);
+        updateFilterPref(preferences);
+        updateTriggerPref(preferences);
         updateFacebookPref(preferences);
+        updateDropboxPref(preferences);
 
         // Finish Dropbox link request.
         mDropboxHelper.onResumeImpl(getApplicationContext());

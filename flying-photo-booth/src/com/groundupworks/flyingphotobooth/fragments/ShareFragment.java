@@ -55,8 +55,7 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
     // Fragment bundle keys.
     //
 
-    private static final String[] FRAGMENT_BUNDLE_KEY_JPEG_DATA = { "jpeg_data_0", "jpeg_data_1", "jpeg_data_2",
-            "jpeg_data_3" };
+    private static final String[] FRAGMENT_BUNDLE_KEY_JPEG_DATA = { "jpegData0", "jpegData1", "jpegData2", "jpegData3" };
 
     private static final String FRAGMENT_BUNDLE_KEY_ROTATION = "rotation";
 

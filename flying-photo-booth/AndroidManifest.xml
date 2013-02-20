@@ -59,10 +59,13 @@
         </activity>
         <activity
             android:name=".MyPreferenceActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/ThemeSelector" />
         <activity
-            android:name=".facebook.AccountSettingsActivity"
-            android:screenOrientation="portrait" />
+            android:name=".facebook.FacebookSettingsActivity"
+            android:label="@string/facebook_settings__label"
+            android:screenOrientation="portrait"
+            android:theme="@style/ThemeSelector" />
 
         <!-- Required by Facebook -->
         <activity

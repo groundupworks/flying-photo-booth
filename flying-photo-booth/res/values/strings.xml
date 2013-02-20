@@ -7,6 +7,13 @@
     <string name="launch__error_storage_dialog_title">Storage Unavailable</string>
     <string name="launch__error_storage_dialog_message">This application requires access to shared/external storage, such as an SD card mounted to the device.</string>
 
+    <!-- Facebook Settings Activity -->
+    <string name="facebook_settings__label">Select Photo Album</string>
+    <string name="facebook_settings__photo_privacy_self">Only Me</string>
+    <string name="facebook_settings__photo_privacy_friends">Friends</string>
+    <string name="facebook_settings__photo_privacy_friends_of_friends">Friends of Friends</string>
+    <string name="facebook_settings__photo_privacy_everyone">Public</string>
+
     <!-- Camera Preferences -->
     <string name="pref__camera_key">pref__camera</string>
 

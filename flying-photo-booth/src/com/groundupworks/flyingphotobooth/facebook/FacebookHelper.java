@@ -28,7 +28,6 @@ import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.widget.Toast;
 import com.facebook.FacebookRequestError;
 import com.facebook.FacebookRequestError.Category;
@@ -80,9 +79,9 @@ public class FacebookHelper {
 
     private static final int STATE_PUBLISH_PERMISSIONS_REQUEST = 1;
 
-    private static final int STATE_ACCOUNT_SETTINGS_REQUEST = 2;
+    private static final int STATE_SETTINGS_REQUEST = 2;
 
-    private static final int ACCOUNT_SETTINGS_REQUEST_CODE = 369;
+    private static final int SETTINGS_REQUEST_CODE = 369;
 
     //
     // Albums listing params.
@@ -101,17 +100,89 @@ public class FacebookHelper {
     /**
      * The value for params to request.
      */
-    private static final String ALBUMS_LISTING_FIELDS_VALUE = "id,name,privacy,can_upload";
+    private static final String ALBUMS_LISTING_FIELDS_VALUE = "id,name,type,privacy,can_upload";
 
     //
-    // Upload photo params.
+    // Album listing results.
     //
 
-    private static final int UPLOAD_PHOTO_NUM_PARAMS = 2;
+    static final String ALBUMS_LISTING_RESULT_DATA_KEY = "data";
 
-    private static final String UPLOAD_PHOTO_KEY_PICTURE = "picture";
+    static final String ALBUMS_LISTING_FIELD_ID = "id";
 
-    private static final String UPLOAD_PHOTO_KEY_PRIVACY = "privacy";
+    static final String ALBUMS_LISTING_FIELD_NAME = "name";
+
+    static final String ALBUMS_LISTING_FIELD_TYPE = "type";
+
+    static final String ALBUMS_LISTING_FIELD_PRIVACY = "privacy";
+
+    static final String ALBUMS_LISTING_FIELD_CAN_UPLOAD = "can_upload";
+
+    /**
+     * The 'custom' album privacy level.
+     */
+    static final String ALBUM_PRIVACY_CUSTOM = "custom";
+
+    /**
+     * The {@link String} to append to album id to create graph path.
+     */
+    static final String ALBUM_ID_TO_GRAPH_PATH = "/photos";
+
+    //
+    // Default album params.
+    //
+
+    /**
+     * The id of the default album to share to.
+     */
+    static final String DEFAULT_ALBUM_NAME = "Flying PhotoBooth Photos";
+
+    /**
+     * The graph path of the default album to share to.
+     */
+    static final String DEFAULT_ALBUM_GRAPH_PATH = "me/photos";
+
+    /**
+     * The privacy level of the default album to share to.
+     */
+    static final String DEFAULT_ALBUM_PRIVACY = ALBUM_PRIVACY_CUSTOM;
+
+    /**
+     * The type of the default album to share to.
+     */
+    static final String DEFAULT_ALBUM_TYPE = "app";
+
+    //
+    // Privacy levels for albums with 'custom' privacy level.
+    //
+
+    /**
+     * Shared photos are visible to 'Only Me'.
+     */
+    static final String PHOTO_PRIVACY_SELF = "{'value':'SELF'}";
+
+    /**
+     * Shared photos are visible to 'Friends'.
+     */
+    static final String PHOTO_PRIVACY_FRIENDS = "{'value':'ALL_FRIENDS'}";
+
+    /**
+     * Shared photos are visible to 'Friends of Friends'.
+     */
+    static final String PHOTO_PRIVACY_FRIENDS_OF_FRIENDS = "{'value':'FRIENDS_OF_FRIENDS'}";
+
+    /**
+     * Shared photos are visible to 'Public'.
+     */
+    static final String PHOTO_PRIVACY_EVERYONE = "{'value':'EVERYONE'}";
+
+    //
+    // Share params.
+    //
+
+    private static final String SHARE_KEY_PICTURE = "picture";
+
+    private static final String SHARE_KEY_PHOTO_PRIVACY = "privacy";
 
     /**
      * Flag to track if a link request is started.
@@ -248,17 +319,17 @@ public class FacebookHelper {
      *            the {@link Activity}.
      * @return true if the request is made; false if no opened {@link Session} is active.
      */
-    private boolean startAccountSettingsRequest(Activity activity) {
+    private boolean startSettingsRequest(Activity activity) {
         boolean isSuccessful = false;
 
         // State transition.
-        mLinkRequestState = STATE_ACCOUNT_SETTINGS_REQUEST;
+        mLinkRequestState = STATE_SETTINGS_REQUEST;
 
         Session session = Session.getActiveSession();
         if (session != null && session.isOpened()) {
             // Start activity for result.
-            Intent intent = new Intent(activity, AccountSettingsActivity.class);
-            activity.startActivityForResult(intent, ACCOUNT_SETTINGS_REQUEST_CODE);
+            Intent intent = new Intent(activity, FacebookSettingsActivity.class);
+            activity.startActivityForResult(intent, SETTINGS_REQUEST_CODE);
 
             isSuccessful = true;
         }
@@ -266,7 +337,7 @@ public class FacebookHelper {
     }
 
     /**
-     * Finishes a {@link #startAccountSettingsRequest(Activity)}.
+     * Finishes a {@link #startSettingsRequest(Activity)}.
      * 
      * @param activity
      *            the {@link Activity}.
@@ -278,16 +349,16 @@ public class FacebookHelper {
      * @param data
      *            an Intent, which can return result data to the caller (various data can be attached to Intent
      *            "extras").
-     * @return the account settings; or null if failed.
+     * @return the settings; or null if failed.
      */
-    private AccountSettings finishAccountSettingsRequest(Activity activity, int requestCode, int resultCode, Intent data) {
-        AccountSettings accountSettings = null;
+    private FacebookSettings finishSettingsRequest(Activity activity, int requestCode, int resultCode, Intent data) {
+        FacebookSettings settings = null;
 
-        if (requestCode == ACCOUNT_SETTINGS_REQUEST_CODE && resultCode == Activity.RESULT_OK && data != null) {
-            // Construct account settings from the extras bundle.
-            accountSettings = AccountSettings.newInstance(data.getExtras());
+        if (requestCode == SETTINGS_REQUEST_CODE && resultCode == Activity.RESULT_OK && data != null) {
+            // Construct settings from the extras bundle.
+            settings = FacebookSettings.newInstance(data.getExtras());
         }
-        return accountSettings;
+        return settings;
     }
 
     /**
@@ -298,7 +369,7 @@ public class FacebookHelper {
      * @param accountName
      *            the user name associated with the account.
      * @param photoPrivacy
-     *            the privacy level of shared photos.
+     *            the privacy level of shared photos. Only used for albums with 'custom' privacy level. May be null.
      * @param albumName
      *            the name of the album to share to.
      * @param albumGraphPath
@@ -309,9 +380,9 @@ public class FacebookHelper {
             String albumGraphPath) {
         boolean isSuccessful = false;
 
-        // Validate account settings and store.
-        if (accountName != null && accountName.length() > 0 && photoPrivacy != null && photoPrivacy.length() > 0
-                && albumName != null && albumName.length() > 0 && albumGraphPath != null && albumGraphPath.length() > 0) {
+        // Validate account params and store.
+        if (accountName != null && accountName.length() > 0 && albumName != null && albumName.length() > 0
+                && albumGraphPath != null && albumGraphPath.length() > 0) {
             storeAccountParams(context.getApplicationContext(), accountName, photoPrivacy, albumName, albumGraphPath);
             isSuccessful = true;
         }
@@ -355,7 +426,7 @@ public class FacebookHelper {
      * @param accountName
      *            the user name associated with the account.
      * @param photoPrivacy
-     *            the privacy level of shared photos.
+     *            the privacy level of shared photos. Only used for albums with 'custom' privacy level. May be null.
      * @param albumName
      *            the name of the album to share to.
      * @param albumGraphPath
@@ -366,7 +437,9 @@ public class FacebookHelper {
         Context appContext = context.getApplicationContext();
         Editor editor = PreferenceManager.getDefaultSharedPreferences(appContext).edit();
         editor.putString(appContext.getString(R.string.facebook__account_name_key), accountName);
-        editor.putString(appContext.getString(R.string.facebook__photo_privacy_key), photoPrivacy);
+        if (photoPrivacy != null && photoPrivacy.length() > 0) {
+            editor.putString(appContext.getString(R.string.facebook__photo_privacy_key), photoPrivacy);
+        }
         editor.putString(appContext.getString(R.string.facebook__album_name_key), albumName);
         editor.putString(appContext.getString(R.string.facebook__album_graph_path_key), albumGraphPath);
 
@@ -401,7 +474,7 @@ public class FacebookHelper {
      *            the {@link Context}.
      * @return the privacy level; or null if unlinked.
      */
-    private String getLinkedPhotoPrivacy(Context context) {
+    private String optLinkedPhotoPrivacy(Context context) {
         Context appContext = context.getApplicationContext();
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(appContext);
         return preferences.getString(appContext.getString(R.string.facebook__photo_privacy_key), null);
@@ -436,7 +509,7 @@ public class FacebookHelper {
         boolean isSuccessful = false;
 
         Session session = Session.getActiveSession();
-        if (session != null && !session.isOpened()) {
+        if (session != null && session.isOpened()) {
             Request.executeMeRequestAsync(session, graphUserCallback);
             isSuccessful = true;
         }
@@ -454,7 +527,7 @@ public class FacebookHelper {
         boolean isSuccessful = false;
 
         Session session = Session.getActiveSession();
-        if (session != null && !session.isOpened()) {
+        if (session != null && session.isOpened()) {
             // Construct fields to request.
             Bundle params = new Bundle();
             params.putString(ALBUMS_LISTING_FEILDS_KEY, ALBUMS_LISTING_FIELDS_VALUE);
@@ -544,7 +617,6 @@ public class FacebookHelper {
         // State machine to handle the linking process.
         switch (mLinkRequestState) {
             case STATE_OPEN_SESSION_REQUEST: {
-                Log.d("BEN", "STATE_OPEN_SESSION_REQUEST");
                 // Only handle the error case. If successful, the publish permissions request will be started by a
                 // session callback.
                 if (!finishOpenSessionRequest(activity, requestCode, resultCode, data)) {
@@ -553,10 +625,9 @@ public class FacebookHelper {
                 break;
             }
             case STATE_PUBLISH_PERMISSIONS_REQUEST: {
-                Log.d("BEN", "STATE_PUBLISH_PERMISSIONS_REQUEST");
                 if (finishPublishPermissionsRequest(activity, requestCode, resultCode, data)) {
-                    // Start request for account settings.
-                    if (!startAccountSettingsRequest(activity)) {
+                    // Start request for settings.
+                    if (!startSettingsRequest(activity)) {
                         handleLinkError(activity);
                     }
                 } else {
@@ -564,13 +635,12 @@ public class FacebookHelper {
                 }
                 break;
             }
-            case STATE_ACCOUNT_SETTINGS_REQUEST: {
-                Log.d("BEN", "STATE_ACCOUNT_SETTINGS_REQUEST");
-                AccountSettings accountSettings = finishAccountSettingsRequest(activity, requestCode, resultCode, data);
-                if (accountSettings != null) {
+            case STATE_SETTINGS_REQUEST: {
+                FacebookSettings settings = finishSettingsRequest(activity, requestCode, resultCode, data);
+                if (settings != null) {
                     // Link account.
-                    if (link(activity, accountSettings.getAccountName(), accountSettings.getPhotoPrivacy(),
-                            accountSettings.getAlbumName(), accountSettings.getAlbumGraphPath())) {
+                    if (link(activity, settings.getAccountName(), settings.optPhotoPrivacy(), settings.getAlbumName(),
+                            settings.getAlbumGraphPath())) {
                         // End link request, but persist link tokens.
                         Session session = Session.getActiveSession();
                         if (session != null && !session.isClosed()) {
@@ -626,7 +696,7 @@ public class FacebookHelper {
      */
     public void share(Context context, final File file) {
         // Get params associated with the linked account.
-        String photoPrivacy = getLinkedPhotoPrivacy(context);
+        String photoPrivacy = optLinkedPhotoPrivacy(context);
         String albumGraphPath = getLinkedAlbumGraphPath(context);
         if (photoPrivacy != null && albumGraphPath != null) {
             // Try open session with cached access token.
@@ -637,9 +707,11 @@ public class FacebookHelper {
                     // Construct graph params.
                     ParcelFileDescriptor fileDescriptor = ParcelFileDescriptor.open(file,
                             ParcelFileDescriptor.MODE_READ_ONLY);
-                    Bundle params = new Bundle(UPLOAD_PHOTO_NUM_PARAMS);
-                    params.putParcelable(UPLOAD_PHOTO_KEY_PICTURE, fileDescriptor);
-                    params.putString(UPLOAD_PHOTO_KEY_PRIVACY, photoPrivacy);
+                    Bundle params = new Bundle();
+                    params.putParcelable(SHARE_KEY_PICTURE, fileDescriptor);
+                    if (photoPrivacy != null && photoPrivacy.length() > 0) {
+                        params.putString(SHARE_KEY_PHOTO_PRIVACY, photoPrivacy);
+                    }
 
                     // Execute upload request synchronously.
                     Request request = new Request(session, albumGraphPath, params, HttpMethod.POST, null);
