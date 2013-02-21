@@ -698,7 +698,7 @@ public class FacebookHelper {
         // Get params associated with the linked account.
         String photoPrivacy = optLinkedPhotoPrivacy(context);
         String albumGraphPath = getLinkedAlbumGraphPath(context);
-        if (photoPrivacy != null && albumGraphPath != null) {
+        if (albumGraphPath != null) {
             // Try open session with cached access token.
             Session session = Session.openActiveSessionFromCache(context);
             if (session != null && session.isOpened()) {

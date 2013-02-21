@@ -115,6 +115,10 @@ public class FacebookSettingsActivity extends ListActivity {
 
                     if (FacebookHelper.ALBUM_PRIVACY_CUSTOM.equals(albumPrivacy)) {
                         // TODO Request for photo privacy.
+                        mPhotoPrivacy = FacebookHelper.PHOTO_PRIVACY_EVERYONE;
+                        mAlbumName = mAlbumCursor.getString(CURSOR_ALBUM_NAME_INDEX);
+                        mAlbumGraphPath = mAlbumCursor.getString(CURSOR_ALBUM_GRAPH_PATH_INDEX);
+                        tryFinish();
                     } else {
                         mAlbumName = mAlbumCursor.getString(CURSOR_ALBUM_NAME_INDEX);
                         mAlbumGraphPath = mAlbumCursor.getString(CURSOR_ALBUM_GRAPH_PATH_INDEX);
@@ -178,6 +182,7 @@ public class FacebookSettingsActivity extends ListActivity {
                         try {
                             JSONArray jsonArray = jsonObject
                                     .getJSONArray(FacebookHelper.ALBUMS_LISTING_RESULT_DATA_KEY);
+                            long cursorId = 1L;
                             for (int i = 0; i < jsonArray.length(); i++) {
                                 try {
                                     // Get data from json.
@@ -193,13 +198,12 @@ public class FacebookSettingsActivity extends ListActivity {
                                     if (canUpload && id != null && id.length() > 0 && name != null && name.length() > 0
                                             && type != null && type.length() > 0 && privacy != null
                                             && privacy.length() > 0) {
-                                        long index = 1L;
                                         String graphPath = id + FacebookHelper.ALBUM_ID_TO_GRAPH_PATH;
                                         if (FacebookHelper.DEFAULT_ALBUM_TYPE.equals(type)) {
                                             appAlbum = new Object[] { APP_ALBUM_CURSOR_ID, name, graphPath, privacy };
                                         } else {
-                                            albums.add(new Object[] { index, name, graphPath, privacy });
-                                            index++;
+                                            albums.add(new Object[] { cursorId, name, graphPath, privacy });
+                                            cursorId++;
                                         }
                                     }
                                 } catch (JSONException e) {

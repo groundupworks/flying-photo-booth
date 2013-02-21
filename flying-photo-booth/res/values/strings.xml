@@ -8,7 +8,7 @@
     <string name="launch__error_storage_dialog_message">This application requires access to shared/external storage, such as an SD card mounted to the device.</string>
 
     <!-- Facebook Settings Activity -->
-    <string name="facebook_settings__label">Select Photo Album</string>
+    <string name="facebook_settings__label">Select photo album</string>
     <string name="facebook_settings__photo_privacy_self">Only Me</string>
     <string name="facebook_settings__photo_privacy_friends">Friends</string>
     <string name="facebook_settings__photo_privacy_friends_of_friends">Friends of Friends</string>
@@ -90,7 +90,7 @@
     <string name="pref__facebook_link_title_default">Link&#8230;</string>
     <string name="pref__facebook_link_title_linked">Unlink</string>
     <string name="pref__facebook_link_summary_default">Enable one-click or auto share</string>
-    <string name="pref__facebook_link_summary_linked_one_click_share">One-click share to %1$s\'s %2$s</string>
+    <string name="pref__facebook_link_summary_linked_one_click_share">One-click share to %1$s\'s album %2$s</string>
     <string name="pref__facebook_link_summary_linked_auto_share">Auto share to %1$s\'s %2$s</string>
     <string name="pref__facebook_auto_share_key">pref__facebook_auto_share</string>
     <string name="pref__facebook_auto_share_title">Auto share</string>
