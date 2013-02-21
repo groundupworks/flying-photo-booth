@@ -107,11 +107,11 @@ public class ShareController extends BaseController {
                     filters[3] = new BlackAndWhiteFilter();
                 } else if (filterPref.equals(context.getString(R.string.pref__filter_bw_mixed))) {
                     if (arrangementPref.equals(context.getString(R.string.pref__arrangement_box))) {
-                        filters[1] = new BlackAndWhiteFilter();
-                        filters[2] = new BlackAndWhiteFilter();
-                    } else {
-                        filters[1] = new BlackAndWhiteFilter();
+                        filters[0] = new BlackAndWhiteFilter();
                         filters[3] = new BlackAndWhiteFilter();
+                    } else {
+                        filters[0] = new BlackAndWhiteFilter();
+                        filters[2] = new BlackAndWhiteFilter();
                     }
                 } else if (filterPref.equals(context.getString(R.string.pref__filter_sepia))) {
                     filters[0] = new SepiaFilter();
@@ -120,11 +120,11 @@ public class ShareController extends BaseController {
                     filters[3] = new SepiaFilter();
                 } else if (filterPref.equals(context.getString(R.string.pref__filter_sepia_mixed))) {
                     if (arrangementPref.equals(context.getString(R.string.pref__arrangement_box))) {
-                        filters[1] = new SepiaFilter();
-                        filters[2] = new SepiaFilter();
-                    } else {
-                        filters[1] = new SepiaFilter();
+                        filters[0] = new SepiaFilter();
                         filters[3] = new SepiaFilter();
+                    } else {
+                        filters[0] = new SepiaFilter();
+                        filters[2] = new SepiaFilter();
                     }
                 } else if (filterPref.equals(context.getString(R.string.pref__filter_line_art))) {
                     filters[0] = new LineArtFilter();

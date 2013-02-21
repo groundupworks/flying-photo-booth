@@ -20,11 +20,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import com.groundupworks.flyingphotobooth.fragments.CaptureFragment;
 import com.groundupworks.flyingphotobooth.fragments.ErrorDialogFragment;
 import com.groundupworks.flyingphotobooth.helpers.StorageHelper;
@@ -34,7 +29,7 @@ import com.groundupworks.flyingphotobooth.helpers.StorageHelper;
  * 
  * @author Benedict Lau
  */
-public class LaunchActivity extends FragmentActivity {
+public class LaunchActivity extends BaseFragmentActivity {
 
     /**
      * Worker handler for posting background tasks.
@@ -54,7 +49,6 @@ public class LaunchActivity extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_launch);
 
         // Create worker handler.
         mWorkerHandler = new Handler(MyApplication.getWorkerLooper());
@@ -113,57 +107,6 @@ public class LaunchActivity extends FragmentActivity {
     //
     // Public methods.
     //
-
-    /**
-     * Adds a {@link Fragment} to the container.
-     * 
-     * @param fragment
-     *            the new {@link Fragment} to add.
-     * @param addToBackStack
-     *            true to add transaction to back stack; false otherwise.
-     */
-    public void addFragment(Fragment fragment, boolean addToBackStack) {
-        final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.add(R.id.fragment_container, fragment);
-        if (addToBackStack) {
-            ft.addToBackStack(null);
-        }
-        ft.commit();
-    }
-
-    /**
-     * Replaces a {@link Fragment} in the container.
-     * 
-     * @param fragment
-     *            the new {@link Fragment} used to replace the current.
-     * @param addToBackStack
-     *            true to add transaction to back stack; false otherwise.
-     * @param popPreviousState
-     *            true to pop the previous state from the back stack; false otherwise.
-     */
-    public void replaceFragment(Fragment fragment, boolean addToBackStack, boolean popPreviousState) {
-        final FragmentManager fragmentManager = getSupportFragmentManager();
-        if (popPreviousState) {
-            fragmentManager.popBackStack();
-        }
-
-        final FragmentTransaction ft = fragmentManager.beginTransaction();
-        ft.replace(R.id.fragment_container, fragment);
-        if (addToBackStack) {
-            ft.addToBackStack(null);
-        }
-        ft.commit();
-    }
-
-    /**
-     * Shows a {@link DialogFragment}.
-     * 
-     * @param fragment
-     *            the new {@link DialogFragment} to show.
-     */
-    public void showDialogFragment(DialogFragment fragment) {
-        fragment.show(getSupportFragmentManager(), null);
-    }
 
     /**
      * Sets a handler for the back pressed event.

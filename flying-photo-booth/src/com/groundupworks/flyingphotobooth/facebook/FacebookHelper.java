@@ -119,11 +119,6 @@ public class FacebookHelper {
     static final String ALBUMS_LISTING_FIELD_CAN_UPLOAD = "can_upload";
 
     /**
-     * The 'custom' album privacy level.
-     */
-    static final String ALBUM_PRIVACY_CUSTOM = "custom";
-
-    /**
      * The {@link String} to append to album id to create graph path.
      */
     static final String ALBUM_ID_TO_GRAPH_PATH = "/photos";
@@ -133,19 +128,19 @@ public class FacebookHelper {
     //
 
     /**
-     * The id of the default album to share to.
+     * The default name of the app album. Note that the current app album name may have been changed by the user.
      */
-    static final String DEFAULT_ALBUM_NAME = "Flying PhotoBooth Photos";
+    static final String APP_ALBUM_DEFAULT_NAME = "Flying PhotoBooth Photos";
 
     /**
-     * The graph path of the default album to share to.
+     * The graph path of the app album.
      */
-    static final String DEFAULT_ALBUM_GRAPH_PATH = "me/photos";
+    static final String APP_ALBUM_GRAPH_PATH = "me/photos";
 
     /**
-     * The privacy level of the default album to share to.
+     * The configurable privacy level of the app album.
      */
-    static final String DEFAULT_ALBUM_PRIVACY = ALBUM_PRIVACY_CUSTOM;
+    static final String APP_ALBUM_PRIVACY = "select privacy level";
 
     /**
      * The type of the default album to share to.

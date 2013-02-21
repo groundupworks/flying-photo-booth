@@ -9,10 +9,6 @@
 
     <!-- Facebook Settings Activity -->
     <string name="facebook_settings__label">Select photo album</string>
-    <string name="facebook_settings__photo_privacy_self">Only Me</string>
-    <string name="facebook_settings__photo_privacy_friends">Friends</string>
-    <string name="facebook_settings__photo_privacy_friends_of_friends">Friends of Friends</string>
-    <string name="facebook_settings__photo_privacy_everyone">Public</string>
 
     <!-- Camera Preferences -->
     <string name="pref__camera_key">pref__camera</string>
@@ -140,6 +136,13 @@
     <string name="facebook__album_name_key">facebook__album_name_key</string>
     <string name="facebook__album_graph_path_key">facebook__album_graph_path_key</string>
     <string name="facebook__error_link">Unable to link Facebook</string>
+
+    <!-- Facebook Privacy Dialog Fragment -->
+    <string name="facebook_privacy__dialog_title">Select Privacy Level</string>
+    <string name="facebook_privacy__photo_privacy_self">Only Me</string>
+    <string name="facebook_privacy__photo_privacy_friends">Friends</string>
+    <string name="facebook_privacy__photo_privacy_friends_of_friends">Friends of Friends</string>
+    <string name="facebook_privacy__photo_privacy_everyone">Public</string>
 
     <!-- Dropbox -->
     <string name="dropbox__account_name_key">dropbox__account_name_key</string>
