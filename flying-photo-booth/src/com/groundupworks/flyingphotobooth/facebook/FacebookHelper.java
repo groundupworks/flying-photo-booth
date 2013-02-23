@@ -212,6 +212,7 @@ public class FacebookHelper {
         // Construct open request.
         OpenRequest openRequest = new OpenRequest(activity);
         openRequest.setPermissions(readPermissions);
+        openRequest.setDefaultAudience(SessionDefaultAudience.EVERYONE);
         openRequest.setCallback(statusCallback);
 
         // Execute open request.

@@ -87,7 +87,7 @@
     <string name="pref__facebook_link_title_linked">Unlink</string>
     <string name="pref__facebook_link_summary_default">Enable one-click or auto share</string>
     <string name="pref__facebook_link_summary_linked_one_click_share">One-click share to %1$s\'s album %2$s</string>
-    <string name="pref__facebook_link_summary_linked_auto_share">Auto share to %1$s\'s %2$s</string>
+    <string name="pref__facebook_link_summary_linked_auto_share">Auto share to %1$s\'s album %2$s</string>
     <string name="pref__facebook_auto_share_key">pref__facebook_auto_share</string>
     <string name="pref__facebook_auto_share_title">Auto share</string>
 
