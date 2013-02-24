@@ -620,6 +620,19 @@ public class FacebookHelper {
     }
 
     /**
+     * Checks if the user has auto share turned on for Facebook.
+     * 
+     * @param context
+     *            the {@link Context}.
+     */
+    public boolean isAutoShare(Context context) {
+        Context appContext = context.getApplicationContext();
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(appContext);
+        return preferences.getBoolean(appContext.getString(R.string.pref__facebook_link_key), false)
+                && preferences.getBoolean(appContext.getString(R.string.pref__facebook_auto_share_key), false);
+    }
+
+    /**
      * A convenience method to be called in the onActivityResult() of any {@link Activity} or {@link Fragment} that uses
      * {@link #startLinkRequest(Context)}.
      * 

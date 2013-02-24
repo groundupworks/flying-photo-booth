@@ -65,9 +65,9 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
 
     public static final int IMAGE_VIEW_READY = 0;
 
-    public static final int FACEBOOK_SHARE_CLICKED = 1;
+    public static final int FACEBOOK_SHARE_REQUESTED = 1;
 
-    public static final int DROPBOX_SHARE_CLICKED = 2;
+    public static final int DROPBOX_SHARE_REQUESTED = 2;
 
     public static final int FRAGMENT_DESTROYED = 3;
 
@@ -214,10 +214,7 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
                 Activity activity = getActivity();
                 if (activity != null && !activity.isFinishing()) {
                     if (mDropboxHelper.isLinked(activity)) {
-                        // Notify controller the Dropbox share button is clicked.
-                        Message msg = Message.obtain();
-                        msg.what = DROPBOX_SHARE_CLICKED;
-                        sendEvent(msg);
+                        requestDropboxShare();
                     } else {
                         // Listen to Dropbox linking event.
                         mDropboxLinkListener = new DropboxLinkListener();
@@ -239,10 +236,7 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
                 Activity activity = getActivity();
                 if (activity != null && !activity.isFinishing()) {
                     if (mFacebookHelper.isLinked(activity)) {
-                        // Notify controller the Facebook share button is clicked.
-                        Message msg = Message.obtain();
-                        msg.what = FACEBOOK_SHARE_CLICKED;
-                        sendEvent(msg);
+                        requestFacebookShare();
                     } else {
                         // Listen to Facebook linking event.
                         mFacebookLinkListener = new FacebookLinkListener();
@@ -386,8 +380,19 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
 
                 // Enable sharing options.
                 mShareButton.setEnabled(true);
-                mDropboxButton.setVisibility(View.VISIBLE);
-                mFacebookButton.setVisibility(View.VISIBLE);
+
+                if (mDropboxHelper.isAutoShare(appContext)) {
+                    requestFacebookShare();
+                } else {
+                    mDropboxButton.setVisibility(View.VISIBLE);
+                }
+
+                if (mFacebookHelper.isAutoShare(appContext)) {
+                    requestDropboxShare();
+                } else {
+                    mFacebookButton.setVisibility(View.VISIBLE);
+                }
+
                 if (BeamHelper.supportsBeam(appContext)) {
                     mBeamButton.setVisibility(View.VISIBLE);
                 }
@@ -408,6 +413,28 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
             default:
                 break;
         }
+    }
+
+    //
+    // Private methods.
+    //
+
+    /**
+     * Notify controller of a Facebook share request.
+     */
+    private void requestFacebookShare() {
+        Message msg = Message.obtain();
+        msg.what = FACEBOOK_SHARE_REQUESTED;
+        sendEvent(msg);
+    }
+
+    /**
+     * Notify controller of a Dropbox share request.
+     */
+    private void requestDropboxShare() {
+        Message msg = Message.obtain();
+        msg.what = DROPBOX_SHARE_REQUESTED;
+        sendEvent(msg);
     }
 
     //
@@ -453,10 +480,7 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
             Activity activity = getActivity();
             if (activity != null && !activity.isFinishing() && key.equals(getString(R.string.pref__facebook_link_key))
                     && mFacebookHelper.isLinked(activity)) {
-                // Notify controller the Facebook share button is clicked.
-                Message msg = Message.obtain();
-                msg.what = FACEBOOK_SHARE_CLICKED;
-                sendEvent(msg);
+                requestFacebookShare();
             }
         }
     }
@@ -471,10 +495,7 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
             Activity activity = getActivity();
             if (activity != null && !activity.isFinishing() && key.equals(getString(R.string.pref__dropbox_link_key))
                     && mDropboxHelper.isLinked(activity)) {
-                // Notify controller the Dropbox share button is clicked.
-                Message msg = Message.obtain();
-                msg.what = DROPBOX_SHARE_CLICKED;
-                sendEvent(msg);
+                requestDropboxShare();
             }
         }
     }

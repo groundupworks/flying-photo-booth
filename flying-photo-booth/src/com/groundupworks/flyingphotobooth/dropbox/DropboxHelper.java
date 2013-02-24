@@ -353,6 +353,19 @@ public class DropboxHelper {
     }
 
     /**
+     * Checks if the user has auto share turned on for Dropbox.
+     * 
+     * @param context
+     *            the {@link Context}.
+     */
+    public boolean isAutoShare(Context context) {
+        Context appContext = context.getApplicationContext();
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(appContext);
+        return preferences.getBoolean(appContext.getString(R.string.pref__dropbox_link_key), false)
+                && preferences.getBoolean(appContext.getString(R.string.pref__dropbox_auto_share_key), false);
+    }
+
+    /**
      * A convenience method to be called in the onResume() of any {@link Activity} or {@link Fragment} that uses
      * {@link #startLinkRequest(Context)}.
      * 

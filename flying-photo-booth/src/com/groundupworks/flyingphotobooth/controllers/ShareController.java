@@ -236,7 +236,7 @@ public class ShareController extends BaseController {
                 }
 
                 break;
-            case ShareFragment.FACEBOOK_SHARE_CLICKED:
+            case ShareFragment.FACEBOOK_SHARE_REQUESTED:
                 // Create record in Wings.
                 if (mIsFacebookShareActive
                         && mJpegPath != null
@@ -257,7 +257,7 @@ public class ShareController extends BaseController {
                     reportError();
                 }
                 break;
-            case ShareFragment.DROPBOX_SHARE_CLICKED:
+            case ShareFragment.DROPBOX_SHARE_REQUESTED:
                 // Create record in Wings.
                 if (mIsDropboxShareActive
                         && mJpegPath != null
