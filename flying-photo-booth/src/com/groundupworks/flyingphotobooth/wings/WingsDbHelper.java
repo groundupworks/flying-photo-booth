@@ -1,3 +1,18 @@
+/*
+ * Copyright (C) 2012 Benedict Lau
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.groundupworks.flyingphotobooth.wings;
 
 import java.util.ArrayList;
@@ -31,6 +46,11 @@ public class WingsDbHelper extends SQLiteOpenHelper {
      * SQL where clause by id.
      */
     private static final String WHERE_CLAUSE_BY_ID = ShareRequestTable.COLUMN_ID + "=?";
+
+    /**
+     * SQL where clause by destination.
+     */
+    private static final String WHERE_CLAUSE_BY_DESTINATION = ShareRequestTable.COLUMN_DESTINATION + "=?";
 
     /**
      * SQL where clause by destination and state.
@@ -78,6 +98,11 @@ public class WingsDbHelper extends SQLiteOpenHelper {
     private static WingsDbHelper sInstance;
 
     /**
+     * The {@link Context}.
+     */
+    private Context mContext;
+
+    /**
      * Private constructor.
      * 
      * @param context
@@ -85,6 +110,7 @@ public class WingsDbHelper extends SQLiteOpenHelper {
      */
     private WingsDbHelper(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
+        mContext = context;
     }
 
     @Override
@@ -149,6 +175,9 @@ public class WingsDbHelper extends SQLiteOpenHelper {
             db.close();
         }
 
+        // Reset retry policy because a new record is created.
+        RetryPolicy.reset(mContext);
+
         return isSuccessful;
     }
 
@@ -205,6 +234,28 @@ public class WingsDbHelper extends SQLiteOpenHelper {
         }
 
         return shareRequests;
+    }
+
+    /**
+     * Deletes all {@link ShareRequest} based on destination.
+     * 
+     * @param destination
+     *            the destination of the list of {@link ShareRequest} to delete.
+     */
+    public synchronized void deleteShareRequests(int destination) {
+        SQLiteDatabase db = null;
+        try {
+            db = getWritableDatabase();
+
+            int rows = db.delete(ShareRequestTable.NAME, WHERE_CLAUSE_BY_DESTINATION,
+                    new String[] { String.valueOf(destination) });
+
+            Log.d(getClass().getSimpleName(), "deleteShareRequests() destination=" + destination + " rows=" + rows);
+        } catch (SQLException e) {
+            // Do nothing.
+        } finally {
+            db.close();
+        }
     }
 
     /**
@@ -282,23 +333,40 @@ public class WingsDbHelper extends SQLiteOpenHelper {
 
     /**
      * Purges the database based on the purge policy.
+     * 
+     * @return the number of records remaining after the purge; or -1 if an error occurred.
      */
-    public synchronized void purge() {
+    public synchronized int purge() {
+        int count = -1;
         SQLiteDatabase db = null;
+        Cursor cursor = null;
         try {
             db = getWritableDatabase();
 
+            // Purge records.
             long earliestValidTime = System.currentTimeMillis() - RECORD_EXPIRY_TIME;
             int rows = db.delete(ShareRequestTable.NAME, WHERE_CLAUSE_PURGE_POLICY,
                     new String[] { String.valueOf(earliestValidTime), String.valueOf(ShareRequest.STATE_PROCESSED),
                             String.valueOf(RECORD_MAX_FAILS) });
 
-            Log.d(getClass().getSimpleName(), "purge() rows=" + rows);
+            // Check number of records remaining in the table.
+            cursor = db.query(ShareRequestTable.NAME, new String[] { ShareRequestTable.COLUMN_ID }, null, null, null,
+                    null, null);
+            if (cursor != null) {
+                count = cursor.getCount();
+            }
+
+            Log.d(getClass().getSimpleName(), "purge() rows=" + rows + " count=" + count);
         } catch (SQLException e) {
             // Do nothing.
         } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
             db.close();
         }
+
+        return count;
     }
 
     //

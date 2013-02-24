@@ -338,6 +338,17 @@ public class DropboxHelper {
                 }
             }
         }
+
+        // Remove existing share requests in a background thread.
+        final Context appContext = context.getApplicationContext();
+        Handler workerHandler = new Handler(MyApplication.getWorkerLooper());
+        workerHandler.post(new Runnable() {
+
+            @Override
+            public void run() {
+                WingsDbHelper.getInstance(appContext).deleteShareRequests(ShareRequest.DESTINATION_DROPBOX);
+            }
+        });
     }
 
     /**

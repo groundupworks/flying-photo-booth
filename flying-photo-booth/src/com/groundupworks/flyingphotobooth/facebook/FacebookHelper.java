@@ -25,6 +25,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.ParcelFileDescriptor;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
@@ -42,6 +43,7 @@ import com.facebook.Session.NewPermissionsRequest;
 import com.facebook.Session.OpenRequest;
 import com.facebook.SessionDefaultAudience;
 import com.facebook.SessionState;
+import com.groundupworks.flyingphotobooth.MyApplication;
 import com.groundupworks.flyingphotobooth.R;
 import com.groundupworks.flyingphotobooth.wings.ShareRequest;
 import com.groundupworks.flyingphotobooth.wings.WingsDbHelper;
@@ -605,6 +607,17 @@ public class FacebookHelper {
         if (session != null && !session.isClosed()) {
             session.closeAndClearTokenInformation();
         }
+
+        // Remove existing share requests in a background thread.
+        final Context appContext = context.getApplicationContext();
+        Handler workerHandler = new Handler(MyApplication.getWorkerLooper());
+        workerHandler.post(new Runnable() {
+
+            @Override
+            public void run() {
+                WingsDbHelper.getInstance(appContext).deleteShareRequests(ShareRequest.DESTINATION_FACEBOOK);
+            }
+        });
     }
 
     /**

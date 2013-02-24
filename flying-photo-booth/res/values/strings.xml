@@ -159,4 +159,7 @@
     <string name="dropbox__notification_shared_msg_multi">+%1$d photos to %2$s</string>
     <string name="dropbox__notification_shared_ticker">Dropbox share completed</string>
 
+    <!-- Retry Policy -->
+    <string name="retry_policy__consecutive_fails">retry_policy__consecutive_fails</string>
+
 </resources>
