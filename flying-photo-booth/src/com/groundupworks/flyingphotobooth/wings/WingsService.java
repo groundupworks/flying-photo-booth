@@ -74,12 +74,12 @@ public class WingsService extends IntentService {
         } else {
             msg = getString(R.string.facebook__notification_shared_msg_single, albumName);
         }
+        String ticker = getString(R.string.facebook__notification_shared_ticker);
 
         // Construct notification.
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
-        Notification notification = builder.setSmallIcon(R.drawable.notification)
-                .setContentTitle(title).setContentText(msg).setTicker(title).setAutoCancel(true)
-                .setWhen(System.currentTimeMillis()).build();
+        Notification notification = builder.setSmallIcon(R.drawable.notification).setContentTitle(title)
+                .setContentText(msg).setTicker(ticker).setAutoCancel(true).setWhen(System.currentTimeMillis()).build();
 
         // Send notification.
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
@@ -108,11 +108,12 @@ public class WingsService extends IntentService {
         } else {
             msg = getString(R.string.dropbox__notification_shared_msg_single, shareUrl);
         }
+        String ticker = getString(R.string.dropbox__notification_shared_ticker);
 
         // Construct notification.
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
         Notification notification = builder.setSmallIcon(R.drawable.notification).setContentTitle(title)
-                .setContentText(msg).setTicker(title).setAutoCancel(true).setWhen(System.currentTimeMillis()).build();
+                .setContentText(msg).setTicker(ticker).setAutoCancel(true).setWhen(System.currentTimeMillis()).build();
 
         // Send notification.
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
