@@ -15,17 +15,16 @@
  */
 package com.groundupworks.flyingphotobooth.fragments;
 
-import java.io.File;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
@@ -36,7 +35,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 import com.groundupworks.flyingphotobooth.LaunchActivity;
-import com.groundupworks.flyingphotobooth.MyApplication;
 import com.groundupworks.flyingphotobooth.R;
 import com.groundupworks.flyingphotobooth.controllers.ShareController;
 import com.groundupworks.flyingphotobooth.dropbox.DropboxHelper;
@@ -96,15 +94,33 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
      */
     private Uri mJpegUri = null;
 
+    //
+    // Facebook share with Wings.
+    //
+
     /**
      * A {@link FacebookHelper}.
      */
     private FacebookHelper mFacebookHelper = new FacebookHelper();
 
     /**
+     * Listener for Facebook linking events. May be null.
+     */
+    private FacebookLinkListener mFacebookLinkListener = null;
+
+    //
+    // Dropbox share with Wings.
+    //
+
+    /**
      * A {@link DropboxHelper}.
      */
     private DropboxHelper mDropboxHelper = new DropboxHelper();
+
+    /**
+     * Listener for Dropbox linking events. May be null.
+     */
+    private DropboxLinkListener mDropboxLinkListener = null;
 
     //
     // Views.
@@ -195,10 +211,24 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
 
             @Override
             public void onClick(View v) {
-                // Notify controller the Dropbox share button is clicked.
-                Message msg = Message.obtain();
-                msg.what = DROPBOX_SHARE_CLICKED;
-                sendEvent(msg);
+                Activity activity = getActivity();
+                if (activity != null && !activity.isFinishing()) {
+                    if (mDropboxHelper.isLinked(activity)) {
+                        // Notify controller the Dropbox share button is clicked.
+                        Message msg = Message.obtain();
+                        msg.what = DROPBOX_SHARE_CLICKED;
+                        sendEvent(msg);
+                    } else {
+                        // Listen to Dropbox linking event.
+                        mDropboxLinkListener = new DropboxLinkListener();
+                        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(activity
+                                .getApplicationContext());
+                        preferences.registerOnSharedPreferenceChangeListener(mDropboxLinkListener);
+
+                        // Start Dropbox link request.
+                        mDropboxHelper.startLinkRequest(activity);
+                    }
+                }
             }
         });
 
@@ -206,10 +236,24 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
 
             @Override
             public void onClick(View v) {
-                // Notify controller the Facebook share button is clicked.
-                Message msg = Message.obtain();
-                msg.what = FACEBOOK_SHARE_CLICKED;
-                sendEvent(msg);
+                Activity activity = getActivity();
+                if (activity != null && !activity.isFinishing()) {
+                    if (mFacebookHelper.isLinked(activity)) {
+                        // Notify controller the Facebook share button is clicked.
+                        Message msg = Message.obtain();
+                        msg.what = FACEBOOK_SHARE_CLICKED;
+                        sendEvent(msg);
+                    } else {
+                        // Listen to Facebook linking event.
+                        mFacebookLinkListener = new FacebookLinkListener();
+                        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(activity
+                                .getApplicationContext());
+                        preferences.registerOnSharedPreferenceChangeListener(mFacebookLinkListener);
+
+                        // Start Facebook link request.
+                        mFacebookHelper.startLinkRequest(activity, ShareFragment.this);
+                    }
+                }
             }
         });
 
@@ -253,7 +297,7 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
         super.onActivityResult(requestCode, resultCode, data);
 
         // Finish Facebook link request.
-        mFacebookHelper.onActivityResultImpl(getActivity(), requestCode, resultCode, data);
+        mFacebookHelper.onActivityResultImpl(getActivity(), ShareFragment.this, requestCode, resultCode, data);
     }
 
     @Override
@@ -266,13 +310,29 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
 
     @Override
     public void onDestroy() {
+        Activity activity = getActivity();
+
+        // Unregister listeners to shared preferences.
+        if (mFacebookLinkListener != null || mDropboxLinkListener != null) {
+            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity
+                    .getApplicationContext());
+            if (mFacebookLinkListener != null) {
+                sharedPreferences.unregisterOnSharedPreferenceChangeListener(mFacebookLinkListener);
+                mFacebookLinkListener = null;
+            }
+            if (mDropboxLinkListener != null) {
+                sharedPreferences.unregisterOnSharedPreferenceChangeListener(mDropboxLinkListener);
+                mDropboxLinkListener = null;
+            }
+        }
+
         // Notify controller the image is discarded.
         Message msg = Message.obtain();
         msg.what = FRAGMENT_DESTROYED;
         sendEvent(msg);
 
         // Cancel Android Beam.
-        BeamHelper.beamUris(getActivity(), null);
+        BeamHelper.beamUris(activity, null);
 
         super.onDestroy();
     }
@@ -322,13 +382,15 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
                 imageView.setImageBitmap(thumbBitmap);
                 break;
             case ShareController.JPEG_SAVED:
+                mJpegUri = Uri.parse("file://" + (String) msg.obj);
+
+                // Enable sharing options.
                 mShareButton.setEnabled(true);
                 mDropboxButton.setVisibility(View.VISIBLE);
                 mFacebookButton.setVisibility(View.VISIBLE);
                 if (BeamHelper.supportsBeam(appContext)) {
                     mBeamButton.setVisibility(View.VISIBLE);
                 }
-                mJpegUri = Uri.parse("file://" + (String) msg.obj);
 
                 // Setup Android Beam.
                 BeamHelper.beamUris(activity, new Uri[] { mJpegUri });
@@ -338,34 +400,10 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
                         new String[] { ImageHelper.JPEG_MIME_TYPE }, null);
                 break;
             case ShareController.FACEBOOK_SHARE_MARKED:
-                // TODO Kick off share service.
-                if (mFacebookHelper.isLinked(appContext)) {
-                    Handler handler = new Handler(MyApplication.getWorkerLooper());
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            mFacebookHelper.share(appContext, new File(mJpegUri.getPath()));
-                        }
-                    });
-                } else {
-                    // Start Dropbox link request.
-                    mFacebookHelper.startLinkRequest(activity);
-                }
+                mFacebookButton.setEnabled(false);
                 break;
             case ShareController.DROPBOX_SHARE_MARKED:
-                // TODO Kick off share service.
-                if (mDropboxHelper.isLinked(appContext)) {
-                    Handler handler = new Handler(MyApplication.getWorkerLooper());
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            mDropboxHelper.share(appContext, new File(mJpegUri.getPath()));
-                        }
-                    });
-                } else {
-                    // Start Dropbox link request.
-                    mDropboxHelper.startLinkRequest(appContext);
-                }
+                mDropboxButton.setEnabled(false);
                 break;
             default:
                 break;
@@ -399,5 +437,45 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
         fragment.setArguments(args);
 
         return fragment;
+    }
+
+    //
+    // Private inner classes.
+    //
+
+    /**
+     * Listener for the Facebook link event. Deliver deferred share click if linked.
+     */
+    private class FacebookLinkListener implements OnSharedPreferenceChangeListener {
+
+        @Override
+        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+            Activity activity = getActivity();
+            if (activity != null && !activity.isFinishing() && key.equals(getString(R.string.pref__facebook_link_key))
+                    && mFacebookHelper.isLinked(activity)) {
+                // Notify controller the Facebook share button is clicked.
+                Message msg = Message.obtain();
+                msg.what = FACEBOOK_SHARE_CLICKED;
+                sendEvent(msg);
+            }
+        }
+    }
+
+    /**
+     * Listener for the Dropbox link event. Deliver deferred share click if linked.
+     */
+    private class DropboxLinkListener implements OnSharedPreferenceChangeListener {
+
+        @Override
+        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+            Activity activity = getActivity();
+            if (activity != null && !activity.isFinishing() && key.equals(getString(R.string.pref__dropbox_link_key))
+                    && mDropboxHelper.isLinked(activity)) {
+                // Notify controller the Dropbox share button is clicked.
+                Message msg = Message.obtain();
+                msg.what = DROPBOX_SHARE_CLICKED;
+                sendEvent(msg);
+            }
+        }
     }
 }

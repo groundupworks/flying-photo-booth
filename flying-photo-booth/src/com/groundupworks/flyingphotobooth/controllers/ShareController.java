@@ -22,10 +22,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Message;
+import android.sax.StartElementListener;
 import com.groundupworks.flyingphotobooth.MyApplication;
 import com.groundupworks.flyingphotobooth.R;
 import com.groundupworks.flyingphotobooth.arrangements.BoxArrangement;
@@ -38,6 +40,9 @@ import com.groundupworks.flyingphotobooth.fragments.ShareFragment;
 import com.groundupworks.flyingphotobooth.helpers.ImageHelper;
 import com.groundupworks.flyingphotobooth.helpers.ImageHelper.Arrangement;
 import com.groundupworks.flyingphotobooth.helpers.ImageHelper.ImageFilter;
+import com.groundupworks.flyingphotobooth.wings.ShareRequest;
+import com.groundupworks.flyingphotobooth.wings.WingsDbHelper;
+import com.groundupworks.flyingphotobooth.wings.WingsService;
 
 /**
  * Controller class for the {@link ShareFragment}.
@@ -60,7 +65,13 @@ public class ShareController extends BaseController {
 
     public static final int DROPBOX_SHARE_MARKED = 3;
 
+    private String mJpegPath = null;
+
     private Bitmap mThumb = null;
+
+    private boolean mIsFacebookShareActive = true;
+
+    private boolean mIsDropboxShareActive = true;
 
     //
     // BaseController implementation.
@@ -68,9 +79,9 @@ public class ShareController extends BaseController {
 
     @Override
     protected void handleEvent(Message msg) {
+        final Context context = MyApplication.getContext();
         switch (msg.what) {
             case ShareFragment.IMAGE_VIEW_READY:
-                final Context context = MyApplication.getContext();
 
                 /*
                  * Create an image bitmap from Jpeg data.
@@ -196,10 +207,12 @@ public class ShareController extends BaseController {
                         outputStream.close();
 
                         if (isSuccessful) {
+                            mJpegPath = file.getPath();
+
                             // Notify ui the Jpeg is saved.
                             Message uiMsg = Message.obtain();
                             uiMsg.what = JPEG_SAVED;
-                            uiMsg.obj = file.getPath();
+                            uiMsg.obj = mJpegPath;
                             sendUiUpdate(uiMsg);
                         } else {
                             reportError();
@@ -224,9 +237,18 @@ public class ShareController extends BaseController {
 
                 break;
             case ShareFragment.FACEBOOK_SHARE_CLICKED:
-                // TODO Mark in database.
-                boolean isFacebookShareMarked = true;
-                if (isFacebookShareMarked) {
+                // Create record in Wings.
+                if (mIsFacebookShareActive
+                        && mJpegPath != null
+                        && WingsDbHelper.getInstance(context).createShareRequest(mJpegPath,
+                                ShareRequest.DESTINATION_FACEBOOK)) {
+                    // Disable to ensure we only make one share request.
+                    mIsFacebookShareActive = false;
+
+                    // Start Wings service.
+                    Intent intent = new Intent(context, WingsService.class);
+                    context.startService(intent);
+
                     // Notify ui.
                     Message uiMsg = Message.obtain();
                     uiMsg.what = FACEBOOK_SHARE_MARKED;
@@ -236,9 +258,18 @@ public class ShareController extends BaseController {
                 }
                 break;
             case ShareFragment.DROPBOX_SHARE_CLICKED:
-                // TODO Mark in database.
-                boolean isDropboxShareMarked = true;
-                if (isDropboxShareMarked) {
+                // Create record in Wings.
+                if (mIsDropboxShareActive
+                        && mJpegPath != null
+                        && WingsDbHelper.getInstance(context).createShareRequest(mJpegPath,
+                                ShareRequest.DESTINATION_DROPBOX)) {
+                    // Disable to ensure we only make one share request.
+                    mIsDropboxShareActive = false;
+
+                    // Start Wings service.
+                    Intent intent = new Intent(context, WingsService.class);
+                    context.startService(intent);
+
                     // Notify ui.
                     Message uiMsg = Message.obtain();
                     uiMsg.what = DROPBOX_SHARE_MARKED;

@@ -29,6 +29,7 @@ import android.os.ParcelFileDescriptor;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.widget.Toast;
+import com.facebook.FacebookException;
 import com.facebook.FacebookRequestError;
 import com.facebook.FacebookRequestError.Category;
 import com.facebook.HttpMethod;
@@ -42,6 +43,8 @@ import com.facebook.Session.OpenRequest;
 import com.facebook.SessionDefaultAudience;
 import com.facebook.SessionState;
 import com.groundupworks.flyingphotobooth.R;
+import com.groundupworks.flyingphotobooth.wings.ShareRequest;
+import com.groundupworks.flyingphotobooth.wings.WingsDbHelper;
 
 /**
  * A helper class for linking and sharing to Facebook.
@@ -193,10 +196,12 @@ public class FacebookHelper {
      * 
      * @param activity
      *            the {@link Activity}.
+     * @param fragment
+     *            the {@link Fragment}. May be null.
      * @param statusCallback
      *            callback when the {@link Session} state changes.
      */
-    private void startOpenSessionRequest(Activity activity, Session.StatusCallback statusCallback) {
+    private void startOpenSessionRequest(Activity activity, Fragment fragment, Session.StatusCallback statusCallback) {
         // State transition.
         mLinkRequestState = STATE_OPEN_SESSION_REQUEST;
 
@@ -210,7 +215,12 @@ public class FacebookHelper {
         readPermissions.add(PERMISSION_USER_PHOTOS);
 
         // Construct open request.
-        OpenRequest openRequest = new OpenRequest(activity);
+        OpenRequest openRequest;
+        if (fragment == null) {
+            openRequest = new OpenRequest(activity);
+        } else {
+            openRequest = new OpenRequest(fragment);
+        }
         openRequest.setPermissions(readPermissions);
         openRequest.setDefaultAudience(SessionDefaultAudience.EVERYONE);
         openRequest.setCallback(statusCallback);
@@ -254,9 +264,11 @@ public class FacebookHelper {
      * 
      * @param activity
      *            the {@link Activity}.
+     * @param fragment
+     *            the {@link Fragment}. May be null.
      * @return true if the request is made; false if no opened {@link Session} is active.
      */
-    private boolean startPublishPermissionsRequest(Activity activity) {
+    private boolean startPublishPermissionsRequest(Activity activity, Fragment fragment) {
         boolean isSuccessful = false;
 
         // State transition.
@@ -269,7 +281,12 @@ public class FacebookHelper {
             publishPermissions.add(PERMISSION_PUBLISH_ACTIONS);
 
             // Construct permissions request to publish publicly.
-            NewPermissionsRequest permissionsRequest = new NewPermissionsRequest(activity, publishPermissions);
+            NewPermissionsRequest permissionsRequest;
+            if (fragment == null) {
+                permissionsRequest = new NewPermissionsRequest(activity, publishPermissions);
+            } else {
+                permissionsRequest = new NewPermissionsRequest(fragment, publishPermissions);
+            }
             permissionsRequest.setDefaultAudience(SessionDefaultAudience.EVERYONE);
 
             // Execute publish permissions request.
@@ -313,9 +330,11 @@ public class FacebookHelper {
      * 
      * @param activity
      *            the {@link Activity}.
+     * @param fragment
+     *            the {@link Fragment}. May be null.
      * @return true if the request is made; false if no opened {@link Session} is active.
      */
-    private boolean startSettingsRequest(Activity activity) {
+    private boolean startSettingsRequest(Activity activity, Fragment fragment) {
         boolean isSuccessful = false;
 
         // State transition.
@@ -325,7 +344,11 @@ public class FacebookHelper {
         if (session != null && session.isOpened()) {
             // Start activity for result.
             Intent intent = new Intent(activity, FacebookSettingsActivity.class);
-            activity.startActivityForResult(intent, SETTINGS_REQUEST_CODE);
+            if (fragment == null) {
+                activity.startActivityForResult(intent, SETTINGS_REQUEST_CODE);
+            } else {
+                fragment.startActivityForResult(intent, SETTINGS_REQUEST_CODE);
+            }
 
             isSuccessful = true;
         }
@@ -546,15 +569,17 @@ public class FacebookHelper {
      * 
      * @param activity
      *            the {@link Activity}.
+     * @param fragment
+     *            the {@link Fragment}. May be null.
      */
-    public void startLinkRequest(final Activity activity) {
+    public void startLinkRequest(final Activity activity, final Fragment fragment) {
         // Construct status callback.
         Session.StatusCallback statusCallback = new Session.StatusCallback() {
             @Override
             public void call(Session session, SessionState state, Exception exception) {
                 if (mLinkRequestState == STATE_OPEN_SESSION_REQUEST && state.isOpened()) {
                     // Request publish permissions.
-                    if (!startPublishPermissionsRequest(activity)) {
+                    if (!startPublishPermissionsRequest(activity, fragment)) {
                         handleLinkError(activity);
                     }
                 }
@@ -562,7 +587,7 @@ public class FacebookHelper {
         };
 
         // Open session.
-        startOpenSessionRequest(activity, statusCallback);
+        startOpenSessionRequest(activity, fragment, statusCallback);
     }
 
     /**
@@ -600,6 +625,8 @@ public class FacebookHelper {
      * 
      * @param activity
      *            the {@link Activity}.
+     * @param fragment
+     *            the {@link Fragment}. May be null.
      * @param requestCode
      *            the integer request code originally supplied to startActivityForResult(), allowing you to identify who
      *            this result came from.
@@ -609,7 +636,7 @@ public class FacebookHelper {
      *            an Intent, which can return result data to the caller (various data can be attached to Intent
      *            "extras").
      */
-    public void onActivityResultImpl(Activity activity, int requestCode, int resultCode, Intent data) {
+    public void onActivityResultImpl(Activity activity, Fragment fragment, int requestCode, int resultCode, Intent data) {
         // State machine to handle the linking process.
         switch (mLinkRequestState) {
             case STATE_OPEN_SESSION_REQUEST: {
@@ -623,7 +650,7 @@ public class FacebookHelper {
             case STATE_PUBLISH_PERMISSIONS_REQUEST: {
                 if (finishPublishPermissionsRequest(activity, requestCode, resultCode, data)) {
                     // Start request for settings.
-                    if (!startSettingsRequest(activity)) {
+                    if (!startSettingsRequest(activity, fragment)) {
                         handleLinkError(activity);
                     }
                 } else {
@@ -683,53 +710,71 @@ public class FacebookHelper {
     }
 
     /**
-     * Shares an image to the linked account. This should be called in a background thread.
+     * Process share requests by sharing to the linked account. This should be called in a background thread.
      * 
      * @param context
      *            the {@link Context}.
-     * @param file
-     *            the {@link File} to share.
      */
-    public void share(Context context, final File file) {
+    public void processShareRequests(Context context) {
         // Get params associated with the linked account.
         String photoPrivacy = optLinkedPhotoPrivacy(context);
         String albumGraphPath = getLinkedAlbumGraphPath(context);
         if (albumGraphPath != null) {
-            // Try open session with cached access token.
-            Session session = Session.openActiveSessionFromCache(context);
-            if (session != null && session.isOpened()) {
-                // Upload file.
-                try {
-                    // Construct graph params.
-                    ParcelFileDescriptor fileDescriptor = ParcelFileDescriptor.open(file,
-                            ParcelFileDescriptor.MODE_READ_ONLY);
-                    Bundle params = new Bundle();
-                    params.putParcelable(SHARE_KEY_PICTURE, fileDescriptor);
-                    if (photoPrivacy != null && photoPrivacy.length() > 0) {
-                        params.putString(SHARE_KEY_PHOTO_PRIVACY, photoPrivacy);
-                    }
+            // Get share requests for Facebook.
+            WingsDbHelper wingsDbHelper = WingsDbHelper.getInstance(context);
+            List<ShareRequest> shareRequests = wingsDbHelper.checkoutShareRequests(ShareRequest.DESTINATION_FACEBOOK);
 
-                    // Execute upload request synchronously.
-                    Request request = new Request(session, albumGraphPath, params, HttpMethod.POST, null);
-                    Response response = request.executeAndWait();
-
-                    // Process response.
-                    if (response != null) {
-                        FacebookRequestError error = response.getError();
-                        if (error == null) {
-
-                            // TODO Mark file as sent in db.
-
-                        } else {
-                            Category category = error.getCategory();
-                            if (Category.AUTHENTICATION_RETRY.equals(category) || Category.PERMISSION.equals(category)) {
-                                // Update account linking state to unlinked.
-                                unlink(context);
+            if (!shareRequests.isEmpty()) {
+                // Try open session with cached access token.
+                Session session = Session.openActiveSessionFromCache(context);
+                if (session != null && session.isOpened()) {
+                    // Process share requests.
+                    for (ShareRequest shareRequest : shareRequests) {
+                        File file = new File(shareRequest.getFilePath());
+                        try {
+                            // Construct graph params.
+                            ParcelFileDescriptor fileDescriptor = ParcelFileDescriptor.open(file,
+                                    ParcelFileDescriptor.MODE_READ_ONLY);
+                            Bundle params = new Bundle();
+                            params.putParcelable(SHARE_KEY_PICTURE, fileDescriptor);
+                            if (photoPrivacy != null && photoPrivacy.length() > 0) {
+                                params.putString(SHARE_KEY_PHOTO_PRIVACY, photoPrivacy);
                             }
+
+                            // Execute upload request synchronously.
+                            Request request = new Request(session, albumGraphPath, params, HttpMethod.POST, null);
+                            Response response = request.executeAndWait();
+
+                            // Process response.
+                            if (response != null) {
+                                FacebookRequestError error = response.getError();
+                                if (error == null) {
+                                    // Mark as successfully processed.
+                                    wingsDbHelper.markSuccessful(shareRequest.getId());
+                                } else {
+                                    wingsDbHelper.markFailed(shareRequest.getId());
+
+                                    Category category = error.getCategory();
+                                    if (Category.AUTHENTICATION_RETRY.equals(category)
+                                            || Category.PERMISSION.equals(category)) {
+                                        // Update account linking state to unlinked.
+                                        unlink(context);
+                                    }
+                                }
+                            }
+                        } catch (FacebookException e) {
+                            wingsDbHelper.markFailed(shareRequest.getId());
+                        } catch (IllegalArgumentException e) {
+                            wingsDbHelper.markFailed(shareRequest.getId());
+                        } catch (FileNotFoundException e) {
+                            wingsDbHelper.markFailed(shareRequest.getId());
                         }
                     }
-                } catch (FileNotFoundException e) {
-                    // Do nothing.
+                } else {
+                    // Mark all share requests as failed to process since we failed to open an active session.
+                    for (ShareRequest shareRequest : shareRequests) {
+                        wingsDbHelper.markFailed(shareRequest.getId());
+                    }
                 }
             }
         }

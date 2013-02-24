@@ -23,7 +23,6 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.res.Resources;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
@@ -135,7 +134,7 @@ public class MyPreferenceActivity extends PreferenceActivity {
                     mFacebookHelper.unlink(appContext);
                 } else {
                     // Start Facebook link request.
-                    mFacebookHelper.startLinkRequest(MyPreferenceActivity.this);
+                    mFacebookHelper.startLinkRequest(MyPreferenceActivity.this, null);
                 }
                 return false;
             }
@@ -180,7 +179,7 @@ public class MyPreferenceActivity extends PreferenceActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         // Finish Facebook link request.
-        mFacebookHelper.onActivityResultImpl(this, requestCode, resultCode, data);
+        mFacebookHelper.onActivityResultImpl(this, null, requestCode, resultCode, data);
     }
 
     @Override
@@ -351,7 +350,7 @@ public class MyPreferenceActivity extends PreferenceActivity {
         int widgetRes = R.layout.pref_facebook_checkbox_unselected;
 
         // Check if linked to Facebook account.
-        boolean isLinked = preferences.getBoolean(mFacebookLinkKey, false);
+        boolean isLinked = mFacebookHelper.isLinked(this);
         if (isLinked) {
             // Get account information.
             String accountName = mFacebookHelper.getLinkedAccountName(this);
@@ -395,7 +394,7 @@ public class MyPreferenceActivity extends PreferenceActivity {
         int widgetRes = R.layout.pref_dropbox_checkbox_unselected;
 
         // Check if linked to Dropbox account.
-        boolean isLinked = preferences.getBoolean(mDropboxLinkKey, false);
+        boolean isLinked = mDropboxHelper.isLinked(this);
         if (isLinked) {
             // Get account information.
             String accountName = mDropboxHelper.getLinkedAccountName(this);

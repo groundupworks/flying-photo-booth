@@ -8,6 +8,7 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 /**
  * The Wings database helper that stores {@link ShareRequest} records and manages the state of those records.
@@ -65,9 +66,11 @@ public class WingsDbHelper extends SQLiteOpenHelper {
     private static long RECORD_EXPIRY_TIME = 172800000L;
 
     /**
-     * The number of times a record may fail to process, beyond which it will be purged.
+     * The number of times a record may fail to process, beyond which it will be purged. Too small of a number is
+     * dangerous as every new record creation will trigger a retry, and the number of fails can build up quickly when
+     * the device has no connectivity.
      */
-    private static int RECORD_MAX_FAILS = 20;
+    private static int RECORD_MAX_FAILS = 500;
 
     /**
      * Singleton.
@@ -137,6 +140,9 @@ public class WingsDbHelper extends SQLiteOpenHelper {
             values.put(ShareRequestTable.COLUMN_FAILS, 0);
 
             isSuccessful = db.insert(ShareRequestTable.NAME, null, values) != ID_ERROR;
+
+            Log.d(getClass().getSimpleName(), "createShareRequest() isSuccessful=" + isSuccessful + " filePath="
+                    + filePath + " destination=" + destination);
         } catch (SQLException e) {
             // Do nothing.
         } finally {
@@ -172,8 +178,8 @@ public class WingsDbHelper extends SQLiteOpenHelper {
 
             if (cursor != null && cursor.moveToFirst()) {
                 do {
-                    int id = cursor.getInt(ShareRequestTable.COLUMN_ID_INDEX);
-                    String filePath = cursor.getString(ShareRequestTable.COLUMN_FILE_PATH_INDEX);
+                    int id = cursor.getInt(cursor.getColumnIndex(ShareRequestTable.COLUMN_ID));
+                    String filePath = cursor.getString(cursor.getColumnIndex(ShareRequestTable.COLUMN_FILE_PATH));
 
                     // Update state back to processing.
                     ContentValues values = new ContentValues();
@@ -183,6 +189,9 @@ public class WingsDbHelper extends SQLiteOpenHelper {
                             new String[] { String.valueOf(id) }) > 0) {
                         // Add record to list.
                         shareRequests.add(new ShareRequest(id, filePath, destination));
+
+                        Log.d(getClass().getSimpleName(), "checkoutShareRequests() id=" + id + " filePath=" + filePath
+                                + " destination=" + destination);
                     }
                 } while (cursor.moveToNext());
             }
@@ -218,6 +227,8 @@ public class WingsDbHelper extends SQLiteOpenHelper {
 
             isSuccessful = db.update(ShareRequestTable.NAME, values, WHERE_CLAUSE_BY_ID,
                     new String[] { String.valueOf(id) }) > 0;
+
+            Log.d(getClass().getSimpleName(), "markSuccessful() isSuccessful=" + isSuccessful + " id=" + id);
         } catch (SQLException e) {
             // Do nothing.
         } finally {
@@ -245,7 +256,7 @@ public class WingsDbHelper extends SQLiteOpenHelper {
             cursor = db.query(ShareRequestTable.NAME, new String[] { ShareRequestTable.COLUMN_FAILS },
                     WHERE_CLAUSE_BY_ID, new String[] { String.valueOf(id) }, null, null, null);
             if (cursor != null && cursor.moveToFirst()) {
-                int fails = cursor.getInt(ShareRequestTable.COLUMN_FAILS_INDEX);
+                int fails = cursor.getInt(cursor.getColumnIndex(ShareRequestTable.COLUMN_FAILS));
 
                 // Reset state back to pending and increment fails.
                 ContentValues values = new ContentValues();
@@ -254,6 +265,8 @@ public class WingsDbHelper extends SQLiteOpenHelper {
 
                 isSuccessful = db.update(ShareRequestTable.NAME, values, WHERE_CLAUSE_BY_ID,
                         new String[] { String.valueOf(id) }) > 0;
+
+                Log.d(getClass().getSimpleName(), "markFailed() isSuccessful=" + isSuccessful + " id=" + id);
             }
         } catch (SQLException e) {
             // Do nothing.
@@ -276,9 +289,11 @@ public class WingsDbHelper extends SQLiteOpenHelper {
             db = getWritableDatabase();
 
             long earliestValidTime = System.currentTimeMillis() - RECORD_EXPIRY_TIME;
-            db.delete(ShareRequestTable.NAME, WHERE_CLAUSE_PURGE_POLICY,
+            int rows = db.delete(ShareRequestTable.NAME, WHERE_CLAUSE_PURGE_POLICY,
                     new String[] { String.valueOf(earliestValidTime), String.valueOf(ShareRequest.STATE_PROCESSED),
                             String.valueOf(RECORD_MAX_FAILS) });
+
+            Log.d(getClass().getSimpleName(), "purge() rows=" + rows);
         } catch (SQLException e) {
             // Do nothing.
         } finally {
@@ -342,21 +357,5 @@ public class WingsDbHelper extends SQLiteOpenHelper {
          * The number of times sharing failed. Internally managed.
          */
         private static final String COLUMN_FAILS = "fails";
-
-        //
-        // Column indices.
-        //
-
-        private static final int COLUMN_ID_INDEX = 0;
-
-        private static final int COLUMN_FILE_PATH_INDEX = 1;
-
-        private static final int COLUMN_DESTINATION_INDEX = 2;
-
-        private static final int COLUMN_TIME_CREATED_INDEX = 3;
-
-        private static final int COLUMN_STATE_INDEX = 4;
-
-        private static final int COLUMN_FAILS_INDEX = 5;
     }
 }

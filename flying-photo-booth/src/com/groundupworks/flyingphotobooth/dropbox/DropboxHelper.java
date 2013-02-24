@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.List;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -37,6 +38,8 @@ import com.dropbox.client2.session.AppKeyPair;
 import com.dropbox.client2.session.Session.AccessType;
 import com.groundupworks.flyingphotobooth.MyApplication;
 import com.groundupworks.flyingphotobooth.R;
+import com.groundupworks.flyingphotobooth.wings.ShareRequest;
+import com.groundupworks.flyingphotobooth.wings.WingsDbHelper;
 
 /**
  * A helper class for linking and sharing to Dropbox.
@@ -394,45 +397,57 @@ public class DropboxHelper {
     }
 
     /**
-     * Shares an image to the linked account. This should be called in a background thread.
+     * Process share requests by sharing to the linked account. This should be called in a background thread.
      * 
      * @param context
      *            the {@link Context}.
-     * @param file
-     *            the {@link File} to share.
      */
-    public void share(Context context, File file) {
+    public void processShareRequests(Context context) {
         // Get access token associated with the linked account.
         AccessTokenPair accessToken = getLinkedAccessToken(context);
         if (accessToken != null) {
-            // Start new session with the persisted access token.
-            AppKeyPair appKeys = new AppKeyPair(APP_KEY, APP_SECRET);
-            AndroidAuthSession session = new AndroidAuthSession(appKeys, ACCESS_TYPE);
-            session.setAccessTokenPair(accessToken);
-            DropboxAPI<AndroidAuthSession> dropboxApi = new DropboxAPI<AndroidAuthSession>(session);
+            // Get share requests for Dropbox.
+            WingsDbHelper wingsDbHelper = WingsDbHelper.getInstance(context);
+            List<ShareRequest> shareRequests = wingsDbHelper.checkoutShareRequests(ShareRequest.DESTINATION_DROPBOX);
 
-            // Upload file.
-            FileInputStream inputStream = null;
-            try {
-                inputStream = new FileInputStream(file);
+            if (!shareRequests.isEmpty()) {
+                // Start new session with the persisted access token.
+                AppKeyPair appKeys = new AppKeyPair(APP_KEY, APP_SECRET);
+                AndroidAuthSession session = new AndroidAuthSession(appKeys, ACCESS_TYPE);
+                session.setAccessTokenPair(accessToken);
+                DropboxAPI<AndroidAuthSession> dropboxApi = new DropboxAPI<AndroidAuthSession>(session);
 
-                dropboxApi.putFile(file.getName(), inputStream, file.length(), null, null);
-
-                // TODO Mark file as sent in db.
-
-            } catch (DropboxUnlinkedException e) {
-                // Update account linking state to unlinked.
-                unlink(context);
-            } catch (DropboxException e) {
-                // Do nothing.
-            } catch (FileNotFoundException e) {
-                // Do nothing.
-            } finally {
-                if (inputStream != null) {
+                // Process share requests.
+                for (ShareRequest shareRequest : shareRequests) {
+                    File file = new File(shareRequest.getFilePath());
+                    FileInputStream inputStream = null;
                     try {
-                        inputStream.close();
-                    } catch (IOException e) {
-                        // Do nothing.
+                        inputStream = new FileInputStream(file);
+
+                        // Upload file.
+                        dropboxApi.putFile(file.getName(), inputStream, file.length(), null, null);
+
+                        // Mark as successfully processed.
+                        wingsDbHelper.markSuccessful(shareRequest.getId());
+                    } catch (DropboxUnlinkedException e) {
+                        wingsDbHelper.markFailed(shareRequest.getId());
+
+                        // Update account linking state to unlinked.
+                        unlink(context);
+                    } catch (DropboxException e) {
+                        wingsDbHelper.markFailed(shareRequest.getId());
+                    } catch (IllegalArgumentException e) {
+                        wingsDbHelper.markFailed(shareRequest.getId());
+                    } catch (FileNotFoundException e) {
+                        wingsDbHelper.markFailed(shareRequest.getId());
+                    } finally {
+                        if (inputStream != null) {
+                            try {
+                                inputStream.close();
+                            } catch (IOException e) {
+                                // Do nothing.
+                            }
+                        }
                     }
                 }
             }
