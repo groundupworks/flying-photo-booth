@@ -401,8 +401,11 @@ public class DropboxHelper {
      * 
      * @param context
      *            the {@link Context}.
+     * @return the number of successfully shared items.
      */
-    public void processShareRequests(Context context) {
+    public int processShareRequests(Context context) {
+        int shared = 0;
+
         // Get access token associated with the linked account.
         AccessTokenPair accessToken = getLinkedAccessToken(context);
         if (accessToken != null) {
@@ -429,6 +432,8 @@ public class DropboxHelper {
 
                         // Mark as successfully processed.
                         wingsDbHelper.markSuccessful(shareRequest.getId());
+
+                        shared++;
                     } catch (DropboxUnlinkedException e) {
                         wingsDbHelper.markFailed(shareRequest.getId());
 
@@ -452,5 +457,7 @@ public class DropboxHelper {
                 }
             }
         }
+
+        return shared;
     }
 }

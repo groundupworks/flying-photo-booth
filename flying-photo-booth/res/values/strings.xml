@@ -96,8 +96,8 @@
     <string name="pref__dropbox_link_title_default">Link&#8230;</string>
     <string name="pref__dropbox_link_title_linked">Unlink</string>
     <string name="pref__dropbox_link_summary_default">Enable one-click or auto share</string>
-    <string name="pref__dropbox_link_summary_linked_one_click_share">One-click share to %1$s\'s Dropbox at %2$s</string>
-    <string name="pref__dropbox_link_summary_linked_auto_share">Auto share to %1$s\'s Dropbox at %2$s</string>
+    <string name="pref__dropbox_link_summary_linked_one_click_share">One-click share to %1$s\'s folder at %2$s</string>
+    <string name="pref__dropbox_link_summary_linked_auto_share">Auto share to %1$s\'s folder at %2$s</string>
     <string name="pref__dropbox_auto_share_key">pref__dropbox_auto_share</string>
     <string name="pref__dropbox_auto_share_title">Auto share</string>
 
@@ -136,6 +136,9 @@
     <string name="facebook__album_name_key">facebook__album_name_key</string>
     <string name="facebook__album_graph_path_key">facebook__album_graph_path_key</string>
     <string name="facebook__error_link">Unable to link Facebook</string>
+    <string name="facebook__notification_shared_title">Facebook share completed</string>
+    <string name="facebook__notification_shared_msg_single">+1 photo to %1$s</string>
+    <string name="facebook__notification_shared_msg_multi">+%1$d photos to %2$s</string>
 
     <!-- Facebook Privacy Dialog Fragment -->
     <string name="facebook_privacy__dialog_title">Select Privacy Level</string>
@@ -150,5 +153,8 @@
     <string name="dropbox__access_token_key_key">dropbox__access_token_key</string>
     <string name="dropbox__access_token_secret_key">dropbox__access_token_secret</string>
     <string name="dropbox__error_link">Unable to link Dropbox</string>
+    <string name="dropbox__notification_shared_title">Dropbox share completed</string>
+    <string name="dropbox__notification_shared_msg_single">+1 photo to %1$s</string>
+    <string name="dropbox__notification_shared_msg_multi">+%1$d photos to %2$s</string>
 
 </resources>

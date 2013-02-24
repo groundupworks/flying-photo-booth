@@ -714,8 +714,11 @@ public class FacebookHelper {
      * 
      * @param context
      *            the {@link Context}.
+     * @return the number of successfully shared items.
      */
-    public void processShareRequests(Context context) {
+    public int processShareRequests(Context context) {
+        int shared = 0;
+
         // Get params associated with the linked account.
         String photoPrivacy = optLinkedPhotoPrivacy(context);
         String albumGraphPath = getLinkedAlbumGraphPath(context);
@@ -751,6 +754,8 @@ public class FacebookHelper {
                                 if (error == null) {
                                     // Mark as successfully processed.
                                     wingsDbHelper.markSuccessful(shareRequest.getId());
+
+                                    shared++;
                                 } else {
                                     wingsDbHelper.markFailed(shareRequest.getId());
 
@@ -778,5 +783,7 @@ public class FacebookHelper {
                 }
             }
         }
+
+        return shared;
     }
 }
