@@ -77,7 +77,7 @@ public class RetryPolicy {
 
         // Synchronously increment the consecutive fail count.
         Editor editor = preferences.edit();
-        editor.putLong(key, consecutiveFails + 1L);
+        editor.putInt(key, consecutiveFails + 1);
         editor.commit();
 
         return getFibonacci(consecutiveFails) * MINUTE_TO_MILLIS;
@@ -97,7 +97,7 @@ public class RetryPolicy {
         // Synchronously reset consecutive fail count.
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(appContext);
         Editor editor = preferences.edit();
-        editor.putLong(key, 0L);
+        editor.putInt(key, 0);
         editor.commit();
     }
 }

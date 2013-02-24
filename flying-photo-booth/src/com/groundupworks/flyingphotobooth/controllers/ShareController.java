@@ -22,12 +22,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Message;
-import android.sax.StartElementListener;
 import com.groundupworks.flyingphotobooth.MyApplication;
 import com.groundupworks.flyingphotobooth.R;
 import com.groundupworks.flyingphotobooth.arrangements.BoxArrangement;
@@ -246,8 +244,7 @@ public class ShareController extends BaseController {
                     mIsFacebookShareActive = false;
 
                     // Start Wings service.
-                    Intent intent = new Intent(context, WingsService.class);
-                    context.startService(intent);
+                    WingsService.startWakefulService(context);
 
                     // Notify ui.
                     Message uiMsg = Message.obtain();
@@ -267,8 +264,7 @@ public class ShareController extends BaseController {
                     mIsDropboxShareActive = false;
 
                     // Start Wings service.
-                    Intent intent = new Intent(context, WingsService.class);
-                    context.startService(intent);
+                    WingsService.startWakefulService(context);
 
                     // Notify ui.
                     Message uiMsg = Message.obtain();

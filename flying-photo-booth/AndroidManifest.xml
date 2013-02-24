@@ -90,6 +90,8 @@
         </activity>
 
         <service android:name=".wings.WingsService" />
+
+        <receiver android:name=".wings.AlarmReceiver" />
     </application>
 
 </manifest>

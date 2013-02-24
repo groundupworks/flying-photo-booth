@@ -15,9 +15,11 @@
  */
 package com.groundupworks.flyingphotobooth.wings;
 
+import android.app.AlarmManager;
 import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.PowerManager;
@@ -88,7 +90,7 @@ public class WingsService extends IntentService {
             // Purge share requests.
             if (WingsDbHelper.getInstance(appContext).purge() > 0) {
                 // Some share requests failed. Schedule next attempt to share.
-                RetryPolicy.incrementAndGetTime(this);
+                scheduleRetry();
             } else {
                 // All share requests completed successfully. Reset retry policy.
                 RetryPolicy.reset(this);
@@ -133,6 +135,23 @@ public class WingsService extends IntentService {
             sWakeLock.release();
             sWakeLock = null;
         }
+    }
+
+    /**
+     * Schedules a retry in the future. This method figures out how far in the future the next attempt should be.
+     */
+    private void scheduleRetry() {
+        Context appContext = getApplicationContext();
+        long nextRetry = System.currentTimeMillis() + RetryPolicy.incrementAndGetTime(appContext);
+
+        // Create pending intent.
+        Intent intent = new Intent(appContext, AlarmReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(appContext, 0, intent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+
+        // Set alarm.
+        AlarmManager alarmManager = (AlarmManager) appContext.getSystemService(Context.ALARM_SERVICE);
+        alarmManager.set(AlarmManager.RTC_WAKEUP, nextRetry, pendingIntent);
     }
 
     /**
