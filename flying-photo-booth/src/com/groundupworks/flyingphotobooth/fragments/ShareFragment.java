@@ -382,13 +382,13 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
                 mShareButton.setEnabled(true);
 
                 if (mDropboxHelper.isAutoShare(appContext)) {
-                    requestFacebookShare();
+                    requestDropboxShare();
                 } else {
                     mDropboxButton.setVisibility(View.VISIBLE);
                 }
 
                 if (mFacebookHelper.isAutoShare(appContext)) {
-                    requestDropboxShare();
+                    requestFacebookShare();
                 } else {
                     mFacebookButton.setVisibility(View.VISIBLE);
                 }
