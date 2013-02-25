@@ -98,6 +98,16 @@ public class FacebookHelper {
     private static final String ALBUMS_LISTING_GRAPH_PATH = "me/albums";
 
     /**
+     * The key for max number of albums to request.
+     */
+    private static final String ALBUMS_LISTING_LIMIT_KEY = "limit";
+
+    /**
+     * The value for max number of albums to request.
+     */
+    private static final String ALBUMS_LISTING_LIMIT_VALUE = "50";
+
+    /**
      * The key for params to request.
      */
     private static final String ALBUMS_LISTING_FEILDS_KEY = "fields";
@@ -551,6 +561,7 @@ public class FacebookHelper {
         if (session != null && session.isOpened()) {
             // Construct fields to request.
             Bundle params = new Bundle();
+            params.putString(ALBUMS_LISTING_LIMIT_KEY, ALBUMS_LISTING_LIMIT_VALUE);
             params.putString(ALBUMS_LISTING_FEILDS_KEY, ALBUMS_LISTING_FIELDS_VALUE);
 
             // Construct and execute albums listing request.
