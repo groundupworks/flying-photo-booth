@@ -176,10 +176,14 @@ public class WingsService extends IntentService {
         }
         String ticker = getString(R.string.facebook__notification_shared_ticker);
 
+        // Construct blank pending intent as some versions of Android require it.
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, new Intent(), PendingIntent.FLAG_ONE_SHOT);
+
         // Construct notification.
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
         Notification notification = builder.setSmallIcon(R.drawable.notification).setContentTitle(title)
-                .setContentText(msg).setTicker(ticker).setAutoCancel(true).setWhen(System.currentTimeMillis()).build();
+                .setContentText(msg).setTicker(ticker).setAutoCancel(true).setWhen(System.currentTimeMillis())
+                .setContentIntent(pendingIntent).build();
 
         // Send notification.
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
@@ -210,10 +214,14 @@ public class WingsService extends IntentService {
         }
         String ticker = getString(R.string.dropbox__notification_shared_ticker);
 
+        // Construct blank pending intent as some versions of Android require it.
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, new Intent(), PendingIntent.FLAG_ONE_SHOT);
+
         // Construct notification.
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
         Notification notification = builder.setSmallIcon(R.drawable.notification).setContentTitle(title)
-                .setContentText(msg).setTicker(ticker).setAutoCancel(true).setWhen(System.currentTimeMillis()).build();
+                .setContentText(msg).setTicker(ticker).setAutoCancel(true).setWhen(System.currentTimeMillis())
+                .setContentIntent(pendingIntent).build();
 
         // Send notification.
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
