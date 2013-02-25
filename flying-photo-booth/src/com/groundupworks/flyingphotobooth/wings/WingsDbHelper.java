@@ -23,7 +23,6 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 /**
  * The Wings database helper that stores {@link ShareRequest} records and manages the state of those records.
@@ -167,8 +166,8 @@ public class WingsDbHelper extends SQLiteOpenHelper {
 
             isSuccessful = db.insert(ShareRequestTable.NAME, null, values) != ID_ERROR;
 
-            Log.d(getClass().getSimpleName(), "createShareRequest() isSuccessful=" + isSuccessful + " filePath="
-                    + filePath + " destination=" + destination);
+            // Log.d(getClass().getSimpleName(), "createShareRequest() isSuccessful=" + isSuccessful + " filePath="
+            // + filePath + " destination=" + destination);
         } catch (SQLException e) {
             // Do nothing.
         } finally {
@@ -219,8 +218,9 @@ public class WingsDbHelper extends SQLiteOpenHelper {
                         // Add record to list.
                         shareRequests.add(new ShareRequest(id, filePath, destination));
 
-                        Log.d(getClass().getSimpleName(), "checkoutShareRequests() id=" + id + " filePath=" + filePath
-                                + " destination=" + destination);
+                        // Log.d(getClass().getSimpleName(), "checkoutShareRequests() id=" + id + " filePath=" +
+                        // filePath
+                        // + " destination=" + destination);
                     }
                 } while (cursor.moveToNext());
             }
@@ -250,7 +250,7 @@ public class WingsDbHelper extends SQLiteOpenHelper {
             int rows = db.delete(ShareRequestTable.NAME, WHERE_CLAUSE_BY_DESTINATION,
                     new String[] { String.valueOf(destination) });
 
-            Log.d(getClass().getSimpleName(), "deleteShareRequests() destination=" + destination + " rows=" + rows);
+            // Log.d(getClass().getSimpleName(), "deleteShareRequests() destination=" + destination + " rows=" + rows);
         } catch (SQLException e) {
             // Do nothing.
         } finally {
@@ -279,7 +279,7 @@ public class WingsDbHelper extends SQLiteOpenHelper {
             isSuccessful = db.update(ShareRequestTable.NAME, values, WHERE_CLAUSE_BY_ID,
                     new String[] { String.valueOf(id) }) > 0;
 
-            Log.d(getClass().getSimpleName(), "markSuccessful() isSuccessful=" + isSuccessful + " id=" + id);
+            // Log.d(getClass().getSimpleName(), "markSuccessful() isSuccessful=" + isSuccessful + " id=" + id);
         } catch (SQLException e) {
             // Do nothing.
         } finally {
@@ -317,7 +317,7 @@ public class WingsDbHelper extends SQLiteOpenHelper {
                 isSuccessful = db.update(ShareRequestTable.NAME, values, WHERE_CLAUSE_BY_ID,
                         new String[] { String.valueOf(id) }) > 0;
 
-                Log.d(getClass().getSimpleName(), "markFailed() isSuccessful=" + isSuccessful + " id=" + id);
+                // Log.d(getClass().getSimpleName(), "markFailed() isSuccessful=" + isSuccessful + " id=" + id);
             }
         } catch (SQLException e) {
             // Do nothing.
@@ -356,7 +356,7 @@ public class WingsDbHelper extends SQLiteOpenHelper {
                 count = cursor.getCount();
             }
 
-            Log.d(getClass().getSimpleName(), "purge() rows=" + rows + " count=" + count);
+            // Log.d(getClass().getSimpleName(), "purge() rows=" + rows + " count=" + count);
         } catch (SQLException e) {
             // Do nothing.
         } finally {
