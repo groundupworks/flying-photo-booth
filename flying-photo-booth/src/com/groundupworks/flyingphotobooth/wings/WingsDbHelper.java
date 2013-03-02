@@ -23,6 +23,7 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import com.groundupworks.flyingphotobooth.helpers.LogsHelper;
 
 /**
  * The Wings database helper that stores {@link ShareRequest} records and manages the state of those records.
@@ -50,6 +51,11 @@ public class WingsDbHelper extends SQLiteOpenHelper {
      * SQL where clause by destination.
      */
     private static final String WHERE_CLAUSE_BY_DESTINATION = ShareRequestTable.COLUMN_DESTINATION + "=?";
+
+    /**
+     * SQL where clause by state.
+     */
+    private static final String WHERE_CLAUSE_BY_STATE = ShareRequestTable.COLUMN_STATE + "=?";
 
     /**
      * SQL where clause by destination and state.
@@ -166,8 +172,8 @@ public class WingsDbHelper extends SQLiteOpenHelper {
 
             isSuccessful = db.insert(ShareRequestTable.NAME, null, values) != ID_ERROR;
 
-            // Log.d(getClass().getSimpleName(), "createShareRequest() isSuccessful=" + isSuccessful + " filePath="
-            // + filePath + " destination=" + destination);
+            LogsHelper.log(WingsDbHelper.class, "createShareRequest", "isSuccessful=" + isSuccessful + " filePath="
+                    + filePath + " destination=" + destination);
         } catch (SQLException e) {
             // Do nothing.
         } finally {
@@ -218,9 +224,8 @@ public class WingsDbHelper extends SQLiteOpenHelper {
                         // Add record to list.
                         shareRequests.add(new ShareRequest(id, filePath, destination));
 
-                        // Log.d(getClass().getSimpleName(), "checkoutShareRequests() id=" + id + " filePath=" +
-                        // filePath
-                        // + " destination=" + destination);
+                        LogsHelper.log(WingsDbHelper.class, "checkoutShareRequests", "id=" + id + " filePath="
+                                + filePath + " destination=" + destination);
                     }
                 } while (cursor.moveToNext());
             }
@@ -247,10 +252,11 @@ public class WingsDbHelper extends SQLiteOpenHelper {
         try {
             db = getWritableDatabase();
 
-            int rows = db.delete(ShareRequestTable.NAME, WHERE_CLAUSE_BY_DESTINATION,
+            int recordsDeleted = db.delete(ShareRequestTable.NAME, WHERE_CLAUSE_BY_DESTINATION,
                     new String[] { String.valueOf(destination) });
 
-            // Log.d(getClass().getSimpleName(), "deleteShareRequests() destination=" + destination + " rows=" + rows);
+            LogsHelper.log(WingsDbHelper.class, "deleteShareRequests", "destination=" + destination + " rowsDeleted="
+                    + recordsDeleted);
         } catch (SQLException e) {
             // Do nothing.
         } finally {
@@ -279,7 +285,7 @@ public class WingsDbHelper extends SQLiteOpenHelper {
             isSuccessful = db.update(ShareRequestTable.NAME, values, WHERE_CLAUSE_BY_ID,
                     new String[] { String.valueOf(id) }) > 0;
 
-            // Log.d(getClass().getSimpleName(), "markSuccessful() isSuccessful=" + isSuccessful + " id=" + id);
+            LogsHelper.log(WingsDbHelper.class, "markSuccessful", "isSuccessful=" + isSuccessful + " id=" + id);
         } catch (SQLException e) {
             // Do nothing.
         } finally {
@@ -317,7 +323,7 @@ public class WingsDbHelper extends SQLiteOpenHelper {
                 isSuccessful = db.update(ShareRequestTable.NAME, values, WHERE_CLAUSE_BY_ID,
                         new String[] { String.valueOf(id) }) > 0;
 
-                // Log.d(getClass().getSimpleName(), "markFailed() isSuccessful=" + isSuccessful + " id=" + id);
+                LogsHelper.log(WingsDbHelper.class, "markFailed", "isSuccessful=" + isSuccessful + " id=" + id);
             }
         } catch (SQLException e) {
             // Do nothing.
@@ -337,7 +343,7 @@ public class WingsDbHelper extends SQLiteOpenHelper {
      * @return the number of records remaining after the purge; or -1 if an error occurred.
      */
     public synchronized int purge() {
-        int count = -1;
+        int recordsRemaining = -1;
         SQLiteDatabase db = null;
         Cursor cursor = null;
         try {
@@ -345,7 +351,7 @@ public class WingsDbHelper extends SQLiteOpenHelper {
 
             // Purge records.
             long earliestValidTime = System.currentTimeMillis() - RECORD_EXPIRY_TIME;
-            int rows = db.delete(ShareRequestTable.NAME, WHERE_CLAUSE_PURGE_POLICY,
+            int recordsDeleted = db.delete(ShareRequestTable.NAME, WHERE_CLAUSE_PURGE_POLICY,
                     new String[] { String.valueOf(earliestValidTime), String.valueOf(ShareRequest.STATE_PROCESSED),
                             String.valueOf(RECORD_MAX_FAILS) });
 
@@ -353,10 +359,11 @@ public class WingsDbHelper extends SQLiteOpenHelper {
             cursor = db.query(ShareRequestTable.NAME, new String[] { ShareRequestTable.COLUMN_ID }, null, null, null,
                     null, null);
             if (cursor != null) {
-                count = cursor.getCount();
+                recordsRemaining = cursor.getCount();
             }
 
-            // Log.d(getClass().getSimpleName(), "purge() rows=" + rows + " count=" + count);
+            LogsHelper.log(WingsDbHelper.class, "purge", "recordsDeleted=" + recordsDeleted + " recordsRemaining="
+                    + recordsRemaining);
         } catch (SQLException e) {
             // Do nothing.
         } finally {
@@ -366,7 +373,30 @@ public class WingsDbHelper extends SQLiteOpenHelper {
             db.close();
         }
 
-        return count;
+        return recordsRemaining;
+    }
+
+    /**
+     * Reset all records that somehow got stuck in a processing state.
+     */
+    public synchronized void resetProcessingShareRequests() {
+        SQLiteDatabase db = null;
+        try {
+            db = getWritableDatabase();
+
+            // Update state back to pending.
+            ContentValues values = new ContentValues();
+            values.put(ShareRequestTable.COLUMN_STATE, ShareRequest.STATE_PENDING);
+
+            int recordsUpdated = db.update(ShareRequestTable.NAME, values, WHERE_CLAUSE_BY_STATE,
+                    new String[] { String.valueOf(ShareRequest.STATE_PROCESSING) });
+
+            LogsHelper.log(WingsDbHelper.class, "resetProcessingShareRequests", "recordsUpdated=" + recordsUpdated);
+        } catch (SQLException e) {
+            // Do nothing.
+        } finally {
+            db.close();
+        }
     }
 
     //

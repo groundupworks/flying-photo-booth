@@ -28,6 +28,7 @@ import android.support.v4.app.NotificationCompat;
 import com.groundupworks.flyingphotobooth.R;
 import com.groundupworks.flyingphotobooth.dropbox.DropboxHelper;
 import com.groundupworks.flyingphotobooth.facebook.FacebookHelper;
+import com.groundupworks.flyingphotobooth.helpers.LogsHelper;
 
 /**
  * An {@link IntentService} that processes {@link ShareRequest}. To ensure the device does not sleep before the service
@@ -61,40 +62,53 @@ public class WingsService extends IntentService {
         }
 
         super.onStartCommand(intent, flags, startId);
-        return (START_REDELIVER_INTENT);
+        return START_REDELIVER_INTENT;
     }
 
     @Override
     protected void onHandleIntent(Intent intent) {
         try {
             Context appContext = getApplicationContext();
+            WingsDbHelper wingsDbHelper = WingsDbHelper.getInstance(appContext);
+
+            // Reset all records that somehow got stuck in a processing state.
+            wingsDbHelper.resetProcessingShareRequests();
 
             // Process share requests to Facebook.
             FacebookHelper facebookHelper = new FacebookHelper();
             if (facebookHelper.isLinked(appContext)) {
-                int shared = facebookHelper.processShareRequests(appContext);
-                if (shared > 0) {
-                    sendFacebookNotification(appContext, facebookHelper, shared);
+                String albumName = facebookHelper.getLinkedAlbumName(appContext);
+                if (albumName != null) {
+                    int shared = facebookHelper.processShareRequests(appContext);
+                    if (shared > 0) {
+                        sendFacebookNotification(appContext, albumName, shared);
+                    }
                 }
             }
 
             // Process share requests to Dropbox.
             DropboxHelper dropboxHelper = new DropboxHelper();
             if (dropboxHelper.isLinked(appContext)) {
-                int shared = dropboxHelper.processShareRequests(appContext);
-                if (shared > 0) {
-                    sendDropboxNotification(appContext, dropboxHelper, shared);
+                String shareUrl = dropboxHelper.getLinkedShareUrl(appContext);
+                if (shareUrl != null) {
+                    int shared = dropboxHelper.processShareRequests(appContext);
+                    if (shared > 0) {
+                        sendDropboxNotification(appContext, shareUrl, shared);
+                    }
                 }
             }
 
             // Purge share requests.
-            if (WingsDbHelper.getInstance(appContext).purge() > 0) {
+            if (wingsDbHelper.purge() > 0) {
                 // Some share requests failed. Schedule next attempt to share.
                 scheduleRetry();
             } else {
                 // All share requests completed successfully. Reset retry policy.
                 RetryPolicy.reset(this);
             }
+        } catch (Exception e) {
+            // An unexpected exception occurred. Schedule next attempt to share.
+            scheduleRetry();
         } finally {
             releaseWakeLock();
         }
@@ -116,25 +130,34 @@ public class WingsService extends IntentService {
             PowerManager powerManager = (PowerManager) context.getApplicationContext().getSystemService(
                     Context.POWER_SERVICE);
             sWakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, NAME);
-
-            // One release is sufficient to release this lock.
-            sWakeLock.setReferenceCounted(false);
+            sWakeLock.setReferenceCounted(true);
         }
 
         // Acquire lock.
-        if (!sWakeLock.isHeld()) {
-            sWakeLock.acquire();
-        }
+        sWakeLock.acquire();
+
+        LogsHelper.log(WingsService.class, "acquireWakeLock", "sWakeLock=" + sWakeLock);
     }
 
     /**
      * Releases the wake lock if one is held.
      */
     private synchronized static void releaseWakeLock() {
-        if (sWakeLock != null && sWakeLock.isHeld()) {
-            sWakeLock.release();
-            sWakeLock = null;
+        if (sWakeLock != null) {
+            if (sWakeLock.isHeld()) {
+                sWakeLock.release();
+
+                // Clear static reference if the lock is no longer held after the release() call.
+                if (!sWakeLock.isHeld()) {
+                    sWakeLock = null;
+                }
+            } else {
+                // The lock is not held, just clear the static reference.
+                sWakeLock = null;
+            }
         }
+
+        LogsHelper.log(WingsService.class, "releaseWakeLock", "sWakeLock=" + sWakeLock);
     }
 
     /**
@@ -143,15 +166,7 @@ public class WingsService extends IntentService {
     private void scheduleRetry() {
         Context appContext = getApplicationContext();
         long nextRetry = System.currentTimeMillis() + RetryPolicy.incrementAndGetTime(appContext);
-
-        // Create pending intent.
-        Intent intent = new Intent(appContext, AlarmReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(appContext, 0, intent,
-                PendingIntent.FLAG_UPDATE_CURRENT);
-
-        // Set alarm.
-        AlarmManager alarmManager = (AlarmManager) appContext.getSystemService(Context.ALARM_SERVICE);
-        alarmManager.set(AlarmManager.RTC_WAKEUP, nextRetry, pendingIntent);
+        scheduleWingsService(appContext, nextRetry);
     }
 
     /**
@@ -159,15 +174,14 @@ public class WingsService extends IntentService {
      * 
      * @param context
      *            the {@link Context}.
-     * @param helper
-     *            the {@link FacebookHelper}.
+     * @param albumName
+     *            the name of the album to share to.
      * @param shared
      *            the number of successful shares. Must be larger than 0.
      */
-    private void sendFacebookNotification(Context context, FacebookHelper helper, int shared) {
+    private void sendFacebookNotification(Context context, String albumName, int shared) {
         // Construct notification title and message text.
         String title = getString(R.string.facebook__notification_shared_title);
-        String albumName = helper.getLinkedAlbumName(context);
         String msg;
         if (shared > 1) {
             msg = getString(R.string.facebook__notification_shared_msg_multi, shared, albumName);
@@ -197,15 +211,14 @@ public class WingsService extends IntentService {
      * 
      * @param context
      *            the {@link Context}.
-     * @param helper
-     *            the {@link DropboxHelper}.
+     * @param shareUrl
+     *            the share url associated with the account.
      * @param shared
      *            the number of successful shares. Must be larger than 0.
      */
-    private void sendDropboxNotification(Context context, DropboxHelper helper, int shared) {
+    private void sendDropboxNotification(Context context, String shareUrl, int shared) {
         // Construct notification title and message text.
         String title = getString(R.string.dropbox__notification_shared_title);
-        String shareUrl = helper.getLinkedShareUrl(context);
         String msg;
         if (shared > 1) {
             msg = getString(R.string.dropbox__notification_shared_msg_multi, shared, shareUrl);
@@ -228,6 +241,31 @@ public class WingsService extends IntentService {
         if (notificationManager != null) {
             notificationManager.notify(ShareRequest.DESTINATION_DROPBOX, notification);
         }
+    }
+
+    //
+    // Package private methods.
+    //
+
+    /**
+     * Schedules an alarm to start the {@link WingsService}.
+     * 
+     * @param context
+     *            the {@link Context}.
+     * @param delay
+     *            how far in the future to schedule the alarm.
+     */
+    static void scheduleWingsService(Context context, long delay) {
+        Context appContext = context.getApplicationContext();
+
+        // Create pending intent.
+        Intent intent = new Intent(appContext, AlarmReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(appContext, 0, intent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+
+        // Set alarm.
+        AlarmManager alarmManager = (AlarmManager) appContext.getSystemService(Context.ALARM_SERVICE);
+        alarmManager.set(AlarmManager.RTC_WAKEUP, delay, pendingIntent);
     }
 
     //

@@ -236,42 +236,44 @@ public class ShareController extends BaseController {
                 break;
             case ShareFragment.FACEBOOK_SHARE_REQUESTED:
                 // Create record in Wings.
-                if (mIsFacebookShareActive
-                        && mJpegPath != null
-                        && WingsDbHelper.getInstance(context).createShareRequest(mJpegPath,
-                                ShareRequest.DESTINATION_FACEBOOK)) {
-                    // Disable to ensure we only make one share request.
-                    mIsFacebookShareActive = false;
+                if (mIsFacebookShareActive) {
+                    if (mJpegPath != null
+                            && WingsDbHelper.getInstance(context).createShareRequest(mJpegPath,
+                                    ShareRequest.DESTINATION_FACEBOOK)) {
+                        // Disable to ensure we only make one share request.
+                        mIsFacebookShareActive = false;
 
-                    // Start Wings service.
-                    WingsService.startWakefulService(context);
+                        // Start Wings service.
+                        WingsService.startWakefulService(context);
 
-                    // Notify ui.
-                    Message uiMsg = Message.obtain();
-                    uiMsg.what = FACEBOOK_SHARE_MARKED;
-                    sendUiUpdate(uiMsg);
-                } else {
-                    reportError();
+                        // Notify ui.
+                        Message uiMsg = Message.obtain();
+                        uiMsg.what = FACEBOOK_SHARE_MARKED;
+                        sendUiUpdate(uiMsg);
+                    } else {
+                        reportError();
+                    }
                 }
                 break;
             case ShareFragment.DROPBOX_SHARE_REQUESTED:
                 // Create record in Wings.
-                if (mIsDropboxShareActive
-                        && mJpegPath != null
-                        && WingsDbHelper.getInstance(context).createShareRequest(mJpegPath,
-                                ShareRequest.DESTINATION_DROPBOX)) {
-                    // Disable to ensure we only make one share request.
-                    mIsDropboxShareActive = false;
+                if (mIsDropboxShareActive) {
+                    if (mJpegPath != null
+                            && WingsDbHelper.getInstance(context).createShareRequest(mJpegPath,
+                                    ShareRequest.DESTINATION_DROPBOX)) {
+                        // Disable to ensure we only make one share request.
+                        mIsDropboxShareActive = false;
 
-                    // Start Wings service.
-                    WingsService.startWakefulService(context);
+                        // Start Wings service.
+                        WingsService.startWakefulService(context);
 
-                    // Notify ui.
-                    Message uiMsg = Message.obtain();
-                    uiMsg.what = DROPBOX_SHARE_MARKED;
-                    sendUiUpdate(uiMsg);
-                } else {
-                    reportError();
+                        // Notify ui.
+                        Message uiMsg = Message.obtain();
+                        uiMsg.what = DROPBOX_SHARE_MARKED;
+                        sendUiUpdate(uiMsg);
+                    } else {
+                        reportError();
+                    }
                 }
                 break;
             case ShareFragment.FRAGMENT_DESTROYED:

@@ -24,6 +24,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ParcelFileDescriptor;
@@ -37,11 +38,13 @@ import com.facebook.HttpMethod;
 import com.facebook.Request;
 import com.facebook.Request.Callback;
 import com.facebook.Request.GraphUserCallback;
+import com.facebook.RequestBatch;
 import com.facebook.Response;
 import com.facebook.Session;
 import com.facebook.Session.NewPermissionsRequest;
 import com.facebook.Session.OpenRequest;
 import com.facebook.SessionDefaultAudience;
+import com.facebook.SessionLoginBehavior;
 import com.facebook.SessionState;
 import com.groundupworks.flyingphotobooth.MyApplication;
 import com.groundupworks.flyingphotobooth.R;
@@ -54,6 +57,16 @@ import com.groundupworks.flyingphotobooth.wings.WingsDbHelper;
  * @author Benedict Lau
  */
 public class FacebookHelper {
+
+    /**
+     * Timeout value for http requests.
+     */
+    private static final int HTTP_REQUEST_TIMEOUT = 120000;
+
+    /**
+     * Facebook app package name.
+     */
+    private static final String KATANA_PACKAGE = "com.facebook.katana";
 
     //
     // Facebook permissions.
@@ -233,6 +246,10 @@ public class FacebookHelper {
         } else {
             openRequest = new OpenRequest(fragment);
         }
+
+        // Allow SSO login only because the web login does not allow PERMISSION_USER_PHOTOS to be bundled with the
+        // first openForRead() call.
+        openRequest.setLoginBehavior(SessionLoginBehavior.SSO_ONLY);
         openRequest.setPermissions(readPermissions);
         openRequest.setDefaultAudience(SessionDefaultAudience.EVERYONE);
         openRequest.setCallback(statusCallback);
@@ -257,7 +274,7 @@ public class FacebookHelper {
      *            "extras").
      * @return true if open session request is successful; false otherwise.
      */
-    private boolean finishOpenSessionRequest(Activity activity, int requestCode, int resultCode, Intent data) {
+    private boolean finishOpenSessionRequest(final Activity activity, int requestCode, int resultCode, Intent data) {
         boolean isSuccessful = false;
 
         Session session = Session.getActiveSession();
@@ -393,6 +410,25 @@ public class FacebookHelper {
     }
 
     /**
+     * Checks if the Facebook native app is installed on the device.
+     * 
+     * @param context
+     *            the {@link Context}.
+     * @return true if installed; false otherwise.
+     */
+    private boolean isFacebookAppInstalled(Context context) {
+        boolean isInstalled = false;
+        try {
+            // An exception will be thrown if the package is not found.
+            context.getPackageManager().getApplicationInfo(KATANA_PACKAGE, 0);
+            isInstalled = true;
+        } catch (PackageManager.NameNotFoundException e) {
+            // Do nothing.
+        }
+        return isInstalled;
+    }
+
+    /**
      * Links an account.
      * 
      * @param context
@@ -433,7 +469,11 @@ public class FacebookHelper {
         mLinkRequestState = STATE_NONE;
 
         // Show toast to indicate error during linking.
-        showLinkError(appContext);
+        if (isFacebookAppInstalled(context)) {
+            showLinkError(appContext);
+        } else {
+            showFacebookAppError(appContext);
+        }
 
         // Unlink account to ensure proper reset.
         unlink(appContext);
@@ -447,6 +487,16 @@ public class FacebookHelper {
      */
     private void showLinkError(Context context) {
         Toast.makeText(context, context.getString(R.string.facebook__error_link), Toast.LENGTH_SHORT).show();
+    }
+
+    /**
+     * Displays the Facebook app error message.
+     * 
+     * @param context
+     *            the {@link Context}.
+     */
+    private void showFacebookAppError(Context context) {
+        Toast.makeText(context, context.getString(R.string.facebook__error_facebook_app), Toast.LENGTH_SHORT).show();
     }
 
     /**
@@ -781,34 +831,45 @@ public class FacebookHelper {
                                 params.putString(SHARE_KEY_PHOTO_PRIVACY, photoPrivacy);
                             }
 
-                            // Execute upload request synchronously.
+                            // Execute upload request synchronously. Need to use RequestBatch to set connection timeout.
                             Request request = new Request(session, albumGraphPath, params, HttpMethod.POST, null);
-                            Response response = request.executeAndWait();
+                            RequestBatch requestBatch = new RequestBatch(request);
+                            requestBatch.setTimeout(HTTP_REQUEST_TIMEOUT);
+                            List<Response> responses = requestBatch.executeAndWait();
+                            if (responses != null && !responses.isEmpty()) {
+                                // Process response.
+                                Response response = responses.get(0);
+                                if (response != null) {
+                                    FacebookRequestError error = response.getError();
+                                    if (error == null) {
+                                        // Mark as successfully processed.
+                                        wingsDbHelper.markSuccessful(shareRequest.getId());
 
-                            // Process response.
-                            if (response != null) {
-                                FacebookRequestError error = response.getError();
-                                if (error == null) {
-                                    // Mark as successfully processed.
-                                    wingsDbHelper.markSuccessful(shareRequest.getId());
+                                        shared++;
+                                    } else {
+                                        wingsDbHelper.markFailed(shareRequest.getId());
 
-                                    shared++;
+                                        Category category = error.getCategory();
+                                        if (Category.AUTHENTICATION_RETRY.equals(category)
+                                                || Category.PERMISSION.equals(category)) {
+                                            // Update account linking state to unlinked.
+                                            unlink(context);
+                                        }
+                                    }
                                 } else {
                                     wingsDbHelper.markFailed(shareRequest.getId());
-
-                                    Category category = error.getCategory();
-                                    if (Category.AUTHENTICATION_RETRY.equals(category)
-                                            || Category.PERMISSION.equals(category)) {
-                                        // Update account linking state to unlinked.
-                                        unlink(context);
-                                    }
                                 }
+                            } else {
+                                wingsDbHelper.markFailed(shareRequest.getId());
                             }
                         } catch (FacebookException e) {
                             wingsDbHelper.markFailed(shareRequest.getId());
                         } catch (IllegalArgumentException e) {
                             wingsDbHelper.markFailed(shareRequest.getId());
                         } catch (FileNotFoundException e) {
+                            wingsDbHelper.markFailed(shareRequest.getId());
+                        } catch (Exception e) {
+                            // Safety.
                             wingsDbHelper.markFailed(shareRequest.getId());
                         }
                     }

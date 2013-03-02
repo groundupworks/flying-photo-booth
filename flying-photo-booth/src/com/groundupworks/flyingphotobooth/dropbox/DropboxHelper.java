@@ -469,6 +469,9 @@ public class DropboxHelper {
                         wingsDbHelper.markFailed(shareRequest.getId());
                     } catch (FileNotFoundException e) {
                         wingsDbHelper.markFailed(shareRequest.getId());
+                    } catch (Exception e) {
+                        // Safety.
+                        wingsDbHelper.markFailed(shareRequest.getId());
                     } finally {
                         if (inputStream != null) {
                             try {
