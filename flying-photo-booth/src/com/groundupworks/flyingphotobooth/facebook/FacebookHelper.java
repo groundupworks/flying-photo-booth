@@ -17,6 +17,7 @@ package com.groundupworks.flyingphotobooth.facebook;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 import android.app.Activity;
@@ -821,10 +822,10 @@ public class FacebookHelper {
                     // Process share requests.
                     for (ShareRequest shareRequest : shareRequests) {
                         File file = new File(shareRequest.getFilePath());
+                        ParcelFileDescriptor fileDescriptor = null;
                         try {
                             // Construct graph params.
-                            ParcelFileDescriptor fileDescriptor = ParcelFileDescriptor.open(file,
-                                    ParcelFileDescriptor.MODE_READ_ONLY);
+                            fileDescriptor = ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY);
                             Bundle params = new Bundle();
                             params.putParcelable(SHARE_KEY_PICTURE, fileDescriptor);
                             if (photoPrivacy != null && photoPrivacy.length() > 0) {
@@ -871,6 +872,14 @@ public class FacebookHelper {
                         } catch (Exception e) {
                             // Safety.
                             wingsDbHelper.markFailed(shareRequest.getId());
+                        } finally {
+                            if (fileDescriptor != null) {
+                                try {
+                                    fileDescriptor.close();
+                                } catch (IOException e) {
+                                    // Do nothing.
+                                }
+                            }
                         }
                     }
                 } else {
