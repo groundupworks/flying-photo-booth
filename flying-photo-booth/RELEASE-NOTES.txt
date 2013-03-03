@@ -81,7 +81,8 @@ Create and share photo strips!
 
 NEW FEATURES
 
-¥ Improved Wings to complete your shares even if the device is rebooted  
+¥ Improved camera configurations
+¥ Improved Wings to complete your shares even if the device is rebooted
 ¥ Clicking on a notification opens up your newly shared photo in Facebook or Dropbox
 ¥ Increased the maximum number of Facebook albums to show
 
