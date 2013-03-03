@@ -77,24 +77,18 @@ public class WingsService extends IntentService {
             // Process share requests to Facebook.
             FacebookHelper facebookHelper = new FacebookHelper();
             if (facebookHelper.isLinked(appContext)) {
-                String albumName = facebookHelper.getLinkedAlbumName(appContext);
-                if (albumName != null) {
-                    int shared = facebookHelper.processShareRequests(appContext);
-                    if (shared > 0) {
-                        sendFacebookNotification(appContext, albumName, shared);
-                    }
+                IWingsNotification notification = facebookHelper.processShareRequests(appContext);
+                if (notification != null) {
+                    sendNotification(appContext, notification);
                 }
             }
 
             // Process share requests to Dropbox.
             DropboxHelper dropboxHelper = new DropboxHelper();
             if (dropboxHelper.isLinked(appContext)) {
-                String shareUrl = dropboxHelper.getLinkedShareUrl(appContext);
-                if (shareUrl != null) {
-                    int shared = dropboxHelper.processShareRequests(appContext);
-                    if (shared > 0) {
-                        sendDropboxNotification(appContext, shareUrl, shared);
-                    }
+                IWingsNotification notification = dropboxHelper.processShareRequests(appContext);
+                if (notification != null) {
+                    sendNotification(appContext, notification);
                 }
             }
 
@@ -170,76 +164,25 @@ public class WingsService extends IntentService {
     }
 
     /**
-     * Sends a notification of the Facebook share results to the notification bar.
-     * 
-     * @param context
-     *            the {@link Context}.
-     * @param albumName
-     *            the name of the album to share to.
-     * @param shared
-     *            the number of successful shares. Must be larger than 0.
+     * Sends a {@link IWingsNotification} to the notification bar.
      */
-    private void sendFacebookNotification(Context context, String albumName, int shared) {
-        // Construct notification title and message text.
-        String title = getString(R.string.facebook__notification_shared_title);
-        String msg;
-        if (shared > 1) {
-            msg = getString(R.string.facebook__notification_shared_msg_multi, shared, albumName);
-        } else {
-            msg = getString(R.string.facebook__notification_shared_msg_single, albumName);
-        }
-        String ticker = getString(R.string.facebook__notification_shared_ticker);
-
-        // Construct blank pending intent as some versions of Android require it.
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, new Intent(), PendingIntent.FLAG_ONE_SHOT);
+    private void sendNotification(Context context, IWingsNotification wingsNotification) {
+        // Construct pending intent. The wrapped Intent must not be null as some versions of Android require it.
+        Intent intent = wingsNotification.getIntent();
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_ONE_SHOT);
 
         // Construct notification.
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
-        Notification notification = builder.setSmallIcon(R.drawable.notification).setContentTitle(title)
-                .setContentText(msg).setTicker(ticker).setAutoCancel(true).setWhen(System.currentTimeMillis())
+        Notification notification = builder.setSmallIcon(R.drawable.notification)
+                .setContentTitle(wingsNotification.getTitle()).setContentText(wingsNotification.getMessage())
+                .setTicker(wingsNotification.getTicker()).setAutoCancel(true).setWhen(System.currentTimeMillis())
                 .setContentIntent(pendingIntent).build();
 
         // Send notification.
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         if (notificationManager != null) {
-            notificationManager.notify(ShareRequest.DESTINATION_FACEBOOK, notification);
-        }
-    }
-
-    /**
-     * Sends a notification of the Dropbox share results to the notification bar.
-     * 
-     * @param context
-     *            the {@link Context}.
-     * @param shareUrl
-     *            the share url associated with the account.
-     * @param shared
-     *            the number of successful shares. Must be larger than 0.
-     */
-    private void sendDropboxNotification(Context context, String shareUrl, int shared) {
-        // Construct notification title and message text.
-        String title = getString(R.string.dropbox__notification_shared_title);
-        String msg;
-        if (shared > 1) {
-            msg = getString(R.string.dropbox__notification_shared_msg_multi, shared, shareUrl);
-        } else {
-            msg = getString(R.string.dropbox__notification_shared_msg_single, shareUrl);
-        }
-        String ticker = getString(R.string.dropbox__notification_shared_ticker);
-
-        // Construct blank pending intent as some versions of Android require it.
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, new Intent(), PendingIntent.FLAG_ONE_SHOT);
-
-        // Construct notification.
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
-        Notification notification = builder.setSmallIcon(R.drawable.notification).setContentTitle(title)
-                .setContentText(msg).setTicker(ticker).setAutoCancel(true).setWhen(System.currentTimeMillis())
-                .setContentIntent(pendingIntent).build();
-
-        // Send notification.
-        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        if (notificationManager != null) {
-            notificationManager.notify(ShareRequest.DESTINATION_DROPBOX, notification);
+            notificationManager.notify(wingsNotification.getId(), notification);
         }
     }
 

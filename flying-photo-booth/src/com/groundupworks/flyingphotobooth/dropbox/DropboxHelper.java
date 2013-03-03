@@ -38,6 +38,7 @@ import com.dropbox.client2.session.AppKeyPair;
 import com.dropbox.client2.session.Session.AccessType;
 import com.groundupworks.flyingphotobooth.MyApplication;
 import com.groundupworks.flyingphotobooth.R;
+import com.groundupworks.flyingphotobooth.wings.IWingsNotification;
 import com.groundupworks.flyingphotobooth.wings.ShareRequest;
 import com.groundupworks.flyingphotobooth.wings.WingsDbHelper;
 
@@ -425,14 +426,15 @@ public class DropboxHelper {
      * 
      * @param context
      *            the {@link Context}.
-     * @return the number of successfully shared items.
+     * @return a {@link IWingsNotification} representing the results of the processed {@link ShareRequest}. May be null.
      */
-    public int processShareRequests(Context context) {
+    public IWingsNotification processShareRequests(Context context) {
         int shared = 0;
 
         // Get access token associated with the linked account.
         AccessTokenPair accessToken = getLinkedAccessToken(context);
-        if (accessToken != null) {
+        String shareUrl = getLinkedShareUrl(context);
+        if (accessToken != null && shareUrl != null) {
             // Get share requests for Dropbox.
             WingsDbHelper wingsDbHelper = WingsDbHelper.getInstance(context);
             List<ShareRequest> shareRequests = wingsDbHelper.checkoutShareRequests(ShareRequest.DESTINATION_DROPBOX);
@@ -485,6 +487,12 @@ public class DropboxHelper {
             }
         }
 
-        return shared;
+        // Construct notification representing share results.
+        DropboxNotification notification = null;
+        if (shared > 0) {
+            notification = new DropboxNotification(context, shareUrl, shared, shareUrl);
+        }
+
+        return notification;
     }
 }

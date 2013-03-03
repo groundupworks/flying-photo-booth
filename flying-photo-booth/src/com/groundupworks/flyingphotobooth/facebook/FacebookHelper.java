@@ -20,6 +20,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
+import org.json.JSONObject;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -47,8 +48,10 @@ import com.facebook.Session.OpenRequest;
 import com.facebook.SessionDefaultAudience;
 import com.facebook.SessionLoginBehavior;
 import com.facebook.SessionState;
+import com.facebook.model.GraphObject;
 import com.groundupworks.flyingphotobooth.MyApplication;
 import com.groundupworks.flyingphotobooth.R;
+import com.groundupworks.flyingphotobooth.wings.IWingsNotification;
 import com.groundupworks.flyingphotobooth.wings.ShareRequest;
 import com.groundupworks.flyingphotobooth.wings.WingsDbHelper;
 
@@ -207,6 +210,10 @@ public class FacebookHelper {
     private static final String SHARE_KEY_PICTURE = "picture";
 
     private static final String SHARE_KEY_PHOTO_PRIVACY = "privacy";
+
+    private static final String SHARE_KEY_PHOTO_ID = "id";
+
+    private static final String SHARE_NOTIFICATION_INTENT_BASE_URI = "fb://photo/";
 
     /**
      * Flag to track if a link request is started.
@@ -575,6 +582,26 @@ public class FacebookHelper {
         return preferences.getString(appContext.getString(R.string.facebook__album_graph_path_key), null);
     }
 
+    /**
+     * Parses the photo id from a {@link GraphObject}.
+     * 
+     * @param graphObject
+     *            the {@link GraphObject} to parse.
+     * 
+     * @return the photo id; or null if not found.
+     */
+    private String parsePhotoId(GraphObject graphObject) {
+        String photoId = null;
+
+        if (graphObject != null) {
+            JSONObject jsonObject = graphObject.getInnerJSONObject();
+            if (jsonObject != null) {
+                photoId = jsonObject.optString(SHARE_KEY_PHOTO_ID, null);
+            }
+        }
+        return photoId;
+    }
+
     //
     // Package private methods.
     //
@@ -802,15 +829,17 @@ public class FacebookHelper {
      * 
      * @param context
      *            the {@link Context}.
-     * @return the number of successfully shared items.
+     * @return a {@link IWingsNotification} representing the results of the processed {@link ShareRequest}. May be null.
      */
-    public int processShareRequests(Context context) {
+    public IWingsNotification processShareRequests(Context context) {
         int shared = 0;
+        String intentUri = null;
 
         // Get params associated with the linked account.
         String photoPrivacy = optLinkedPhotoPrivacy(context);
+        String albumName = getLinkedAlbumName(context);
         String albumGraphPath = getLinkedAlbumGraphPath(context);
-        if (albumGraphPath != null) {
+        if (albumName != null && albumGraphPath != null) {
             // Get share requests for Facebook.
             WingsDbHelper wingsDbHelper = WingsDbHelper.getInstance(context);
             List<ShareRequest> shareRequests = wingsDbHelper.checkoutShareRequests(ShareRequest.DESTINATION_FACEBOOK);
@@ -845,6 +874,14 @@ public class FacebookHelper {
                                     if (error == null) {
                                         // Mark as successfully processed.
                                         wingsDbHelper.markSuccessful(shareRequest.getId());
+
+                                        // Parse photo id to construct notification intent uri.
+                                        if (intentUri == null) {
+                                            String photoId = parsePhotoId(response.getGraphObject());
+                                            if (photoId != null && photoId.length() > 0) {
+                                                intentUri = SHARE_NOTIFICATION_INTENT_BASE_URI + photoId;
+                                            }
+                                        }
 
                                         shared++;
                                     } else {
@@ -891,6 +928,12 @@ public class FacebookHelper {
             }
         }
 
-        return shared;
+        // Construct notification representing share results.
+        FacebookNotification notification = null;
+        if (shared > 0) {
+            notification = new FacebookNotification(context, albumName, shared, intentUri);
+        }
+
+        return notification;
     }
 }
