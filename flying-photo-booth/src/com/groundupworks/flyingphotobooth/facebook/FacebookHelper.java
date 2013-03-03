@@ -119,7 +119,7 @@ public class FacebookHelper {
     /**
      * The value for max number of albums to request.
      */
-    private static final String ALBUMS_LISTING_LIMIT_VALUE = "50";
+    private static final String ALBUMS_LISTING_LIMIT_VALUE = "200";
 
     /**
      * The key for params to request.
