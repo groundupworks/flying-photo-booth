@@ -45,11 +45,6 @@ public class CenteredPreview extends ViewGroup implements SurfaceHolder.Callback
     private static final String TAG = CenteredPreview.class.getSimpleName();
 
     /**
-     * The target aspect ratio used to select the optimal preview size.
-     */
-    private static final double ASPECT_RATIO_TARGET = 1.0d;
-
-    /**
      * The preview surface dimensions must be an integer multiple of this factor, otherwise we may get a blank line at
      * one of the edges.
      */
@@ -86,6 +81,16 @@ public class CenteredPreview extends ViewGroup implements SurfaceHolder.Callback
      * The camera to fill the preview surface.
      */
     private Camera mCamera = null;
+
+    /**
+     * The width of the picture the camera is configured to capture.
+     */
+    private int mPictureWidth = 0;
+
+    /**
+     * The height of the picture the camera is configured to capture.
+     */
+    private int mPictureHeight = 0;
 
     /**
      * The surface to draw the camera preview.
@@ -153,24 +158,15 @@ public class CenteredPreview extends ViewGroup implements SurfaceHolder.Callback
         // Set layout size.
         setMeasuredDimension(width, height);
 
-        if (mCamera != null && mSupportedPreviewSizes != null) {
-            // Calculate the optimal supported preview size based on the layout size.
-            if (mPreviewDisplayOrientation == CameraHelper.CAMERA_SCREEN_ORIENTATION_0
-                    || mPreviewDisplayOrientation == CameraHelper.CAMERA_SCREEN_ORIENTATION_180) {
-                mPreviewSize = CameraHelper.getOptimalPreviewSize(mSupportedPreviewSizes, width, height,
-                        ASPECT_RATIO_TARGET);
-            } else if (mPreviewDisplayOrientation == CameraHelper.CAMERA_SCREEN_ORIENTATION_90
-                    || mPreviewDisplayOrientation == CameraHelper.CAMERA_SCREEN_ORIENTATION_270) {
-                mPreviewSize = CameraHelper.getOptimalPreviewSize(mSupportedPreviewSizes, height, width,
-                        ASPECT_RATIO_TARGET);
-            } else {
-                throw new IllegalArgumentException("Invalid value specified for preview display orientation");
+        if (mCamera != null && mSupportedPreviewSizes != null && mPictureWidth > 0 && mPictureHeight > 0) {
+            // Calculate the optimal supported preview size based on the picture size.
+            mPreviewSize = CameraHelper.getOptimalPreviewSize(mSupportedPreviewSizes, mPictureWidth, mPictureHeight);
+            if (mPreviewSize != null) {
+                // Configure the camera to output in the optimal calculated size.
+                Camera.Parameters params = mCamera.getParameters();
+                params.setPreviewSize(mPreviewSize.width, mPreviewSize.height);
+                mCamera.setParameters(params);
             }
-
-            // Configure the camera to output in the optimal calculated size.
-            Camera.Parameters params = mCamera.getParameters();
-            params.setPreviewSize(mPreviewSize.width, mPreviewSize.height);
-            mCamera.setParameters(params);
         }
     }
 
@@ -258,6 +254,8 @@ public class CenteredPreview extends ViewGroup implements SurfaceHolder.Callback
         if (mCamera != null) {
             mCamera.stopPreview();
         }
+
+        mSurfaceCreated = false;
     }
 
     //
@@ -309,13 +307,19 @@ public class CenteredPreview extends ViewGroup implements SurfaceHolder.Callback
      * 
      * @param camera
      *            the Camera to use for preview.
+     * @param pictureWidth
+     *            the width of the picture the camera is configured to capture.
+     * @param pictureHeight
+     *            the height of the picture the camera is configured to capture.
      * @param previewDisplayOrientation
      *            the display orientation of the preview. Valid values are {@link #PREVIEW_DISPLAY_ORIENTATION_0},
      *            {@link #PREVIEW_DISPLAY_ORIENTATION_90}, {@link #PREVIEW_DISPLAY_ORIENTATION_180}, and
      *            {@link #PREVIEW_DISPLAY_ORIENTATION_270}.
      */
-    public void setCamera(Camera camera, int previewDisplayOrientation) {
+    public void setCamera(Camera camera, int pictureWidth, int pictureHeight, int previewDisplayOrientation) {
         mCamera = camera;
+        mPictureWidth = pictureWidth;
+        mPictureHeight = pictureHeight;
         mPreviewDisplayOrientation = previewDisplayOrientation;
 
         if (camera != null) {

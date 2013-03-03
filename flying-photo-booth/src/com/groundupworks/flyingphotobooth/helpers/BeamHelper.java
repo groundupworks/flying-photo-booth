@@ -91,7 +91,11 @@ public class BeamHelper {
         if (activity != null && !activity.isFinishing()) {
             NfcAdapter nfcAdapter = getNfcAdapter(activity);
             if (nfcAdapter != null) {
-                nfcAdapter.setBeamPushUris(uris, activity);
+                try {
+                    nfcAdapter.setBeamPushUris(uris, activity);
+                } catch (Exception e) {
+                    // Do nothing. An exception is thrown if a destroyed Activity is passed.
+                }
             }
         }
     }

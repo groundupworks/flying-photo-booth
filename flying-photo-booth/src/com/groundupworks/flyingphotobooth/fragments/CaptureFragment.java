@@ -444,8 +444,8 @@ public class CaptureFragment extends Fragment {
                     params.setJpegQuality(CAPTURED_JPEG_QUALITY);
 
                     // Set optimal size for Jpeg capture.
-                    Size pictureSize = CameraHelper.getOptimalPictureSize(mCamera.getParameters()
-                            .getSupportedPictureSizes(), ImageHelper.IMAGE_SIZE, ImageHelper.IMAGE_SIZE);
+                    Size pictureSize = CameraHelper.getOptimalPictureSize(params.getSupportedPreviewSizes(),
+                            params.getSupportedPictureSizes(), ImageHelper.IMAGE_SIZE, ImageHelper.IMAGE_SIZE);
                     params.setPictureSize(pictureSize.width, pictureSize.height);
 
                     mCamera.setParameters(params);
@@ -455,7 +455,7 @@ public class CaptureFragment extends Fragment {
                      */
                     mPreviewDisplayOrientation = CameraHelper.getCameraScreenOrientation(activity, mCameraId);
                     mCamera.setDisplayOrientation(mPreviewDisplayOrientation);
-                    mPreview.setCamera(mCamera, mPreviewDisplayOrientation);
+                    mPreview.setCamera(mCamera, pictureSize.width, pictureSize.height, mPreviewDisplayOrientation);
                 } catch (RuntimeException e) {
                     String title = getString(R.string.capture__error_camera_dialog_title);
                     String message = getString(R.string.capture__error_camera_dialog_message_in_use);
@@ -478,7 +478,7 @@ public class CaptureFragment extends Fragment {
         }
 
         if (mCamera != null) {
-            mPreview.setCamera(null, CameraHelper.CAMERA_SCREEN_ORIENTATION_0);
+            mPreview.setCamera(null, 0, 0, CameraHelper.CAMERA_SCREEN_ORIENTATION_0);
             mCamera.release();
             mCamera = null;
         }

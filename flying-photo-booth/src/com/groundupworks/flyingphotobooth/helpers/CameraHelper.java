@@ -56,7 +56,70 @@ public class CameraHelper {
     /**
      * The aspect ratio tolerance used to select the optimal preview size.
      */
-    private static final double ASPECT_RATIO_TOLERANCE = 0.1d;
+    private static final double PREVIEW_ASPECT_RATIO_TOLERANCE = 0.1d;
+
+    /**
+     * The aspect ratio tolerance used to select the optimal picture size.
+     */
+    private static final double PICTURE_ASPECT_RATIO_TOLERANCE = 0.4d;
+
+    //
+    // Private methods.
+    //
+
+    /**
+     * Selects the optimal picture size with flags to toggle filtering criteria.
+     * 
+     * @param previewSizes
+     *            the list of supported preview sizes.
+     * @param pictureSizes
+     *            the list of supported picture sizes.
+     * @param targetWidth
+     *            the target picture width.
+     * @param targetHeight
+     *            the target picture height.
+     * @param filterMinSize
+     *            true to block sizes smaller than target dimensions; false otherwise.
+     * @param filterAspectRatio
+     *            true to block sizes above the aspect ratio tolerance; false otherwise.
+     * @param filterPreviewSizes
+     *            true to block sizes without a corresponding preview size; false otherwise.
+     * @return the optimal supported picture size; or null if failed.
+     */
+    private static Size selectPictureSize(List<Size> previewSizes, List<Size> pictureSizes, final int targetWidth,
+            final int targetHeight, boolean filterMinSize, boolean filterAspectRatio, boolean filterPreviewSizes) {
+        Size optimalSize = null;
+
+        double targetAspectRatio = (double) targetWidth / targetHeight;
+        int minArea = Integer.MAX_VALUE;
+        for (Size size : pictureSizes) {
+            // Block sizes smaller than target dimensions.
+            if (filterMinSize && (size.width < targetWidth || size.height < targetHeight)) {
+                continue;
+            }
+
+            // Block sizes above the aspect ratio tolerance.
+            double aspectRatio = (double) size.width / size.height;
+            if (filterAspectRatio && (Math.abs(aspectRatio - targetAspectRatio) > PICTURE_ASPECT_RATIO_TOLERANCE)) {
+                continue;
+            }
+
+            // Block sizes without a corresponding preview size.
+            if (filterPreviewSizes && !previewSizes.contains(size)) {
+                continue;
+            }
+
+            // Select smallest size.
+            int area = size.width * size.height;
+            if (area < minArea) {
+                optimalSize = size;
+                minArea = area;
+            } else {
+            }
+        }
+
+        return optimalSize;
+    }
 
     //
     // Public methods.
@@ -115,34 +178,37 @@ public class CameraHelper {
     }
 
     /**
-     * Selects the optimal preview size by best match of the target aspect ratio and size.
+     * Selects the optimal preview size based on the target aspect ratio and size.
      * 
-     * @param sizes
+     * @param previewSizes
      *            the list of supported preview sizes.
      * @param targetWidth
      *            the target preview width.
      * @param targetHeight
      *            the target preview height.
-     * @param targetAspectRatio
-     *            the target aspect ratio.
      * @return the optimal supported preview size; or null if an empty list is passed.
      */
-    public static Size getOptimalPreviewSize(List<Size> sizes, final int targetWidth, final int targetHeight,
-            final double targetAspectRatio) {
+    public static Size getOptimalPreviewSize(List<Size> previewSizes, int targetWidth, int targetHeight) {
+        // Check for null or empty list.
+        if (previewSizes == null || previewSizes.isEmpty()) {
+            return null;
+        }
+
         Size optimalSize = null;
+
+        double targetAspectRatio = (double) targetWidth / targetHeight;
         int minDiff = Integer.MAX_VALUE;
 
         /*
          * Try to match aspect ratio and size.
          */
-        for (Size size : sizes) {
-            // Filter by aspect ratio.
+        for (Size size : previewSizes) {
+            // Block aspect ratios that do not match.
             double aspectRatio = (double) size.width / size.height;
-            if (Math.abs(aspectRatio - targetAspectRatio) > ASPECT_RATIO_TOLERANCE) {
+            if (Math.abs(aspectRatio - targetAspectRatio) > PREVIEW_ASPECT_RATIO_TOLERANCE) {
                 continue;
             }
 
-            // Match by size.
             int diff = Math.max(Math.abs(size.width - targetWidth), Math.abs(size.height - targetHeight));
             if (diff < minDiff) {
                 optimalSize = size;
@@ -151,12 +217,11 @@ public class CameraHelper {
         }
 
         /*
-         * Cannot match aspect ratio. Try to match size.
+         * Try to match size.
          */
         if (optimalSize == null) {
             minDiff = Integer.MAX_VALUE;
-            for (Size size : sizes) {
-                // Match by size.
+            for (Size size : previewSizes) {
                 int diff = Math.max(Math.abs(size.width - targetWidth), Math.abs(size.height - targetHeight));
                 if (diff < minDiff) {
                     optimalSize = size;
@@ -165,14 +230,20 @@ public class CameraHelper {
             }
         }
 
+        LogsHelper.log(CameraHelper.class, "getOptimalPreviewSize", "size=[" + optimalSize.width + ", "
+                + optimalSize.height + "]");
+
         return optimalSize;
     }
 
     /**
      * Selects the optimal picture size by selecting the smallest supported size with dimensions larger than the target
-     * dimensions. If this fails, the largest supported size is returned.
+     * dimensions. The algorithm also prefers picture sizes with a similar aspect ratio as the target dimensions, and
+     * have a corresponding preview size. If the ideal case fails, the largest supported size is returned.
      * 
-     * @param sizes
+     * @param previewSizes
+     *            the list of supported preview sizes.
+     * @param pictureSizes
      *            the list of supported picture sizes.
      * @param targetWidth
      *            the target picture width.
@@ -180,33 +251,36 @@ public class CameraHelper {
      *            the target picture height.
      * @return the optimal supported picture size; or null if an empty list is passed.
      */
-    public static Size getOptimalPictureSize(List<Size> sizes, final int targetWidth, final int targetHeight) {
-        Size optimalSize = null;
-
-        /*
-         * Try to select smallest size with dimensions larger than the target dimensions.
-         */
-        int minArea = Integer.MAX_VALUE;
-        for (Size size : sizes) {
-            // Block sizes smaller than target dimensions.
-            if (size.width < targetWidth || size.height < targetHeight) {
-                continue;
-            }
-
-            // Select smallest size.
-            int area = size.width * size.height;
-            if (area < minArea) {
-                optimalSize = size;
-                minArea = area;
-            }
+    public static Size getOptimalPictureSize(List<Size> previewSizes, List<Size> pictureSizes, int targetWidth,
+            int targetHeight) {
+        // Check for null or empty lists.
+        if (previewSizes == null || pictureSizes == null || previewSizes.isEmpty() || pictureSizes.isEmpty()) {
+            return null;
         }
 
         /*
-         * Cannot fulfill requirement to have sizes larger than target dimensions. Select the largest size.
+         * Try to select an optimal picture size, gradually relaxing the criteria.
+         */
+        Size optimalSize = selectPictureSize(previewSizes, pictureSizes, targetWidth, targetHeight, true, true, true);
+        if (optimalSize == null) {
+            // Ignore preview size criteria.
+            optimalSize = selectPictureSize(previewSizes, pictureSizes, targetWidth, targetHeight, true, true, false);
+        }
+        if (optimalSize == null) {
+            // Ignore aspect ratio criteria.
+            optimalSize = selectPictureSize(previewSizes, pictureSizes, targetWidth, targetHeight, true, false, true);
+        }
+        if (optimalSize == null) {
+            // Ignore both aspect ratio and preview size criteria.
+            optimalSize = selectPictureSize(previewSizes, pictureSizes, targetWidth, targetHeight, true, false, false);
+        }
+
+        /*
+         * Cannot fulfill the requirements. Select the largest size.
          */
         if (optimalSize == null) {
             int maxArea = Integer.MIN_VALUE;
-            for (Size size : sizes) {
+            for (Size size : pictureSizes) {
                 // Select max size.
                 int area = size.width * size.height;
                 if (area > maxArea) {
@@ -215,6 +289,9 @@ public class CameraHelper {
                 }
             }
         }
+
+        LogsHelper.log(CameraHelper.class, "getOptimalPictureSize", "size=[" + optimalSize.width + ", "
+                + optimalSize.height + "]");
 
         return optimalSize;
     }
