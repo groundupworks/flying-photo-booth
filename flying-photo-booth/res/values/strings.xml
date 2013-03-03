@@ -38,7 +38,7 @@
     <!-- Number of Photos Preference -->
     <string name="pref__number_of_photos_key">pref__number_of_photos</string>
     <string name="pref__number_of_photos_title">Number of photos</string>
-    <string name="pref__number_of_photos_default">4</string>
+    <string name="pref__number_of_photos_default">2</string>
     <string name="pref__number_of_photos_one">1</string>
     <string name="pref__number_of_photos_two">2</string>
     <string name="pref__number_of_photos_three">3</string>
