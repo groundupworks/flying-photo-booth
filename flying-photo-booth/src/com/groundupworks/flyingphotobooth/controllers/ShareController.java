@@ -26,21 +26,22 @@ import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Message;
-import com.groundupworks.flyingphotobooth.MyApplication;
 import com.groundupworks.flyingphotobooth.R;
-import com.groundupworks.flyingphotobooth.arrangements.BoxArrangement;
-import com.groundupworks.flyingphotobooth.arrangements.HorizontalArrangement;
-import com.groundupworks.flyingphotobooth.arrangements.VerticalArrangement;
-import com.groundupworks.flyingphotobooth.filters.BlackAndWhiteFilter;
-import com.groundupworks.flyingphotobooth.filters.LineArtFilter;
-import com.groundupworks.flyingphotobooth.filters.SepiaFilter;
 import com.groundupworks.flyingphotobooth.fragments.ShareFragment;
-import com.groundupworks.flyingphotobooth.helpers.ImageHelper;
-import com.groundupworks.flyingphotobooth.helpers.ImageHelper.Arrangement;
-import com.groundupworks.flyingphotobooth.helpers.ImageHelper.ImageFilter;
-import com.groundupworks.flyingphotobooth.wings.ShareRequest;
-import com.groundupworks.flyingphotobooth.wings.WingsDbHelper;
-import com.groundupworks.flyingphotobooth.wings.WingsService;
+import com.groundupworks.lib.photobooth.arrangements.BoxArrangement;
+import com.groundupworks.lib.photobooth.arrangements.HorizontalArrangement;
+import com.groundupworks.lib.photobooth.arrangements.VerticalArrangement;
+import com.groundupworks.lib.photobooth.filters.BlackAndWhiteFilter;
+import com.groundupworks.lib.photobooth.filters.LineArtFilter;
+import com.groundupworks.lib.photobooth.filters.SepiaFilter;
+import com.groundupworks.lib.photobooth.framework.BaseController;
+import com.groundupworks.lib.photobooth.framework.MyApplication;
+import com.groundupworks.lib.photobooth.helpers.ImageHelper;
+import com.groundupworks.lib.photobooth.helpers.ImageHelper.Arrangement;
+import com.groundupworks.lib.photobooth.helpers.ImageHelper.ImageFilter;
+import com.groundupworks.lib.photobooth.wings.ShareRequest;
+import com.groundupworks.lib.photobooth.wings.WingsDbHelper;
+import com.groundupworks.lib.photobooth.wings.WingsService;
 
 /**
  * Controller class for the {@link ShareFragment}.

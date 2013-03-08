@@ -1,31 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <!-- Preferences options -->
-    <array name="pref__arrangement_options">
-        <item>@string/pref__arrangement_vertical</item>
-        <item>@string/pref__arrangement_horizontal</item>
-        <item>@string/pref__arrangement_box</item>
-    </array>
-    <array name="pref__number_of_photos_options">
-        <item>@string/pref__number_of_photos_one</item>
-        <item>@string/pref__number_of_photos_two</item>
-        <item>@string/pref__number_of_photos_three</item>
-        <item>@string/pref__number_of_photos_four</item>
-    </array>
-    <array name="pref__filter_options">
-        <item>@string/pref__filter_none</item>
-        <item>@string/pref__filter_bw</item>
-        <item>@string/pref__filter_bw_mixed</item>
-        <item>@string/pref__filter_sepia</item>
-        <item>@string/pref__filter_sepia_mixed</item>
-    </array>
-    <array name="pref__trigger_options">
-        <item>@string/pref__trigger_manual</item>
-        <item>@string/pref__trigger_countdown</item>
-        <item>@string/pref__trigger_burst</item>
-    </array>
-
     <!-- Preferences options summaries -->
     <array name="pref__arrangement_options_summaries">
         <item>@string/pref__arrangement_vertical_summary</item>
@@ -49,14 +24,6 @@
         <item>@string/pref__trigger_manual_summary</item>
         <item>@string/pref__trigger_countdown_summary</item>
         <item>@string/pref__trigger_burst_summary</item>
-    </array>
-
-    <!-- Facebook photo privacies -->
-    <array name="facebook_privacy__privacies">
-        <item>@string/facebook_privacy__photo_privacy_self</item>
-        <item>@string/facebook_privacy__photo_privacy_friends</item>
-        <item>@string/facebook_privacy__photo_privacy_friends_of_friends</item>
-        <item>@string/facebook_privacy__photo_privacy_everyone</item>
     </array>
 
 </resources>

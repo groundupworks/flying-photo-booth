@@ -37,10 +37,11 @@ import android.widget.Toast;
 import com.groundupworks.flyingphotobooth.LaunchActivity;
 import com.groundupworks.flyingphotobooth.R;
 import com.groundupworks.flyingphotobooth.controllers.ShareController;
-import com.groundupworks.flyingphotobooth.dropbox.DropboxHelper;
-import com.groundupworks.flyingphotobooth.facebook.FacebookHelper;
-import com.groundupworks.flyingphotobooth.helpers.BeamHelper;
-import com.groundupworks.flyingphotobooth.helpers.ImageHelper;
+import com.groundupworks.lib.photobooth.dropbox.DropboxHelper;
+import com.groundupworks.lib.photobooth.facebook.FacebookHelper;
+import com.groundupworks.lib.photobooth.framework.ControllerBackedFragment;
+import com.groundupworks.lib.photobooth.helpers.BeamHelper;
+import com.groundupworks.lib.photobooth.helpers.ImageHelper;
 
 /**
  * Ui for the image confirmation screen.

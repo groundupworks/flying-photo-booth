@@ -51,9 +51,9 @@ import com.groundupworks.flyingphotobooth.LaunchActivity;
 import com.groundupworks.flyingphotobooth.LaunchActivity.BackPressedHandler;
 import com.groundupworks.flyingphotobooth.MyPreferenceActivity;
 import com.groundupworks.flyingphotobooth.R;
-import com.groundupworks.flyingphotobooth.helpers.CameraHelper;
-import com.groundupworks.flyingphotobooth.helpers.ImageHelper;
-import com.groundupworks.flyingphotobooth.views.CenteredPreview;
+import com.groundupworks.lib.photobooth.helpers.CameraHelper;
+import com.groundupworks.lib.photobooth.helpers.ImageHelper;
+import com.groundupworks.lib.photobooth.views.CenteredPreview;
 
 /**
  * Ui for the camera preview and capture screen.

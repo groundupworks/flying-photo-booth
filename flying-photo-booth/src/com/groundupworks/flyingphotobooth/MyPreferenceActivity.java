@@ -29,8 +29,8 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
-import com.groundupworks.flyingphotobooth.dropbox.DropboxHelper;
-import com.groundupworks.flyingphotobooth.facebook.FacebookHelper;
+import com.groundupworks.lib.photobooth.dropbox.DropboxHelper;
+import com.groundupworks.lib.photobooth.facebook.FacebookHelper;
 
 /**
  * The {@link Activity} to configure user preferences.
