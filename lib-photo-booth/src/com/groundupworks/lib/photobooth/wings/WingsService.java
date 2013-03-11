@@ -39,7 +39,7 @@ import com.groundupworks.lib.photobooth.helpers.LogsHelper;
  */
 public class WingsService extends IntentService {
 
-    private static final String NAME = "com.groundupworks.flyingphotobooth.wings.WingsService";
+    private static final String NAME = "com.groundupworks.lib.photobooth.wings.WingsService";
 
     /**
      * Static {@link WakeLock} to ensure device does not sleep before service starts and completes its work.

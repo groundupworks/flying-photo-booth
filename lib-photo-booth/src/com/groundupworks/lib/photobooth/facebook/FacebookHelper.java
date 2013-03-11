@@ -50,7 +50,7 @@ import com.facebook.SessionLoginBehavior;
 import com.facebook.SessionState;
 import com.facebook.model.GraphObject;
 import com.groundupworks.lib.photobooth.R;
-import com.groundupworks.lib.photobooth.framework.MyApplication;
+import com.groundupworks.lib.photobooth.framework.BaseApplication;
 import com.groundupworks.lib.photobooth.wings.IWingsNotification;
 import com.groundupworks.lib.photobooth.wings.ShareRequest;
 import com.groundupworks.lib.photobooth.wings.WingsDbHelper;
@@ -158,11 +158,6 @@ public class FacebookHelper {
     //
     // Default album params.
     //
-
-    /**
-     * The default name of the app album. Note that the current app album name may have been changed by the user.
-     */
-    static final String APP_ALBUM_DEFAULT_NAME = "Flying PhotoBooth Photos";
 
     /**
      * The graph path of the app album.
@@ -699,7 +694,7 @@ public class FacebookHelper {
 
         // Remove existing share requests in a background thread.
         final Context appContext = context.getApplicationContext();
-        Handler workerHandler = new Handler(MyApplication.getWorkerLooper());
+        Handler workerHandler = new Handler(BaseApplication.getWorkerLooper());
         workerHandler.post(new Runnable() {
 
             @Override

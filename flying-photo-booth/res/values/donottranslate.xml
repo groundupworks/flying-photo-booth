@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Image Helper -->
+    <string name="image_helper__image_folder_name">FlyingPhotoBooth</string>
+    <string name="image_helper__image_filename_prefix">fpb</string>
+
+    <!-- Facebook Helper -->
+    <string name="facebook__app_id">208629902615310</string>
+    <string name="facebook__app_album_default_name">Flying PhotoBooth Photos</string>
+
+    <!-- Dropbox Helper -->
+    <string name="dropbox__app_key">io2pka2ev0f6xwh</string>
+    <string name="dropbox__app_secret">r76x7h1eva7p3f2</string>
+
+    <!-- Preferences -->
+    <string name="pref__photo_booth_category_key">pref__photo_booth</string>
+    <string name="pref__facebook_category_key">pref__facebook</string>
+    <string name="pref__dropbox_category_key">pref__dropbox</string>
+    <string name="pref__about_category_key">pref__about</string>
+    <string name="pref__rate_key">pref__rate</string>
+
+</resources>

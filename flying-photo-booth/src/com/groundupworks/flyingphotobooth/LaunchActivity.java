@@ -23,7 +23,6 @@ import android.preference.PreferenceManager;
 import com.groundupworks.flyingphotobooth.fragments.CaptureFragment;
 import com.groundupworks.flyingphotobooth.fragments.ErrorDialogFragment;
 import com.groundupworks.lib.photobooth.framework.BaseFragmentActivity;
-import com.groundupworks.lib.photobooth.framework.MyApplication;
 import com.groundupworks.lib.photobooth.helpers.StorageHelper;
 
 /**

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <string name="app_name">Flying PhotoBooth</string>
 
@@ -7,15 +7,39 @@
     <string name="launch__error_storage_dialog_title">Storage Unavailable</string>
     <string name="launch__error_storage_dialog_message">This application requires access to shared/external storage, such as an SD card mounted to the device.</string>
 
+    <!-- Capture Fragment -->
+    <string name="capture__title_frame">PHOTO %1$d OF %2$d</string>
+    <string name="capture__start_countdown_button_text">PRESS TO BEGIN</string>
+    <string name="capture__start_manual_button_text">CAPTURE</string>
+    <string name="capture__countdown_one">1</string>
+    <string name="capture__countdown_two">2</string>
+    <string name="capture__countdown_three">3</string>
+    <string name="capture__countdown_separator">•</string>
+    <string name="capture__review_instructions">Swipe screen to retake</string>
+    <string name="capture__review_discarded">Discarded</string>
+    <string name="capture__error_camera_dialog_title">Camera Unavailable</string>
+    <string name="capture__error_camera_dialog_message_none">This application requires a camera on your device.</string>
+    <string name="capture__error_camera_dialog_message_in_use">Your camera may be in use by another application.</string>
+    <string name="capture__error_camera_crash">Restarting confused camera</string>
+
+    <!-- Share Fragment -->
+    <string name="share__beam_toast">Tap compatible device to send with Android Beam, long press icon for details</string>
+    <string name="share__share_chooser_title">Share image using</string>
+    <string name="share__error_generic">An error has occurred</string>
+
+    <!-- Beam Details Dialog Fragment -->
+    <string name="beam_details__dialog_title">Android Beam</string>
+    <string name="beam_details__dialog_message">To beam a photo strip, both devices must have:\n\n1. Hardware that supports NFC\n2. Android JellyBean or above\n3. Screen on and unlocked\n4. NFC enabled\n5. Bluetooth enabled\n6. Android Beam enabled\n\nTap devices together to initiate transfer.</string>
+    <string name="beam_details__dialog_button_text">Settings</string>
+
+    <!-- Error Dialog Fragment -->
+    <string name="error__dialog_button_text">Exit</string>
+
     <!-- Preferences -->
     <string name="pref__preference_screen_title">Preferences</string>
-    <string name="pref__photo_booth_category_key">pref__photo_booth</string>
     <string name="pref__photo_booth_category_title">Photo Booth</string>
-    <string name="pref__facebook_category_key">pref__facebook</string>
     <string name="pref__facebook_category_title">Facebook Sharing</string>
-    <string name="pref__dropbox_category_key">pref__dropbox</string>
     <string name="pref__dropbox_category_title">Dropbox Sharing</string>
-    <string name="pref__about_category_key">pref__about</string>
     <string name="pref__about_category_title">About</string>
 
     <!-- Arrangement Preferences -->
@@ -47,7 +71,6 @@
     <string name="pref__trigger_burst_summary">Burst captures 1s apart</string>
 
     <!-- Rate Preferences -->
-    <string name="pref__rate_key">pref__rate</string>
     <string name="pref__rate_title">What do you think?</string>
     <string name="pref__rate_summary">Your feedback is appreciated</string>
 
@@ -66,33 +89,5 @@
     <string name="pref__dropbox_link_summary_linked_one_click_share">One-click share to %1$s\'s folder at %2$s</string>
     <string name="pref__dropbox_link_summary_linked_auto_share">Auto share to %1$s\'s folder at %2$s</string>
     <string name="pref__dropbox_auto_share_title">Auto share</string>
-
-    <!-- Capture Fragment -->
-    <string name="capture__title_frame">PHOTO %1$d OF %2$d</string>
-    <string name="capture__start_countdown_button_text">PRESS TO BEGIN</string>
-    <string name="capture__start_manual_button_text">CAPTURE</string>
-    <string name="capture__countdown_one">1</string>
-    <string name="capture__countdown_two">2</string>
-    <string name="capture__countdown_three">3</string>
-    <string name="capture__countdown_separator">•</string>
-    <string name="capture__review_instructions">Swipe screen to retake</string>
-    <string name="capture__review_discarded">Discarded</string>
-    <string name="capture__error_camera_dialog_title">Camera Unavailable</string>
-    <string name="capture__error_camera_dialog_message_none">This application requires a camera on your device.</string>
-    <string name="capture__error_camera_dialog_message_in_use">Your camera may be in use by another application.</string>
-    <string name="capture__error_camera_crash">Restarting confused camera</string>
-
-    <!-- Share Fragment -->
-    <string name="share__beam_toast">Tap compatible device to send with Android Beam, long press icon for details</string>
-    <string name="share__share_chooser_title">Share image using</string>
-    <string name="share__error_generic">An error has occurred</string>
-
-    <!-- Beam Details Dialog Fragment -->
-    <string name="beam_details__dialog_title">Android Beam</string>
-    <string name="beam_details__dialog_message">To beam a photo strip, both devices must have:\n\n1. Hardware that supports NFC\n2. Android JellyBean or above\n3. Screen on and unlocked\n4. NFC enabled\n5. Bluetooth enabled\n6. Android Beam enabled\n\nTap devices together to initiate transfer.</string>
-    <string name="beam_details__dialog_button_text">Settings</string>
-
-    <!-- Error Dialog Fragment -->
-    <string name="error__dialog_button_text">Exit</string>
 
 </resources>

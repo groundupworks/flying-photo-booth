@@ -25,7 +25,7 @@ import android.os.Looper;
  * 
  * @author Benedict Lau
  */
-public class MyApplication extends Application {
+public abstract class BaseApplication extends Application {
 
     private static final String WORKER_THREAD_NAME = "workerThread";
 

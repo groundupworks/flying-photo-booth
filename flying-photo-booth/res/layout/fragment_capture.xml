@@ -128,7 +128,7 @@
 
             <!-- Camera preview -->
 
-            <com.groundupworks.flyingphotobooth.views.CenteredPreview
+            <com.groundupworks.lib.photobooth.views.CenteredPreview
                 android:id="@+id/preview"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

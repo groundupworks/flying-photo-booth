@@ -50,16 +50,6 @@ public class ImageHelper {
     public static final Bitmap.Config BITMAP_CONFIG = Config.ARGB_8888;
 
     /**
-     * Saved image directory.
-     */
-    private static final String IMAGE_FOLDER = "/FlyingPhotoBooth";
-
-    /**
-     * The prefix for the saved Jpeg filename.
-     */
-    private static final String JPEG_FILENAME_PREFIX = "fpb";
-
-    /**
      * The Jpeg extension.
      */
     private static final String JPEG_EXTENSION = ".jpg";
@@ -148,19 +138,23 @@ public class ImageHelper {
     /**
      * Gets the path to the writable captured image directory.
      * 
+     * @param the
+     *            image folder name.
      * @return the path to the captured image directory; or null if unsuccessful.
      */
-    public static String getCapturedImageDirectory() {
-        return StorageHelper.getDirectory(IMAGE_FOLDER);
+    public static String getCapturedImageDirectory(String imageFolder) {
+        return StorageHelper.getDirectory("/" + imageFolder);
     }
 
     /**
      * Generates a file name for the captured Jpeg.
      * 
+     * @param the
+     *            prefix for the saved Jpeg filename.
      * @return the automatically generated file name.
      */
-    public static String generateCapturedImageName() {
-        return JPEG_FILENAME_PREFIX + Long.toString(System.currentTimeMillis()) + JPEG_EXTENSION;
+    public static String generateCapturedImageName(String filenamePrefix) {
+        return filenamePrefix + Long.toString(System.currentTimeMillis()) + JPEG_EXTENSION;
     }
 
     /**

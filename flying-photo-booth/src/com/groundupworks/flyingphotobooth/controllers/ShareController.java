@@ -26,6 +26,7 @@ import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Message;
+import com.groundupworks.flyingphotobooth.MyApplication;
 import com.groundupworks.flyingphotobooth.R;
 import com.groundupworks.flyingphotobooth.fragments.ShareFragment;
 import com.groundupworks.lib.photobooth.arrangements.BoxArrangement;
@@ -35,7 +36,6 @@ import com.groundupworks.lib.photobooth.filters.BlackAndWhiteFilter;
 import com.groundupworks.lib.photobooth.filters.LineArtFilter;
 import com.groundupworks.lib.photobooth.filters.SepiaFilter;
 import com.groundupworks.lib.photobooth.framework.BaseController;
-import com.groundupworks.lib.photobooth.framework.MyApplication;
 import com.groundupworks.lib.photobooth.helpers.ImageHelper;
 import com.groundupworks.lib.photobooth.helpers.ImageHelper.Arrangement;
 import com.groundupworks.lib.photobooth.helpers.ImageHelper.ImageFilter;
@@ -194,9 +194,11 @@ public class ShareController extends BaseController {
                  * Save image bitmap as Jpeg.
                  */
                 try {
-                    String imageDirectory = ImageHelper.getCapturedImageDirectory();
+                    String imageDirectory = ImageHelper.getCapturedImageDirectory(context
+                            .getString(R.string.image_helper__image_folder_name));
                     if (imageDirectory != null) {
-                        String imageName = ImageHelper.generateCapturedImageName();
+                        String imageName = ImageHelper.generateCapturedImageName(context
+                                .getString(R.string.image_helper__image_filename_prefix));
                         File file = new File(imageDirectory, imageName);
                         final OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(file));
 

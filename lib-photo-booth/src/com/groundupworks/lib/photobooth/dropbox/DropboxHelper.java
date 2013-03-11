@@ -37,7 +37,7 @@ import com.dropbox.client2.session.AccessTokenPair;
 import com.dropbox.client2.session.AppKeyPair;
 import com.dropbox.client2.session.Session.AccessType;
 import com.groundupworks.lib.photobooth.R;
-import com.groundupworks.lib.photobooth.framework.MyApplication;
+import com.groundupworks.lib.photobooth.framework.BaseApplication;
 import com.groundupworks.lib.photobooth.wings.IWingsNotification;
 import com.groundupworks.lib.photobooth.wings.ShareRequest;
 import com.groundupworks.lib.photobooth.wings.WingsDbHelper;
@@ -48,16 +48,6 @@ import com.groundupworks.lib.photobooth.wings.WingsDbHelper;
  * @author Benedict Lau
  */
 public class DropboxHelper {
-
-    /**
-     * The unique application key.
-     */
-    final static private String APP_KEY = "io2pka2ev0f6xwh";
-
-    /**
-     * The unique application secret.
-     */
-    final static private String APP_SECRET = "r76x7h1eva7p3f2";
 
     /**
      * Limit access level to a specific folder in the user's Dropbox.
@@ -129,7 +119,7 @@ public class DropboxHelper {
                 final Context appContext = context.getApplicationContext();
                 final DropboxAPI<AndroidAuthSession> dropboxApi = mDropboxApi;
 
-                Handler workerHandler = new Handler(MyApplication.getWorkerLooper());
+                Handler workerHandler = new Handler(BaseApplication.getWorkerLooper());
                 workerHandler.post(new Runnable() {
 
                     @Override
@@ -311,7 +301,8 @@ public class DropboxHelper {
     public void startLinkRequest(Context context) {
         mIsLinkRequested = true;
 
-        AppKeyPair appKeyPair = new AppKeyPair(APP_KEY, APP_SECRET);
+        AppKeyPair appKeyPair = new AppKeyPair(context.getString(R.string.dropbox__app_key),
+                context.getString(R.string.dropbox__app_secret));
         AndroidAuthSession session = new AndroidAuthSession(appKeyPair, ACCESS_TYPE);
         synchronized (mDropboxApiLock) {
             mDropboxApi = new DropboxAPI<AndroidAuthSession>(session);
@@ -342,7 +333,7 @@ public class DropboxHelper {
 
         // Remove existing share requests in a background thread.
         final Context appContext = context.getApplicationContext();
-        Handler workerHandler = new Handler(MyApplication.getWorkerLooper());
+        Handler workerHandler = new Handler(BaseApplication.getWorkerLooper());
         workerHandler.post(new Runnable() {
 
             @Override
@@ -441,7 +432,8 @@ public class DropboxHelper {
 
             if (!shareRequests.isEmpty()) {
                 // Start new session with the persisted access token.
-                AppKeyPair appKeys = new AppKeyPair(APP_KEY, APP_SECRET);
+                AppKeyPair appKeys = new AppKeyPair(context.getString(R.string.dropbox__app_key),
+                        context.getString(R.string.dropbox__app_secret));
                 AndroidAuthSession session = new AndroidAuthSession(appKeys, ACCESS_TYPE);
                 session.setAccessTokenPair(accessToken);
                 DropboxAPI<AndroidAuthSession> dropboxApi = new DropboxAPI<AndroidAuthSession>(session);

@@ -213,7 +213,8 @@ public class FacebookAlbumListFragment extends ListFragment {
                     // If not already present, construct row to represent the default app album that will be auto
                     // created.
                     if (appAlbum == null) {
-                        appAlbum = new Object[] { APP_ALBUM_CURSOR_ID, FacebookHelper.APP_ALBUM_DEFAULT_NAME,
+                        appAlbum = new Object[] { APP_ALBUM_CURSOR_ID,
+                                activity.getString(R.string.facebook__app_album_default_name),
                                 FacebookHelper.APP_ALBUM_GRAPH_PATH, FacebookHelper.APP_ALBUM_PRIVACY };
                     }
 

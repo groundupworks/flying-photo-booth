@@ -34,7 +34,7 @@ public abstract class BaseController {
      * Constructor.
      */
     public BaseController() {
-        mWorkerHandler = new Handler(MyApplication.getWorkerLooper()) {
+        mWorkerHandler = new Handler(BaseApplication.getWorkerLooper()) {
             @Override
             public void handleMessage(Message msg) {
                 handleEvent(msg);
