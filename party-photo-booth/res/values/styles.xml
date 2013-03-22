@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+
+    <style name="Text">
+        <item name="android:textSize">24dip</item>
+        <item name="android:textColor">@color/text_color</item>
+    </style>
+
+    <style name="Text.Countdown">
+        <item name="android:textSize">64dip</item>
+    </style>
+
+    <style name="ThemeSelector" parent="android:Theme.Holo.Light" />
+
+</resources>
