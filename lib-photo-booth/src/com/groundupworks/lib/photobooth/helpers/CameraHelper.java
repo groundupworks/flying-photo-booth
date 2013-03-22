@@ -114,7 +114,6 @@ public class CameraHelper {
             if (area < minArea) {
                 optimalSize = size;
                 minArea = area;
-            } else {
             }
         }
 

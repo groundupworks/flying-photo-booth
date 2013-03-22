@@ -1,0 +1,56 @@
+VERSION 1.0
+
+Need a photo booth at your event? There is an app for that!
+
+Party PhotoBooth is optimized for weddings, birthday parties, and any events where your guests are encouraged to act goofy on camera. As the host, you will be able to get your photo booth up and running in a minute. You can link your Facebook and Dropbox accounts to have photo strips of your guests automatically shared, privately or publicly.
+
+The app includes party features like keeping itself in the foreground, so the device will remain as a photo booth for the duration of the event. You can even have guests pass the device around as a mobile photo booth, not having to worry about the app being closed.
+
+I understand if you are to use Party PhotoBooth at your wedding, the app must work flawlessly. Party PhotoBooth is based on the same engine that drives the Flying PhotoBooth, which has been in market for a while with great reviews. I would recommend trying that out as a demo: https://play.google.com/store/apps/details?id=com.groundupworks.flyingphotobooth
+
+
+FEATURES
+
+One-minute Set Up
+
+¥ Enter the event name and date
+¥ Pick the photo strip arrangement and number of photos
+¥ Select "Self-serve Mode" to use front-facing camera and photo booth style timer, or "Photographer Mode" to use back-facing camera
+¥ Optionally link Facebook and Dropbox accounts for auto sharing, retries are automatically scheduled if network is unavailable
+¥ Lock device with a password so guests will not exit the app
+
+Guest Experience
+
+¥ Press the Capture button to shoot each photo, and review with the unique swipe-to-retake feature
+¥ Optionally show the Facebook album and Dropbox link where your guests may find their newly created photo strip
+¥ Automatically return to the Capture screen for the next guest
+
+The Unofficial Print Feature
+
+With a little DIY spirit, you can get Party PhotoBooth to automatically print every photo strip as they are captured!
+
+To get started, you will need:
+
+¥ A Dropbox account
+¥ A mobile device connected to the internet
+¥ A computer connected to the internet
+¥ A printer that the computer can print from
+
+Steps to setup your DIY photo booth:
+
+1. Install Party PhotoBooth on your mobile device, link to Dropbox for auto sharing.
+
+2. Install the Dropbox Desktop Application on your computer.
+
+3. Configure your computer to monitor the "Party PhotoBooth" folder in your Dropbox and print every file that gets added. Follow the below links, and in each case, you will have to replace "PrintQueue" with "Party PhotoBooth" as the folder to monitor.
+
+For Macs, http://www.labnol.org/tech/print-files-on-remote-mac/17838/
+For Linux, http://www.labnol.org/software/print-files-on-linux/17841/
+For Windows, http://www.labnol.org/internet/print-from-mobile-phones/17827/ 
+
+Have fun!
+
+
+TAGLINE
+
+Need a photo booth at your event?
