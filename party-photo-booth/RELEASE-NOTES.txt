@@ -17,7 +17,7 @@ One-minute Set Up
 ¥ Pick the photo strip arrangement and number of photos
 ¥ Select "Self-serve Mode" to use front-facing camera and photo booth style timer, or "Photographer Mode" to use back-facing camera
 ¥ Optionally link Facebook and Dropbox accounts for auto sharing, retries are automatically scheduled if network is unavailable
-¥ Lock device with a password so guests will not exit the app
+¥ Lock with a password so guests will not exit the photo booth app
 
 Guest Experience
 

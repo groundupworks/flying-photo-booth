@@ -1,5 +1,7 @@
 /*
  * Copyright (C) 2013 Benedict Lau
+ * 
+ * All rights reserved.
  */
 package com.groundupworks.partyphotobooth;
 
