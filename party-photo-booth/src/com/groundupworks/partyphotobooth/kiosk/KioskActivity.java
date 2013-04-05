@@ -43,6 +43,9 @@ public class KioskActivity extends BaseFragmentActivity {
                 return true;
             }
         });
+
+        // Start with Kiosk setup.
+        replaceFragment(KioskSetupFragment.newInstance(), false, true);
     }
 
     @Override

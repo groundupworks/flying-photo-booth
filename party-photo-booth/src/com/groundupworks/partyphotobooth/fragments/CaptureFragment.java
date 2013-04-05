@@ -25,4 +25,17 @@ public class CaptureFragment extends ControllerBackedFragment<CaptureController>
     protected void handleUiUpdate(Message msg) {
 
     }
+
+    //
+    // Public methods.
+    //
+
+    /**
+     * Creates a new {@link CaptureFragment} instance.
+     * 
+     * @return the new {@link CaptureFragment} instance.
+     */
+    public static CaptureFragment newInstance() {
+        return new CaptureFragment();
+    }
 }

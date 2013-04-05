@@ -10,6 +10,6 @@
         <item name="android:textSize">64dip</item>
     </style>
 
-    <style name="ThemeSelector" parent="android:Theme.Holo.Light" />
+    <style name="ThemeSelector" parent="android:Theme.Light" />
 
 </resources>
