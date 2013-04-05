@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <item name="kiosk_mode_button_exit_size" format="float" type="dimen">9</item>
+    <item name="kiosk_mode_button_exit_size_dn" format="float" type="dimen">36</item>
+
+</resources>

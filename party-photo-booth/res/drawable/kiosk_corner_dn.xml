@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle" >
+
+    <size
+        android:height="64dp"
+        android:width="64dp" />
+
+    <gradient
+        android:centerX="100%"
+        android:centerY="0%"
+        android:endColor="@color/background_color"
+        android:gradientRadius="@dimen/kiosk_mode_button_exit_size_dn"
+        android:startColor="@color/selection_color"
+        android:type="radial" />
+
+</shape>

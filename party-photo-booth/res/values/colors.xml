@@ -3,6 +3,7 @@
 
     <color name="background_color">#f3f3f3</color>
     <color name="text_color">#888888</color>
+    <color name="kiosk_corner_color">#888888</color>
     <color name="selection_color">#cc33b5e5</color>
 
 </resources>

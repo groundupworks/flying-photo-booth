@@ -39,8 +39,9 @@
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook__app_id" />
 
+        <!-- Photo booth setup -->
         <activity
-            android:name=".LaunchActivity"
+            android:name=".SetupActivity"
             android:screenOrientation="landscape"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
             <intent-filter>
@@ -49,6 +50,18 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- Kiosk mode -->
+        <activity
+            android:name=".kiosk.KioskActivity"
+            android:excludeFromRecents="true"
+            android:launchMode="singleTask"
+            android:screenOrientation="landscape"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
+
+        <service android:name=".kiosk.KioskService" />
+
+        <!-- Facebook linking -->
         <activity
             android:name="com.groundupworks.lib.photobooth.facebook.FacebookSettingsActivity"
             android:label="@string/facebook_settings__label"
@@ -77,6 +90,7 @@
             </intent-filter>
         </activity>
 
+        <!-- Wings service -->
         <service android:name="com.groundupworks.lib.photobooth.wings.WingsService" />
 
         <receiver android:name="com.groundupworks.lib.photobooth.wings.AlarmReceiver" />

@@ -62,6 +62,8 @@
             android:name=".MyPreferenceActivity"
             android:screenOrientation="portrait"
             android:theme="@style/ThemeSelector" />
+
+        <!-- Facebook linking -->
         <activity
             android:name="com.groundupworks.lib.photobooth.facebook.FacebookSettingsActivity"
             android:label="@string/facebook_settings__label"
@@ -90,6 +92,7 @@
             </intent-filter>
         </activity>
 
+        <!-- Wings service -->
         <service android:name="com.groundupworks.lib.photobooth.wings.WingsService" />
 
         <receiver android:name="com.groundupworks.lib.photobooth.wings.AlarmReceiver" />

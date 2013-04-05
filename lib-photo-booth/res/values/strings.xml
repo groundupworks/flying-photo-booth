@@ -13,7 +13,7 @@
     <string name="facebook_settings__label">Select photo album</string>
 
     <!-- Facebook Privacy Dialog Fragment -->
-    <string name="facebook_privacy__dialog_title">Select Privacy Level</string>
+    <string name="facebook_privacy__dialog_title">Select privacy level</string>
     <string name="facebook_privacy__photo_privacy_self">Only Me</string>
     <string name="facebook_privacy__photo_privacy_friends">Friends</string>
     <string name="facebook_privacy__photo_privacy_friends_of_friends">Friends of Friends</string>

@@ -3,4 +3,9 @@
 
     <string name="app_name">Party PhotoBooth</string>
 
+    <!-- Kiosk mode -->
+    <string name="kiosk_mode__notification_title">Kiosk mode</string>
+    <string name="kiosk_mode__notification_msg">Press &amp; hold top right corner to exit</string>
+    <string name="kiosk_mode__notification_ticker">Entering Kiosk mode</string>
+
 </resources>
