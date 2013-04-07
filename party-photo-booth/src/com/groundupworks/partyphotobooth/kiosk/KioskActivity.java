@@ -14,6 +14,8 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import com.groundupworks.lib.photobooth.framework.BaseFragmentActivity;
 import com.groundupworks.partyphotobooth.R;
+import com.groundupworks.partyphotobooth.fragments.CaptureFragment;
+import com.groundupworks.partyphotobooth.kiosk.KioskModeHelper.State;
 
 /**
  * {@link Activity} that puts the device in Kiosk mode. This should only be launched from the {@link KioskService}.
@@ -37,15 +39,21 @@ public class KioskActivity extends BaseFragmentActivity {
         exitButton.setOnLongClickListener(new OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                // Disable Kiosk mode and finish KioskActivity.
-                helper.setKioskMode(false);
-                finish();
+                if (helper.isPasswordRequired()) {
+                    showDialogFragment(KioskPasswordDialogFragment.newInstance());
+                } else {
+                    exitKioskMode(helper);
+                }
                 return true;
             }
         });
 
-        // Start with Kiosk setup.
-        replaceFragment(KioskSetupFragment.newInstance(), false, true);
+        // Choose Fragment to start with based on whether Kiosk mode setup has completed.
+        if (helper.isSetupCompleted()) {
+            replaceFragment(CaptureFragment.newInstance(), false, true);
+        } else {
+            replaceFragment(KioskSetupFragment.newInstance(), false, true);
+        }
     }
 
     @Override
@@ -63,5 +71,23 @@ public class KioskActivity extends BaseFragmentActivity {
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         // Block event.
         return true;
+    }
+
+    //
+    // Package private methods.
+    //
+
+    /**
+     * Exits Kiosk mode.
+     * 
+     * @param helper
+     *            a {@link KioskModeHelper}.
+     */
+    void exitKioskMode(KioskModeHelper helper) {
+        // Disable Kiosk mode.
+        helper.transitionState(State.DISABLED);
+
+        // Finish KioskActivity.
+        finish();
     }
 }

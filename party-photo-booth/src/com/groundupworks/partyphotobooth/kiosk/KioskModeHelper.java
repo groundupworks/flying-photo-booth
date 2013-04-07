@@ -13,11 +13,18 @@ import android.preference.PreferenceManager;
 import com.groundupworks.partyphotobooth.R;
 
 /**
- * Helper class to manage flags used by Kiosk mode.
+ * Helper class to manage Kiosk mode.
  * 
  * @author Benedict Lau
  */
 public class KioskModeHelper {
+
+    /**
+     * States in the Kiosk mode lifecycle.
+     */
+    public static enum State {
+        ENABLED, SETUP_COMPLETED, DISABLED
+    }
 
     /**
      * The {@link Application} context.
@@ -39,15 +46,32 @@ public class KioskModeHelper {
     //
 
     /**
-     * Sets the flag to indicate whether Kiosk mode is enabled.
+     * Initiates a Kiosk mode state transition.
      * 
-     * @param isEnabled
-     *            true to enable; false to disable.
+     * @param state
+     *            the {@link KioskModeHelper.State} to transition to.
      */
-    public void setKioskMode(boolean isEnabled) {
+    public void transitionState(State state) {
         Editor editor = PreferenceManager.getDefaultSharedPreferences(mContext).edit();
-        editor.putBoolean(mContext.getString(R.string.pref__kiosk_mode_key), isEnabled);
-        editor.commit();
+
+        switch (state) {
+            case ENABLED:
+                editor.putBoolean(mContext.getString(R.string.pref__kiosk_mode_enabled_key), true);
+                editor.putBoolean(mContext.getString(R.string.pref__kiosk_mode_setup_completed_key), false);
+                editor.putString(mContext.getString(R.string.pref__kiosk_mode_password_key), "");
+                break;
+            case SETUP_COMPLETED:
+                editor.putBoolean(mContext.getString(R.string.pref__kiosk_mode_setup_completed_key), true);
+                break;
+            case DISABLED:
+                editor.putBoolean(mContext.getString(R.string.pref__kiosk_mode_enabled_key), false);
+                editor.putBoolean(mContext.getString(R.string.pref__kiosk_mode_setup_completed_key), false);
+                editor.putString(mContext.getString(R.string.pref__kiosk_mode_password_key), "");
+                break;
+            default:
+        }
+
+        editor.apply();
     }
 
     /**
@@ -55,8 +79,52 @@ public class KioskModeHelper {
      * 
      * @return true if enabled; false otherwise.
      */
-    public boolean isKioskModeEnabled() {
+    public boolean isEnabled() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mContext);
-        return preferences.getBoolean(mContext.getString(R.string.pref__kiosk_mode_key), false);
+        return preferences.getBoolean(mContext.getString(R.string.pref__kiosk_mode_enabled_key), false);
+    }
+
+    /**
+     * Checks whether Kiosk mode setup is completed.
+     * 
+     * @return true if completed; false otherwise.
+     */
+    public boolean isSetupCompleted() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mContext);
+        return preferences.getBoolean(mContext.getString(R.string.pref__kiosk_mode_setup_completed_key), false);
+    }
+
+    /**
+     * Sets the Kiosk mode password.
+     * 
+     * @param password
+     *            the password to use.
+     */
+    public void setPassword(String password) {
+        Editor editor = PreferenceManager.getDefaultSharedPreferences(mContext).edit();
+        editor.putString(mContext.getString(R.string.pref__kiosk_mode_password_key), password);
+        editor.apply();
+    }
+
+    /**
+     * Checks whether Kiosk mode requires a password to unlock.
+     * 
+     * @return true if password is required; false otherwise.
+     */
+    public boolean isPasswordRequired() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mContext);
+        return !preferences.getString(mContext.getString(R.string.pref__kiosk_mode_password_key), "").equals("");
+    }
+
+    /**
+     * Verifies the Kiosk mode password.
+     * 
+     * @param password
+     *            the password to verify.
+     * @return true if password matches; false otherwise.
+     */
+    public boolean verifyPassword(String password) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mContext);
+        return preferences.getString(mContext.getString(R.string.pref__kiosk_mode_password_key), "").equals(password);
     }
 }

@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
 
+    <style name="TextSize">
+        <item name="android:textSize">24dip</item>
+    </style>
+
     <style name="Text">
         <item name="android:textSize">24dip</item>
         <item name="android:textColor">@color/text_color</item>

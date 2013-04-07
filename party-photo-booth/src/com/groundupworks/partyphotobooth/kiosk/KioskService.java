@@ -81,26 +81,24 @@ public class KioskService extends Service {
     //
 
     /**
-     * Launches the {@link KioskActivity} and starts a timer to relaunch it in order to keep it in foreground at all
-     * times.
+     * Starts a timer to launch and relaunch the {@link KioskActivity} in order to keep it in foreground until Kiosk
+     * mode is disabled.
      * 
      * @param context
      *            the {@link Context}.
      */
     private void startKioskLauncher(final Context context) {
         final KioskModeHelper kioskModeHelper = new KioskModeHelper(context);
-        kioskModeHelper.setKioskMode(true);
+        final Intent intent = new Intent(context, KioskActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
         // Start timer to launch and relaunch the KioskActivity.
         final Timer timer = new Timer();
         timer.schedule(new TimerTask() {
-
             @Override
             public void run() {
-                if (kioskModeHelper.isKioskModeEnabled()) {
+                if (kioskModeHelper.isEnabled()) {
                     // Send Intent to start KioskActivity.
-                    Intent intent = new Intent(context, KioskActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);
                 } else {
                     // Stop the timer and the KioskService.

@@ -13,7 +13,9 @@
     <string name="dropbox__app_key">o8qu7uepb92xtzz</string>
     <string name="dropbox__app_secret">cvqpxd623eii9ew</string>
 
-    <!-- Preferences -->
-    <string name="pref__kiosk_mode_key">pref__kiosk_mode</string>
+    <!-- Kiosk Mode -->
+    <string name="pref__kiosk_mode_enabled_key">pref__kiosk_mode_enabled_key</string>
+    <string name="pref__kiosk_mode_setup_completed_key">pref__kiosk_mode_setup_completed_key</string>
+    <string name="pref__kiosk_mode_password_key">pref__kiosk_mode_password_key</string>
 
 </resources>

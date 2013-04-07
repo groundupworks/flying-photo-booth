@@ -3,13 +3,18 @@
 
     <string name="app_name">Party PhotoBooth</string>
 
-    <!-- Kiosk mode -->
-    <string name="kiosk_setup__message">Press &amp; hold top right corner to exit</string>
-    <string name="kiosk_setup__password_label">Password lock:</string>
-    <string name="kiosk_setup__password_hint">none</string>
-    <string name="kiosk_setup__button_ok">OK</string>
+    <!-- Kiosk Mode -->
+    <string name="kiosk_mode__setup_message">Press &amp; hold top right corner to exit</string>
+    <string name="kiosk_mode__setup_password_label">Require passcode:</string>
+    <string name="kiosk_mode__setup_password_hint">none</string>
+    <string name="kiosk_mode__setup_button_ok">OK</string>
     <string name="kiosk_mode__notification_title">Kiosk mode</string>
     <string name="kiosk_mode__notification_msg">Press &amp; hold top right corner to exit</string>
     <string name="kiosk_mode__notification_ticker">Entering Kiosk mode</string>
+    <string name="kiosk_mode__dialog_title">Exit</string>
+    <string name="kiosk_mode__dialog_password_hint">Passcode</string>
+    <string name="kiosk_mode__dialog_button_positive_text">OK</string>
+    <string name="kiosk_mode__dialog_button_negative_text">Cancel</string>
+    <string name="kiosk_mode__error_password">Passcode does not match</string>
 
 </resources>
