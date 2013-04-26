@@ -54,7 +54,7 @@ public class KioskPasswordDialogFragment extends DialogFragment {
                                     Editable password = passwordView.getText();
                                     KioskModeHelper helper = new KioskModeHelper(activity);
                                     if (passwordView != null && helper.verifyPassword(password.toString())) {
-                                        activity.exitKioskMode(helper);
+                                        activity.exitKioskMode();
                                     } else {
                                         Toast.makeText(activity, getString(R.string.kiosk_mode__error_password),
                                                 Toast.LENGTH_SHORT).show();

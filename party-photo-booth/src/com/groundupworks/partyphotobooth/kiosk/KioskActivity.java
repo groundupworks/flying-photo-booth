@@ -24,9 +24,21 @@ import com.groundupworks.partyphotobooth.kiosk.KioskModeHelper.State;
  */
 public class KioskActivity extends BaseFragmentActivity {
 
+    /**
+     * Package private flag to track whether the single instance {@link KioskActivity} is in foreground.
+     */
+    static boolean sIsInForeground = false;
+
+    /**
+     * The {@link KioskModeHelper}.
+     */
+    private KioskModeHelper mKioskModeHelper;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        mKioskModeHelper = new KioskModeHelper(this);
 
         // Show on top of lock screen.
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
@@ -34,26 +46,38 @@ public class KioskActivity extends BaseFragmentActivity {
         setContentView(R.layout.activity_kiosk);
 
         // Configure button to exit Kiosk mode.
-        final KioskModeHelper helper = new KioskModeHelper(this);
+
         ImageView exitButton = (ImageView) findViewById(R.id.kiosk_exit_button);
         exitButton.setOnLongClickListener(new OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                if (helper.isPasswordRequired()) {
+                if (mKioskModeHelper.isPasswordRequired()) {
                     showDialogFragment(KioskPasswordDialogFragment.newInstance());
                 } else {
-                    exitKioskMode(helper);
+                    exitKioskMode();
                 }
                 return true;
             }
         });
 
         // Choose Fragment to start with based on whether Kiosk mode setup has completed.
-        if (helper.isSetupCompleted()) {
+        if (mKioskModeHelper.isSetupCompleted()) {
             replaceFragment(CaptureFragment.newInstance(), false, true);
         } else {
             replaceFragment(KioskSetupFragment.newInstance(), false, true);
         }
+    }
+
+    @Override
+    public void onResume() {
+        sIsInForeground = true;
+        super.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        sIsInForeground = false;
     }
 
     @Override
@@ -79,13 +103,10 @@ public class KioskActivity extends BaseFragmentActivity {
 
     /**
      * Exits Kiosk mode.
-     * 
-     * @param helper
-     *            a {@link KioskModeHelper}.
      */
-    void exitKioskMode(KioskModeHelper helper) {
+    void exitKioskMode() {
         // Disable Kiosk mode.
-        helper.transitionState(State.DISABLED);
+        mKioskModeHelper.transitionState(State.DISABLED);
 
         // Finish KioskActivity.
         finish();

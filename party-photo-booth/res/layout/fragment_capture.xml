@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:weightSum="1" >
+
+    <!-- Review container -->
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="0.3"
+        android:orientation="vertical"
+        android:paddingTop="12dip" />
+
+    <!-- Capture container -->
+
+    <RelativeLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="0.7"
+        android:padding="12dip" >
+
+        <!-- Capture button -->
+
+        <Button
+            android:id="@+id/capture_button"
+            style="@style/Text.Colored"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_margin="6dip"
+            android:background="@drawable/selector_button_capture" />
+
+        <!-- Camera preview -->
+
+        <com.groundupworks.lib.photobooth.views.CenteredPreview
+            android:id="@+id/camera_preview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@id/capture_button"
+            android:layout_alignParentTop="true"
+            android:background="@color/background_color" />
+    </RelativeLayout>
+
+</LinearLayout>

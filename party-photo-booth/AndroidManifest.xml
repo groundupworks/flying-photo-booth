@@ -42,6 +42,7 @@
         <!-- Photo booth setup -->
         <activity
             android:name=".SetupActivity"
+            android:excludeFromRecents="true"
             android:screenOrientation="landscape"
             android:theme="@style/ThemeSelectorFullscreen" >
             <intent-filter>
@@ -64,6 +65,7 @@
         <!-- Facebook linking -->
         <activity
             android:name="com.groundupworks.lib.photobooth.facebook.FacebookSettingsActivity"
+            android:excludeFromRecents="true"
             android:label="@string/facebook_settings__label"
             android:screenOrientation="portrait"
             android:theme="@style/ThemeSelector" />
@@ -71,12 +73,14 @@
         <!-- Required by Facebook -->
         <activity
             android:name="com.facebook.LoginActivity"
+            android:excludeFromRecents="true"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
 
         <!-- Required by Dropbox -->
         <activity
             android:name="com.dropbox.client2.android.AuthActivity"
             android:configChanges="orientation|keyboard"
+            android:excludeFromRecents="true"
             android:launchMode="singleTask" >
             <intent-filter>
 

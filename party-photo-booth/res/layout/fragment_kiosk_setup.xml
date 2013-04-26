@@ -14,7 +14,7 @@
             android:layout_height="wrap_content" >
 
             <TextView
-                style="@style/Text"
+                style="@style/Text.Colored"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_span="3"
@@ -27,7 +27,7 @@
             android:layout_height="wrap_content" >
 
             <TextView
-                style="@style/Text"
+                style="@style/Text.Colored"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="12dp"
@@ -35,7 +35,7 @@
 
             <EditText
                 android:id="@+id/kiosk_setup_password"
-                style="@style/TextSize"
+                style="@style/Text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:hint="@string/kiosk_mode__setup_password_hint"

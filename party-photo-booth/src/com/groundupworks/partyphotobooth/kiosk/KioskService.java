@@ -98,8 +98,10 @@ public class KioskService extends Service {
             @Override
             public void run() {
                 if (kioskModeHelper.isEnabled()) {
-                    // Send Intent to start KioskActivity.
-                    startActivity(intent);
+                    if (!KioskActivity.sIsInForeground) {
+                        // Send Intent to start KioskActivity.
+                        startActivity(intent);
+                    }
                 } else {
                     // Stop the timer and the KioskService.
                     timer.cancel();
