@@ -5,6 +5,7 @@
  */
 package com.groundupworks.partyphotobooth.kiosk;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
@@ -14,9 +15,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import com.groundupworks.lib.photobooth.framework.BaseFragmentActivity;
 import com.groundupworks.partyphotobooth.R;
-import com.groundupworks.partyphotobooth.fragments.CaptureFragment;
 import com.groundupworks.partyphotobooth.kiosk.KioskModeHelper.State;
 
 /**
@@ -52,7 +51,7 @@ public class KioskSetupFragment extends Fragment {
         mOkButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                BaseFragmentActivity activity = (BaseFragmentActivity) getActivity();
+                Activity activity = getActivity();
                 if (activity != null && !activity.isFinishing()) {
                     KioskModeHelper helper = new KioskModeHelper(activity);
 
@@ -65,8 +64,11 @@ public class KioskSetupFragment extends Fragment {
                     // Transition to setup completed states.
                     helper.transitionState(State.SETUP_COMPLETED);
 
-                    // Start photo booth.
-                    activity.replaceFragment(CaptureFragment.newInstance(), false, true);
+                    // Call transition.
+                    if (activity instanceof IFragmentTransition) {
+                        IFragmentTransition transition = (IFragmentTransition) activity;
+                        transition.onKioskSetupComplete();
+                    }
                 }
             }
         });
@@ -83,5 +85,20 @@ public class KioskSetupFragment extends Fragment {
      */
     public static KioskSetupFragment newInstance() {
         return new KioskSetupFragment();
+    }
+
+    //
+    // Interfaces.
+    //
+
+    /**
+     * Interface to be implemented by manager of this {@link Fragment}.
+     */
+    public interface IFragmentTransition {
+
+        /**
+         * Callback when kiosk setup is completed.
+         */
+        public void onKioskSetupComplete();
     }
 }

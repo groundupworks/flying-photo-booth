@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <!-- Capture Fragment -->
     <string name="app_name">Party PhotoBooth</string>
+
+    <!-- Capture Fragment -->
     <string name="capture__error_camera_dialog_title">Camera unavailable</string>
     <string name="capture__error_camera_dialog_message_none">This application requires a camera on your device.</string>
     <string name="capture__error_camera_dialog_message_in_use">Your camera may be in use by another application.</string>
@@ -12,12 +13,12 @@
     <string name="error__dialog_button_text">Exit</string>
 
     <!-- Kiosk Mode -->
-    <string name="kiosk_mode__setup_message">Press &amp; hold top left corner to exit</string>
+    <string name="kiosk_mode__setup_message">Press &amp; hold top right corner to exit</string>
     <string name="kiosk_mode__setup_password_label">Require passcode:</string>
     <string name="kiosk_mode__setup_password_hint">none</string>
     <string name="kiosk_mode__setup_button_ok">OK</string>
     <string name="kiosk_mode__notification_title">Kiosk mode</string>
-    <string name="kiosk_mode__notification_msg">Press &amp; hold top left corner to exit</string>
+    <string name="kiosk_mode__notification_msg">Press &amp; hold top right corner to exit</string>
     <string name="kiosk_mode__notification_ticker">Entering Kiosk mode</string>
     <string name="kiosk_mode__dialog_title">Exit</string>
     <string name="kiosk_mode__dialog_password_hint">Passcode</string>

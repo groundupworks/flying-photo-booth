@@ -26,7 +26,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.Toast;
 import com.groundupworks.lib.photobooth.helpers.CameraHelper;
 import com.groundupworks.lib.photobooth.helpers.ImageHelper;
@@ -147,7 +147,7 @@ public class CaptureFragment extends Fragment {
 
     private CenteredPreview mPreview;
 
-    private Button mStartButton;
+    private ImageButton mStartButton;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -198,7 +198,7 @@ public class CaptureFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_capture, container, false);
 
         mPreview = (CenteredPreview) view.findViewById(R.id.camera_preview);
-        mStartButton = (Button) view.findViewById(R.id.capture_button);
+        mStartButton = (ImageButton) view.findViewById(R.id.capture_button);
 
         return view;
     }
@@ -262,7 +262,7 @@ public class CaptureFragment extends Fragment {
         KioskActivity activity = (KioskActivity) getActivity();
         if (mOnPauseCalled) {
             // Relaunch fragment with new camera.
-            activity.replaceFragment(CaptureFragment.newInstance(), false, true);
+            // activity.replaceFragment(CaptureFragment.newInstance(), false, true);
         } else {
             if (mCameraId != INVALID_CAMERA_ID) {
                 try {
@@ -522,7 +522,7 @@ public class CaptureFragment extends Fragment {
                 // The native camera crashes occasionally. Self-recover by relaunching fragment.
                 final KioskActivity activity = (KioskActivity) getActivity();
                 Toast.makeText(activity, getString(R.string.capture__error_camera_crash), Toast.LENGTH_SHORT).show();
-                activity.replaceFragment(CaptureFragment.newInstance(), false, true);
+                // activity.replaceFragment(CaptureFragment.newInstance(), false, true);
             }
         }
     }

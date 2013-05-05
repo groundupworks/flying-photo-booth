@@ -7,6 +7,9 @@ package com.groundupworks.partyphotobooth.kiosk;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnLongClickListener;
@@ -15,6 +18,7 @@ import android.widget.ImageView;
 import com.groundupworks.lib.photobooth.framework.BaseFragmentActivity;
 import com.groundupworks.partyphotobooth.R;
 import com.groundupworks.partyphotobooth.fragments.CaptureFragment;
+import com.groundupworks.partyphotobooth.fragments.PhotoStripFragment;
 import com.groundupworks.partyphotobooth.kiosk.KioskModeHelper.State;
 
 /**
@@ -22,7 +26,7 @@ import com.groundupworks.partyphotobooth.kiosk.KioskModeHelper.State;
  * 
  * @author Benedict Lau
  */
-public class KioskActivity extends BaseFragmentActivity {
+public class KioskActivity extends BaseFragmentActivity implements KioskSetupFragment.IFragmentTransition {
 
     /**
      * Package private flag to track whether the single instance {@link KioskActivity} is in foreground.
@@ -33,6 +37,12 @@ public class KioskActivity extends BaseFragmentActivity {
      * The {@link KioskModeHelper}.
      */
     private KioskModeHelper mKioskModeHelper;
+
+    //
+    // Fragments.
+    //
+
+    private KioskSetupFragment mKioskSetupFragment = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,9 +72,10 @@ public class KioskActivity extends BaseFragmentActivity {
 
         // Choose Fragment to start with based on whether Kiosk mode setup has completed.
         if (mKioskModeHelper.isSetupCompleted()) {
-            replaceFragment(CaptureFragment.newInstance(), false, true);
+            // replaceRightFragment(CaptureFragment.newInstance());
         } else {
-            replaceFragment(KioskSetupFragment.newInstance(), false, true);
+            mKioskSetupFragment = KioskSetupFragment.newInstance();
+            replaceFragment(mKioskSetupFragment, false, true);
         }
     }
 
@@ -95,6 +106,52 @@ public class KioskActivity extends BaseFragmentActivity {
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         // Block event.
         return true;
+    }
+
+    //
+    // Fragment transition interfaces.
+    //
+
+    @Override
+    public void onKioskSetupComplete() {
+        final FragmentManager fragmentManager = getSupportFragmentManager();
+        final FragmentTransaction ft = fragmentManager.beginTransaction();
+        ft.remove(mKioskSetupFragment);
+        ft.commit();
+
+        // Start photo booth.
+        replaceLeftFragment(PhotoStripFragment.newInstance());
+        replaceRightFragment(CaptureFragment.newInstance());
+    }
+
+    //
+    // Private methods.
+    //
+
+    /**
+     * Replaces the {@link Fragment} in the left side container.
+     * 
+     * @param fragment
+     *            the new {@link Fragment} used to replace the current.
+     */
+    public void replaceLeftFragment(Fragment fragment) {
+        final FragmentManager fragmentManager = getSupportFragmentManager();
+        final FragmentTransaction ft = fragmentManager.beginTransaction();
+        ft.replace(R.id.fragment_container_left, fragment);
+        ft.commit();
+    }
+
+    /**
+     * Replaces the {@link Fragment} in the left side container.
+     * 
+     * @param fragment
+     *            the new {@link Fragment} used to replace the current.
+     */
+    public void replaceRightFragment(Fragment fragment) {
+        final FragmentManager fragmentManager = getSupportFragmentManager();
+        final FragmentTransaction ft = fragmentManager.beginTransaction();
+        ft.replace(R.id.fragment_container_right, fragment);
+        ft.commit();
     }
 
     //

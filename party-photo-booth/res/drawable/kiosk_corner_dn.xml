@@ -7,7 +7,7 @@
         android:width="64dp" />
 
     <gradient
-        android:centerX="0%"
+        android:centerX="100%"
         android:centerY="0%"
         android:endColor="@color/selection_color_transparent"
         android:gradientRadius="@dimen/kiosk_mode_button_exit_size_dn"
