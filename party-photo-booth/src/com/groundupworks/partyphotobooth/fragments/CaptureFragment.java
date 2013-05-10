@@ -13,6 +13,7 @@ import java.util.concurrent.TimeUnit;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.drawable.AnimationDrawable;
 import android.hardware.Camera;
 import android.hardware.Camera.AutoFocusCallback;
 import android.hardware.Camera.CameraInfo;
@@ -26,10 +27,11 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
+import android.widget.Button;
 import android.widget.Toast;
 import com.groundupworks.lib.photobooth.helpers.CameraHelper;
 import com.groundupworks.lib.photobooth.helpers.ImageHelper;
+import com.groundupworks.lib.photobooth.views.AnimationDrawableCallback;
 import com.groundupworks.lib.photobooth.views.CenteredPreview;
 import com.groundupworks.partyphotobooth.R;
 import com.groundupworks.partyphotobooth.kiosk.KioskActivity;
@@ -147,7 +149,7 @@ public class CaptureFragment extends Fragment {
 
     private CenteredPreview mPreview;
 
-    private ImageButton mStartButton;
+    private Button mStartButton;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -198,7 +200,7 @@ public class CaptureFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_capture, container, false);
 
         mPreview = (CenteredPreview) view.findViewById(R.id.camera_preview);
-        mStartButton = (ImageButton) view.findViewById(R.id.capture_button);
+        mStartButton = (Button) view.findViewById(R.id.capture_button);
 
         return view;
     }
@@ -239,9 +241,15 @@ public class CaptureFragment extends Fragment {
             public void onClick(View v) {
                 if (mCamera != null) {
                     mStartButton.setEnabled(false);
-                    mStartButton.setVisibility(View.INVISIBLE);
 
-                    // TODO Kick off capture sequence.
+                    AnimationDrawable countdownAnimation = (AnimationDrawable) mStartButton.getBackground();
+                    countdownAnimation.setCallback(new AnimationDrawableCallback(countdownAnimation, mStartButton) {
+                        @Override
+                        public void onAnimationComplete() {
+                            // TODO Do something.
+                        }
+                    });
+                    countdownAnimation.start();
                 }
             }
         });

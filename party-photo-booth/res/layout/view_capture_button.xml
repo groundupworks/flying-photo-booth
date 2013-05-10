@@ -1,0 +1,3 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Button xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="@drawable/anim_list_button_capture" />

@@ -5,18 +5,15 @@
 
     <!-- Capture button -->
 
-    <ImageButton
+    <include
         android:id="@+id/capture_button"
-        style="@style/Text.Colored"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="12dip"
         android:layout_marginTop="12dip"
-        android:background="@drawable/selector_button_capture"
-        android:padding="6dip"
-        android:src="@drawable/ic_menu_camera" />
+        layout="@layout/view_capture_button" />
 
     <!-- Camera preview -->
 
