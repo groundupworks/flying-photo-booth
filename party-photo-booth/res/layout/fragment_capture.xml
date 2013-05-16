@@ -11,8 +11,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="12dip"
-        android:layout_marginTop="12dip"
+        android:layout_marginBottom="@dimen/kiosk_spacing"
+        android:layout_marginTop="@dimen/kiosk_spacing"
         layout="@layout/view_capture_button" />
 
     <!-- Camera preview -->
@@ -23,7 +23,7 @@
         android:layout_height="match_parent"
         android:layout_above="@id/capture_button"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="12dip"
+        android:layout_marginTop="@dimen/kiosk_spacing"
         android:background="@color/background_color" />
 
 </RelativeLayout>

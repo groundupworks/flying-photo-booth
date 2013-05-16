@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle" >
+
+    <corners android:topRightRadius="@dimen/photo_strip_shadow_size" />
+
+    <gradient
+        android:angle="0"
+        android:endColor="@android:color/transparent"
+        android:startColor="@color/shadow_color" />
+
+</shape>

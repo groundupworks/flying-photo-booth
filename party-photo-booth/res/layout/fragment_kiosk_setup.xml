@@ -14,7 +14,7 @@
             android:layout_height="wrap_content" >
 
             <TextView
-                style="@style/Text.Colored"
+                style="@style/Text.Light"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_span="3"
@@ -27,7 +27,7 @@
             android:layout_height="wrap_content" >
 
             <TextView
-                style="@style/Text.Colored"
+                style="@style/Text.Light"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="12dp"
@@ -57,7 +57,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:layout_margin="12dp"
+        android:layout_margin="@dimen/kiosk_spacing"
         android:padding="12dp"
         android:text="@string/kiosk_mode__setup_button_ok" />
 

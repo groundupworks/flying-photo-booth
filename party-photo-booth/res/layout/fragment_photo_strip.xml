@@ -1,5 +1,59 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<View xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@android:color/darker_gray" />
+    android:layout_height="match_parent" >
+
+    <ScrollView
+        android:id="@+id/photo_strip_scroll_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:fadingEdge="vertical"
+        android:requiresFadingEdge="vertical"
+        android:scrollbars="none" >
+
+        <LinearLayout
+            android:id="@+id/photo_strip_shadow_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <View
+                android:layout_width="@dimen/kiosk_spacing"
+                android:layout_height="match_parent" />
+
+            <LinearLayout
+                android:id="@+id/photo_strip_container"
+                android:layout_width="@dimen/photo_strip_content_width"
+                android:layout_height="wrap_content"
+                android:background="@drawable/photo_strip_background"
+                android:orientation="vertical"
+                android:paddingLeft="@dimen/kiosk_spacing"
+                android:paddingRight="@dimen/kiosk_spacing" >
+
+                <TextView
+                    android:id="@+id/event_title"
+                    style="@style/Text.Dark.Heavy"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="@dimen/kiosk_spacing" />
+
+                <TextView
+                    android:id="@+id/event_date"
+                    style="@style/Text.Light"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginBottom="@dimen/kiosk_spacing" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="@dimen/photo_strip_shadow_size"
+                android:layout_height="match_parent"
+                android:layout_marginTop="@dimen/photo_strip_shadow_size"
+                android:background="@drawable/photo_strip_shadow" />
+        </LinearLayout>
+    </ScrollView>
+
+</RelativeLayout>

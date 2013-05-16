@@ -17,20 +17,17 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="horizontal"
-        android:weightSum="1" >
+        android:orientation="horizontal" >
 
         <FrameLayout
             android:id="@+id/fragment_container_left"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="0.35" />
+            android:layout_width="@dimen/photo_strip_width"
+            android:layout_height="match_parent" />
 
         <FrameLayout
             android:id="@+id/fragment_container_right"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="0.65" />
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
     </LinearLayout>
 
     <!-- Exit Kiosk mode button -->

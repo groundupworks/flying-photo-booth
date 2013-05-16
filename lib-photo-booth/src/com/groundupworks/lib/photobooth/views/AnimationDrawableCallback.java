@@ -47,6 +47,7 @@ public abstract class AnimationDrawableCallback implements Callback {
     private boolean mIsCallbackTriggered = false;
 
     /**
+     * Constructor.
      * 
      * @param animationDrawable
      *            the {@link AnimationDrawable}.
