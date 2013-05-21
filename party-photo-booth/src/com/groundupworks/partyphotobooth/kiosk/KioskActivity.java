@@ -15,9 +15,11 @@ import android.view.View;
 import android.view.View.OnLongClickListener;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.Toast;
 import com.groundupworks.lib.photobooth.framework.BaseFragmentActivity;
 import com.groundupworks.partyphotobooth.R;
 import com.groundupworks.partyphotobooth.fragments.CaptureFragment;
+import com.groundupworks.partyphotobooth.fragments.ErrorDialogFragment;
 import com.groundupworks.partyphotobooth.fragments.PhotoStripFragment;
 import com.groundupworks.partyphotobooth.kiosk.KioskModeHelper.State;
 
@@ -26,7 +28,8 @@ import com.groundupworks.partyphotobooth.kiosk.KioskModeHelper.State;
  * 
  * @author Benedict Lau
  */
-public class KioskActivity extends BaseFragmentActivity implements KioskSetupFragment.IFragmentTransition {
+public class KioskActivity extends BaseFragmentActivity implements KioskSetupFragment.ICallbacks,
+        PhotoStripFragment.ICallbacks, CaptureFragment.ICallbacks {
 
     /**
      * Package private flag to track whether the single instance {@link KioskActivity} is in foreground.
@@ -43,6 +46,10 @@ public class KioskActivity extends BaseFragmentActivity implements KioskSetupFra
     //
 
     private KioskSetupFragment mKioskSetupFragment = null;
+
+    private PhotoStripFragment mPhotoStripFragment = null;
+
+    private CaptureFragment mCaptureFragment = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,9 +77,12 @@ public class KioskActivity extends BaseFragmentActivity implements KioskSetupFra
             }
         });
 
-        // Choose Fragment to start with based on whether Kiosk mode setup has completed.
+        // Choose fragments to start with based on whether Kiosk mode setup has completed.
         if (mKioskModeHelper.isSetupCompleted()) {
-            // replaceRightFragment(CaptureFragment.newInstance());
+            mPhotoStripFragment = PhotoStripFragment.newInstance();
+            mCaptureFragment = CaptureFragment.newInstance();
+            replaceLeftFragment(mPhotoStripFragment);
+            replaceRightFragment(mCaptureFragment);
         } else {
             mKioskSetupFragment = KioskSetupFragment.newInstance();
             replaceFragment(mKioskSetupFragment, false, true);
@@ -109,19 +119,76 @@ public class KioskActivity extends BaseFragmentActivity implements KioskSetupFra
     }
 
     //
-    // Fragment transition interfaces.
+    // Implementation of the KioskSetupFragment callbacks.
     //
 
     @Override
-    public void onKioskSetupComplete() {
-        final FragmentManager fragmentManager = getSupportFragmentManager();
-        final FragmentTransaction ft = fragmentManager.beginTransaction();
-        ft.remove(mKioskSetupFragment);
-        ft.commit();
+    public void onKioskSetupComplete(String password) {
+        // Set password if used.
+        if (password != null) {
+            mKioskModeHelper.setPassword(password);
+        }
 
-        // Start photo booth.
-        replaceLeftFragment(PhotoStripFragment.newInstance());
-        replaceRightFragment(CaptureFragment.newInstance());
+        // Transition to setup completed state.
+        mKioskModeHelper.transitionState(State.SETUP_COMPLETED);
+
+        // Remove Kiosk setup fragment.
+        if (mKioskSetupFragment != null) {
+            final FragmentManager fragmentManager = getSupportFragmentManager();
+            final FragmentTransaction ft = fragmentManager.beginTransaction();
+            ft.remove(mKioskSetupFragment);
+            ft.commit();
+            mKioskSetupFragment = null;
+        }
+
+        // Launch photo booth ui.
+        mPhotoStripFragment = PhotoStripFragment.newInstance();
+        mCaptureFragment = CaptureFragment.newInstance();
+        replaceLeftFragment(mPhotoStripFragment);
+        replaceRightFragment(mCaptureFragment);
+    }
+
+    //
+    // Implementation of the PhotoStripFragment callbacks.
+    //
+
+    @Override
+    public void onPhotoAdded(int count, int totalNumPhotos) {
+        mCaptureFragment = CaptureFragment.newInstance();
+        replaceRightFragment(mCaptureFragment);
+    }
+
+    //
+    // Implementation of the CaptureFragment callbacks.
+    //
+
+    @Override
+    public void onPictureTaken(byte[] data, boolean isReflected) {
+        if (mPhotoStripFragment != null) {
+            mPhotoStripFragment.addPhoto(data, isReflected);
+        }
+    }
+
+    @Override
+    public void onErrorCameraNone() {
+        String title = getString(R.string.capture__error_camera_dialog_title);
+        String message = getString(R.string.capture__error_camera_dialog_message_none);
+        showDialogFragment(ErrorDialogFragment.newInstance(title, message));
+    }
+
+    @Override
+    public void onErrorCameraInUse() {
+        String title = getString(R.string.capture__error_camera_dialog_title);
+        String message = getString(R.string.capture__error_camera_dialog_message_in_use);
+        showDialogFragment(ErrorDialogFragment.newInstance(title, message));
+    }
+
+    @Override
+    public void onErrorCameraCrashed() {
+        // The native camera crashes occasionally. Self-recover by relaunching fragment.
+        Toast.makeText(KioskActivity.this, getString(R.string.capture__error_camera_crash), Toast.LENGTH_SHORT).show();
+        mCaptureFragment = CaptureFragment.newInstance();
+        replaceRightFragment(mCaptureFragment);
     }
 
     //

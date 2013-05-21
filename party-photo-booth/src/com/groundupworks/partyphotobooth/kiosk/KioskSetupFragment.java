@@ -5,6 +5,7 @@
  */
 package com.groundupworks.partyphotobooth.kiosk;
 
+import java.lang.ref.WeakReference;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -16,7 +17,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import com.groundupworks.partyphotobooth.R;
-import com.groundupworks.partyphotobooth.kiosk.KioskModeHelper.State;
 
 /**
  * {@link Fragment} containing instructions and configurations for Kiosk mode.
@@ -25,6 +25,11 @@ import com.groundupworks.partyphotobooth.kiosk.KioskModeHelper.State;
  */
 public class KioskSetupFragment extends Fragment {
 
+    /**
+     * Callbacks for this fragment.
+     */
+    private WeakReference<KioskSetupFragment.ICallbacks> mCallbacks = null;
+
     //
     // Views.
     //
@@ -32,6 +37,12 @@ public class KioskSetupFragment extends Fragment {
     private EditText mPassword;
 
     private Button mOkButton;
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        mCallbacks = new WeakReference<KioskSetupFragment.ICallbacks>((KioskSetupFragment.ICallbacks) activity);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -51,27 +62,37 @@ public class KioskSetupFragment extends Fragment {
         mOkButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                Activity activity = getActivity();
-                if (activity != null && !activity.isFinishing()) {
-                    KioskModeHelper helper = new KioskModeHelper(activity);
+                // Get password.
+                String passwordString = null;
+                Editable password = mPassword.getText();
+                if (password != null) {
+                    passwordString = password.toString();
+                }
 
-                    // Get password if used.
-                    Editable password = mPassword.getText();
-                    if (password != null) {
-                        helper.setPassword(password.toString());
-                    }
-
-                    // Transition to setup completed states.
-                    helper.transitionState(State.SETUP_COMPLETED);
-
-                    // Call transition.
-                    if (activity instanceof IFragmentTransition) {
-                        IFragmentTransition transition = (IFragmentTransition) activity;
-                        transition.onKioskSetupComplete();
-                    }
+                // Call to client.
+                ICallbacks callbacks = getCallbacks();
+                if (callbacks != null) {
+                    callbacks.onKioskSetupComplete(passwordString);
                 }
             }
         });
+    }
+
+    //
+    // Private methods.
+    //
+
+    /**
+     * Gets the callbacks for this fragment.
+     * 
+     * @return the callbacks; or null if not set.
+     */
+    private KioskSetupFragment.ICallbacks getCallbacks() {
+        KioskSetupFragment.ICallbacks callbacks = null;
+        if (mCallbacks != null) {
+            callbacks = mCallbacks.get();
+        }
+        return callbacks;
     }
 
     //
@@ -84,7 +105,8 @@ public class KioskSetupFragment extends Fragment {
      * @return the new {@link KioskSetupFragment} instance.
      */
     public static KioskSetupFragment newInstance() {
-        return new KioskSetupFragment();
+        KioskSetupFragment fragment = new KioskSetupFragment();
+        return fragment;
     }
 
     //
@@ -92,13 +114,16 @@ public class KioskSetupFragment extends Fragment {
     //
 
     /**
-     * Interface to be implemented by manager of this {@link Fragment}.
+     * Callbacks for this fragment.
      */
-    public interface IFragmentTransition {
+    public interface ICallbacks {
 
         /**
-         * Callback when kiosk setup is completed.
+         * Kiosk setup completed.
+         * 
+         * @param password
+         *            the password; or null if not set.
          */
-        public void onKioskSetupComplete();
+        public void onKioskSetupComplete(String password);
     }
 }

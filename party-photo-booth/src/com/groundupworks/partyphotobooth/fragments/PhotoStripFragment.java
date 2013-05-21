@@ -5,14 +5,18 @@
  */
 package com.groundupworks.partyphotobooth.fragments;
 
-import java.util.Timer;
-import java.util.TimerTask;
+import java.lang.ref.WeakReference;
+import android.app.Activity;
+import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewGroup.LayoutParams;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.TranslateAnimation;
@@ -22,6 +26,7 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import com.groundupworks.partyphotobooth.R;
+import com.groundupworks.partyphotobooth.helpers.PreferencesHelper;
 
 /**
  * Display photos in a photo strip format.
@@ -29,6 +34,30 @@ import com.groundupworks.partyphotobooth.R;
  * @author Benedict Lau
  */
 public class PhotoStripFragment extends Fragment {
+
+    /**
+     * The duration for the {@link TranslateAnimation}.
+     */
+    private static final long ANIMATION_DURATION = 3000L;
+
+    /**
+     * Callbacks for this fragment.
+     */
+    private WeakReference<PhotoStripFragment.ICallbacks> mCallbacks = null;
+
+    /**
+     * The total number of frames to capture.
+     */
+    private int mFramesTotal = 0;
+
+    /**
+     * The current frame index.
+     */
+    private int mFrameIndex = 0;
+
+    //
+    // Views.
+    //
 
     private ScrollView mScroller;
 
@@ -39,6 +68,12 @@ public class PhotoStripFragment extends Fragment {
     private TextView mEventTitle;
 
     private TextView mEventDate;
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        mCallbacks = new WeakReference<PhotoStripFragment.ICallbacks>((PhotoStripFragment.ICallbacks) activity);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -53,58 +88,102 @@ public class PhotoStripFragment extends Fragment {
         mEventTitle = (TextView) view.findViewById(R.id.event_title);
         mEventDate = (TextView) view.findViewById(R.id.event_date);
 
-        // TODO Dummy event title.
-        mEventTitle.setText("Hello World!");
-        mEventDate.setText("June 29, 2013");
+        return view;
+    }
 
-        // TODO Dummy photos.
-        Timer timer = new Timer();
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
 
-        for (int i = 1; i < 5; i++) {
-            timer.schedule(new TimerTask() {
+        Context appContext = getActivity().getApplicationContext();
+        PreferencesHelper preferencesHelper = new PreferencesHelper();
 
-                @Override
-                public void run() {
-                    getActivity().runOnUiThread(new Runnable() {
-
-                        @Override
-                        public void run() {
-                            ImageView photo = new ImageView(getActivity());
-                            int size = getResources().getDimensionPixelSize(R.dimen.photo_thumb_size);
-                            mContainer.addView(photo, new LayoutParams(size, size));
-                            photo.setScaleType(ScaleType.CENTER_CROP);
-                            photo.setImageDrawable(getResources().getDrawable(R.drawable.ic_launcher));
-                            mScroller.fullScroll(ScrollView.FOCUS_DOWN);
-
-                            TranslateAnimation animation = new TranslateAnimation(0f, 0f, size, 0f);
-                            animation.setDuration(5000L);
-                            animation.setAnimationListener(new AnimationListener() {
-
-                                @Override
-                                public void onAnimationStart(Animation animation) {
-                                    mScroller.fullScroll(ScrollView.FOCUS_DOWN);
-                                }
-
-                                @Override
-                                public void onAnimationRepeat(Animation animation) {
-                                    // TODO Auto-generated method stub
-
-                                }
-
-                                @Override
-                                public void onAnimationEnd(Animation animation) {
-                                    // TODO Auto-generated method stub
-
-                                }
-                            });
-                            mShadower.startAnimation(animation);
-                        }
-                    });
-                }
-            }, i * 8000);
+        // Display event title.
+        String eventName = preferencesHelper.getEventName(appContext);
+        if (eventName == null || eventName.isEmpty()) {
+            mEventTitle.setVisibility(View.GONE);
+        } else {
+            mEventTitle.setText(eventName);
+            mEventTitle.setVisibility(View.VISIBLE);
         }
 
-        return view;
+        // Display event date.
+        String eventDate = preferencesHelper.getEventDate(appContext);
+        if (eventDate == null || eventDate.isEmpty()) {
+            mEventDate.setVisibility(View.GONE);
+        } else {
+            mEventDate.setText(eventDate);
+            mEventDate.setVisibility(View.VISIBLE);
+        }
+
+        // Set number of photos from preferences.
+        mFramesTotal = preferencesHelper.getPhotoStripNumPhotos(appContext);
+    }
+
+    //
+    // Private methods.
+    //
+
+    /**
+     * Gets the callbacks for this fragment.
+     * 
+     * @return the callbacks; or null if not set.
+     */
+    private PhotoStripFragment.ICallbacks getCallbacks() {
+        PhotoStripFragment.ICallbacks callbacks = null;
+        if (mCallbacks != null) {
+            callbacks = mCallbacks.get();
+        }
+        return callbacks;
+    }
+
+    /**
+     * Checks whether the {@link Activity} is attached and not finishing. This should be used as a validation check in a
+     * runnable posted to the ui thread, and the {@link Activity} may be have detached by the time the runnable
+     * executes. This method should be called on the ui thread.
+     * 
+     * @return true if {@link Activity} is still alive; false otherwise.
+     */
+    private boolean isActivityAlive() {
+        Activity activity = getActivity();
+        return activity != null && !activity.isFinishing();
+    }
+
+    /**
+     * Gets a {@link TranslateAnimation} for animating the photo strip when a new photo is added.
+     * 
+     * @param offset
+     *            the starting offset in pixels.
+     * @return the animation.
+     */
+    private TranslateAnimation getTranslateAnimation(float offset) {
+        TranslateAnimation animation = new TranslateAnimation(0f, 0f, offset, 0f);
+        animation.setDuration(ANIMATION_DURATION);
+        animation.setAnimationListener(new AnimationListener() {
+
+            @Override
+            public void onAnimationStart(Animation animation) {
+                mScroller.fullScroll(ScrollView.FOCUS_DOWN);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+                // Do nothing.
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                mScroller.fullScroll(ScrollView.FOCUS_DOWN);
+
+                // Call to client.
+                ICallbacks callbacks = getCallbacks();
+                if (callbacks != null) {
+                    callbacks.onPhotoAdded(mFrameIndex, mFramesTotal);
+                }
+            }
+        });
+
+        return animation;
     }
 
     //
@@ -118,5 +197,62 @@ public class PhotoStripFragment extends Fragment {
      */
     public static PhotoStripFragment newInstance() {
         return new PhotoStripFragment();
+    }
+
+    /**
+     * Adds a new photo to the photo strip.
+     * 
+     * @param data
+     *            the picture data.
+     * @param isReflected
+     *            flag to indicate whether the camera image is reflected.
+     */
+    public void addPhoto(byte[] data, boolean isReflected) {
+        if (isActivityAlive()) {
+            Activity activity = getActivity();
+            Resources res = getResources();
+
+            int photoSize = res.getDimensionPixelSize(R.dimen.photo_thumb_size);
+            int photoPadding = res.getDimensionPixelSize(R.dimen.kiosk_spacing);
+            int offset = photoSize + photoPadding;
+
+            // TODO Perform background tasks.
+            Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+            BitmapDrawable drawable = new BitmapDrawable(res, bitmap);
+
+            // Create view.
+            ImageView imageView = new ImageView(activity);
+            imageView.setScaleType(ScaleType.CENTER_CROP);
+            imageView.setImageDrawable(drawable);
+
+            // Create layout params.
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(photoSize, photoSize);
+            layoutParams.setMargins(0, 0, 0, photoPadding);
+
+            // Add view to hierarchy and start animation.
+            mContainer.addView(imageView, layoutParams);
+            mScroller.fullScroll(ScrollView.FOCUS_DOWN);
+            mShadower.startAnimation(getTranslateAnimation((float) offset));
+        }
+    }
+
+    //
+    // Interfaces.
+    //
+
+    /**
+     * Callbacks for this fragment.
+     */
+    public interface ICallbacks {
+
+        /**
+         * A photo is added to the photo strip.
+         * 
+         * @param count
+         *            the count of the newly added photo.
+         * @param totalNumPhotos
+         *            the total number of photos.
+         */
+        public void onPhotoAdded(int count, int totalNumPhotos);
     }
 }
