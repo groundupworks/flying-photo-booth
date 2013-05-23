@@ -32,6 +32,11 @@ public class KioskActivity extends BaseFragmentActivity implements KioskSetupFra
         PhotoStripFragment.ICallbacks, CaptureFragment.ICallbacks {
 
     /**
+     * Duration of the flash screen when a photo is taken. In milliseconds.
+     */
+    private static final long FLASH_SCREEN_DURATION = 500L;
+
+    /**
      * Package private flag to track whether the single instance {@link KioskActivity} is in foreground.
      */
     static boolean sIsInForeground = false;
@@ -51,6 +56,12 @@ public class KioskActivity extends BaseFragmentActivity implements KioskSetupFra
 
     private CaptureFragment mCaptureFragment = null;
 
+    //
+    // Views.
+    //
+
+    private View mFlashScreen;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,6 +76,7 @@ public class KioskActivity extends BaseFragmentActivity implements KioskSetupFra
         // Configure button to exit Kiosk mode.
 
         ImageView exitButton = (ImageView) findViewById(R.id.kiosk_exit_button);
+        mFlashScreen = findViewById(R.id.flash_screen);
         exitButton.setOnLongClickListener(new OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
@@ -153,7 +165,19 @@ public class KioskActivity extends BaseFragmentActivity implements KioskSetupFra
     //
 
     @Override
-    public void onPhotoAdded(int count, int totalNumPhotos) {
+    public void onNewPhotoStart() {
+        mFlashScreen.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (!isFinishing()) {
+                    mFlashScreen.setVisibility(View.GONE);
+                }
+            }
+        }, FLASH_SCREEN_DURATION);
+    }
+
+    @Override
+    public void onNewPhotoEnd(int count, int totalNumPhotos) {
         mCaptureFragment = CaptureFragment.newInstance();
         replaceRightFragment(mCaptureFragment);
     }
@@ -163,9 +187,10 @@ public class KioskActivity extends BaseFragmentActivity implements KioskSetupFra
     //
 
     @Override
-    public void onPictureTaken(byte[] data, boolean isReflected) {
+    public void onPictureTaken(byte[] data, float rotation, boolean reflection) {
         if (mPhotoStripFragment != null) {
-            mPhotoStripFragment.addPhoto(data, isReflected);
+            mFlashScreen.setVisibility(View.VISIBLE);
+            mPhotoStripFragment.addPhoto(data, rotation, reflection);
         }
     }
 

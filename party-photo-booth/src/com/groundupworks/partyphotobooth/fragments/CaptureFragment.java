@@ -303,7 +303,7 @@ public class CaptureFragment extends Fragment {
                 // Call to client.
                 ICallbacks callbacks = getCallbacks();
                 if (callbacks != null) {
-                    callbacks.onPictureTaken(data, mIsReflected);
+                    callbacks.onPictureTaken(data, mPreviewDisplayOrientation, mIsReflected);
                 }
             }
         }
@@ -392,10 +392,12 @@ public class CaptureFragment extends Fragment {
          * 
          * @param data
          *            the picture data.
-         * @param isReflected
-         *            flag to indicate whether the camera image is reflected.
+         * @param rotation
+         *            clockwise rotation applied to image in degrees.
+         * @param reflection
+         *            horizontal reflection applied to image.
          */
-        public void onPictureTaken(byte[] data, boolean isReflected);
+        public void onPictureTaken(byte[] data, float rotation, boolean reflection);
 
         /**
          * No camera.

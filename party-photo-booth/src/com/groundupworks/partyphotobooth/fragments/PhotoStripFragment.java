@@ -10,10 +10,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,7 +24,10 @@ import android.widget.ImageView.ScaleType;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import com.groundupworks.lib.photobooth.framework.ControllerBackedFragment;
+import com.groundupworks.lib.photobooth.helpers.ImageHelper;
 import com.groundupworks.partyphotobooth.R;
+import com.groundupworks.partyphotobooth.controllers.PhotoStripController;
 import com.groundupworks.partyphotobooth.helpers.PreferencesHelper;
 
 /**
@@ -33,7 +35,27 @@ import com.groundupworks.partyphotobooth.helpers.PreferencesHelper;
  * 
  * @author Benedict Lau
  */
-public class PhotoStripFragment extends Fragment {
+public class PhotoStripFragment extends ControllerBackedFragment<PhotoStripController> {
+
+    //
+    // Ui events. The controller should be notified of these events.
+    //
+
+    public static final int JPEG_DATA_READY = 0;
+
+    public static final int FACEBOOK_SHARE_REQUESTED = 2;
+
+    public static final int DROPBOX_SHARE_REQUESTED = 3;
+
+    //
+    // Message bundle keys.
+    //
+
+    public static final String MESSAGE_BUNDLE_KEY_THUMB_JPEG_DATA = "jpegData";
+
+    public static final String MESSAGE_BUNDLE_KEY_ROTATION = "rotation";
+
+    public static final String MESSAGE_BUNDLE_KEY_REFLECTION = "reflection";
 
     /**
      * The duration for the {@link TranslateAnimation}.
@@ -121,6 +143,20 @@ public class PhotoStripFragment extends Fragment {
     }
 
     //
+    // ControllerBackedFragment implementation.
+    //
+
+    @Override
+    protected PhotoStripController initController() {
+        return new PhotoStripController();
+    }
+
+    @Override
+    protected void handleUiUpdate(Message msg) {
+
+    }
+
+    //
     // Private methods.
     //
 
@@ -164,6 +200,12 @@ public class PhotoStripFragment extends Fragment {
             @Override
             public void onAnimationStart(Animation animation) {
                 mScroller.fullScroll(ScrollView.FOCUS_DOWN);
+
+                // Call to client.
+                ICallbacks callbacks = getCallbacks();
+                if (callbacks != null) {
+                    callbacks.onNewPhotoStart();
+                }
             }
 
             @Override
@@ -178,7 +220,7 @@ public class PhotoStripFragment extends Fragment {
                 // Call to client.
                 ICallbacks callbacks = getCallbacks();
                 if (callbacks != null) {
-                    callbacks.onPhotoAdded(mFrameIndex, mFramesTotal);
+                    callbacks.onNewPhotoEnd(mFrameIndex, mFramesTotal);
                 }
             }
         });
@@ -204,10 +246,12 @@ public class PhotoStripFragment extends Fragment {
      * 
      * @param data
      *            the picture data.
-     * @param isReflected
-     *            flag to indicate whether the camera image is reflected.
+     * @param rotation
+     *            clockwise rotation applied to image in degrees.
+     * @param reflection
+     *            horizontal reflection applied to image.
      */
-    public void addPhoto(byte[] data, boolean isReflected) {
+    public void addPhoto(byte[] data, float rotation, boolean reflection) {
         if (isActivityAlive()) {
             Activity activity = getActivity();
             Resources res = getResources();
@@ -217,7 +261,7 @@ public class PhotoStripFragment extends Fragment {
             int offset = photoSize + photoPadding;
 
             // TODO Perform background tasks.
-            Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+            Bitmap bitmap = ImageHelper.createImage(data, rotation, reflection, null);
             BitmapDrawable drawable = new BitmapDrawable(res, bitmap);
 
             // Create view.
@@ -246,13 +290,18 @@ public class PhotoStripFragment extends Fragment {
     public interface ICallbacks {
 
         /**
-         * A photo is added to the photo strip.
+         * A new photo animation started.
+         */
+        public void onNewPhotoStart();
+
+        /**
+         * A new photo animation ended.
          * 
          * @param count
          *            the count of the newly added photo.
          * @param totalNumPhotos
-         *            the total number of photos.
+         *            the total number of photos expected in the photo strip.
          */
-        public void onPhotoAdded(int count, int totalNumPhotos);
+        public void onNewPhotoEnd(int count, int totalNumPhotos);
     }
 }
