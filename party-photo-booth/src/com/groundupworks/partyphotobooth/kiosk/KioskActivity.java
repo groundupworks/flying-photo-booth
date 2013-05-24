@@ -14,6 +14,9 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnLongClickListener;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.Animation.AnimationListener;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.Toast;
 import com.groundupworks.lib.photobooth.framework.BaseFragmentActivity;
@@ -30,11 +33,6 @@ import com.groundupworks.partyphotobooth.kiosk.KioskModeHelper.State;
  */
 public class KioskActivity extends BaseFragmentActivity implements KioskSetupFragment.ICallbacks,
         PhotoStripFragment.ICallbacks, CaptureFragment.ICallbacks {
-
-    /**
-     * Duration of the flash screen when a photo is taken. In milliseconds.
-     */
-    private static final long FLASH_SCREEN_DURATION = 500L;
 
     /**
      * Package private flag to track whether the single instance {@link KioskActivity} is in foreground.
@@ -166,14 +164,26 @@ public class KioskActivity extends BaseFragmentActivity implements KioskSetupFra
 
     @Override
     public void onNewPhotoStart() {
-        mFlashScreen.postDelayed(new Runnable() {
+        // Fade out flash screen.
+        Animation animation = AnimationUtils.loadAnimation(this, R.anim.fade_out);
+        animation.setAnimationListener(new AnimationListener() {
+
             @Override
-            public void run() {
-                if (!isFinishing()) {
-                    mFlashScreen.setVisibility(View.GONE);
-                }
+            public void onAnimationStart(Animation animation) {
+                // Do nothing.
             }
-        }, FLASH_SCREEN_DURATION);
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+                // Do nothing.
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                mFlashScreen.setVisibility(View.GONE);
+            }
+        });
+        mFlashScreen.startAnimation(animation);
     }
 
     @Override
