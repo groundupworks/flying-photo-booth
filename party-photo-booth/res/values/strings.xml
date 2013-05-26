@@ -11,6 +11,7 @@
 
     <!-- Photo Strip Fragment -->
     <string name="photostrip__title_text">PHOTO\nBOOTH</string>
+    <string name="photostrip__error_new_photo">Unable to add new photo</string>
 
     <!-- Error Dialog Fragment -->
     <string name="error__dialog_button_text">Exit</string>

@@ -25,7 +25,6 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import com.groundupworks.lib.photobooth.framework.ControllerBackedFragment;
-import com.groundupworks.lib.photobooth.helpers.ImageHelper;
 import com.groundupworks.partyphotobooth.R;
 import com.groundupworks.partyphotobooth.controllers.PhotoStripController;
 import com.groundupworks.partyphotobooth.helpers.PreferencesHelper;
@@ -52,7 +51,7 @@ public class PhotoStripFragment extends ControllerBackedFragment<PhotoStripContr
     // Message bundle keys.
     //
 
-    public static final String MESSAGE_BUNDLE_KEY_THUMB_JPEG_DATA = "jpegData";
+    public static final String MESSAGE_BUNDLE_KEY_JPEG_DATA = "jpegData";
 
     public static final String MESSAGE_BUNDLE_KEY_ROTATION = "rotation";
 
@@ -67,16 +66,6 @@ public class PhotoStripFragment extends ControllerBackedFragment<PhotoStripContr
      * Callbacks for this fragment.
      */
     private WeakReference<PhotoStripFragment.ICallbacks> mCallbacks = null;
-
-    /**
-     * The total number of frames to capture.
-     */
-    private int mFramesTotal = 0;
-
-    /**
-     * The current frame index.
-     */
-    private int mFrameIndex = 0;
 
     //
     // Views.
@@ -153,9 +142,6 @@ public class PhotoStripFragment extends ControllerBackedFragment<PhotoStripContr
             mEventDate.setText(eventDate);
             mEventDate.setVisibility(View.VISIBLE);
         }
-
-        // Set number of photos from preferences.
-        mFramesTotal = preferencesHelper.getPhotoStripNumPhotos(appContext);
     }
 
     //
@@ -169,7 +155,25 @@ public class PhotoStripFragment extends ControllerBackedFragment<PhotoStripContr
 
     @Override
     protected void handleUiUpdate(Message msg) {
+        Activity activity = getActivity();
 
+        switch (msg.what) {
+            case PhotoStripController.ERROR_OCCURRED:
+                // Call to client.
+                ICallbacks callbacks = getCallbacks();
+                if (callbacks != null) {
+                    callbacks.onNewPhotoError();
+                }
+                break;
+            case PhotoStripController.THUMB_READY:
+                addThumb(activity, (Bitmap) msg.obj, false);
+                break;
+            case PhotoStripController.PHOTO_STRIP_READY:
+                addThumb(activity, (Bitmap) msg.obj, true);
+                break;
+            default:
+                break;
+        }
     }
 
     //
@@ -202,13 +206,48 @@ public class PhotoStripFragment extends ControllerBackedFragment<PhotoStripContr
     }
 
     /**
+     * Adds the thumbnail of a frame to the photo strip ui.
+     * 
+     * @param activity
+     *            the {@link Activity}.
+     * @param thumb
+     *            the thumbnail bitmap.
+     * @param isPhotoStripComplete
+     *            true if this is the last frame and the photo strip is complete; false otherwise.
+     */
+    private void addThumb(Activity activity, Bitmap thumb, boolean isPhotoStripComplete) {
+        Resources res = getResources();
+        int photoSize = res.getDimensionPixelSize(R.dimen.photo_thumb_size);
+        int photoPadding = res.getDimensionPixelSize(R.dimen.kiosk_spacing);
+        int offset = photoSize + photoPadding;
+
+        BitmapDrawable drawable = new BitmapDrawable(res, thumb);
+
+        // Create view for thumbnail.
+        ImageView imageView = new ImageView(activity);
+        imageView.setScaleType(ScaleType.CENTER_CROP);
+        imageView.setImageDrawable(drawable);
+
+        // Create layout params for view.
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(photoSize, photoSize);
+        layoutParams.setMargins(0, 0, 0, photoPadding);
+
+        // Add view to hierarchy and start animation.
+        mContainer.addView(imageView, layoutParams);
+        mScroller.fullScroll(ScrollView.FOCUS_DOWN);
+        mShadower.startAnimation(getTranslateAnimation((float) offset, isPhotoStripComplete));
+    }
+
+    /**
      * Gets a {@link TranslateAnimation} for animating the photo strip when a new photo is added.
      * 
      * @param offset
      *            the starting offset in pixels.
+     * @param isPhotoStripComplete
+     *            true if this is the last frame and the photo strip is complete; false otherwise.
      * @return the animation.
      */
-    private TranslateAnimation getTranslateAnimation(float offset) {
+    private TranslateAnimation getTranslateAnimation(float offset, final boolean isPhotoStripComplete) {
         TranslateAnimation animation = new TranslateAnimation(0f, 0f, offset, 0f);
         animation.setDuration(ANIMATION_DURATION);
         animation.setAnimationListener(new AnimationListener() {
@@ -236,7 +275,7 @@ public class PhotoStripFragment extends ControllerBackedFragment<PhotoStripContr
                 // Call to client.
                 ICallbacks callbacks = getCallbacks();
                 if (callbacks != null) {
-                    callbacks.onNewPhotoEnd(mFrameIndex, mFramesTotal);
+                    callbacks.onNewPhotoEnd(isPhotoStripComplete);
                 }
             }
         });
@@ -269,30 +308,15 @@ public class PhotoStripFragment extends ControllerBackedFragment<PhotoStripContr
      */
     public void addPhoto(byte[] data, float rotation, boolean reflection) {
         if (isActivityAlive()) {
-            Activity activity = getActivity();
-            Resources res = getResources();
-
-            int photoSize = res.getDimensionPixelSize(R.dimen.photo_thumb_size);
-            int photoPadding = res.getDimensionPixelSize(R.dimen.kiosk_spacing);
-            int offset = photoSize + photoPadding;
-
-            // TODO Perform background tasks.
-            Bitmap bitmap = ImageHelper.createImage(data, rotation, reflection, null);
-            BitmapDrawable drawable = new BitmapDrawable(res, bitmap);
-
-            // Create view.
-            ImageView imageView = new ImageView(activity);
-            imageView.setScaleType(ScaleType.CENTER_CROP);
-            imageView.setImageDrawable(drawable);
-
-            // Create layout params.
-            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(photoSize, photoSize);
-            layoutParams.setMargins(0, 0, 0, photoPadding);
-
-            // Add view to hierarchy and start animation.
-            mContainer.addView(imageView, layoutParams);
-            mScroller.fullScroll(ScrollView.FOCUS_DOWN);
-            mShadower.startAnimation(getTranslateAnimation((float) offset));
+            // Notify controller Jpeg data is ready.
+            Message msg = Message.obtain();
+            msg.what = JPEG_DATA_READY;
+            Bundle bundle = new Bundle();
+            bundle.putByteArray(MESSAGE_BUNDLE_KEY_JPEG_DATA, data);
+            bundle.putFloat(MESSAGE_BUNDLE_KEY_ROTATION, rotation);
+            bundle.putBoolean(MESSAGE_BUNDLE_KEY_REFLECTION, reflection);
+            msg.setData(bundle);
+            sendEvent(msg);
         }
     }
 
@@ -313,11 +337,14 @@ public class PhotoStripFragment extends ControllerBackedFragment<PhotoStripContr
         /**
          * A new photo animation ended.
          * 
-         * @param count
-         *            the count of the newly added photo.
-         * @param totalNumPhotos
-         *            the total number of photos expected in the photo strip.
+         * @param isPhotoStripComplete
+         *            true if this is the last frame and the photo strip is complete; false otherwise.
          */
-        public void onNewPhotoEnd(int count, int totalNumPhotos);
+        public void onNewPhotoEnd(boolean isPhotoStripComplete);
+
+        /**
+         * An error occurred while attempting to add a new photo.
+         */
+        public void onNewPhotoError();
     }
 }

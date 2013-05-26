@@ -22,6 +22,7 @@ import android.widget.Toast;
 import com.groundupworks.lib.photobooth.framework.BaseFragmentActivity;
 import com.groundupworks.partyphotobooth.R;
 import com.groundupworks.partyphotobooth.fragments.CaptureFragment;
+import com.groundupworks.partyphotobooth.fragments.ConfirmationFragment;
 import com.groundupworks.partyphotobooth.fragments.ErrorDialogFragment;
 import com.groundupworks.partyphotobooth.fragments.PhotoStripFragment;
 import com.groundupworks.partyphotobooth.kiosk.KioskModeHelper.State;
@@ -53,6 +54,8 @@ public class KioskActivity extends BaseFragmentActivity implements KioskSetupFra
     private PhotoStripFragment mPhotoStripFragment = null;
 
     private CaptureFragment mCaptureFragment = null;
+
+    private ConfirmationFragment mConfirmationFragment = null;
 
     //
     // Views.
@@ -187,7 +190,24 @@ public class KioskActivity extends BaseFragmentActivity implements KioskSetupFra
     }
 
     @Override
-    public void onNewPhotoEnd(int count, int totalNumPhotos) {
+    public void onNewPhotoEnd(boolean isPhotoStripComplete) {
+        if (isPhotoStripComplete) {
+            // Confirm submission of photo strip.
+            mConfirmationFragment = ConfirmationFragment.newInstance();
+            replaceRightFragment(mConfirmationFragment);
+        } else {
+            // Capture next frame.
+            mCaptureFragment = CaptureFragment.newInstance();
+            replaceRightFragment(mCaptureFragment);
+        }
+    }
+
+    @Override
+    public void onNewPhotoError() {
+        // Report error.
+        Toast.makeText(this, getString(R.string.photostrip__error_new_photo), Toast.LENGTH_LONG).show();
+
+        // Try to recover.
         mCaptureFragment = CaptureFragment.newInstance();
         replaceRightFragment(mCaptureFragment);
     }
