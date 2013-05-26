@@ -203,6 +203,13 @@ public class KioskActivity extends BaseFragmentActivity implements KioskSetupFra
     }
 
     @Override
+    public void onPhotoRemoval() {
+        // Capture next frame.
+        mCaptureFragment = CaptureFragment.newInstance();
+        replaceRightFragment(mCaptureFragment);
+    }
+
+    @Override
     public void onNewPhotoError() {
         // Report error.
         Toast.makeText(this, getString(R.string.photostrip__error_new_photo), Toast.LENGTH_LONG).show();

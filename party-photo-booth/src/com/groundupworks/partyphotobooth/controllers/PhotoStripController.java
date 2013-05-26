@@ -26,11 +26,13 @@ public class PhotoStripController extends BaseController {
     // Controller events. The ui should be notified of these events.
     //
 
-    public static final int ERROR_OCCURRED = -1;
+    public static final int ERROR_JPEG_DATA = -1;
 
-    public static final int THUMB_READY = 0;
+    public static final int THUMB_BITMAP_READY = 0;
 
-    public static final int PHOTO_STRIP_READY = 1;
+    public static final int FRAME_REMOVED = 1;
+
+    public static final int PHOTO_STRIP_READY = 2;
 
     /**
      * The {@link Application} {@link Context}.
@@ -89,6 +91,11 @@ public class PhotoStripController extends BaseController {
                 boolean reflection = bundle.getBoolean(PhotoStripFragment.MESSAGE_BUNDLE_KEY_REFLECTION);
                 processJpegData(jpegData, rotation, reflection);
                 break;
+            case PhotoStripFragment.FRAME_REMOVAL:
+                processFrameRemoval(msg.arg1);
+                break;
+            default:
+                break;
         }
     }
 
@@ -98,15 +105,18 @@ public class PhotoStripController extends BaseController {
 
     /**
      * Reports an error event to ui.
+     * 
+     * @param error
+     *            the error.
      */
-    private void reportError() {
+    private void reportError(int error) {
         Message uiMsg = Message.obtain();
-        uiMsg.what = ERROR_OCCURRED;
+        uiMsg.what = error;
         sendUiUpdate(uiMsg);
     }
 
     /**
-     * Process Jpeg data and notify ui.
+     * Processes Jpeg data and notifies ui.
      * 
      * @param jpegData
      *            byte array of Jpeg data.
@@ -122,27 +132,43 @@ public class PhotoStripController extends BaseController {
             Bitmap thumb = Bitmap.createScaledBitmap(frame, mThumbSize, mThumbSize, true);
             if (thumb != null) {
                 // Store frame bitmap.
-                boolean isPhotoStripComplete = storeFrame(frame);
+                int key = storeFrame(frame);
 
                 // Notify ui.
                 Message uiMsg = Message.obtain();
-                if (isPhotoStripComplete) {
+                if (key >= mFramesTotal - 1) {
                     // The last thumbnail bitmap is ready. The photo strip is complete.
                     uiMsg.what = PHOTO_STRIP_READY;
                 } else {
                     // A thumbnail bitmap is ready. The photo strip still needs more frames.
-                    uiMsg.what = THUMB_READY;
+                    uiMsg.what = THUMB_BITMAP_READY;
                 }
+                uiMsg.arg1 = key;
                 uiMsg.obj = thumb;
                 sendUiUpdate(uiMsg);
             } else {
                 // An error has occurred.
-                reportError();
+                reportError(ERROR_JPEG_DATA);
             }
         } else {
             // An error has occurred.
-            reportError();
+            reportError(ERROR_JPEG_DATA);
         }
+    }
+
+    /**
+     * Processes a frame removal request and notifies ui.
+     * 
+     * @param key
+     *            the key of the frame to remove.
+     */
+    private void processFrameRemoval(int key) {
+        mFramesMap.delete(key);
+
+        // Notify ui.
+        Message uiMsg = Message.obtain();
+        uiMsg.what = FRAME_REMOVED;
+        sendUiUpdate(uiMsg);
     }
 
     /**
@@ -150,17 +176,16 @@ public class PhotoStripController extends BaseController {
      * 
      * @param frame
      *            the bitmap to store. Must not be null.
-     * @return true if this is the last frame and the photo strip is complete; false otherwise.
+     * @return the key of the stored frame.
      */
-    private boolean storeFrame(Bitmap frame) {
-        boolean isPhotoStripComplete = false;
-        for (int i = 0; i < mFramesTotal; i++) {
-            if (mFramesMap.get(i) == null) {
-                mFramesMap.put(i, frame);
-                isPhotoStripComplete = i == mFramesTotal - 1;
+    private int storeFrame(Bitmap frame) {
+        int key;
+        for (key = 0; key < mFramesTotal; key++) {
+            if (mFramesMap.get(key) == null) {
+                mFramesMap.put(key, frame);
                 break;
             }
         }
-        return isPhotoStripComplete;
+        return key;
     }
 }

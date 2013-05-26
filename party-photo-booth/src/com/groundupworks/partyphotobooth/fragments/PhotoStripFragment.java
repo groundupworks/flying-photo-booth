@@ -15,13 +15,16 @@ import android.os.Bundle;
 import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
+import android.view.animation.AnimationUtils;
 import android.view.animation.TranslateAnimation;
+import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ImageView.ScaleType;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import com.groundupworks.lib.photobooth.framework.ControllerBackedFragment;
@@ -43,9 +46,7 @@ public class PhotoStripFragment extends ControllerBackedFragment<PhotoStripContr
 
     public static final int JPEG_DATA_READY = 0;
 
-    public static final int FACEBOOK_SHARE_REQUESTED = 2;
-
-    public static final int DROPBOX_SHARE_REQUESTED = 3;
+    public static final int FRAME_REMOVAL = 1;
 
     //
     // Message bundle keys.
@@ -157,19 +158,25 @@ public class PhotoStripFragment extends ControllerBackedFragment<PhotoStripContr
     protected void handleUiUpdate(Message msg) {
         Activity activity = getActivity();
 
+        ICallbacks callbacks = getCallbacks();
         switch (msg.what) {
-            case PhotoStripController.ERROR_OCCURRED:
+            case PhotoStripController.ERROR_JPEG_DATA:
                 // Call to client.
-                ICallbacks callbacks = getCallbacks();
                 if (callbacks != null) {
                     callbacks.onNewPhotoError();
                 }
                 break;
-            case PhotoStripController.THUMB_READY:
-                addThumb(activity, (Bitmap) msg.obj, false);
+            case PhotoStripController.THUMB_BITMAP_READY:
+                addThumb(activity, (Bitmap) msg.obj, msg.arg1, false);
+                break;
+            case PhotoStripController.FRAME_REMOVED:
+                // Call to client.
+                if (callbacks != null) {
+                    callbacks.onPhotoRemoval();
+                }
                 break;
             case PhotoStripController.PHOTO_STRIP_READY:
-                addThumb(activity, (Bitmap) msg.obj, true);
+                addThumb(activity, (Bitmap) msg.obj, msg.arg1, true);
                 break;
             default:
                 break;
@@ -212,10 +219,12 @@ public class PhotoStripFragment extends ControllerBackedFragment<PhotoStripContr
      *            the {@link Activity}.
      * @param thumb
      *            the thumbnail bitmap.
+     * @param key
+     *            the key for the frame.
      * @param isPhotoStripComplete
      *            true if this is the last frame and the photo strip is complete; false otherwise.
      */
-    private void addThumb(Activity activity, Bitmap thumb, boolean isPhotoStripComplete) {
+    private void addThumb(Activity activity, Bitmap thumb, final int key, boolean isPhotoStripComplete) {
         Resources res = getResources();
         int photoSize = res.getDimensionPixelSize(R.dimen.photo_thumb_size);
         int photoPadding = res.getDimensionPixelSize(R.dimen.kiosk_spacing);
@@ -223,17 +232,62 @@ public class PhotoStripFragment extends ControllerBackedFragment<PhotoStripContr
 
         BitmapDrawable drawable = new BitmapDrawable(res, thumb);
 
-        // Create view for thumbnail.
-        ImageView imageView = new ImageView(activity);
-        imageView.setScaleType(ScaleType.CENTER_CROP);
-        imageView.setImageDrawable(drawable);
+        // Create view for frame.
+        final RelativeLayout frame = (RelativeLayout) LayoutInflater.from(activity).inflate(
+                R.layout.view_photo_strip_frame, null);
+        ImageView photo = (ImageView) frame.findViewById(R.id.frame_photo);
+        Button discardButton = (Button) frame.findViewById(R.id.frame_button_discard);
 
-        // Create layout params for view.
+        // Set thumbnail and click listener.
+        photo.setImageDrawable(drawable);
+        final Animation animation = AnimationUtils.loadAnimation(activity, R.anim.fade_out);
+        discardButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Disable and remove view.
+                v.setEnabled(false);
+
+                // Remove view with animation.
+                animation.setAnimationListener(new AnimationListener() {
+
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+                        // Do nothing.
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+                        // Do nothing.
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        // Make view invisible and post a task to remove it from the photo strip.
+                        frame.setVisibility(View.GONE);
+                        mContainer.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                mContainer.removeView(frame);
+                            }
+                        });
+                    }
+                });
+                frame.startAnimation(animation);
+
+                // Notify controller of the frame removal request.
+                Message msg = Message.obtain();
+                msg.what = FRAME_REMOVAL;
+                msg.arg1 = key;
+                sendEvent(msg);
+            }
+        });
+
+        // Create layout params for frame view.
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(photoSize, photoSize);
         layoutParams.setMargins(0, 0, 0, photoPadding);
 
         // Add view to hierarchy and start animation.
-        mContainer.addView(imageView, layoutParams);
+        mContainer.addView(frame, layoutParams);
         mScroller.fullScroll(ScrollView.FOCUS_DOWN);
         mShadower.startAnimation(getTranslateAnimation((float) offset, isPhotoStripComplete));
     }
@@ -341,6 +395,11 @@ public class PhotoStripFragment extends ControllerBackedFragment<PhotoStripContr
          *            true if this is the last frame and the photo strip is complete; false otherwise.
          */
         public void onNewPhotoEnd(boolean isPhotoStripComplete);
+
+        /**
+         * A photo is removed from the photo strip.
+         */
+        public void onPhotoRemoval();
 
         /**
          * An error occurred while attempting to add a new photo.

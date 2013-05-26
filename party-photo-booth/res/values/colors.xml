@@ -7,6 +7,6 @@
     <color name="selection_color">#cc33b5e5</color>
     <color name="selection_color_transparent">#0033b5e5</color>
     <color name="border_color">#333333</color>
-    <color name="shadow_color">#33000000</color>
+    <color name="shadow_color">#66000000</color>
 
 </resources>
