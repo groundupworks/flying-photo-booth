@@ -9,6 +9,9 @@
     <string name="capture__error_camera_dialog_message_in_use">Your camera may be in use by another application.</string>
     <string name="capture__error_camera_crash">Restarting confused camera</string>
 
+    <!-- Photo Strip Fragment -->
+    <string name="photostrip__title_text">PHOTO\nBOOTH</string>
+
     <!-- Error Dialog Fragment -->
     <string name="error__dialog_button_text">Exit</string>
 

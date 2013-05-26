@@ -17,7 +17,9 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="horizontal" >
+        android:orientation="horizontal"
+        android:paddingLeft="@dimen/kiosk_spacing"
+        android:paddingRight="@dimen/photo_strip_shadow_size" >
 
         <FrameLayout
             android:id="@+id/fragment_container_left"

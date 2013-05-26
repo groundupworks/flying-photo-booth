@@ -8,7 +8,7 @@
     <!-- This must be photo_thumb_size + kiosk_spacing * 2 -->
     <dimen name="photo_strip_content_width">224dp</dimen>
 
-    <!-- This must be kiosk_spacing + photo_strip_content_width + photo_strip_shadow_size -->
-    <dimen name="photo_strip_width">242dp</dimen>
+    <!-- This must be photo_strip_content_width + photo_strip_shadow_size -->
+    <dimen name="photo_strip_width">230dp</dimen>
 
 </resources>

@@ -29,6 +29,7 @@ import com.groundupworks.lib.photobooth.helpers.ImageHelper;
 import com.groundupworks.partyphotobooth.R;
 import com.groundupworks.partyphotobooth.controllers.PhotoStripController;
 import com.groundupworks.partyphotobooth.helpers.PreferencesHelper;
+import com.groundupworks.partyphotobooth.helpers.PreferencesHelper.PhotoBoothTheme;
 
 /**
  * Display photos in a photo strip format.
@@ -81,6 +82,8 @@ public class PhotoStripFragment extends ControllerBackedFragment<PhotoStripContr
     // Views.
     //
 
+    private TextView mTitle;
+
     private ScrollView mScroller;
 
     private LinearLayout mShadower;
@@ -104,6 +107,7 @@ public class PhotoStripFragment extends ControllerBackedFragment<PhotoStripContr
          */
         View view = inflater.inflate(R.layout.fragment_photo_strip, container, false);
 
+        mTitle = (TextView) view.findViewById(R.id.title);
         mScroller = (ScrollView) view.findViewById(R.id.photo_strip_scroll_container);
         mShadower = (LinearLayout) view.findViewById(R.id.photo_strip_shadow_container);
         mContainer = (LinearLayout) view.findViewById(R.id.photo_strip_container);
@@ -119,6 +123,18 @@ public class PhotoStripFragment extends ControllerBackedFragment<PhotoStripContr
 
         Context appContext = getActivity().getApplicationContext();
         PreferencesHelper preferencesHelper = new PreferencesHelper();
+
+        // Set the selected theme.
+        PhotoBoothTheme theme = preferencesHelper.getPhotoBoothTheme(appContext);
+        if (PhotoBoothTheme.STRIPES_BLUE.equals(theme)) {
+            mTitle.setBackgroundResource(R.drawable.bitmap_tile_blue);
+        } else if (PhotoBoothTheme.STRIPES_PINK.equals(theme)) {
+            mTitle.setBackgroundResource(R.drawable.bitmap_tile_pink);
+        } else if (PhotoBoothTheme.STRIPES_ORANGE.equals(theme)) {
+            mTitle.setBackgroundResource(R.drawable.bitmap_tile_orange);
+        } else if (PhotoBoothTheme.STRIPES_GREEN.equals(theme)) {
+            mTitle.setBackgroundResource(R.drawable.bitmap_tile_green);
+        }
 
         // Display event title.
         String eventName = preferencesHelper.getEventName(appContext);

@@ -3,13 +3,26 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
+    <TextView
+        android:id="@+id/title"
+        style="@style/TitleText"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginRight="@dimen/photo_strip_shadow_size"
+        android:gravity="center_horizontal"
+        android:text="@string/photostrip__title_text" />
+
     <ScrollView
         android:id="@+id/photo_strip_scroll_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:fadingEdge="vertical"
-        android:requiresFadingEdge="vertical"
+        android:fadingEdge="none"
+        android:requiresFadingEdge="none"
         android:scrollbars="none" >
 
         <LinearLayout
@@ -17,10 +30,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal" >
-
-            <View
-                android:layout_width="@dimen/kiosk_spacing"
-                android:layout_height="match_parent" />
 
             <LinearLayout
                 android:id="@+id/photo_strip_container"
@@ -38,7 +47,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:layout_marginBottom="@dimen/kiosk_spacing"
                     android:visibility="gone" />
 
                 <TextView
@@ -47,8 +55,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:layout_marginBottom="@dimen/kiosk_spacing"
                     android:visibility="gone" />
+
+                <View
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/kiosk_spacing" />
             </LinearLayout>
 
             <View

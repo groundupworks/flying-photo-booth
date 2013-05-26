@@ -18,6 +18,12 @@
         <item name="android:textStyle">bold</item>
     </style>
 
+    <style name="TitleText">
+        <item name="android:textSize">60dip</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/background_color</item>
+    </style>
+
     <style name="ThemeSelector" parent="android:Theme.Light" />
 
     <style name="ThemeSelectorFullscreen" parent="android:Theme.Light.NoTitleBar.Fullscreen" />

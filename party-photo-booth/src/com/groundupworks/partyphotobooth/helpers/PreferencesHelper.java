@@ -17,6 +17,32 @@ import android.preference.PreferenceManager;
 public class PreferencesHelper {
 
     /**
+     * Photo booth themes.
+     */
+    public enum PhotoBoothTheme {
+
+        /**
+         * Blue stripes.
+         */
+        STRIPES_BLUE,
+
+        /**
+         * Pink stripes.
+         */
+        STRIPES_PINK,
+
+        /**
+         * Orange stripes.
+         */
+        STRIPES_ORANGE,
+
+        /**
+         * Green stripes.
+         */
+        STRIPES_GREEN
+    }
+
+    /**
      * Photo booth modes.
      */
     public enum PhotoBoothMode {
@@ -54,6 +80,11 @@ public class PreferencesHelper {
     };
 
     /**
+     * Key for the photo booth theme record.
+     */
+    private static final String KEY_PHOTO_BOOTH_THEME = "photoBoothTheme";
+
+    /**
      * Key for the photo booth mode record.
      */
     private static final String KEY_PHOTO_BOOTH_MODE = "photoBoothMode";
@@ -87,6 +118,32 @@ public class PreferencesHelper {
      * The default preferences for the event name and date.
      */
     private static final String DEFAULT_EVENT_PREFERENCE = "";
+
+    /**
+     * Stores the photo booth theme preference.
+     * 
+     * @param context
+     *            the {@link Context}.
+     * @param mode
+     *            one of {@link PhotoBoothTheme}. Must not be null.
+     */
+    public void storePhotoBoothTheme(Context context, PhotoBoothTheme theme) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
+        preferences.edit().putString(KEY_PHOTO_BOOTH_THEME, theme.name()).apply();
+    }
+
+    /**
+     * Reads the photo booth theme preference.
+     * 
+     * @param context
+     *            the {@link Context}.
+     * @return the stored {@link PhotoBoothTheme}.
+     */
+    public PhotoBoothTheme getPhotoBoothTheme(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
+        String theme = preferences.getString(KEY_PHOTO_BOOTH_THEME, PhotoBoothTheme.STRIPES_BLUE.name());
+        return PhotoBoothTheme.valueOf(theme);
+    }
 
     /**
      * Stores the photo booth mode preference.
