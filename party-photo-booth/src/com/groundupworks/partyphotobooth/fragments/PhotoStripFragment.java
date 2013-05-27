@@ -163,7 +163,7 @@ public class PhotoStripFragment extends ControllerBackedFragment<PhotoStripContr
             case PhotoStripController.ERROR_JPEG_DATA:
                 // Call to client.
                 if (callbacks != null) {
-                    callbacks.onNewPhotoError();
+                    callbacks.onErrorNewPhoto();
                 }
                 break;
             case PhotoStripController.THUMB_BITMAP_READY:
@@ -404,6 +404,6 @@ public class PhotoStripFragment extends ControllerBackedFragment<PhotoStripContr
         /**
          * An error occurred while attempting to add a new photo.
          */
-        public void onNewPhotoError();
+        public void onErrorNewPhoto();
     }
 }
