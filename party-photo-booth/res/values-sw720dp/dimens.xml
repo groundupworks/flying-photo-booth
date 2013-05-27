@@ -9,6 +9,6 @@
     <dimen name="photo_strip_content_width">348dp</dimen>
 
     <!-- This must be photo_strip_content_width + photo_strip_shadow_size -->
-    <dimen name="photo_strip_width">372dp</dimen>
+    <dimen name="photo_strip_width">354dp</dimen>
 
 </resources>
