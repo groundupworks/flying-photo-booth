@@ -85,7 +85,9 @@ public class PhotoStripFragment extends ControllerBackedFragment<PhotoStripContr
 
     private LinearLayout mContainer;
 
-    private TextView mEventTitle;
+    private TextView mEventLineOne;
+
+    private TextView mEventLineTwo;
 
     private TextView mEventDate;
 
@@ -106,7 +108,8 @@ public class PhotoStripFragment extends ControllerBackedFragment<PhotoStripContr
         mScroller = (ScrollView) view.findViewById(R.id.photo_strip_scroll_container);
         mShadower = (LinearLayout) view.findViewById(R.id.photo_strip_shadow_container);
         mContainer = (LinearLayout) view.findViewById(R.id.photo_strip_container);
-        mEventTitle = (TextView) view.findViewById(R.id.event_title);
+        mEventLineOne = (TextView) view.findViewById(R.id.event_line_one);
+        mEventLineTwo = (TextView) view.findViewById(R.id.event_line_two);
         mEventDate = (TextView) view.findViewById(R.id.event_date);
 
         return view;
@@ -132,21 +135,28 @@ public class PhotoStripFragment extends ControllerBackedFragment<PhotoStripContr
         }
 
         // Display event title.
-        String eventName = preferencesHelper.getEventName(appContext);
-        if (eventName == null || eventName.isEmpty()) {
-            mEventTitle.setVisibility(View.GONE);
+        String eventLineOne = preferencesHelper.getEventLineOne(appContext);
+        String eventLineTwo = preferencesHelper.getEventLineTwo(appContext);
+        if (eventLineOne != null && eventLineOne.length() > 0) {
+            mEventLineOne.setText(eventLineOne);
+            mEventLineOne.setVisibility(View.VISIBLE);
         } else {
-            mEventTitle.setText(eventName);
-            mEventTitle.setVisibility(View.VISIBLE);
+            mEventLineOne.setVisibility(View.GONE);
+        }
+        if (eventLineTwo != null && eventLineTwo.length() > 0) {
+            mEventLineTwo.setText(eventLineTwo);
+            mEventLineTwo.setVisibility(View.VISIBLE);
+        } else {
+            mEventLineTwo.setVisibility(View.GONE);
         }
 
         // Display event date.
         String eventDate = preferencesHelper.getEventDate(appContext);
-        if (eventDate == null || eventDate.isEmpty()) {
-            mEventDate.setVisibility(View.GONE);
-        } else {
+        if (eventDate != null && eventDate.length() > 0) {
             mEventDate.setText(eventDate);
             mEventDate.setVisibility(View.VISIBLE);
+        } else {
+            mEventDate.setVisibility(View.GONE);
         }
     }
 

@@ -7,6 +7,7 @@ package com.groundupworks.partyphotobooth.helpers;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.preference.PreferenceManager;
 
 /**
@@ -100,9 +101,14 @@ public class PreferencesHelper {
     private static final String KEY_PHOTO_STRIP_NUM_PHOTOS = "photoStripNumPhotos";
 
     /**
-     * Key for the event name record.
+     * Key for the first line of the event title record.
      */
-    private static final String KEY_EVENT_NAME = "eventName";
+    private static final String KEY_EVENT_LINE_ONE = "eventLineOne";
+
+    /**
+     * Key for the second line of the event title record.
+     */
+    private static final String KEY_EVENT_LINE_TWO = "eventLineTwo";
 
     /**
      * Key for the event date record.
@@ -223,28 +229,61 @@ public class PreferencesHelper {
     }
 
     /**
-     * Stores the name of the event.
+     * Stores the first line of the event title.
      * 
      * @param context
      *            the {@link Context}.
-     * @param eventName
-     *            the event name; or an empty string. Must not be null.
+     * @param eventLineOne
+     *            the first line of the event title; or an empty string. Pass null to clear.
      */
-    public void storeEventName(Context context, String eventName) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
-        preferences.edit().putString(KEY_EVENT_NAME, eventName).apply();
+    public void storeEventLineOne(Context context, String eventLineOne) {
+        Editor editor = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext()).edit();
+        if (eventLineOne != null && eventLineOne.length() > 0) {
+            editor.putString(KEY_EVENT_LINE_ONE, eventLineOne).apply();
+        } else {
+            editor.remove(KEY_EVENT_LINE_ONE).apply();
+        }
     }
 
     /**
-     * Reads the name of the event.
+     * Reads the first line of the event title.
      * 
      * @param context
      *            the {@link Context}.
-     * @return the event name; or an empty string.
+     * @return the first line of the event title; or an empty string.
      */
-    public String getEventName(Context context) {
+    public String getEventLineOne(Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
-        return preferences.getString(KEY_EVENT_NAME, DEFAULT_EVENT_PREFERENCE);
+        return preferences.getString(KEY_EVENT_LINE_ONE, DEFAULT_EVENT_PREFERENCE);
+    }
+
+    /**
+     * Stores the second line of the event title.
+     * 
+     * @param context
+     *            the {@link Context}.
+     * @param eventLineTwo
+     *            the second line of the event title; or an empty string. Pass null to clear.
+     */
+    public void storeEventLineTwo(Context context, String eventLineTwo) {
+        Editor editor = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext()).edit();
+        if (eventLineTwo != null && eventLineTwo.length() > 0) {
+            editor.putString(KEY_EVENT_LINE_TWO, eventLineTwo).apply();
+        } else {
+            editor.remove(KEY_EVENT_LINE_TWO).apply();
+        }
+    }
+
+    /**
+     * Reads the second line of the event title.
+     * 
+     * @param context
+     *            the {@link Context}.
+     * @return the second line of the event title; or an empty string.
+     */
+    public String getEventLineTwo(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
+        return preferences.getString(KEY_EVENT_LINE_TWO, DEFAULT_EVENT_PREFERENCE);
     }
 
     /**
@@ -253,7 +292,7 @@ public class PreferencesHelper {
      * @param context
      *            the {@link Context}.
      * @param eventDate
-     *            the event date; or an empty string. Must not be null.
+     *            the event date; or an empty string. Pass null to clear.
      */
     public void storeEventDate(Context context, String eventDate) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
