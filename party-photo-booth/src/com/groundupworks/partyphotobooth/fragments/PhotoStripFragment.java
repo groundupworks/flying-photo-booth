@@ -59,9 +59,14 @@ public class PhotoStripFragment extends ControllerBackedFragment<PhotoStripContr
     public static final String MESSAGE_BUNDLE_KEY_REFLECTION = "reflection";
 
     /**
-     * The duration for the {@link TranslateAnimation}.
+     * The duration for the {@link TranslateAnimation} when a new photo is added.
      */
-    private static final long ANIMATION_DURATION = 3000L;
+    private static final long TRANSLATE_ANIMATION_DURATION = 3000L;
+
+    /**
+     * The delay between the photo removal request and the start of the fade animation.
+     */
+    private static final long FADE_ANIMATION_DELAY = 500L;
 
     /**
      * Callbacks for this fragment.
@@ -247,32 +252,38 @@ public class PhotoStripFragment extends ControllerBackedFragment<PhotoStripContr
                 // Disable and remove view.
                 v.setEnabled(false);
 
-                // Remove view with animation.
-                animation.setAnimationListener(new AnimationListener() {
-
+                // Post runnable to start animation.
+                mContainer.postDelayed(new Runnable() {
                     @Override
-                    public void onAnimationStart(Animation animation) {
-                        // Do nothing.
-                    }
+                    public void run() {
+                        // Remove view with animation.
+                        animation.setAnimationListener(new AnimationListener() {
 
-                    @Override
-                    public void onAnimationRepeat(Animation animation) {
-                        // Do nothing.
-                    }
-
-                    @Override
-                    public void onAnimationEnd(Animation animation) {
-                        // Make view invisible and post a task to remove it from the photo strip.
-                        frame.setVisibility(View.GONE);
-                        mContainer.post(new Runnable() {
                             @Override
-                            public void run() {
-                                mContainer.removeView(frame);
+                            public void onAnimationStart(Animation animation) {
+                                // Do nothing.
+                            }
+
+                            @Override
+                            public void onAnimationRepeat(Animation animation) {
+                                // Do nothing.
+                            }
+
+                            @Override
+                            public void onAnimationEnd(Animation animation) {
+                                // Make view invisible and post a runnable to remove it from the photo strip.
+                                frame.setVisibility(View.GONE);
+                                mContainer.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        mContainer.removeView(frame);
+                                    }
+                                });
                             }
                         });
+                        frame.startAnimation(animation);
                     }
-                });
-                frame.startAnimation(animation);
+                }, FADE_ANIMATION_DELAY);
 
                 // Notify controller of the frame removal request.
                 Message msg = Message.obtain();
@@ -303,7 +314,7 @@ public class PhotoStripFragment extends ControllerBackedFragment<PhotoStripContr
      */
     private TranslateAnimation getTranslateAnimation(float offset, final boolean isPhotoStripComplete) {
         TranslateAnimation animation = new TranslateAnimation(0f, 0f, offset, 0f);
-        animation.setDuration(ANIMATION_DURATION);
+        animation.setDuration(TRANSLATE_ANIMATION_DURATION);
         animation.setAnimationListener(new AnimationListener() {
 
             @Override

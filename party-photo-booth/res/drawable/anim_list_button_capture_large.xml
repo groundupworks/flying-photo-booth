@@ -7,13 +7,13 @@
         android:duration="0"/>
     <item
         android:drawable="@drawable/button_capture_count3_large"
-        android:duration="1000"/>
+        android:duration="1500"/>
     <item
         android:drawable="@drawable/button_capture_count2_large"
-        android:duration="1000"/>
+        android:duration="1500"/>
     <item
         android:drawable="@drawable/button_capture_count1_large"
-        android:duration="1000"/>
+        android:duration="1500"/>
     <item
         android:drawable="@android:color/transparent"
         android:duration="0"/>
