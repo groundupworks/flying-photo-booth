@@ -5,13 +5,6 @@
     android:background="@color/background_color"
     android:keepScreenOn="true" >
 
-    <!-- Fullscreen fragment container -->
-
-    <FrameLayout
-        android:id="@+id/fragment_container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
     <!-- Two-pane fragment containers -->
 
     <LinearLayout
@@ -31,6 +24,13 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
     </LinearLayout>
+
+    <!-- Fullscreen fragment container -->
+
+    <FrameLayout
+        android:id="@+id/fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
     <!-- Exit Kiosk mode button -->
 

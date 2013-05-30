@@ -18,6 +18,10 @@
         <item name="android:textStyle">bold</item>
     </style>
 
+    <style name="Text.Light.Heavy">
+        <item name="android:textStyle">bold</item>
+    </style>
+
     <style name="TitleText">
         <item name="android:textSize">60dp</item>
         <item name="android:textStyle">bold</item>

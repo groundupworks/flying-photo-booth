@@ -24,6 +24,7 @@ import com.groundupworks.partyphotobooth.R;
 import com.groundupworks.partyphotobooth.fragments.CaptureFragment;
 import com.groundupworks.partyphotobooth.fragments.ConfirmationFragment;
 import com.groundupworks.partyphotobooth.fragments.ErrorDialogFragment;
+import com.groundupworks.partyphotobooth.fragments.NoticeFragment;
 import com.groundupworks.partyphotobooth.fragments.PhotoStripFragment;
 import com.groundupworks.partyphotobooth.kiosk.KioskModeHelper.State;
 
@@ -33,7 +34,8 @@ import com.groundupworks.partyphotobooth.kiosk.KioskModeHelper.State;
  * @author Benedict Lau
  */
 public class KioskActivity extends BaseFragmentActivity implements KioskSetupFragment.ICallbacks,
-        PhotoStripFragment.ICallbacks, CaptureFragment.ICallbacks {
+        PhotoStripFragment.ICallbacks, CaptureFragment.ICallbacks, ConfirmationFragment.ICallbacks,
+        NoticeFragment.ICallbacks {
 
     /**
      * Package private flag to track whether the single instance {@link KioskActivity} is in foreground.
@@ -52,6 +54,8 @@ public class KioskActivity extends BaseFragmentActivity implements KioskSetupFra
     private KioskSetupFragment mKioskSetupFragment = null;
 
     private PhotoStripFragment mPhotoStripFragment = null;
+
+    private NoticeFragment mNoticeFragment = null;
 
     //
     // Views.
@@ -237,6 +241,37 @@ public class KioskActivity extends BaseFragmentActivity implements KioskSetupFra
         // The native camera crashes occasionally. Self-recover by relaunching capture fragment.
         Toast.makeText(this, getString(R.string.capture__error_camera_crash), Toast.LENGTH_SHORT).show();
         launchCaptureFragment();
+    }
+
+    //
+    // Implementation of the ConfirmationFragment callbacks.
+    //
+
+    @Override
+    public void onSubmit() {
+        // Reset photo booth ui.
+        launchPhotoStripFragment();
+        launchCaptureFragment();
+
+        // Show notice fragment.
+        mNoticeFragment = NoticeFragment.newInstance();
+        replaceFragment(mNoticeFragment, false, true);
+    }
+
+    //
+    // Implementation of the NoticeFragment callbacks.
+    //
+
+    @Override
+    public void onNoticeDismissRequested() {
+        // Remove notice fragment.
+        if (mNoticeFragment != null) {
+            final FragmentManager fragmentManager = getSupportFragmentManager();
+            final FragmentTransaction ft = fragmentManager.beginTransaction();
+            ft.remove(mNoticeFragment);
+            ft.commit();
+            mNoticeFragment = null;
+        }
     }
 
     //
