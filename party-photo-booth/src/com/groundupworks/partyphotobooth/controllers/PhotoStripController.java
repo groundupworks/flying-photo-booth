@@ -136,7 +136,7 @@ public class PhotoStripController extends BaseController {
 
                 // Notify ui.
                 Message uiMsg = Message.obtain();
-                if (key >= mFramesTotal - 1) {
+                if (isPhotoStripComplete()) {
                     // The last thumbnail bitmap is ready. The photo strip is complete.
                     uiMsg.what = PHOTO_STRIP_READY;
                 } else {
@@ -172,7 +172,7 @@ public class PhotoStripController extends BaseController {
     }
 
     /**
-     * Store frame bitmap in next available slot in frames map.
+     * Stores frame bitmap in next available slot in frames map.
      * 
      * @param frame
      *            the bitmap to store. Must not be null.
@@ -187,5 +187,21 @@ public class PhotoStripController extends BaseController {
             }
         }
         return key;
+    }
+
+    /**
+     * Checks whether the {@link #mFramesMap} has all the frames needed to construct a photo strip.
+     * 
+     * @return true if the {@link #mFramesMap} is complete; false otherwise.
+     */
+    private boolean isPhotoStripComplete() {
+        boolean isPhotoStripComplete = true;
+        for (int key = 0; key < mFramesTotal; key++) {
+            if (mFramesMap.get(key) == null) {
+                isPhotoStripComplete = false;
+                break;
+            }
+        }
+        return isPhotoStripComplete;
     }
 }
