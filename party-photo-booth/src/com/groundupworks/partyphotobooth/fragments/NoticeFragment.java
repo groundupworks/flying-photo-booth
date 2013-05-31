@@ -14,7 +14,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.TableRow;
 import android.widget.TextView;
 import com.groundupworks.lib.photobooth.dropbox.DropboxHelper;
 import com.groundupworks.lib.photobooth.facebook.FacebookHelper;
@@ -38,13 +37,9 @@ public class NoticeFragment extends Fragment {
 
     private Button mOkButton;
 
-    private TableRow mFacebookNotice;
+    private TextView mFacebookNotice;
 
-    private TableRow mDropboxNotice;
-
-    private TextView mFacebookMsg;
-
-    private TextView mDropboxMsg;
+    private TextView mDropboxNotice;
 
     @Override
     public void onAttach(Activity activity) {
@@ -59,10 +54,8 @@ public class NoticeFragment extends Fragment {
          */
         View view = inflater.inflate(R.layout.fragment_notice, container, false);
         mOkButton = (Button) view.findViewById(R.id.notice_button_ok);
-        mFacebookNotice = (TableRow) view.findViewById(R.id.notice_facebook);
-        mDropboxNotice = (TableRow) view.findViewById(R.id.notice_dropbox);
-        mFacebookMsg = (TextView) view.findViewById(R.id.notice_facebook_msg);
-        mDropboxMsg = (TextView) view.findViewById(R.id.notice_dropbox_msg);
+        mFacebookNotice = (TextView) view.findViewById(R.id.notice_facebook);
+        mDropboxNotice = (TextView) view.findViewById(R.id.notice_dropbox);
 
         return view;
     }
@@ -91,7 +84,7 @@ public class NoticeFragment extends Fragment {
         if (facebookHelper.isLinked(activity)) {
             String name = facebookHelper.getLinkedAccountName(activity);
             String album = facebookHelper.getLinkedAlbumName(activity);
-            mFacebookMsg.setText(getString(R.string.notice__facebook_text, name, album));
+            mFacebookNotice.setText(getString(R.string.notice__facebook_text, name, album));
             mFacebookNotice.setVisibility(View.VISIBLE);
         }
 
@@ -99,7 +92,7 @@ public class NoticeFragment extends Fragment {
         if (dropboxHelper.isLinked(activity)) {
             String name = dropboxHelper.getLinkedAccountName(activity);
             String url = dropboxHelper.getLinkedShareUrl(activity);
-            mDropboxMsg.setText(getString(R.string.notice__dropbox_text, name, url));
+            mDropboxNotice.setText(getString(R.string.notice__dropbox_text, name, url));
             mDropboxNotice.setVisibility(View.VISIBLE);
         }
     }

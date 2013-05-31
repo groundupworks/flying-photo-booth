@@ -4,76 +4,39 @@
     android:layout_height="match_parent"
     android:background="@color/background_color" >
 
-    <TableLayout
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true" >
+        android:layout_centerInParent="true"
+        android:orientation="vertical" >
 
-        <TableRow
+        <TextView
+            style="@style/Text.Light.Heavy"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/kiosk_spacing" >
+            android:layout_margin="@dimen/kiosk_spacing"
+            android:text="@string/notice__title_text" />
 
-            <TextView
-                style="@style/Text.Light.Heavy"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_span="2"
-                android:text="@string/notice__title_text" />
-        </TableRow>
-
-        <TableRow
+        <TextView
             android:id="@+id/notice_facebook"
+            style="@style/Text.Light"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="gone" >
+            android:layout_margin="@dimen/kiosk_spacing"
+            android:drawableLeft="@drawable/selector_icon_facebook"
+            android:drawablePadding="@dimen/kiosk_spacing"
+            android:visibility="gone" />
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/kiosk_spacing"
-                android:gravity="center_vertical" >
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="@dimen/kiosk_spacing"
-                    android:src="@drawable/selector_icon_facebook" />
-
-                <TextView
-                    android:id="@+id/notice_facebook_msg"
-                    style="@style/Text.Light"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-            </LinearLayout>
-        </TableRow>
-
-        <TableRow
+        <TextView
             android:id="@+id/notice_dropbox"
+            style="@style/Text.Light"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="gone" >
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/kiosk_spacing"
-                android:gravity="center_vertical" >
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="@dimen/kiosk_spacing"
-                    android:src="@drawable/selector_icon_dropbox" />
-
-                <TextView
-                    android:id="@+id/notice_dropbox_msg"
-                    style="@style/Text.Light"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-            </LinearLayout>
-        </TableRow>
-    </TableLayout>
+            android:layout_margin="@dimen/kiosk_spacing"
+            android:drawableLeft="@drawable/selector_icon_dropbox"
+            android:drawablePadding="@dimen/kiosk_spacing"
+            android:visibility="gone" />
+    </LinearLayout>
 
     <Button
         android:id="@+id/notice_button_ok"
