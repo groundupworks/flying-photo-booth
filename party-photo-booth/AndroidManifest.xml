@@ -45,7 +45,8 @@
             android:name=".SetupActivity"
             android:excludeFromRecents="true"
             android:screenOrientation="landscape"
-            android:theme="@style/ThemeSelectorFullscreen" >
+            android:theme="@style/ThemeSelectorFullscreen"
+            android:windowSoftInputMode="stateHidden" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -59,7 +60,8 @@
             android:excludeFromRecents="true"
             android:launchMode="singleTask"
             android:screenOrientation="landscape"
-            android:theme="@style/ThemeSelectorFullscreen" />
+            android:theme="@style/ThemeSelectorFullscreen"
+            android:windowSoftInputMode="stateHidden" />
 
         <service android:name=".kiosk.KioskService" />
 
