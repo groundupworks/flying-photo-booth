@@ -19,6 +19,8 @@ import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.Toast;
+import com.groundupworks.lib.photobooth.dropbox.DropboxHelper;
+import com.groundupworks.lib.photobooth.facebook.FacebookHelper;
 import com.groundupworks.lib.photobooth.framework.BaseFragmentActivity;
 import com.groundupworks.partyphotobooth.R;
 import com.groundupworks.partyphotobooth.fragments.CaptureFragment;
@@ -101,9 +103,11 @@ public class KioskActivity extends BaseFragmentActivity implements KioskSetupFra
         if (mKioskModeHelper.isSetupCompleted()) {
             launchPhotoStripFragment();
             launchCaptureFragment();
+
+            // Dismiss the notice fragment after resume.
+            dismissNoticeFragment();
         } else {
-            mKioskSetupFragment = KioskSetupFragment.newInstance();
-            replaceFragment(mKioskSetupFragment, false, true);
+            launchKioskSetupFragment();
         }
     }
 
@@ -145,13 +149,7 @@ public class KioskActivity extends BaseFragmentActivity implements KioskSetupFra
         mKioskModeHelper.transitionState(State.SETUP_COMPLETED);
 
         // Remove Kiosk setup fragment.
-        if (mKioskSetupFragment != null) {
-            final FragmentManager fragmentManager = getSupportFragmentManager();
-            final FragmentTransaction ft = fragmentManager.beginTransaction();
-            ft.remove(mKioskSetupFragment);
-            ft.commit();
-            mKioskSetupFragment = null;
-        }
+        dismissKioskSetupFragment();
 
         // Launch photo booth ui.
         launchPhotoStripFragment();
@@ -253,9 +251,12 @@ public class KioskActivity extends BaseFragmentActivity implements KioskSetupFra
         launchPhotoStripFragment();
         launchCaptureFragment();
 
-        // Show notice fragment.
-        mNoticeFragment = NoticeFragment.newInstance();
-        replaceFragment(mNoticeFragment, false, true);
+        FacebookHelper facebookHelper = new FacebookHelper();
+        DropboxHelper dropboxHelper = new DropboxHelper();
+        if (facebookHelper.isLinked(this) || dropboxHelper.isLinked(this)) {
+            // Show notice fragment.
+            launchNoticeFragment();
+        }
     }
 
     //
@@ -264,19 +265,20 @@ public class KioskActivity extends BaseFragmentActivity implements KioskSetupFra
 
     @Override
     public void onNoticeDismissRequested() {
-        // Remove notice fragment.
-        if (mNoticeFragment != null) {
-            final FragmentManager fragmentManager = getSupportFragmentManager();
-            final FragmentTransaction ft = fragmentManager.beginTransaction();
-            ft.remove(mNoticeFragment);
-            ft.commit();
-            mNoticeFragment = null;
-        }
+        dismissNoticeFragment();
     }
 
     //
     // Private methods.
     //
+
+    /**
+     * Launches the {@link KioskSetupFragment}.
+     */
+    private void launchKioskSetupFragment() {
+        mKioskSetupFragment = KioskSetupFragment.newInstance();
+        replaceFragment(mKioskSetupFragment, false, true);
+    }
 
     /**
      * Launches a new {@link PhotoStripFragment} in the left side container.
@@ -298,6 +300,34 @@ public class KioskActivity extends BaseFragmentActivity implements KioskSetupFra
      */
     private void launchConfirmationFragment() {
         replaceRightFragment(ConfirmationFragment.newInstance());
+    }
+
+    /**
+     * Launches a new {@link NoticeFragment}.
+     */
+    private void launchNoticeFragment() {
+        mNoticeFragment = NoticeFragment.newInstance();
+        replaceFragment(mNoticeFragment, false, true);
+    }
+
+    /**
+     * Dismisses the {@link KioskSetupFragment}.
+     */
+    private void dismissKioskSetupFragment() {
+        if (mKioskSetupFragment != null) {
+            removeFragment(mKioskSetupFragment);
+            mKioskSetupFragment = null;
+        }
+    }
+
+    /**
+     * Dismisses the {@link NoticeFragment}.
+     */
+    private void dismissNoticeFragment() {
+        if (mNoticeFragment != null) {
+            removeFragment(mNoticeFragment);
+            mNoticeFragment = null;
+        }
     }
 
     /**
@@ -323,6 +353,19 @@ public class KioskActivity extends BaseFragmentActivity implements KioskSetupFra
         final FragmentManager fragmentManager = getSupportFragmentManager();
         final FragmentTransaction ft = fragmentManager.beginTransaction();
         ft.replace(R.id.fragment_container_right, fragment);
+        ft.commit();
+    }
+
+    /**
+     * Removes the {@link Fragment}.
+     * 
+     * @param fragment
+     *            the {@link Fragment} to remove.
+     */
+    private void removeFragment(Fragment fragment) {
+        final FragmentManager fragmentManager = getSupportFragmentManager();
+        final FragmentTransaction ft = fragmentManager.beginTransaction();
+        ft.remove(fragment);
         ft.commit();
     }
 

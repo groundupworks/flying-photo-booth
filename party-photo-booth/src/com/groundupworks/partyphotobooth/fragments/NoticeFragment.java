@@ -6,6 +6,8 @@
 package com.groundupworks.partyphotobooth.fragments;
 
 import java.lang.ref.WeakReference;
+import java.util.Timer;
+import java.util.TimerTask;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -25,6 +27,21 @@ import com.groundupworks.partyphotobooth.R;
  * @author Benedict Lau
  */
 public class NoticeFragment extends Fragment {
+
+    /**
+     * The name of the auto-dismissal timer.
+     */
+    private static final String AUTO_DISMISSAL_TIMER_NAME = "dismissTimer";
+
+    /**
+     * The timeout for auto-dismissal to trigger in milliseconds.
+     */
+    private static final long AUTO_DISMISSAL_TIMEOUT = 40000L;
+
+    /**
+     * Timer for scheduling auto-dismissal of this {@link Fragment}.
+     */
+    private Timer mDismissalTimer = null;
 
     /**
      * Callbacks for this fragment.
@@ -95,6 +112,44 @@ public class NoticeFragment extends Fragment {
             mDropboxNotice.setText(getString(R.string.notice__dropbox_text, name, url));
             mDropboxNotice.setVisibility(View.VISIBLE);
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        // Schedule auto-dismissal of the fragment.
+        mDismissalTimer = new Timer(AUTO_DISMISSAL_TIMER_NAME);
+        mDismissalTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                // Post dismissal request to ui thread.
+                final Activity activity = getActivity();
+                if (activity != null && !activity.isFinishing()) {
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            // Call to client.
+                            ICallbacks callbacks = getCallbacks();
+                            if (callbacks != null) {
+                                callbacks.onNoticeDismissRequested();
+                            }
+                        }
+                    });
+                }
+            }
+        }, AUTO_DISMISSAL_TIMEOUT);
+    }
+
+    @Override
+    public void onPause() {
+        // Cancel timer for auto-dimissal.
+        if (mDismissalTimer != null) {
+            mDismissalTimer.cancel();
+            mDismissalTimer = null;
+        }
+
+        super.onPause();
     }
 
     //
