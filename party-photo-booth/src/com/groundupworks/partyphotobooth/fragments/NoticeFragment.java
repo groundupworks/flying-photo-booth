@@ -56,6 +56,11 @@ public class NoticeFragment extends Fragment {
      */
     private WeakReference<NoticeFragment.ICallbacks> mCallbacks = null;
 
+    /**
+     * The screen is valid only if it displays at least one sharing service.
+     */
+    private boolean mIsScreenValid = false;
+
     //
     // Views.
     //
@@ -89,17 +94,6 @@ public class NoticeFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        mOkButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Call to client.
-                ICallbacks callbacks = getCallbacks();
-                if (callbacks != null) {
-                    callbacks.onNoticeDismissRequested();
-                }
-            }
-        });
-
         /*
          * Display notices for the linked sharing services.
          */
@@ -110,19 +104,41 @@ public class NoticeFragment extends Fragment {
         boolean dropboxShared = args.getBoolean(FRAGMENT_BUNDLE_KEY_DROPBOX_SHARED);
 
         FacebookHelper facebookHelper = new FacebookHelper();
-        if (facebookShared && facebookHelper.isLinked(activity)) {
-            String name = facebookHelper.getLinkedAccountName(activity);
-            String album = facebookHelper.getLinkedAlbumName(activity);
-            mFacebookNotice.setText(getString(R.string.notice__facebook_text, name, album));
+        String facebookName = facebookHelper.getLinkedAccountName(activity);
+        String facebookAlbum = facebookHelper.getLinkedAlbumName(activity);
+        if (facebookShared && facebookName != null && facebookAlbum != null) {
+            mFacebookNotice.setText(getString(R.string.notice__facebook_text, facebookName, facebookAlbum));
             mFacebookNotice.setVisibility(View.VISIBLE);
+            mIsScreenValid = true;
         }
 
         DropboxHelper dropboxHelper = new DropboxHelper();
-        if (dropboxShared && dropboxHelper.isLinked(activity)) {
-            String name = dropboxHelper.getLinkedAccountName(activity);
-            String url = dropboxHelper.getLinkedShareUrl(activity);
-            mDropboxNotice.setText(getString(R.string.notice__dropbox_text, name, url));
+        String dropboxName = dropboxHelper.getLinkedAccountName(activity);
+        String dropboxUrl = dropboxHelper.getLinkedShareUrl(activity);
+        if (dropboxShared && dropboxName != null && dropboxUrl != null) {
+            mDropboxNotice.setText(getString(R.string.notice__dropbox_text, dropboxName, dropboxUrl));
             mDropboxNotice.setVisibility(View.VISIBLE);
+            mIsScreenValid = true;
+        }
+
+        // Set click behaviour of Ok button or send dismissal request depending on whether the screen is valid.
+        if (mIsScreenValid) {
+            mOkButton.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // Call to client.
+                    ICallbacks callbacks = getCallbacks();
+                    if (callbacks != null) {
+                        callbacks.onNoticeDismissRequested();
+                    }
+                }
+            });
+        } else {
+            // Screen is invalid. Send dismissal request to client.
+            ICallbacks callbacks = getCallbacks();
+            if (callbacks != null) {
+                callbacks.onNoticeDismissRequested();
+            }
         }
     }
 
@@ -130,27 +146,29 @@ public class NoticeFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        // Schedule auto-dismissal of the fragment.
-        mDismissalTimer = new Timer(AUTO_DISMISSAL_TIMER_NAME);
-        mDismissalTimer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                // Post dismissal request to ui thread.
-                final Activity activity = getActivity();
-                if (activity != null && !activity.isFinishing()) {
-                    activity.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            // Call to client.
-                            ICallbacks callbacks = getCallbacks();
-                            if (callbacks != null) {
-                                callbacks.onNoticeDismissRequested();
+        if (mIsScreenValid) {
+            // Schedule auto-dismissal of the fragment.
+            mDismissalTimer = new Timer(AUTO_DISMISSAL_TIMER_NAME);
+            mDismissalTimer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    // Post dismissal request to ui thread.
+                    final Activity activity = getActivity();
+                    if (activity != null && !activity.isFinishing()) {
+                        activity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                // Call to client.
+                                ICallbacks callbacks = getCallbacks();
+                                if (callbacks != null) {
+                                    callbacks.onNoticeDismissRequested();
+                                }
                             }
-                        }
-                    });
+                        });
+                    }
                 }
-            }
-        }, AUTO_DISMISSAL_TIMEOUT);
+            }, AUTO_DISMISSAL_TIMEOUT);
+        }
     }
 
     @Override
