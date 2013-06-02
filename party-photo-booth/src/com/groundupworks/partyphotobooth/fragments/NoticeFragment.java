@@ -28,6 +28,14 @@ import com.groundupworks.partyphotobooth.R;
  */
 public class NoticeFragment extends Fragment {
 
+    //
+    // Fragment bundle keys.
+    //
+
+    private static final String FRAGMENT_BUNDLE_KEY_FACEBOOK_SHARED = "facebookShared";
+
+    private static final String FRAGMENT_BUNDLE_KEY_DROPBOX_SHARED = "dropboxShared";
+
     /**
      * The name of the auto-dismissal timer.
      */
@@ -95,10 +103,14 @@ public class NoticeFragment extends Fragment {
         /*
          * Display notices for the linked sharing services.
          */
+        Bundle args = getArguments();
         Activity activity = getActivity();
 
+        boolean facebookShared = args.getBoolean(FRAGMENT_BUNDLE_KEY_FACEBOOK_SHARED);
+        boolean dropboxShared = args.getBoolean(FRAGMENT_BUNDLE_KEY_DROPBOX_SHARED);
+
         FacebookHelper facebookHelper = new FacebookHelper();
-        if (facebookHelper.isLinked(activity)) {
+        if (facebookShared && facebookHelper.isLinked(activity)) {
             String name = facebookHelper.getLinkedAccountName(activity);
             String album = facebookHelper.getLinkedAlbumName(activity);
             mFacebookNotice.setText(getString(R.string.notice__facebook_text, name, album));
@@ -106,7 +118,7 @@ public class NoticeFragment extends Fragment {
         }
 
         DropboxHelper dropboxHelper = new DropboxHelper();
-        if (dropboxHelper.isLinked(activity)) {
+        if (dropboxShared && dropboxHelper.isLinked(activity)) {
             String name = dropboxHelper.getLinkedAccountName(activity);
             String url = dropboxHelper.getLinkedShareUrl(activity);
             mDropboxNotice.setText(getString(R.string.notice__dropbox_text, name, url));
@@ -176,10 +188,21 @@ public class NoticeFragment extends Fragment {
     /**
      * Creates a new {@link NoticeFragment} instance.
      * 
+     * @param facebookShared
+     *            true if the photo strip is marked for Facebook sharing; false otherwise.
+     * @param dropboxShared
+     *            true if the photo strip is marked for Dropbox sharing; false otherwise.
      * @return the new {@link NoticeFragment} instance.
      */
-    public static NoticeFragment newInstance() {
-        return new NoticeFragment();
+    public static NoticeFragment newInstance(boolean facebookShared, boolean dropboxShared) {
+        NoticeFragment fragment = new NoticeFragment();
+
+        Bundle args = new Bundle();
+        args.putBoolean(FRAGMENT_BUNDLE_KEY_FACEBOOK_SHARED, facebookShared);
+        args.putBoolean(FRAGMENT_BUNDLE_KEY_DROPBOX_SHARED, dropboxShared);
+        fragment.setArguments(args);
+
+        return fragment;
     }
 
     //

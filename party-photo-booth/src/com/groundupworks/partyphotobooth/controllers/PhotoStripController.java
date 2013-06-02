@@ -5,15 +5,31 @@
  */
 package com.groundupworks.partyphotobooth.controllers;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import android.app.Application;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.media.MediaScannerConnection;
 import android.os.Bundle;
 import android.os.Message;
 import android.util.SparseArray;
+import com.groundupworks.lib.photobooth.arrangements.BoxArrangement;
+import com.groundupworks.lib.photobooth.arrangements.HorizontalArrangement;
+import com.groundupworks.lib.photobooth.arrangements.VerticalArrangement;
+import com.groundupworks.lib.photobooth.dropbox.DropboxHelper;
+import com.groundupworks.lib.photobooth.facebook.FacebookHelper;
 import com.groundupworks.lib.photobooth.framework.BaseController;
 import com.groundupworks.lib.photobooth.helpers.ImageHelper;
+import com.groundupworks.lib.photobooth.helpers.ImageHelper.Arrangement;
+import com.groundupworks.lib.photobooth.wings.ShareRequest;
+import com.groundupworks.lib.photobooth.wings.WingsDbHelper;
+import com.groundupworks.lib.photobooth.wings.WingsService;
 import com.groundupworks.partyphotobooth.MyApplication;
 import com.groundupworks.partyphotobooth.R;
 import com.groundupworks.partyphotobooth.fragments.PhotoStripFragment;
@@ -28,11 +44,23 @@ public class PhotoStripController extends BaseController {
 
     public static final int ERROR_JPEG_DATA = -1;
 
+    public static final int ERROR_PHOTO_STRIP_SUBMIT = -2;
+
     public static final int THUMB_BITMAP_READY = 0;
 
     public static final int FRAME_REMOVED = 1;
 
     public static final int PHOTO_STRIP_READY = 2;
+
+    public static final int PHOTO_STRIP_SUBMITTED = 3;
+
+    //
+    // Message bundle keys.
+    //
+
+    public static final String MESSAGE_BUNDLE_KEY_FACEBOOK_SHARED = "facebookShared";
+
+    public static final String MESSAGE_BUNDLE_KEY_DROPBOX_SHARED = "dropboxShared";
 
     /**
      * The {@link Application} {@link Context}.
@@ -47,12 +75,12 @@ public class PhotoStripController extends BaseController {
     /**
      * The photo strip arrangement.
      */
-    private PhotoStripArrangement mArrangement;
+    private PhotoStripArrangement mArrangementPref;
 
     /**
      * The total number of frames to capture.
      */
-    private int mFramesTotal;
+    private int mFramesTotalPref;
 
     /**
      * Pixel size of frame thumbnails.
@@ -72,9 +100,9 @@ public class PhotoStripController extends BaseController {
 
         // Set params from preferences.
         mPreferencesHelper = new PreferencesHelper();
-        mArrangement = mPreferencesHelper.getPhotoStripArrangement(mContext);
-        mFramesTotal = mPreferencesHelper.getPhotoStripNumPhotos(mContext);
-        mFramesMap = new SparseArray<Bitmap>(mFramesTotal);
+        mArrangementPref = mPreferencesHelper.getPhotoStripArrangement(mContext);
+        mFramesTotalPref = mPreferencesHelper.getPhotoStripNumPhotos(mContext);
+        mFramesMap = new SparseArray<Bitmap>(mFramesTotalPref);
 
         // Set params from resources.
         Resources res = mContext.getResources();
@@ -93,6 +121,9 @@ public class PhotoStripController extends BaseController {
                 break;
             case PhotoStripFragment.FRAME_REMOVAL:
                 processFrameRemoval(msg.arg1);
+                break;
+            case PhotoStripFragment.PHOTO_STRIP_SUBMIT:
+                processPhotoStripSubmission();
                 break;
             default:
                 break;
@@ -172,6 +203,102 @@ public class PhotoStripController extends BaseController {
     }
 
     /**
+     * Processes a photo strip submission request and notifies ui.
+     */
+    private void processPhotoStripSubmission() {
+        /*
+         * Create photo strip.
+         */
+        // Select arrangement.
+        Arrangement arrangement = null;
+        if (PhotoStripArrangement.HORIZONTAL.equals(mArrangementPref)) {
+            arrangement = new HorizontalArrangement();
+        } else if (PhotoStripArrangement.BOX.equals(mArrangementPref)) {
+            arrangement = new BoxArrangement();
+        } else {
+            arrangement = new VerticalArrangement();
+        }
+
+        // Create photo strip as a single bitmap.
+        Bitmap[] bitmaps = new Bitmap[mFramesTotalPref];
+        for (int i = 0; i < mFramesTotalPref; i++) {
+            bitmaps[i] = mFramesMap.get(i);
+        }
+        Bitmap photoStrip = ImageHelper.createPhotoStrip(bitmaps, arrangement);
+
+        // Clear frames map.
+        mFramesMap.clear();
+
+        /*
+         * Save photo strip bitmap as Jpeg.
+         */
+        Context context = MyApplication.getContext();
+        try {
+            String imageDirectory = ImageHelper.getCapturedImageDirectory(context
+                    .getString(R.string.image_helper__image_folder_name));
+            if (imageDirectory != null) {
+                String imageName = ImageHelper.generateCapturedImageName(context
+                        .getString(R.string.image_helper__image_filename_prefix));
+                File file = new File(imageDirectory, imageName);
+                final OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(file));
+
+                // Convert to Jpeg and writes to file.
+                boolean isSuccessful = ImageHelper.toJpegOutputStream(photoStrip, outputStream);
+                outputStream.flush();
+                outputStream.close();
+
+                if (isSuccessful) {
+                    String jpegPath = file.getPath();
+
+                    // Request adding Jpeg to Android Gallery.
+                    MediaScannerConnection.scanFile(context, new String[] { jpegPath },
+                            new String[] { ImageHelper.JPEG_MIME_TYPE }, null);
+
+                    // Share to Facebook.
+                    boolean facebookShared = false;
+                    FacebookHelper facebookHelper = new FacebookHelper();
+                    if (facebookHelper.isLinked(context)) {
+                        facebookShared = share(context, jpegPath, ShareRequest.DESTINATION_FACEBOOK);
+                    }
+
+                    // Share to Dropbox.
+                    boolean dropboxShared = false;
+                    DropboxHelper dropboxHelper = new DropboxHelper();
+                    if (dropboxHelper.isLinked(context)) {
+                        dropboxShared = share(context, jpegPath, ShareRequest.DESTINATION_DROPBOX);
+                    }
+
+                    // Notify ui the Jpeg is saved and shared to linked services.
+                    Message uiMsg = Message.obtain();
+                    uiMsg.what = PHOTO_STRIP_SUBMITTED;
+                    Bundle bundle = new Bundle();
+                    bundle.putBoolean(MESSAGE_BUNDLE_KEY_FACEBOOK_SHARED, facebookShared);
+                    bundle.putBoolean(MESSAGE_BUNDLE_KEY_DROPBOX_SHARED, dropboxShared);
+                    uiMsg.setData(bundle);
+                    sendUiUpdate(uiMsg);
+                } else {
+                    reportError(ERROR_PHOTO_STRIP_SUBMIT);
+                }
+            } else {
+                // Invalid external storage state or failed directory creation.
+                reportError(ERROR_PHOTO_STRIP_SUBMIT);
+            }
+        } catch (FileNotFoundException e) {
+            reportError(ERROR_PHOTO_STRIP_SUBMIT);
+        } catch (IOException e) {
+            reportError(ERROR_PHOTO_STRIP_SUBMIT);
+        }
+
+        /*
+         * Recycle photo strip bitmap.
+         */
+        if (photoStrip != null) {
+            photoStrip.recycle();
+            photoStrip = null;
+        }
+    }
+
+    /**
      * Stores frame bitmap in next available slot in frames map.
      * 
      * @param frame
@@ -180,7 +307,7 @@ public class PhotoStripController extends BaseController {
      */
     private int storeFrame(Bitmap frame) {
         int key;
-        for (key = 0; key < mFramesTotal; key++) {
+        for (key = 0; key < mFramesTotalPref; key++) {
             if (mFramesMap.get(key) == null) {
                 mFramesMap.put(key, frame);
                 break;
@@ -196,12 +323,34 @@ public class PhotoStripController extends BaseController {
      */
     private boolean isPhotoStripComplete() {
         boolean isPhotoStripComplete = true;
-        for (int key = 0; key < mFramesTotal; key++) {
+        for (int key = 0; key < mFramesTotalPref; key++) {
             if (mFramesMap.get(key) == null) {
                 isPhotoStripComplete = false;
                 break;
             }
         }
         return isPhotoStripComplete;
+    }
+
+    /**
+     * Shares a photo strip to a sharing service.
+     * 
+     * @param context
+     *            the {@link Context}.
+     * @param jpegPath
+     *            The path to the Jpeg to share.
+     * @param destination
+     *            The sharing service to share to.
+     * @return true if successful; false otherwise.
+     */
+    private boolean share(Context context, String jpegPath, int destination) {
+        boolean isSuccessful = false;
+        if (jpegPath != null && WingsDbHelper.getInstance(context).createShareRequest(jpegPath, destination)) {
+            // Start Wings service.
+            WingsService.startWakefulService(context);
+
+            isSuccessful = true;
+        }
+        return isSuccessful;
     }
 }

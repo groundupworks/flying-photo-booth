@@ -13,6 +13,7 @@
     <string name="photostrip__title_text">PHOTO\nBOOTH</string>
     <string name="photostrip__button_text_discard">Discard</string>
     <string name="photostrip__error_new_photo">Unable to add new photo</string>
+    <string name="photostrip__error_submission">Unable to submit the current photo strip</string>
 
     <!-- Error Dialog Fragment -->
     <string name="error__dialog_button_text">Exit</string>

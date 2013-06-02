@@ -48,6 +48,8 @@ public class PhotoStripFragment extends ControllerBackedFragment<PhotoStripContr
 
     public static final int FRAME_REMOVAL = 1;
 
+    public static final int PHOTO_STRIP_SUBMIT = 2;
+
     //
     // Message bundle keys.
     //
@@ -175,23 +177,39 @@ public class PhotoStripFragment extends ControllerBackedFragment<PhotoStripContr
 
         ICallbacks callbacks = getCallbacks();
         switch (msg.what) {
-            case PhotoStripController.ERROR_JPEG_DATA:
-                // Call to client.
-                if (callbacks != null) {
-                    callbacks.onErrorNewPhoto();
-                }
-                break;
             case PhotoStripController.THUMB_BITMAP_READY:
                 addThumb(activity, (Bitmap) msg.obj, msg.arg1, false);
                 break;
             case PhotoStripController.FRAME_REMOVED:
                 // Call to client.
                 if (callbacks != null) {
-                    callbacks.onPhotoRemoval();
+                    callbacks.onPhotoRemoved();
                 }
                 break;
             case PhotoStripController.PHOTO_STRIP_READY:
                 addThumb(activity, (Bitmap) msg.obj, msg.arg1, true);
+                break;
+            case PhotoStripController.PHOTO_STRIP_SUBMITTED:
+                Bundle bundle = msg.getData();
+                boolean facebookShared = bundle.getBoolean(PhotoStripController.MESSAGE_BUNDLE_KEY_FACEBOOK_SHARED);
+                boolean dropboxShared = bundle.getBoolean(PhotoStripController.MESSAGE_BUNDLE_KEY_DROPBOX_SHARED);
+
+                // Call to client.
+                if (callbacks != null) {
+                    callbacks.onPhotoStripSubmitted(facebookShared, dropboxShared);
+                }
+                break;
+            case PhotoStripController.ERROR_JPEG_DATA:
+                // Call to client.
+                if (callbacks != null) {
+                    callbacks.onErrorNewPhoto();
+                }
+                break;
+            case PhotoStripController.ERROR_PHOTO_STRIP_SUBMIT:
+                // Call to client.
+                if (callbacks != null) {
+                    callbacks.onErrorPhotoStripSubmit();
+                }
                 break;
             default:
                 break;
@@ -314,6 +332,16 @@ public class PhotoStripFragment extends ControllerBackedFragment<PhotoStripContr
     }
 
     /**
+     * Submits the current photo strip.
+     */
+    public void submitPhotoStrip() {
+        // Notify controller of the photo strip submission request.
+        Message msg = Message.obtain();
+        msg.what = PHOTO_STRIP_SUBMIT;
+        sendEvent(msg);
+    }
+
+    /**
      * Gets a {@link TranslateAnimation} for animating the photo strip when a new photo is added.
      * 
      * @param offset
@@ -334,7 +362,7 @@ public class PhotoStripFragment extends ControllerBackedFragment<PhotoStripContr
                 // Call to client.
                 ICallbacks callbacks = getCallbacks();
                 if (callbacks != null) {
-                    callbacks.onNewPhotoStart();
+                    callbacks.onNewPhotoStarted();
                 }
             }
 
@@ -350,7 +378,7 @@ public class PhotoStripFragment extends ControllerBackedFragment<PhotoStripContr
                 // Call to client.
                 ICallbacks callbacks = getCallbacks();
                 if (callbacks != null) {
-                    callbacks.onNewPhotoEnd(isPhotoStripComplete);
+                    callbacks.onNewPhotoEnded(isPhotoStripComplete);
                 }
             }
         });
@@ -407,7 +435,7 @@ public class PhotoStripFragment extends ControllerBackedFragment<PhotoStripContr
         /**
          * A new photo animation started.
          */
-        public void onNewPhotoStart();
+        public void onNewPhotoStarted();
 
         /**
          * A new photo animation ended.
@@ -415,16 +443,31 @@ public class PhotoStripFragment extends ControllerBackedFragment<PhotoStripContr
          * @param isPhotoStripComplete
          *            true if this is the last frame and the photo strip is complete; false otherwise.
          */
-        public void onNewPhotoEnd(boolean isPhotoStripComplete);
+        public void onNewPhotoEnded(boolean isPhotoStripComplete);
 
         /**
          * A photo is removed from the photo strip.
          */
-        public void onPhotoRemoval();
+        public void onPhotoRemoved();
+
+        /**
+         * The current photo strip is submitted.
+         * 
+         * @param facebookShared
+         *            true if the photo strip is marked for Facebook sharing; false otherwise.
+         * @param dropboxShared
+         *            true if the photo strip is marked for Dropbox sharing; false otherwise.
+         */
+        public void onPhotoStripSubmitted(boolean facebookShared, boolean dropboxShared);
 
         /**
          * An error occurred while attempting to add a new photo.
          */
         public void onErrorNewPhoto();
+
+        /**
+         * An error occurred while attempting to submit the current photo strip.
+         */
+        public void onErrorPhotoStripSubmit();
     }
 }

@@ -19,8 +19,6 @@ import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.Toast;
-import com.groundupworks.lib.photobooth.dropbox.DropboxHelper;
-import com.groundupworks.lib.photobooth.facebook.FacebookHelper;
 import com.groundupworks.lib.photobooth.framework.BaseFragmentActivity;
 import com.groundupworks.partyphotobooth.R;
 import com.groundupworks.partyphotobooth.fragments.CaptureFragment;
@@ -161,7 +159,7 @@ public class KioskActivity extends BaseFragmentActivity implements KioskSetupFra
     //
 
     @Override
-    public void onNewPhotoStart() {
+    public void onNewPhotoStarted() {
         // Fade out flash screen.
         Animation animation = AnimationUtils.loadAnimation(this, R.anim.fade_out);
         animation.setAnimationListener(new AnimationListener() {
@@ -185,7 +183,7 @@ public class KioskActivity extends BaseFragmentActivity implements KioskSetupFra
     }
 
     @Override
-    public void onNewPhotoEnd(boolean isPhotoStripComplete) {
+    public void onNewPhotoEnded(boolean isPhotoStripComplete) {
         if (isPhotoStripComplete) {
             // Confirm submission of photo strip.
             launchConfirmationFragment();
@@ -196,15 +194,35 @@ public class KioskActivity extends BaseFragmentActivity implements KioskSetupFra
     }
 
     @Override
-    public void onPhotoRemoval() {
+    public void onPhotoRemoved() {
         // Capture next frame.
         launchCaptureFragment();
+    }
+
+    @Override
+    public void onPhotoStripSubmitted(boolean facebookShared, boolean dropboxShared) {
+        // Reset photo booth ui.
+        launchPhotoStripFragment();
+        launchCaptureFragment();
+
+        if (facebookShared || dropboxShared) {
+            // Show notice fragment.
+            launchNoticeFragment(facebookShared, dropboxShared);
+        }
     }
 
     @Override
     public void onErrorNewPhoto() {
         // An error occurred while trying to add a new photo. Self-recover by relaunching capture fragment.
         Toast.makeText(this, getString(R.string.photostrip__error_new_photo), Toast.LENGTH_LONG).show();
+        launchCaptureFragment();
+    }
+
+    @Override
+    public void onErrorPhotoStripSubmit() {
+        // An error occurred while trying to submit the current photo strip. Self-recover by relaunching photo booth ui.
+        Toast.makeText(this, getString(R.string.photostrip__error_submission), Toast.LENGTH_LONG).show();
+        launchPhotoStripFragment();
         launchCaptureFragment();
     }
 
@@ -247,15 +265,8 @@ public class KioskActivity extends BaseFragmentActivity implements KioskSetupFra
 
     @Override
     public void onSubmit() {
-        // Reset photo booth ui.
-        launchPhotoStripFragment();
-        launchCaptureFragment();
-
-        FacebookHelper facebookHelper = new FacebookHelper();
-        DropboxHelper dropboxHelper = new DropboxHelper();
-        if (facebookHelper.isLinked(this) || dropboxHelper.isLinked(this)) {
-            // Show notice fragment.
-            launchNoticeFragment();
+        if (mPhotoStripFragment != null) {
+            mPhotoStripFragment.submitPhotoStrip();
         }
     }
 
@@ -304,9 +315,14 @@ public class KioskActivity extends BaseFragmentActivity implements KioskSetupFra
 
     /**
      * Launches a new {@link NoticeFragment}.
+     * 
+     * @param facebookShared
+     *            true if the photo strip is marked for Facebook sharing; false otherwise.
+     * @param dropboxShared
+     *            true if the photo strip is marked for Dropbox sharing; false otherwise.
      */
-    private void launchNoticeFragment() {
-        mNoticeFragment = NoticeFragment.newInstance();
+    private void launchNoticeFragment(boolean facebookShared, boolean dropboxShared) {
+        mNoticeFragment = NoticeFragment.newInstance(facebookShared, dropboxShared);
         replaceFragment(mNoticeFragment, false, true);
     }
 
