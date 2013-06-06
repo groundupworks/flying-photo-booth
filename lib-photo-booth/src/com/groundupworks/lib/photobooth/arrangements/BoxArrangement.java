@@ -31,26 +31,41 @@ public class BoxArrangement extends BaseArrangement {
     public Bitmap createPhotoStrip(Bitmap[] srcBitmaps) {
         Bitmap returnBitmap = null;
 
-        // Calculate return bitmap dimensions.
+        // Calculate return bitmap width.
         int boxLength = srcBitmaps.length / 2;
         int srcBitmapWidth = srcBitmaps[0].getWidth();
-        int srcBitmapHeight = srcBitmaps[0].getHeight();
         int returnBitmapWidth = srcBitmapWidth * boxLength + PHOTO_STRIP_PANEL_PADDING * (boxLength + 1);
-        int returnBitmapHeight = srcBitmapHeight * boxLength + PHOTO_STRIP_PANEL_PADDING * (boxLength + 1);
+
+        // Get header bitmap if applied.
+        int headerHeight = 0;
+        Bitmap header = getHeader(returnBitmapWidth);
+        if (header != null) {
+            headerHeight = header.getHeight();
+        }
+
+        // Calculate return bitmap height.
+        int srcBitmapHeight = srcBitmaps[0].getHeight();
+        int returnBitmapHeight = srcBitmapHeight * boxLength + PHOTO_STRIP_PANEL_PADDING * (boxLength + 1)
+                + headerHeight;
 
         returnBitmap = Bitmap.createBitmap(returnBitmapWidth, returnBitmapHeight, ImageHelper.BITMAP_CONFIG);
         if (returnBitmap != null) {
             // Create canvas and draw photo strip.
             Canvas canvas = new Canvas(returnBitmap);
             canvas.drawColor(Color.WHITE);
-            drawPhotoStripBorders(canvas, 0, 0, returnBitmapWidth - 1, returnBitmapHeight - 1);
 
-            // Draw each bitmap.
+            // Draw header bitmap.
+            if (header != null) {
+                canvas.drawBitmap(header, 0, 0, null);
+            }
+
+            // Draw photo bitmaps.
             int i = 0;
             for (Bitmap bitmap : srcBitmaps) {
                 // Even indices start at first column and odd indices start at second column.
                 int left = (srcBitmapWidth + PHOTO_STRIP_PANEL_PADDING) * (i % 2) + PHOTO_STRIP_PANEL_PADDING;
-                int top = (srcBitmapHeight + PHOTO_STRIP_PANEL_PADDING) * (i / 2) + PHOTO_STRIP_PANEL_PADDING;
+                int top = (srcBitmapHeight + PHOTO_STRIP_PANEL_PADDING) * (i / 2) + PHOTO_STRIP_PANEL_PADDING
+                        + headerHeight;
                 int right = left + srcBitmapWidth - 1;
                 int bottom = top + srcBitmapHeight - 1;
 
@@ -60,6 +75,9 @@ public class BoxArrangement extends BaseArrangement {
 
                 i++;
             }
+
+            // Draw photo strip borders.
+            drawPhotoStripBorders(canvas, 0, 0, returnBitmapWidth - 1, returnBitmapHeight - 1);
         }
 
         return returnBitmap;

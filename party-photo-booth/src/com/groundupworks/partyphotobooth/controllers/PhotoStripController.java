@@ -19,9 +19,6 @@ import android.media.MediaScannerConnection;
 import android.os.Bundle;
 import android.os.Message;
 import android.util.SparseArray;
-import com.groundupworks.lib.photobooth.arrangements.BoxArrangement;
-import com.groundupworks.lib.photobooth.arrangements.HorizontalArrangement;
-import com.groundupworks.lib.photobooth.arrangements.VerticalArrangement;
 import com.groundupworks.lib.photobooth.dropbox.DropboxHelper;
 import com.groundupworks.lib.photobooth.facebook.FacebookHelper;
 import com.groundupworks.lib.photobooth.framework.BaseController;
@@ -32,6 +29,9 @@ import com.groundupworks.lib.photobooth.wings.WingsDbHelper;
 import com.groundupworks.lib.photobooth.wings.WingsService;
 import com.groundupworks.partyphotobooth.MyApplication;
 import com.groundupworks.partyphotobooth.R;
+import com.groundupworks.partyphotobooth.arrangements.TitledBoxArrangement;
+import com.groundupworks.partyphotobooth.arrangements.TitledHorizontalArrangement;
+import com.groundupworks.partyphotobooth.arrangements.TitledVerticalArrangement;
 import com.groundupworks.partyphotobooth.fragments.PhotoStripFragment;
 import com.groundupworks.partyphotobooth.helpers.PreferencesHelper;
 import com.groundupworks.partyphotobooth.helpers.PreferencesHelper.PhotoStripArrangement;
@@ -73,6 +73,21 @@ public class PhotoStripController extends BaseController {
     private PreferencesHelper mPreferencesHelper;
 
     /**
+     * The first line of the event title.
+     */
+    private String mLineOne = null;
+
+    /**
+     * The second line of the event title.
+     */
+    private String mLineTwo = null;
+
+    /**
+     * The date of the event.
+     */
+    private String mDate = null;
+
+    /**
      * The photo strip arrangement.
      */
     private PhotoStripArrangement mArrangementPref;
@@ -100,6 +115,9 @@ public class PhotoStripController extends BaseController {
 
         // Set params from preferences.
         mPreferencesHelper = new PreferencesHelper();
+        mLineOne = mPreferencesHelper.getEventLineOne(mContext);
+        mLineTwo = mPreferencesHelper.getEventLineTwo(mContext);
+        mDate = mPreferencesHelper.getEventDate(mContext);
         mArrangementPref = mPreferencesHelper.getPhotoStripArrangement(mContext);
         mFramesTotalPref = mPreferencesHelper.getPhotoStripNumPhotos(mContext);
         mFramesMap = new SparseArray<Bitmap>(mFramesTotalPref);
@@ -212,11 +230,11 @@ public class PhotoStripController extends BaseController {
         // Select arrangement.
         Arrangement arrangement = null;
         if (PhotoStripArrangement.HORIZONTAL.equals(mArrangementPref)) {
-            arrangement = new HorizontalArrangement();
+            arrangement = new TitledHorizontalArrangement(mLineOne, mLineTwo, mDate);
         } else if (PhotoStripArrangement.BOX.equals(mArrangementPref)) {
-            arrangement = new BoxArrangement();
+            arrangement = new TitledBoxArrangement(mLineOne, mLineTwo, mDate);
         } else {
-            arrangement = new VerticalArrangement();
+            arrangement = new TitledVerticalArrangement(mLineOne, mLineTwo, mDate);
         }
 
         // Create photo strip as a single bitmap.

@@ -31,25 +31,38 @@ public class VerticalArrangement extends BaseArrangement {
     public Bitmap createPhotoStrip(Bitmap[] srcBitmaps) {
         Bitmap returnBitmap = null;
 
-        // Calculate return bitmap dimensions.
+        // Calculate return bitmap width.
         int srcBitmapWidth = srcBitmaps[0].getWidth();
-        int srcBitmapHeight = srcBitmaps[0].getHeight();
         int returnBitmapWidth = srcBitmapWidth + PHOTO_STRIP_PANEL_PADDING * 2;
+
+        // Get header bitmap if applied.
+        int headerHeight = 0;
+        Bitmap header = getHeader(returnBitmapWidth);
+        if (header != null) {
+            headerHeight = header.getHeight();
+        }
+
+        // Calculate return bitmap height.
+        int srcBitmapHeight = srcBitmaps[0].getHeight();
         int returnBitmapHeight = srcBitmapHeight * srcBitmaps.length + PHOTO_STRIP_PANEL_PADDING
-                * (srcBitmaps.length + 1);
+                * (srcBitmaps.length + 1) + headerHeight;
 
         returnBitmap = Bitmap.createBitmap(returnBitmapWidth, returnBitmapHeight, ImageHelper.BITMAP_CONFIG);
         if (returnBitmap != null) {
             // Create canvas and draw photo strip.
             Canvas canvas = new Canvas(returnBitmap);
             canvas.drawColor(Color.WHITE);
-            drawPhotoStripBorders(canvas, 0, 0, returnBitmapWidth - 1, returnBitmapHeight - 1);
 
-            // Draw each bitmap.
+            // Draw header bitmap.
+            if (header != null) {
+                canvas.drawBitmap(header, 0, 0, null);
+            }
+
+            // Draw photo bitmaps.
             int i = 0;
             for (Bitmap bitmap : srcBitmaps) {
                 int left = PHOTO_STRIP_PANEL_PADDING;
-                int top = (srcBitmapHeight + PHOTO_STRIP_PANEL_PADDING) * i + PHOTO_STRIP_PANEL_PADDING;
+                int top = (srcBitmapHeight + PHOTO_STRIP_PANEL_PADDING) * i + PHOTO_STRIP_PANEL_PADDING + headerHeight;
                 int right = left + srcBitmapWidth - 1;
                 int bottom = top + srcBitmapHeight - 1;
 
@@ -59,6 +72,9 @@ public class VerticalArrangement extends BaseArrangement {
 
                 i++;
             }
+
+            // Draw photo strip borders.
+            drawPhotoStripBorders(canvas, 0, 0, returnBitmapWidth - 1, returnBitmapHeight - 1);
         }
 
         return returnBitmap;

@@ -15,6 +15,7 @@
  */
 package com.groundupworks.lib.photobooth.arrangements;
 
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -28,13 +29,24 @@ import com.groundupworks.lib.photobooth.helpers.ImageHelper.Arrangement;
 public abstract class BaseArrangement implements Arrangement {
 
     /**
-     * Comic panel padding.
+     * Photo strip panel padding.
      */
     public static final int PHOTO_STRIP_PANEL_PADDING = 50;
 
     //
     // Private methods.
     //
+
+    /**
+     * Gets the header bitmap for the photo strip. The base implementation returns null.
+     * 
+     * @param width
+     *            the width of the header bitmap.
+     * @return a bitmap to be drawn as the photo strip header; or null if no header is applied.
+     */
+    protected Bitmap getHeader(int width) {
+        return null;
+    }
 
     /**
      * Draws the border for the photo strip.

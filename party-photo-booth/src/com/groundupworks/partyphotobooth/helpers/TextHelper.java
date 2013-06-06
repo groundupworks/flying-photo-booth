@@ -1,0 +1,106 @@
+/*
+ * Copyright (C) 2013 Benedict Lau
+ * 
+ * All rights reserved.
+ */
+package com.groundupworks.partyphotobooth.helpers;
+
+import android.graphics.Paint;
+import android.graphics.Rect;
+
+/**
+ * Helper class for rendering text.
+ * 
+ * @author Benedict Lau
+ */
+public class TextHelper {
+
+    /**
+     * The minimum text size that can be returned by {@link #getFittedTextSize(String, int, int, Paint)}.
+     */
+    private static final float MIN_TEXT_SIZE = 12f;
+
+    /**
+     * The factor to fill a bounding box with text.
+     */
+    private static final float FILL_FACTOR = 0.8f;
+
+    /**
+     * The space character.
+     */
+    private static final String CHAR_SPACE = " ";
+
+    /**
+     * Gets the optimal text size to use for fitting text inside a bounding box of fixed size.
+     * 
+     * @param text
+     *            the text to print.
+     * @param fitWidth
+     *            the width of the bounding box to fit into.
+     * @param fitHeight
+     *            the height of the bounding box to fit into.
+     * @param paint
+     *            the {@link Paint} used to render the text.
+     * @return the text size to be used in order for the text to fit in the bounding box.
+     */
+    public static float getFittedTextSize(String text, int fitWidth, int fitHeight, Paint paint) {
+        // Determine width and height based on the current text size associated with the paint.
+        float baseTextSize = paint.getTextSize();
+        Rect bounds = new Rect();
+        paint.getTextBounds(text, 0, text.length(), bounds);
+        float baseWidth = (float) (bounds.right - bounds.left);
+        float baseHeight = (float) (bounds.bottom - bounds.top);
+
+        // Determine scale factor to the base text size.
+        float scaleX = 0f;
+        float scaleY = 0f;
+        if (baseWidth > 0f && baseHeight > 0f) {
+            scaleX = (float) fitWidth / baseWidth;
+            scaleY = (float) fitHeight / baseHeight;
+        }
+        float scaleFactor = Math.min(scaleX, scaleY);
+
+        return Math.max(baseTextSize * scaleFactor * FILL_FACTOR, MIN_TEXT_SIZE);
+    }
+
+    /**
+     * Joins two strings.
+     * 
+     * @param stringOne
+     *            the first string; or null if none.
+     * @param stringTwo
+     *            the second string; or null if none.
+     * @return the joined string; or null if both source strings are invalid.
+     */
+    public static String joinStrings(String stringOne, String stringTwo) {
+        String returnString = null;
+        StringBuilder stringBuilder = new StringBuilder();
+        if (isValid(stringOne)) {
+            stringBuilder.append(stringOne);
+        }
+        if (isValid(stringOne) && isValid(stringTwo)) {
+            stringBuilder.append(CHAR_SPACE);
+        }
+        if (isValid(stringTwo)) {
+            stringBuilder.append(stringTwo);
+        }
+
+        String joinedString = stringBuilder.toString();
+        if (isValid(joinedString)) {
+            returnString = joinedString;
+        }
+
+        return returnString;
+    }
+
+    /**
+     * Checks if a string is valid.
+     * 
+     * @param string
+     *            the string.
+     * @return true if the string is non-null or has a length > 0; false otherwise.
+     */
+    public static boolean isValid(String string) {
+        return string != null && string.length() > 0;
+    }
+}
