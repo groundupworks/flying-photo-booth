@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 import com.groundupworks.partyphotobooth.R;
 
 /**
@@ -32,6 +33,8 @@ public class ConfirmationFragment extends Fragment {
     // Views.
     //
 
+    private TextView mMessage;
+
     private Button mSubmit;
 
     @Override
@@ -46,6 +49,7 @@ public class ConfirmationFragment extends Fragment {
          * Inflate views from XML.
          */
         View view = inflater.inflate(R.layout.fragment_confirmation, container, false);
+        mMessage = (TextView) view.findViewById(R.id.confirmation_message);
         mSubmit = (Button) view.findViewById(R.id.confirmation_button_submit);
 
         return view;
@@ -54,6 +58,9 @@ public class ConfirmationFragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
+        String message = getString(R.string.confirmation__message, getString(R.string.app_name));
+        mMessage.setText(message);
 
         mSubmit.setOnClickListener(new OnClickListener() {
             @Override

@@ -19,7 +19,7 @@
     <string name="error__dialog_button_text">Exit</string>
 
     <!-- Confirmation Fragment -->
-    <string name="confirmation__thank_you">Thank you!</string>
+    <string name="confirmation__message">Thank you for using\n%1$s</string>
     <string name="confirmation__button_submit_text">Submit</string>
 
     <!-- Notice Fragment -->

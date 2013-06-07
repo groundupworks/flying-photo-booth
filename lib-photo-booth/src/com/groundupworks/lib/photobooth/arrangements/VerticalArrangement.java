@@ -56,6 +56,8 @@ public class VerticalArrangement extends BaseArrangement {
             // Draw header bitmap.
             if (header != null) {
                 canvas.drawBitmap(header, 0, 0, null);
+                header.recycle();
+                header = null;
             }
 
             // Draw photo bitmaps.
