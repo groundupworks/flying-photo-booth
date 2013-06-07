@@ -30,6 +30,10 @@ public class TextHelper {
      */
     private static final String CHAR_SPACE = " ";
 
+    //
+    // Public methods.
+    //
+
     /**
      * Gets the optimal text size to use for fitting text inside a bounding box of fixed size.
      * 

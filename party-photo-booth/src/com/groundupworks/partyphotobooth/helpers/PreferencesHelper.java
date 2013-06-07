@@ -125,6 +125,10 @@ public class PreferencesHelper {
      */
     private static final String DEFAULT_EVENT_PREFERENCE = "";
 
+    //
+    // Public methods.
+    //
+
     /**
      * Stores the photo booth theme preference.
      * 
