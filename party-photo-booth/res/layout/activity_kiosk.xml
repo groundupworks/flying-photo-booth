@@ -25,10 +25,10 @@
             android:layout_height="match_parent" />
     </LinearLayout>
 
-    <!-- Fullscreen fragment container -->
+    <!-- Top fullscreen fragment container -->
 
     <FrameLayout
-        android:id="@+id/fragment_container"
+        android:id="@+id/fragment_container_top"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 

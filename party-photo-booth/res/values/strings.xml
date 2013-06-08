@@ -3,6 +3,37 @@
 
     <string name="app_name">Party PhotoBooth</string>
 
+    <!-- Setup -->
+    <string name="setup__button_text_next">Next</string>
+
+    <!-- Event Info Setup Fragment -->
+    <string name="event_info_setup__title">Event Information</string>
+    <string name="event_info_setup__event_title">Title</string>
+    <string name="event_info_setup__event_line_one_hint">Line one</string>
+    <string name="event_info_setup__event_line_two_hint">Line two</string>
+    <string name="event_info_setup__event_date">Date</string>
+    <string name="event_info_setup__event_date_hide">Hide date</string>
+
+    <!-- Photo Booth Setup Fragment -->
+    <string name="photo_booth_setup__title">Photo Booth Setup</string>
+
+    <!-- Share Services Setup Fragment -->
+    <string name="share_services_setup__title">Share Services</string>
+
+    <!-- Kiosk Mode -->
+    <string name="kiosk_mode__setup_message">Press &amp; hold top right corner to exit</string>
+    <string name="kiosk_mode__setup_password_label">Require passcode:</string>
+    <string name="kiosk_mode__setup_password_hint">none</string>
+    <string name="kiosk_mode__setup_button_ok_text">OK</string>
+    <string name="kiosk_mode__notification_title">Kiosk mode</string>
+    <string name="kiosk_mode__notification_msg">Press &amp; hold top right corner to exit</string>
+    <string name="kiosk_mode__notification_ticker">Entering Kiosk mode</string>
+    <string name="kiosk_mode__dialog_title">Exit</string>
+    <string name="kiosk_mode__dialog_password_hint">Passcode</string>
+    <string name="kiosk_mode__dialog_button_positive_text">OK</string>
+    <string name="kiosk_mode__dialog_button_negative_text">Cancel</string>
+    <string name="kiosk_mode__error_password">Passcode does not match</string>
+
     <!-- Capture Fragment -->
     <string name="capture__error_camera_dialog_title">Camera unavailable</string>
     <string name="capture__error_camera_dialog_message_none">This application requires a camera on your device.</string>
@@ -27,19 +58,5 @@
     <string name="notice__facebook_text">%1$s\'s Facebook album %2$s</string>
     <string name="notice__dropbox_text">%1$s\'s Dropbox folder %2$s</string>
     <string name="notice__button_ok_text">OK</string>
-
-    <!-- Kiosk Mode -->
-    <string name="kiosk_mode__setup_message">Press &amp; hold top right corner to exit</string>
-    <string name="kiosk_mode__setup_password_label">Require passcode:</string>
-    <string name="kiosk_mode__setup_password_hint">none</string>
-    <string name="kiosk_mode__setup_button_ok_text">OK</string>
-    <string name="kiosk_mode__notification_title">Kiosk mode</string>
-    <string name="kiosk_mode__notification_msg">Press &amp; hold top right corner to exit</string>
-    <string name="kiosk_mode__notification_ticker">Entering Kiosk mode</string>
-    <string name="kiosk_mode__dialog_title">Exit</string>
-    <string name="kiosk_mode__dialog_password_hint">Passcode</string>
-    <string name="kiosk_mode__dialog_button_positive_text">OK</string>
-    <string name="kiosk_mode__dialog_button_negative_text">Cancel</string>
-    <string name="kiosk_mode__error_password">Passcode does not match</string>
 
 </resources>

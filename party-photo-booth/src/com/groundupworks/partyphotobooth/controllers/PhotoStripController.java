@@ -35,6 +35,7 @@ import com.groundupworks.partyphotobooth.arrangements.TitledVerticalArrangement;
 import com.groundupworks.partyphotobooth.fragments.PhotoStripFragment;
 import com.groundupworks.partyphotobooth.helpers.PreferencesHelper;
 import com.groundupworks.partyphotobooth.helpers.PreferencesHelper.PhotoStripArrangement;
+import com.groundupworks.partyphotobooth.helpers.TextHelper;
 
 public class PhotoStripController extends BaseController {
 
@@ -117,7 +118,12 @@ public class PhotoStripController extends BaseController {
         mPreferencesHelper = new PreferencesHelper();
         mLineOne = mPreferencesHelper.getEventLineOne(mContext);
         mLineTwo = mPreferencesHelper.getEventLineTwo(mContext);
-        mDate = mPreferencesHelper.getEventDate(mContext);
+
+        long date = mPreferencesHelper.getEventDate(mContext);
+        if (date != PreferencesHelper.EVENT_DATE_HIDDEN) {
+            mDate = TextHelper.getDateString(mContext, date);
+        }
+
         mArrangementPref = mPreferencesHelper.getPhotoStripArrangement(mContext);
         mFramesTotalPref = mPreferencesHelper.getPhotoStripNumPhotos(mContext);
         mFramesMap = new SparseArray<Bitmap>(mFramesTotalPref);

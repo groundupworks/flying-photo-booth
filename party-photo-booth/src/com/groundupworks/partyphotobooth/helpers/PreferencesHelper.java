@@ -81,6 +81,11 @@ public class PreferencesHelper {
     };
 
     /**
+     * Preference value to hide the event date.
+     */
+    public static final long EVENT_DATE_HIDDEN = -1L;
+
+    /**
      * Key for the photo booth theme record.
      */
     private static final String KEY_PHOTO_BOOTH_THEME = "photoBoothTheme";
@@ -121,9 +126,14 @@ public class PreferencesHelper {
     private static final int DEFAULT_NUM_PHOTOS = 4;
 
     /**
-     * The default preferences for the event name and date.
+     * The default preferences for the event title.
      */
-    private static final String DEFAULT_EVENT_PREFERENCE = "";
+    private static final String DEFAULT_EVENT_TITLE_PREFERENCE = "";
+
+    /**
+     * The default preferences for the event date.
+     */
+    private static final long DEFAULT_EVENT_DATE_PREFERENCE = EVENT_DATE_HIDDEN;
 
     //
     // Public methods.
@@ -258,7 +268,7 @@ public class PreferencesHelper {
      */
     public String getEventLineOne(Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
-        return preferences.getString(KEY_EVENT_LINE_ONE, DEFAULT_EVENT_PREFERENCE);
+        return preferences.getString(KEY_EVENT_LINE_ONE, DEFAULT_EVENT_TITLE_PREFERENCE);
     }
 
     /**
@@ -287,31 +297,31 @@ public class PreferencesHelper {
      */
     public String getEventLineTwo(Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
-        return preferences.getString(KEY_EVENT_LINE_TWO, DEFAULT_EVENT_PREFERENCE);
+        return preferences.getString(KEY_EVENT_LINE_TWO, DEFAULT_EVENT_TITLE_PREFERENCE);
     }
 
     /**
-     * Stores the date of the event.
+     * Stores the date of the event in milliseconds since Jan. 1, 1970, midnight GMT.
      * 
      * @param context
      *            the {@link Context}.
      * @param eventDate
-     *            the event date; or an empty string. Pass null to clear.
+     *            the event date in milliseconds. Pass {@link PreferencesHelper#EVENT_DATE_HIDDEN} to hide event date.
      */
-    public void storeEventDate(Context context, String eventDate) {
+    public void storeEventDate(Context context, long eventDate) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
-        preferences.edit().putString(KEY_EVENT_DATE, eventDate).apply();
+        preferences.edit().putLong(KEY_EVENT_DATE, eventDate).apply();
     }
 
     /**
-     * Reads the date of the event.
+     * Reads the date of the event in milliseconds since Jan. 1, 1970, midnight GMT.
      * 
      * @param context
      *            the {@link Context}.
-     * @return the event date; or an empty string.
+     * @return the event date in milliseconds; or {@link PreferencesHelper#EVENT_DATE_HIDDEN} if hidden.
      */
-    public String getEventDate(Context context) {
+    public long getEventDate(Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
-        return preferences.getString(KEY_EVENT_DATE, DEFAULT_EVENT_PREFERENCE);
+        return preferences.getLong(KEY_EVENT_DATE, DEFAULT_EVENT_DATE_PREFERENCE);
     }
 }

@@ -32,6 +32,7 @@ import com.groundupworks.partyphotobooth.R;
 import com.groundupworks.partyphotobooth.controllers.PhotoStripController;
 import com.groundupworks.partyphotobooth.helpers.PreferencesHelper;
 import com.groundupworks.partyphotobooth.helpers.PreferencesHelper.PhotoBoothTheme;
+import com.groundupworks.partyphotobooth.helpers.TextHelper;
 
 /**
  * Display photos in a photo strip format.
@@ -139,13 +140,13 @@ public class PhotoStripFragment extends ControllerBackedFragment<PhotoStripContr
         // Display event title.
         String eventLineOne = preferencesHelper.getEventLineOne(appContext);
         String eventLineTwo = preferencesHelper.getEventLineTwo(appContext);
-        if (eventLineOne != null && eventLineOne.length() > 0) {
+        if (TextHelper.isValid(eventLineOne)) {
             mEventLineOne.setText(eventLineOne);
             mEventLineOne.setVisibility(View.VISIBLE);
         } else {
             mEventLineOne.setVisibility(View.GONE);
         }
-        if (eventLineTwo != null && eventLineTwo.length() > 0) {
+        if (TextHelper.isValid(eventLineTwo)) {
             mEventLineTwo.setText(eventLineTwo);
             mEventLineTwo.setVisibility(View.VISIBLE);
         } else {
@@ -153,9 +154,9 @@ public class PhotoStripFragment extends ControllerBackedFragment<PhotoStripContr
         }
 
         // Display event date.
-        String eventDate = preferencesHelper.getEventDate(appContext);
-        if (eventDate != null && eventDate.length() > 0) {
-            mEventDate.setText(eventDate);
+        long eventDate = preferencesHelper.getEventDate(appContext);
+        if (eventDate != PreferencesHelper.EVENT_DATE_HIDDEN) {
+            mEventDate.setText(TextHelper.getDateString(appContext, eventDate));
             mEventDate.setVisibility(View.VISIBLE);
         } else {
             mEventDate.setVisibility(View.GONE);

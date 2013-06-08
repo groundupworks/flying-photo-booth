@@ -5,8 +5,11 @@
  */
 package com.groundupworks.partyphotobooth.helpers;
 
+import java.util.Date;
+import android.content.Context;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.text.format.DateFormat;
 
 /**
  * Helper class for rendering text.
@@ -33,6 +36,21 @@ public class TextHelper {
     //
     // Public methods.
     //
+
+    /**
+     * Converts a date in milliseconds since Jan. 1, 1970, midnight GMT to a string according to the system locale
+     * settings.
+     * 
+     * @param context
+     *            the {@link Context}.
+     * @param date
+     *            the date of the event in milliseconds.
+     * @return the date as a string.
+     */
+    public static String getDateString(Context context, long date) {
+        Date eventDate = new Date(date);
+        return DateFormat.getMediumDateFormat(context).format(eventDate);
+    }
 
     /**
      * Gets the optimal text size to use for fitting text inside a bounding box of fixed size.
