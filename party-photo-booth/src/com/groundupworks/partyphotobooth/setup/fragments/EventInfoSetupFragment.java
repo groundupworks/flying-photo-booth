@@ -54,7 +54,7 @@ public class EventInfoSetupFragment extends Fragment {
 
     private DatePicker mDate;
 
-    private CheckBox mDateHide;
+    private CheckBox mDateHidden;
 
     private Button mNext;
 
@@ -73,7 +73,7 @@ public class EventInfoSetupFragment extends Fragment {
         mLineOne = (EditText) view.findViewById(R.id.setup_event_info_line_one);
         mLineTwo = (EditText) view.findViewById(R.id.setup_event_info_line_two);
         mDate = (DatePicker) view.findViewById(R.id.setup_event_info_date);
-        mDateHide = (CheckBox) view.findViewById(R.id.setup_event_info_date_hide);
+        mDateHidden = (CheckBox) view.findViewById(R.id.setup_event_info_date_hidden);
         mNext = (Button) view.findViewById(R.id.setup_event_info_button_next);
 
         return view;
@@ -106,13 +106,13 @@ public class EventInfoSetupFragment extends Fragment {
             mDate.updateDate(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),
                     calendar.get(Calendar.DAY_OF_MONTH));
             mDate.setEnabled(true);
-            mDateHide.setChecked(false);
+            mDateHidden.setChecked(false);
         } else {
             mDate.setEnabled(false);
-            mDateHide.setChecked(true);
+            mDateHidden.setChecked(true);
         }
 
-        mDateHide.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+        mDateHidden.setOnCheckedChangeListener(new OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 mDate.setEnabled(!isChecked);
@@ -151,7 +151,7 @@ public class EventInfoSetupFragment extends Fragment {
         mPreferencesHelper.storeEventLineTwo(appContext, lineTwoString);
 
         // Store date.
-        if (mDateHide.isChecked()) {
+        if (mDateHidden.isChecked()) {
             mPreferencesHelper.storeEventDate(appContext, PreferencesHelper.EVENT_DATE_HIDDEN);
         } else {
             Calendar calendar = new GregorianCalendar(mDate.getYear(), mDate.getMonth(), mDate.getDayOfMonth());

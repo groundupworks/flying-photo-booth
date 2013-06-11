@@ -27,6 +27,7 @@ import com.groundupworks.partyphotobooth.fragments.ConfirmationFragment;
 import com.groundupworks.partyphotobooth.fragments.ErrorDialogFragment;
 import com.groundupworks.partyphotobooth.fragments.NoticeFragment;
 import com.groundupworks.partyphotobooth.fragments.PhotoStripFragment;
+import com.groundupworks.partyphotobooth.helpers.PreferencesHelper;
 import com.groundupworks.partyphotobooth.kiosk.KioskModeHelper.State;
 
 /**
@@ -207,8 +208,11 @@ public class KioskActivity extends FragmentActivity implements KioskSetupFragmen
         launchCaptureFragment();
 
         if (facebookShared || dropboxShared) {
-            // Show notice fragment.
-            launchNoticeFragment(facebookShared, dropboxShared);
+            PreferencesHelper preferencesHelper = new PreferencesHelper();
+            if (preferencesHelper.getNoticeEnabled(this)) {
+                // Show notice fragment.
+                launchNoticeFragment(facebookShared, dropboxShared);
+            }
         }
     }
 

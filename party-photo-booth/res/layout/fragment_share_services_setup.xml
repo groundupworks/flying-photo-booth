@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <TextView
+        android:id="@+id/setup_share_services_title"
+        style="@style/Text.Light.Heavy"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:padding="@dimen/kiosk_spacing"
+        android:text="@string/share_services_setup__title" />
+
+    <TableLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/setup_share_services_title" >
+
+        <TableRow
+            android:id="@+id/setup_share_services_facebook"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+
+            <ImageView
+                android:id="@+id/setup_share_services_facebook_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/kiosk_spacing"
+                android:src="@drawable/selector_icon_facebook" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingBottom="@dimen/kiosk_spacing"
+                android:paddingRight="@dimen/kiosk_spacing"
+                android:paddingTop="@dimen/kiosk_spacing" >
+
+                <TextView
+                    style="@style/Text.Light"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/share_services_setup__facebook_title" />
+
+                <TextView
+                    android:id="@+id/setup_share_services_facebook_status"
+                    style="@style/SmallText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/setup_share_services_dropbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+
+            <ImageView
+                android:id="@+id/setup_share_services_dropbox_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/kiosk_spacing"
+                android:src="@drawable/selector_icon_dropbox" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingBottom="@dimen/kiosk_spacing"
+                android:paddingRight="@dimen/kiosk_spacing"
+                android:paddingTop="@dimen/kiosk_spacing" >
+
+                <TextView
+                    style="@style/Text.Light"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/share_services_setup__dropbox_title" />
+
+                <TextView
+                    android:id="@+id/setup_share_services_dropbox_status"
+                    style="@style/SmallText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <CheckBox
+                android:id="@+id/setup_share_services_notice_enabled"
+                style="@style/SmallText.Light"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/kiosk_spacing"
+                android:layout_span="2"
+                android:text="@string/share_services_setup__notice_enabled" />
+        </TableRow>
+    </TableLayout>
+
+    <Button
+        android:id="@+id/setup_share_services_button_next"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_margin="@dimen/kiosk_spacing"
+        android:padding="@dimen/kiosk_spacing"
+        android:text="@string/setup__button_text_next" />
+
+</RelativeLayout>

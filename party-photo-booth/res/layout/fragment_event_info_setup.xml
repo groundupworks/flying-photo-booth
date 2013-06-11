@@ -82,11 +82,12 @@
                     android:spinnersShown="true" />
 
                 <CheckBox
-                    android:id="@+id/setup_event_info_date_hide"
+                    android:id="@+id/setup_event_info_date_hidden"
+                    style="@style/SmallText.Light"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/kiosk_spacing"
-                    android:text="@string/event_info_setup__event_date_hide" />
+                    android:text="@string/event_info_setup__event_date_hidden" />
             </LinearLayout>
         </TableRow>
     </TableLayout>

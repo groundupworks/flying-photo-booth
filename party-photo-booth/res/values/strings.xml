@@ -12,13 +12,19 @@
     <string name="event_info_setup__event_line_one_hint">Line one</string>
     <string name="event_info_setup__event_line_two_hint">Line two</string>
     <string name="event_info_setup__event_date">Date</string>
-    <string name="event_info_setup__event_date_hide">Hide date</string>
+    <string name="event_info_setup__event_date_hidden">Hide date</string>
 
     <!-- Photo Booth Setup Fragment -->
     <string name="photo_booth_setup__title">Photo Booth Setup</string>
 
     <!-- Share Services Setup Fragment -->
     <string name="share_services_setup__title">Share Services</string>
+    <string name="share_services_setup__facebook_title">Upload photo strips to Facebook</string>
+    <string name="share_services_setup__facebook_enabled">%1$s\'s album %2$s</string>
+    <string name="share_services_setup__dropbox_title">Upload photo strips to Dropbox</string>
+    <string name="share_services_setup__dropbox_enabled">%1$s\'s folder %2$s</string>
+    <string name="share_services_setup__disabled">Disabled</string>
+    <string name="share_services_setup__notice_enabled">Tell guests where to find their photos</string>
 
     <!-- Kiosk Mode -->
     <string name="kiosk_mode__setup_message">Press &amp; hold top right corner to exit</string>

@@ -23,6 +23,15 @@
         <item name="android:textStyle">bold</item>
     </style>
 
+    <style name="SmallText">
+        <item name="android:textSize">18dp</item>
+        <item name="android:typeface">sans</item>
+    </style>
+
+    <style name="SmallText.Light">
+        <item name="android:textColor">@color/text_light</item>
+    </style>
+
     <style name="TitleText">
         <item name="android:textSize">60dp</item>
         <item name="android:textStyle">bold</item>

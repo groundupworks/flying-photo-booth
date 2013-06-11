@@ -121,6 +121,11 @@ public class PreferencesHelper {
     private static final String KEY_EVENT_DATE = "eventDate";
 
     /**
+     * Key for whether enabled share services are shown in a notice screen.
+     */
+    private static final String KEY_NOTICE_ENABLED = "noticeEnabled";
+
+    /**
      * The default number of photos in a photo strip.
      */
     private static final int DEFAULT_NUM_PHOTOS = 4;
@@ -323,5 +328,30 @@ public class PreferencesHelper {
     public long getEventDate(Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
         return preferences.getLong(KEY_EVENT_DATE, DEFAULT_EVENT_DATE_PREFERENCE);
+    }
+
+    /**
+     * Stores whether enabled share services are shown in a notice screen.
+     * 
+     * @param context
+     *            the {@link Context}.
+     * @param isEnabled
+     *            true to enable; false otherwise.
+     */
+    public void storeNoticeEnabled(Context context, boolean isEnabled) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
+        preferences.edit().putBoolean(KEY_NOTICE_ENABLED, isEnabled).apply();
+    }
+
+    /**
+     * Reads whether enabled share services are shown in a notice screen.
+     * 
+     * @param context
+     *            the {@link Context}.
+     * @return true if enabled; false otherwise.
+     */
+    public boolean getNoticeEnabled(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
+        return preferences.getBoolean(KEY_NOTICE_ENABLED, false);
     }
 }

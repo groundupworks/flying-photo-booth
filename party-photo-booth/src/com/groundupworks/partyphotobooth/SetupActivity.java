@@ -32,16 +32,8 @@ public class SetupActivity extends BaseFragmentActivity implements EventInfoSetu
 
     @Override
     public void onEventInfoSetupCompleted() {
-        // TODO
+        replaceFragment(ShareServicesSetupFragment.newInstance(), true, false);
         // replaceFragment(PhotoBoothSetupFragment.newInstance(), true, false);
-
-        // Enable Kiosk mode.
-        KioskModeHelper kioskModeHelper = new KioskModeHelper(this);
-        kioskModeHelper.transitionState(State.ENABLED);
-
-        // Launch Kiosk mode.
-        startService(new Intent(getApplicationContext(), KioskService.class));
-        finish();
     }
 
     @Override
