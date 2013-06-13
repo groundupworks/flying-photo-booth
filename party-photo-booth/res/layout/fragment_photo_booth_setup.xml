@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent" >
+
+    <TextView
+        android:id="@+id/setup_photo_booth_title"
+        style="@style/Text.Light.Heavy"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:padding="@dimen/kiosk_spacing"
+        android:text="@string/photo_booth_setup__title" />
+
+    <TableLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/setup_photo_booth_title" >
+
+        <TableRow
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+
+            <TextView
+                style="@style/Text.Light"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/kiosk_spacing"
+                android:text="@string/photo_booth_setup__mode" />
+
+            <Spinner
+                android:id="@+id/setup_photo_booth_mode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:spinnerMode="dropdown" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+
+            <TextView
+                style="@style/Text.Light"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/kiosk_spacing"
+                android:text="@string/photo_booth_setup__theme" />
+
+            <Spinner
+                android:id="@+id/setup_photo_booth_theme"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:spinnerMode="dropdown" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+
+            <TextView
+                style="@style/Text.Light"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/kiosk_spacing"
+                android:text="@string/photo_booth_setup__arrangement" />
+
+            <Spinner
+                android:id="@+id/setup_photo_booth_arrangement"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:spinnerMode="dropdown" />
+        </TableRow>
+    </TableLayout>
+
+    <Button
+        android:id="@+id/setup_photo_booth_button_next"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_margin="@dimen/kiosk_spacing"
+        android:padding="@dimen/kiosk_spacing"
+        android:text="@string/setup__button_text_next" />
+
+</RelativeLayout>

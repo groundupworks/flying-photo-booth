@@ -32,8 +32,7 @@ public class SetupActivity extends BaseFragmentActivity implements EventInfoSetu
 
     @Override
     public void onEventInfoSetupCompleted() {
-        replaceFragment(ShareServicesSetupFragment.newInstance(), true, false);
-        // replaceFragment(PhotoBoothSetupFragment.newInstance(), true, false);
+        replaceFragment(PhotoBoothSetupFragment.newInstance(), true, false);
     }
 
     @Override

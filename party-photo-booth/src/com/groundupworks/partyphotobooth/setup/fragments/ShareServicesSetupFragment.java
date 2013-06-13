@@ -109,7 +109,7 @@ public class ShareServicesSetupFragment extends Fragment {
         final Context appContext = getActivity().getApplicationContext();
 
         /*
-         * Functionalize views.
+         * Configure views with saved preferences and functionalize.
          */
         mFacebook.setOnClickListener(new OnClickListener() {
             @Override

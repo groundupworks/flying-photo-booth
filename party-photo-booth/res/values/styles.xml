@@ -2,7 +2,7 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <style name="Text">
-        <item name="android:textSize">24dp</item>
+        <item name="android:textSize">@dimen/text_size_normal</item>
         <item name="android:typeface">sans</item>
     </style>
 
@@ -24,7 +24,7 @@
     </style>
 
     <style name="SmallText">
-        <item name="android:textSize">18dp</item>
+        <item name="android:textSize">@dimen/text_size_small</item>
         <item name="android:typeface">sans</item>
     </style>
 
@@ -33,7 +33,7 @@
     </style>
 
     <style name="TitleText">
-        <item name="android:textSize">60dp</item>
+        <item name="android:textSize">@dimen/text_size_large</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">@color/background_color</item>
     </style>

@@ -89,7 +89,7 @@ public class EventInfoSetupFragment extends Fragment {
         long datePref = mPreferencesHelper.getEventDate(appContext);
 
         /*
-         * Configure views with saved preferences.
+         * Configure views with saved preferences and functionalize.
          */
         if (TextHelper.isValid(lineOnePref)) {
             mLineOne.setText(lineOnePref);

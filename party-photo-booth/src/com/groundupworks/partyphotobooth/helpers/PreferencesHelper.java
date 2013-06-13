@@ -18,6 +18,22 @@ import android.preference.PreferenceManager;
 public class PreferencesHelper {
 
     /**
+     * Photo booth modes.
+     */
+    public enum PhotoBoothMode {
+
+        /**
+         * Self-serve mode uses front-facing camera and count down.
+         */
+        SELF_SERVE,
+
+        /**
+         * Photographer mode uses back-facing camera and no count down.
+         */
+        PHOTOGRAPHER
+    };
+
+    /**
      * Photo booth themes.
      */
     public enum PhotoBoothTheme {
@@ -42,22 +58,6 @@ public class PreferencesHelper {
          */
         STRIPES_GREEN
     }
-
-    /**
-     * Photo booth modes.
-     */
-    public enum PhotoBoothMode {
-
-        /**
-         * Self-serve mode uses front-facing camera and count down.
-         */
-        SELF_SERVE,
-
-        /**
-         * Photographer mode uses back-facing camera and no count down.
-         */
-        PHOTOGRAPHER
-    };
 
     /**
      * Photo strip arrangements.
@@ -86,14 +86,14 @@ public class PreferencesHelper {
     public static final long EVENT_DATE_HIDDEN = -1L;
 
     /**
-     * Key for the photo booth theme record.
-     */
-    private static final String KEY_PHOTO_BOOTH_THEME = "photoBoothTheme";
-
-    /**
      * Key for the photo booth mode record.
      */
     private static final String KEY_PHOTO_BOOTH_MODE = "photoBoothMode";
+
+    /**
+     * Key for the photo booth theme record.
+     */
+    private static final String KEY_PHOTO_BOOTH_THEME = "photoBoothTheme";
 
     /**
      * Key for the photo strip arrangement record.
@@ -145,32 +145,6 @@ public class PreferencesHelper {
     //
 
     /**
-     * Stores the photo booth theme preference.
-     * 
-     * @param context
-     *            the {@link Context}.
-     * @param mode
-     *            one of {@link PhotoBoothTheme}. Must not be null.
-     */
-    public void storePhotoBoothTheme(Context context, PhotoBoothTheme theme) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
-        preferences.edit().putString(KEY_PHOTO_BOOTH_THEME, theme.name()).apply();
-    }
-
-    /**
-     * Reads the photo booth theme preference.
-     * 
-     * @param context
-     *            the {@link Context}.
-     * @return the stored {@link PhotoBoothTheme}.
-     */
-    public PhotoBoothTheme getPhotoBoothTheme(Context context) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
-        String theme = preferences.getString(KEY_PHOTO_BOOTH_THEME, PhotoBoothTheme.STRIPES_BLUE.name());
-        return PhotoBoothTheme.valueOf(theme);
-    }
-
-    /**
      * Stores the photo booth mode preference.
      * 
      * @param context
@@ -194,6 +168,32 @@ public class PreferencesHelper {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
         String mode = preferences.getString(KEY_PHOTO_BOOTH_MODE, PhotoBoothMode.SELF_SERVE.name());
         return PhotoBoothMode.valueOf(mode);
+    }
+
+    /**
+     * Stores the photo booth theme preference.
+     * 
+     * @param context
+     *            the {@link Context}.
+     * @param mode
+     *            one of {@link PhotoBoothTheme}. Must not be null.
+     */
+    public void storePhotoBoothTheme(Context context, PhotoBoothTheme theme) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
+        preferences.edit().putString(KEY_PHOTO_BOOTH_THEME, theme.name()).apply();
+    }
+
+    /**
+     * Reads the photo booth theme preference.
+     * 
+     * @param context
+     *            the {@link Context}.
+     * @return the stored {@link PhotoBoothTheme}.
+     */
+    public PhotoBoothTheme getPhotoBoothTheme(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
+        String theme = preferences.getString(KEY_PHOTO_BOOTH_THEME, PhotoBoothTheme.STRIPES_BLUE.name());
+        return PhotoBoothTheme.valueOf(theme);
     }
 
     /**

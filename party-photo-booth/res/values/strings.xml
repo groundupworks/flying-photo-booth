@@ -16,6 +16,9 @@
 
     <!-- Photo Booth Setup Fragment -->
     <string name="photo_booth_setup__title">Photo Booth Setup</string>
+    <string name="photo_booth_setup__mode">Mode</string>
+    <string name="photo_booth_setup__theme">Theme</string>
+    <string name="photo_booth_setup__arrangement">Arrangement</string>
 
     <!-- Share Services Setup Fragment -->
     <string name="share_services_setup__title">Share Services</string>
@@ -25,6 +28,12 @@
     <string name="share_services_setup__dropbox_enabled">%1$s\'s folder %2$s</string>
     <string name="share_services_setup__disabled">Disabled</string>
     <string name="share_services_setup__notice_enabled">Tell guests where to find their photos</string>
+
+    <!-- Mode Adapter -->
+    <string name="photo_booth_mode_adapter__self_serve_display_name">Self-serve</string>
+    <string name="photo_booth_mode_adapter__self_serve_description">Front-facing camera &amp; count down</string>
+    <string name="photo_booth_mode_adapter__photographer_display_name">Photographer</string>
+    <string name="photo_booth_mode_adapter__photographer_description">Back-facing camera</string>
 
     <!-- Kiosk Mode -->
     <string name="kiosk_mode__setup_message">Press &amp; hold top right corner to exit</string>
