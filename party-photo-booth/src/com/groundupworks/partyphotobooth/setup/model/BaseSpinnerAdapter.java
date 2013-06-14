@@ -5,9 +5,9 @@
  */
 package com.groundupworks.partyphotobooth.setup.model;
 
-import java.util.List;
 import android.content.Context;
 import android.content.res.Resources;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,9 +32,9 @@ public abstract class BaseSpinnerAdapter<T> extends BaseAdapter {
     private LayoutInflater mInflater;
 
     /**
-     * The list of model object items.
+     * The {@link SparseArray} of model object items. Indices must be continuous.
      */
-    private List<T> mItems;
+    private SparseArray<T> mItems;
 
     /**
      * Color of a list item display name.
@@ -52,9 +52,9 @@ public abstract class BaseSpinnerAdapter<T> extends BaseAdapter {
      * @param context
      *            the {@link Context}.
      * @param items
-     *            the list of model objects.
+     *            the {@link SparseArray} of model objects. Indices must be continuous.
      */
-    public BaseSpinnerAdapter(Context context, List<T> items) {
+    public BaseSpinnerAdapter(Context context, SparseArray<T> items) {
         mInflater = LayoutInflater.from(context);
         mItems = items;
 

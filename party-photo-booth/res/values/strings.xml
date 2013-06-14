@@ -18,7 +18,7 @@
     <string name="photo_booth_setup__title">Photo Booth Setup</string>
     <string name="photo_booth_setup__mode">Mode</string>
     <string name="photo_booth_setup__theme">Theme</string>
-    <string name="photo_booth_setup__arrangement">Arrangement</string>
+    <string name="photo_booth_setup__template">Photo strip</string>
 
     <!-- Share Services Setup Fragment -->
     <string name="share_services_setup__title">Share Services</string>
@@ -29,11 +29,35 @@
     <string name="share_services_setup__disabled">Disabled</string>
     <string name="share_services_setup__notice_enabled">Tell guests where to find their photos</string>
 
-    <!-- Mode Adapter -->
+    <!-- Photo Booth Mode Adapter -->
     <string name="photo_booth_mode_adapter__self_serve_display_name">Self-serve</string>
     <string name="photo_booth_mode_adapter__self_serve_description">Front-facing camera &amp; count down</string>
     <string name="photo_booth_mode_adapter__photographer_display_name">Photographer</string>
     <string name="photo_booth_mode_adapter__photographer_description">Back-facing camera</string>
+
+    <!-- Photo Booth Theme Adapter -->
+    <string name="photo_booth_theme_adapter__blue_display_name">Blue stripes</string>
+    <string name="photo_booth_theme_adapter__pink_display_name">Pink stripes</string>
+    <string name="photo_booth_theme_adapter__orange_display_name">Orange stripes</string>
+    <string name="photo_booth_theme_adapter__green_display_name">Green stripes</string>
+
+    <!-- Photo Strip Template Adapter -->
+    <string name="photo_strip_template_adapter__single_display_name">Single</string>
+    <string name="photo_strip_template_adapter__single_description">One panel</string>
+    <string name="photo_strip_template_adapter__2_vertical_display_name">Vertical 2</string>
+    <string name="photo_strip_template_adapter__2_vertical_description">Two panels top to bottom</string>
+    <string name="photo_strip_template_adapter__2_horizontal_display_name">Horizontal 2</string>
+    <string name="photo_strip_template_adapter__2_horizontal_description">Two panels left to right</string>
+    <string name="photo_strip_template_adapter__3_vertical_display_name">Vertical 3</string>
+    <string name="photo_strip_template_adapter__3_vertical_description">Three panels top to bottom</string>
+    <string name="photo_strip_template_adapter__3_horizontal_display_name">Horizontal 3</string>
+    <string name="photo_strip_template_adapter__3_horizontal_description">Three panels left to right</string>
+    <string name="photo_strip_template_adapter__4_vertical_display_name">Vertical 4</string>
+    <string name="photo_strip_template_adapter__4_vertical_description">Four panels top to bottom</string>
+    <string name="photo_strip_template_adapter__4_horizontal_display_name">Horizontal 4</string>
+    <string name="photo_strip_template_adapter__4_horizontal_description">Four panels left to right</string>
+    <string name="photo_strip_template_adapter__4_box_display_name">Box 4</string>
+    <string name="photo_strip_template_adapter__4_box_description">Four panels in a box</string>
 
     <!-- Kiosk Mode -->
     <string name="kiosk_mode__setup_message">Press &amp; hold top right corner to exit</string>

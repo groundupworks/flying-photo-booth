@@ -30,7 +30,7 @@ public class PreferencesHelper {
         /**
          * Photographer mode uses back-facing camera and no count down.
          */
-        PHOTOGRAPHER
+        PHOTOGRAPHER;
     };
 
     /**
@@ -56,8 +56,95 @@ public class PreferencesHelper {
         /**
          * Green stripes.
          */
-        STRIPES_GREEN
+        STRIPES_GREEN;
     }
+
+    /**
+     * Photo strip templates.
+     */
+    public enum PhotoStripTemplate {
+
+        /**
+         * Single photo.
+         */
+        SINGLE(PhotoStripArrangement.VERTICAL, 1),
+
+        /**
+         * Vertical arrangement of 2 photos.
+         */
+        VERTICAL_2(PhotoStripArrangement.VERTICAL, 2),
+
+        /**
+         * Horizontal arrangement of 2 photos.
+         */
+        HORIZONTAL_2(PhotoStripArrangement.HORIZONTAL, 2),
+
+        /**
+         * Vertical arrangement of 3 photos.
+         */
+        VERTICAL_3(PhotoStripArrangement.VERTICAL, 3),
+
+        /**
+         * Horizontal arrangement of 3 photos.
+         */
+        HORIZONTAL_3(PhotoStripArrangement.HORIZONTAL, 3),
+
+        /**
+         * Vertical arrangement of 4 photos.
+         */
+        VERTICAL_4(PhotoStripArrangement.VERTICAL, 4),
+
+        /**
+         * Horizontal arrangement of 4 photos.
+         */
+        HORIZONTAL_4(PhotoStripArrangement.HORIZONTAL, 4),
+
+        /**
+         * Box arrangement of 4 photos.
+         */
+        BOX_4(PhotoStripArrangement.BOX, 4);
+
+        /**
+         * The arrangement of the photo strip.
+         */
+        private PhotoStripArrangement mArrangement;
+
+        /**
+         * The number of photos in the photo strip.
+         */
+        private int mNumPhotos;
+
+        /**
+         * Constructor.
+         * 
+         * @param arrangement
+         *            the arrangement of the photo strip.
+         * @param numPhotos
+         *            the number of photos in the photo strip.
+         */
+        private PhotoStripTemplate(PhotoStripArrangement arrangement, int numPhotos) {
+            mArrangement = arrangement;
+            mNumPhotos = numPhotos;
+        }
+
+        /**
+         * Gets the arrangement of the photo strip.
+         * 
+         * @return the {@link PhotoStripArrangement}.
+         */
+        public PhotoStripArrangement getArrangement() {
+            return mArrangement;
+        }
+
+        /**
+         * Gets the number of photos in the photo strip.
+         * 
+         * @return the stored number of photos.
+         */
+        public int getNumPhotos() {
+            return mNumPhotos;
+        }
+    };
 
     /**
      * Photo strip arrangements.
@@ -77,7 +164,7 @@ public class PreferencesHelper {
         /**
          * Box arrangement of photos.
          */
-        BOX
+        BOX;
     };
 
     /**
@@ -96,14 +183,9 @@ public class PreferencesHelper {
     private static final String KEY_PHOTO_BOOTH_THEME = "photoBoothTheme";
 
     /**
-     * Key for the photo strip arrangement record.
+     * Key for the photo strip template record.
      */
-    private static final String KEY_PHOTO_STRIP_ARRANGEMENT = "photoStripArrangement";
-
-    /**
-     * Key for the number of photos in a photo strip record.
-     */
-    private static final String KEY_PHOTO_STRIP_NUM_PHOTOS = "photoStripNumPhotos";
+    private static final String KEY_PHOTO_STRIP_TEMPLATE = "photoStripTemplate";
 
     /**
      * Key for the first line of the event title record.
@@ -124,11 +206,6 @@ public class PreferencesHelper {
      * Key for whether enabled share services are shown in a notice screen.
      */
     private static final String KEY_NOTICE_ENABLED = "noticeEnabled";
-
-    /**
-     * The default number of photos in a photo strip.
-     */
-    private static final int DEFAULT_NUM_PHOTOS = 4;
 
     /**
      * The default preferences for the event title.
@@ -197,54 +274,29 @@ public class PreferencesHelper {
     }
 
     /**
-     * Stores the photo strip arrangement preference.
+     * Stores the photo strip template preference.
      * 
      * @param context
      *            the {@link Context}.
-     * @param arrangement
-     *            one of {@link PhotoStripArrangement}. Must not be null.
+     * @param template
+     *            one of {@link PhotoStripTemplate}. Must not be null.
      */
-    public void storePhotoStripArrangement(Context context, PhotoStripArrangement arrangement) {
+    public void storePhotoStripTemplate(Context context, PhotoStripTemplate template) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
-        preferences.edit().putString(KEY_PHOTO_STRIP_ARRANGEMENT, arrangement.name()).apply();
+        preferences.edit().putString(KEY_PHOTO_STRIP_TEMPLATE, template.name()).apply();
     }
 
     /**
-     * Reads the photo strip arrangement preference.
+     * Reads the photo strip template preference.
      * 
      * @param context
      *            the {@link Context}.
-     * @return the stored {@link PhotoStripArrangement}.
+     * @return the stored {@link PhotoStripTemplate}.
      */
-    public PhotoStripArrangement getPhotoStripArrangement(Context context) {
+    public PhotoStripTemplate getPhotoStripTemplate(Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
-        String arrangement = preferences.getString(KEY_PHOTO_STRIP_ARRANGEMENT, PhotoStripArrangement.VERTICAL.name());
-        return PhotoStripArrangement.valueOf(arrangement);
-    }
-
-    /**
-     * Stores the number of photos in a photo strip.
-     * 
-     * @param context
-     *            the {@link Context}.
-     * @param numPhotos
-     *            the number of photos.
-     */
-    public void storePhotoStripNumPhotos(Context context, int numPhotos) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
-        preferences.edit().putInt(KEY_PHOTO_STRIP_NUM_PHOTOS, numPhotos).apply();
-    }
-
-    /**
-     * Reads the number of photos in a photo strip.
-     * 
-     * @param context
-     *            the {@link Context}.
-     * @return the stored number of photos.
-     */
-    public int getPhotoStripNumPhotos(Context context) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
-        return preferences.getInt(KEY_PHOTO_STRIP_NUM_PHOTOS, DEFAULT_NUM_PHOTOS);
+        String template = preferences.getString(KEY_PHOTO_STRIP_TEMPLATE, PhotoStripTemplate.VERTICAL_3.name());
+        return PhotoStripTemplate.valueOf(template);
     }
 
     /**

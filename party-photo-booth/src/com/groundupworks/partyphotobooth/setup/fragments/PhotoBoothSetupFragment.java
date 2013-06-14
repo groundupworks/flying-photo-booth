@@ -21,7 +21,11 @@ import android.widget.Spinner;
 import com.groundupworks.partyphotobooth.R;
 import com.groundupworks.partyphotobooth.helpers.PreferencesHelper;
 import com.groundupworks.partyphotobooth.helpers.PreferencesHelper.PhotoBoothMode;
+import com.groundupworks.partyphotobooth.helpers.PreferencesHelper.PhotoBoothTheme;
+import com.groundupworks.partyphotobooth.helpers.PreferencesHelper.PhotoStripTemplate;
 import com.groundupworks.partyphotobooth.setup.model.PhotoBoothModeAdapter;
+import com.groundupworks.partyphotobooth.setup.model.PhotoBoothThemeAdapter;
+import com.groundupworks.partyphotobooth.setup.model.PhotoStripTemplateAdapter;
 
 /**
  * Ui for setting up the photo booth.
@@ -48,7 +52,7 @@ public class PhotoBoothSetupFragment extends Fragment {
 
     private Spinner mTheme;
 
-    private Spinner mArrangement;
+    private Spinner mTemplate;
 
     private Button mNext;
 
@@ -67,7 +71,7 @@ public class PhotoBoothSetupFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_photo_booth_setup, container, false);
         mMode = (Spinner) view.findViewById(R.id.setup_photo_booth_mode);
         mTheme = (Spinner) view.findViewById(R.id.setup_photo_booth_theme);
-        mArrangement = (Spinner) view.findViewById(R.id.setup_photo_booth_arrangement);
+        mTemplate = (Spinner) view.findViewById(R.id.setup_photo_booth_template);
         mNext = (Button) view.findViewById(R.id.setup_photo_booth_button_next);
 
         return view;
@@ -100,7 +104,39 @@ public class PhotoBoothSetupFragment extends Fragment {
             }
         });
 
-        // TODO Handle theme and arrangement.
+        final PhotoBoothThemeAdapter themeAdapter = new PhotoBoothThemeAdapter(activity);
+        mTheme.setAdapter(themeAdapter);
+        mTheme.setSelection(mPreferencesHelper.getPhotoBoothTheme(appContext).ordinal());
+        mTheme.setOnItemSelectedListener(new OnItemSelectedListener() {
+
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                PhotoBoothTheme selectedTheme = themeAdapter.getPhotoBoothTheme(position);
+                mPreferencesHelper.storePhotoBoothTheme(appContext, selectedTheme);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                // Do nothing.
+            }
+        });
+
+        final PhotoStripTemplateAdapter templateAdapter = new PhotoStripTemplateAdapter(activity);
+        mTemplate.setAdapter(templateAdapter);
+        mTemplate.setSelection(mPreferencesHelper.getPhotoStripTemplate(appContext).ordinal());
+        mTemplate.setOnItemSelectedListener(new OnItemSelectedListener() {
+
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                PhotoStripTemplate selectedTemplate = templateAdapter.getPhotoStripTemplate(position);
+                mPreferencesHelper.storePhotoStripTemplate(appContext, selectedTemplate);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                // Do nothing.
+            }
+        });
 
         mNext.setOnClickListener(new OnClickListener() {
             @Override

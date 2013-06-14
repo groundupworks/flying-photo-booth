@@ -5,9 +5,8 @@
  */
 package com.groundupworks.partyphotobooth.setup.model;
 
-import java.util.ArrayList;
-import java.util.List;
 import android.content.Context;
+import android.util.SparseArray;
 import android.view.View;
 import android.widget.TextView;
 import com.groundupworks.partyphotobooth.R;
@@ -32,9 +31,12 @@ public class PhotoBoothModeAdapter extends BaseSpinnerAdapter<PhotoBoothModeAdap
 
     @Override
     protected void bindView(PhotoBoothModeAdapter.Mode item, View view) {
+        // Hide unused views.
+        view.findViewById(R.id.spinner_item_icon).setVisibility(View.GONE);
+
+        // Bind data.
         ((TextView) view.findViewById(R.id.spinner_item_display_name)).setText(item.mDisplayName);
         ((TextView) view.findViewById(R.id.spinner_item_description)).setText(item.mDescription);
-        view.findViewById(R.id.spinner_item_icon).setVisibility(View.GONE);
     }
 
     //
@@ -46,24 +48,24 @@ public class PhotoBoothModeAdapter extends BaseSpinnerAdapter<PhotoBoothModeAdap
      * 
      * @param context
      *            the {@link Context}.
-     * @return the list of {@link PhotoBoothModeAdapter.Mode}.
+     * @return the {@link SparseArray} of {@link PhotoBoothModeAdapter.Mode}.
      */
-    private static List<PhotoBoothModeAdapter.Mode> createItems(Context context) {
-        List<PhotoBoothModeAdapter.Mode> modes = new ArrayList<PhotoBoothModeAdapter.Mode>();
+    private static SparseArray<PhotoBoothModeAdapter.Mode> createItems(Context context) {
+        SparseArray<PhotoBoothModeAdapter.Mode> modes = new SparseArray<PhotoBoothModeAdapter.Mode>();
 
         // Add self-serve mode.
         PhotoBoothModeAdapter.Mode selfServeMode = new PhotoBoothModeAdapter.Mode();
         selfServeMode.mMode = PhotoBoothMode.SELF_SERVE;
         selfServeMode.mDisplayName = context.getString(R.string.photo_booth_mode_adapter__self_serve_display_name);
         selfServeMode.mDescription = context.getString(R.string.photo_booth_mode_adapter__self_serve_description);
-        modes.add(selfServeMode);
+        modes.put(PhotoBoothMode.SELF_SERVE.ordinal(), selfServeMode);
 
         // Add photographer mode.
         PhotoBoothModeAdapter.Mode photographerMode = new PhotoBoothModeAdapter.Mode();
         photographerMode.mMode = PhotoBoothMode.PHOTOGRAPHER;
         photographerMode.mDisplayName = context.getString(R.string.photo_booth_mode_adapter__photographer_display_name);
         photographerMode.mDescription = context.getString(R.string.photo_booth_mode_adapter__photographer_description);
-        modes.add(photographerMode);
+        modes.put(PhotoBoothMode.PHOTOGRAPHER.ordinal(), photographerMode);
 
         return modes;
     }
