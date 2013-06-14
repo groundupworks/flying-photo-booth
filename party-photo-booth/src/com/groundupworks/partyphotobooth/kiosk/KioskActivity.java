@@ -107,6 +107,7 @@ public class KioskActivity extends FragmentActivity implements KioskSetupFragmen
             // Dismiss the notice fragment after resume.
             dismissNoticeFragment();
         } else {
+            Toast.makeText(this, getString(R.string.kiosk_mode__start_msg), Toast.LENGTH_SHORT).show();
             launchKioskSetupFragment();
         }
     }

@@ -60,8 +60,8 @@ public class KioskService extends Service {
         Notification notification = builder.setSmallIcon(com.groundupworks.lib.photobooth.R.drawable.notification)
                 .setContentTitle(appContext.getString(R.string.kiosk_mode__notification_title))
                 .setContentText(appContext.getString(R.string.kiosk_mode__notification_msg))
-                .setTicker(appContext.getString(R.string.kiosk_mode__notification_ticker))
-                .setWhen(System.currentTimeMillis()).setContentIntent(pendingIntent).build();
+                .setTicker(appContext.getString(R.string.kiosk_mode__start_msg)).setWhen(System.currentTimeMillis())
+                .setContentIntent(pendingIntent).build();
 
         // Make foreground service.
         startForeground(NOTIFICATION_ID, notification);
