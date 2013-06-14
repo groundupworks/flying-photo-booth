@@ -5,6 +5,7 @@
  */
 package com.groundupworks.partyphotobooth.helpers;
 
+import java.util.Date;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -212,11 +213,6 @@ public class PreferencesHelper {
      */
     private static final String DEFAULT_EVENT_TITLE_PREFERENCE = "";
 
-    /**
-     * The default preferences for the event date.
-     */
-    private static final long DEFAULT_EVENT_DATE_PREFERENCE = EVENT_DATE_HIDDEN;
-
     //
     // Public methods.
     //
@@ -375,11 +371,12 @@ public class PreferencesHelper {
      * 
      * @param context
      *            the {@link Context}.
-     * @return the event date in milliseconds; or {@link PreferencesHelper#EVENT_DATE_HIDDEN} if hidden.
+     * @return the event date in milliseconds; or {@link PreferencesHelper#EVENT_DATE_HIDDEN} if hidden. The current
+     *         date is returned if no record is stored.
      */
     public long getEventDate(Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
-        return preferences.getLong(KEY_EVENT_DATE, DEFAULT_EVENT_DATE_PREFERENCE);
+        return preferences.getLong(KEY_EVENT_DATE, new Date().getTime());
     }
 
     /**
