@@ -77,7 +77,6 @@ public class KioskActivity extends FragmentActivity implements KioskSetupFragmen
         setContentView(R.layout.activity_kiosk);
 
         // Configure button to exit Kiosk mode.
-
         ImageView exitButton = (ImageView) findViewById(R.id.kiosk_exit_button);
         mFlashScreen = findViewById(R.id.flash_screen);
         exitButton.setOnLongClickListener(new OnLongClickListener() {

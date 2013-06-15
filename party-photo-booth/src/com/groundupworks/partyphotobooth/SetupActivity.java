@@ -27,7 +27,11 @@ public class SetupActivity extends BaseFragmentActivity implements EventInfoSetu
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        replaceFragment(EventInfoSetupFragment.newInstance(), false, false);
+
+        // Launch event info setup on startup.
+        if (savedInstanceState == null) {
+            replaceFragment(EventInfoSetupFragment.newInstance(), false, false);
+        }
     }
 
     @Override
