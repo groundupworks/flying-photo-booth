@@ -44,25 +44,28 @@
                 <TextView
                     android:id="@+id/event_line_one"
                     style="@style/Text.Dark.Heavy"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
+                    android:gravity="center"
+                    android:singleLine="true"
                     android:visibility="gone" />
 
                 <TextView
                     android:id="@+id/event_line_two"
                     style="@style/Text.Dark.Heavy"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
+                    android:gravity="center"
+                    android:singleLine="true"
                     android:visibility="gone" />
 
                 <TextView
                     android:id="@+id/event_date"
                     style="@style/Text.Light"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
+                    android:gravity="center"
+                    android:singleLine="true"
                     android:visibility="gone" />
 
                 <View

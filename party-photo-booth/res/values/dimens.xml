@@ -2,6 +2,7 @@
 <resources>
 
     <dimen name="photo_thumb_size">200dp</dimen>
+    <dimen name="photo_thumb_text_line_height">30dp</dimen>
     <dimen name="kiosk_spacing">12dp</dimen>
     <dimen name="photo_strip_shadow_size">6dp</dimen>
 

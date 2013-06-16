@@ -10,9 +10,11 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.Paint;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Message;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -125,7 +127,9 @@ public class PhotoStripFragment extends ControllerBackedFragment<PhotoStripContr
         Context appContext = getActivity().getApplicationContext();
         PreferencesHelper preferencesHelper = new PreferencesHelper();
 
-        // Set the selected theme.
+        /*
+         * Set the selected theme.
+         */
         PhotoBoothTheme theme = preferencesHelper.getPhotoBoothTheme(appContext);
         if (PhotoBoothTheme.STRIPES_BLUE.equals(theme)) {
             mTitle.setBackgroundResource(R.drawable.bitmap_tile_blue);
@@ -137,16 +141,61 @@ public class PhotoStripFragment extends ControllerBackedFragment<PhotoStripContr
             mTitle.setBackgroundResource(R.drawable.bitmap_tile_green);
         }
 
-        // Display event title.
+        /*
+         * Calculate optimal text size.
+         */
+        float optimalTextSize = Float.MAX_VALUE;
+
+        // Get bounding box for a line of header text.
+        Resources res = getResources();
+        int lineWidth = res.getDimensionPixelSize(R.dimen.photo_thumb_size);
+        int lineHeight = res.getDimensionPixelSize(R.dimen.photo_thumb_text_line_height);
+
+        // Calculate based on first line of event title.
         String eventLineOne = preferencesHelper.getEventLineOne(appContext);
-        String eventLineTwo = preferencesHelper.getEventLineTwo(appContext);
         if (TextHelper.isValid(eventLineOne)) {
+            Paint paint = mEventLineOne.getPaint();
+            float fittedTextSize = TextHelper.getFittedTextSize(eventLineOne, lineWidth, lineHeight, paint);
+            if (fittedTextSize < optimalTextSize) {
+                optimalTextSize = fittedTextSize;
+            }
+        }
+
+        // Calculate based on second line of event title.
+        String eventLineTwo = preferencesHelper.getEventLineTwo(appContext);
+        if (TextHelper.isValid(eventLineTwo)) {
+            Paint paint = mEventLineTwo.getPaint();
+            float fittedTextSize = TextHelper.getFittedTextSize(eventLineTwo, lineWidth, lineHeight, paint);
+            if (fittedTextSize < optimalTextSize) {
+                optimalTextSize = fittedTextSize;
+            }
+        }
+
+        // Calculate based on event date.
+        String eventDateString = null;
+        long eventDate = preferencesHelper.getEventDate(appContext);
+        if (eventDate != PreferencesHelper.EVENT_DATE_HIDDEN) {
+            Paint paint = mEventDate.getPaint();
+            eventDateString = TextHelper.getDateString(appContext, eventDate);
+            float fittedTextSize = TextHelper.getFittedTextSize(eventDateString, lineWidth, lineHeight, paint);
+            if (fittedTextSize < optimalTextSize) {
+                optimalTextSize = fittedTextSize;
+            }
+        }
+
+        /*
+         * Display header.
+         */
+        // Display event title.
+        if (TextHelper.isValid(eventLineOne)) {
+            mEventLineOne.setTextSize(TypedValue.COMPLEX_UNIT_PX, optimalTextSize);
             mEventLineOne.setText(eventLineOne);
             mEventLineOne.setVisibility(View.VISIBLE);
         } else {
             mEventLineOne.setVisibility(View.GONE);
         }
         if (TextHelper.isValid(eventLineTwo)) {
+            mEventLineTwo.setTextSize(TypedValue.COMPLEX_UNIT_PX, optimalTextSize);
             mEventLineTwo.setText(eventLineTwo);
             mEventLineTwo.setVisibility(View.VISIBLE);
         } else {
@@ -154,9 +203,9 @@ public class PhotoStripFragment extends ControllerBackedFragment<PhotoStripContr
         }
 
         // Display event date.
-        long eventDate = preferencesHelper.getEventDate(appContext);
-        if (eventDate != PreferencesHelper.EVENT_DATE_HIDDEN) {
-            mEventDate.setText(TextHelper.getDateString(appContext, eventDate));
+        if (eventDateString != null) {
+            mEventDate.setTextSize(TypedValue.COMPLEX_UNIT_PX, optimalTextSize);
+            mEventDate.setText(eventDateString);
             mEventDate.setVisibility(View.VISIBLE);
         } else {
             mEventDate.setVisibility(View.GONE);
