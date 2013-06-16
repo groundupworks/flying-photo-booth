@@ -37,7 +37,7 @@ import com.groundupworks.partyphotobooth.kiosk.KioskModeHelper.State;
  */
 public class KioskActivity extends FragmentActivity implements KioskSetupFragment.ICallbacks,
         PhotoStripFragment.ICallbacks, CaptureFragment.ICallbacks, ConfirmationFragment.ICallbacks,
-        NoticeFragment.ICallbacks {
+        NoticeFragment.ICallbacks, ErrorDialogFragment.ICallbacks {
 
     /**
      * Package private flag to track whether the single instance {@link KioskActivity} is in foreground.
@@ -282,6 +282,15 @@ public class KioskActivity extends FragmentActivity implements KioskSetupFragmen
     @Override
     public void onNoticeDismissRequested() {
         dismissNoticeFragment();
+    }
+
+    //
+    // Implementation of the ErrorDialogFragment callbacks.
+    //
+
+    @Override
+    public void onExitPressed() {
+        exitKioskMode();
     }
 
     //

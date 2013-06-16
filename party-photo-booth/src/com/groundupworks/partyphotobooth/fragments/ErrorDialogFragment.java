@@ -5,6 +5,7 @@
  */
 package com.groundupworks.partyphotobooth.fragments;
 
+import java.lang.ref.WeakReference;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -22,9 +23,24 @@ import com.groundupworks.partyphotobooth.R;
  */
 public class ErrorDialogFragment extends DialogFragment {
 
+    //
+    // Fragment bundle keys.
+    //
+
     private static final String FRAGMENT_BUNDLE_KEY_TITLE = "title";
 
     private static final String FRAGMENT_BUNDLE_KEY_MESSAGE = "message";
+
+    /**
+     * Callbacks for this fragment.
+     */
+    private WeakReference<ErrorDialogFragment.ICallbacks> mCallbacks = null;
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        mCallbacks = new WeakReference<ErrorDialogFragment.ICallbacks>((ErrorDialogFragment.ICallbacks) activity);
+    }
 
     @SuppressLint("NewApi")
     @Override
@@ -46,12 +62,30 @@ public class ErrorDialogFragment extends DialogFragment {
                 .setPositiveButton(R.string.error__dialog_button_text, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int whichButton) {
-                        Activity activity = getActivity();
-                        if (activity != null) {
-                            activity.finish();
+                        // Call to client.
+                        ICallbacks callbacks = getCallbacks();
+                        if (callbacks != null) {
+                            callbacks.onExitPressed();
                         }
                     }
                 }).create();
+    }
+
+    //
+    // Private methods.
+    //
+
+    /**
+     * Gets the callbacks for this fragment.
+     * 
+     * @return the callbacks; or null if not set.
+     */
+    private ErrorDialogFragment.ICallbacks getCallbacks() {
+        ErrorDialogFragment.ICallbacks callbacks = null;
+        if (mCallbacks != null) {
+            callbacks = mCallbacks.get();
+        }
+        return callbacks;
     }
 
     //
@@ -77,5 +111,20 @@ public class ErrorDialogFragment extends DialogFragment {
         fragment.setArguments(args);
 
         return fragment;
+    }
+
+    //
+    // Interfaces.
+    //
+
+    /**
+     * Callbacks for this fragment.
+     */
+    public interface ICallbacks {
+
+        /**
+         * Exit button is pressed.
+         */
+        public void onExitPressed();
     }
 }
