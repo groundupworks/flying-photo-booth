@@ -412,7 +412,7 @@ public class PhotoStripFragment extends ControllerBackedFragment<PhotoStripContr
                 // Call to client.
                 ICallbacks callbacks = getCallbacks();
                 if (callbacks != null) {
-                    callbacks.onNewPhotoStarted();
+                    callbacks.onNewPhotoAdded(isPhotoStripComplete);
                 }
             }
 
@@ -424,12 +424,6 @@ public class PhotoStripFragment extends ControllerBackedFragment<PhotoStripContr
             @Override
             public void onAnimationEnd(Animation animation) {
                 mScroller.fullScroll(ScrollView.FOCUS_DOWN);
-
-                // Call to client.
-                ICallbacks callbacks = getCallbacks();
-                if (callbacks != null) {
-                    callbacks.onNewPhotoEnded(isPhotoStripComplete);
-                }
             }
         });
 
@@ -483,17 +477,12 @@ public class PhotoStripFragment extends ControllerBackedFragment<PhotoStripContr
     public interface ICallbacks {
 
         /**
-         * A new photo animation started.
-         */
-        public void onNewPhotoStarted();
-
-        /**
-         * A new photo animation ended.
+         * A new photo is added.
          * 
          * @param isPhotoStripComplete
          *            true if this is the last frame and the photo strip is complete; false otherwise.
          */
-        public void onNewPhotoEnded(boolean isPhotoStripComplete);
+        public void onNewPhotoAdded(boolean isPhotoStripComplete);
 
         /**
          * A photo is removed from the photo strip.

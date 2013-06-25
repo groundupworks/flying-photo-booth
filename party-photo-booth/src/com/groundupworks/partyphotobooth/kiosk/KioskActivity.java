@@ -161,7 +161,7 @@ public class KioskActivity extends FragmentActivity implements KioskSetupFragmen
     //
 
     @Override
-    public void onNewPhotoStarted() {
+    public void onNewPhotoAdded(boolean isPhotoStripComplete) {
         // Fade out flash screen.
         Animation animation = AnimationUtils.loadAnimation(this, R.anim.fade_out);
         animation.setAnimationListener(new AnimationListener() {
@@ -182,10 +182,8 @@ public class KioskActivity extends FragmentActivity implements KioskSetupFragmen
             }
         });
         mFlashScreen.startAnimation(animation);
-    }
 
-    @Override
-    public void onNewPhotoEnded(boolean isPhotoStripComplete) {
+        // Transition right side fragment while flash animation is running.
         if (isPhotoStripComplete) {
             // Confirm submission of photo strip.
             launchConfirmationFragment();
@@ -388,7 +386,7 @@ public class KioskActivity extends FragmentActivity implements KioskSetupFragmen
     }
 
     /**
-     * Replaces the {@link Fragment} in the left side container.
+     * Replaces the {@link Fragment} in the right side container.
      * 
      * @param fragment
      *            the new {@link Fragment} used to replace the current.
