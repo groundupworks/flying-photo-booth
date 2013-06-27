@@ -67,11 +67,6 @@ public class CaptureFragment extends Fragment {
      */
     private int mPreviewDisplayOrientation = CameraHelper.CAMERA_SCREEN_ORIENTATION_0;
 
-    /**
-     * Flag to indicate whether the camera image is reflected.
-     */
-    private boolean mIsReflected = false;
-
     //
     // Views.
     //
@@ -128,9 +123,6 @@ public class CaptureFragment extends Fragment {
         CameraInfo cameraInfo = new CameraInfo();
         for (int cameraId = 0; cameraId < numCameras; cameraId++) {
             Camera.getCameraInfo(cameraId, cameraInfo);
-
-            // Set flag to indicate whether the camera image is reflected.
-            mIsReflected = isCameraImageReflected(cameraInfo);
 
             // Break on finding the preferred camera.
             if (cameraInfo.facing == cameraPreference) {
@@ -303,7 +295,7 @@ public class CaptureFragment extends Fragment {
                 // Call to client.
                 ICallbacks callbacks = getCallbacks();
                 if (callbacks != null) {
-                    callbacks.onPictureTaken(data, mPreviewDisplayOrientation, mIsReflected);
+                    callbacks.onPictureTaken(data, mPreviewDisplayOrientation, false);
                 }
             }
         }
@@ -353,15 +345,6 @@ public class CaptureFragment extends Fragment {
                 }
             }
         }
-    }
-
-    /**
-     * Checks whether the camera image is reflected.
-     * 
-     * @return true if the camera image is reflected; false otherwise.
-     */
-    private boolean isCameraImageReflected(CameraInfo cameraInfo) {
-        return cameraInfo.facing == CameraInfo.CAMERA_FACING_FRONT;
     }
 
     //
