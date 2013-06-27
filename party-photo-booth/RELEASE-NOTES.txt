@@ -1,3 +1,72 @@
+VERSION 1.2
+
+Need a photo booth at your event? There is an app for that!
+
+Party PhotoBooth is designed for birthday parties, weddings and any events where your guests are encouraged to act goofy on camera. As the party host, you will be able to transform your phone or tablet into a photo booth in a minute's time!
+
+The unique Kiosk mode feature keeps the app running in foreground, so the device will remain as a photo booth for the duration of your event. You can fix your tablet on a tripod, or have guests pass around this mobile photo booth, without worrying about the app being closed.
+
+Automatically share photo strips as they are taken, privately or publicly, to Facebook and Dropbox. Guests can optionally be notified of where they may find their photos.
+
+I understand if you are to use Party PhotoBooth at your wedding, the app must be flawlessly reliable. Party PhotoBooth is based on the same engine that drives the Flying PhotoBooth, which has been in market for a while with great reviews.
+
+
+FEATURES
+
+One-minute Set Up
+
+¥ Pick a photo strip template with optional event name and date
+¥ Select "Self-serve mode" to use front-facing camera and photo booth style timer, or "Photographer mode" to use back-facing camera
+¥ Link Facebook and Dropbox accounts for auto sharing, retries are automatically scheduled if network is unavailable
+¥ Keep the app in foreground with passcode-protected Kiosk mode 
+
+Guest Experience
+
+¥ Photo booth style photo shoot with animated review panel
+¥ Find newly created photo strip in your Facebook album and Dropbox folder
+¥ Automatically return to the Capture screen for the next guest
+
+
+USEFUL TIPS
+
+¥ Think about proper lighting and battery life
+¥ The iStabilizer tabMount works very well for mounting my 7-inch and 10-inch Galaxy Tabs onto my camera tripod
+¥ If you happen to forget the Kiosk mode passcode, restart your device with the power button
+
+If you have more questions, just send me an email and I will be happy to help make your event a success! 
+
+
+THE UNOFFICIAL PRINT FEATURE
+
+With a little DIY spirit, you can get Party PhotoBooth to automatically print every photo strip as they are captured!
+
+To get started, you will need:
+
+¥ A Dropbox account
+¥ A mobile device connected to the internet
+¥ A computer connected to the internet
+¥ A printer that the computer can print from
+
+Steps to set up your DIY photo booth:
+
+1. Install Party PhotoBooth on your mobile device, link to Dropbox for auto sharing.
+
+2. Install the Dropbox Desktop Application on your computer.
+
+3. Configure your computer to monitor the "Party PhotoBooth" folder in your Dropbox and print every file that gets added. Follow the below links, and in each case, you will have to replace "PrintQueue" with "Party PhotoBooth" as the folder to monitor.
+
+For Macs, http://www.labnol.org/tech/print-files-on-remote-mac/17838/
+For Linux, http://www.labnol.org/software/print-files-on-linux/17841/
+For Windows, http://www.labnol.org/internet/print-from-mobile-phones/17827/ 
+
+Have fun!
+
+
+TAGLINE
+
+Need a photo booth at your event?
+
+
 VERSION 1.1-TRY.ME
 
 (No release notes)
