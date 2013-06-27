@@ -144,6 +144,8 @@ public class ShareServicesSetupFragment extends Fragment {
         });
 
         final PreferencesHelper preferencesHelper = new PreferencesHelper();
+        boolean isChecked = preferencesHelper.getNoticeEnabled(appContext);
+        mNoticeEnabled.setChecked(isChecked);
         mNoticeEnabled.setOnCheckedChangeListener(new OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
