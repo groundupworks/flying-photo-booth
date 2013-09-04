@@ -146,10 +146,16 @@ public class CaptureFragment extends Fragment {
                         mCamera.autoFocus(null);
 
                         // Start animation. Take picture when count down animation completes.
-                        AnimationDrawable countdownAnimation = (AnimationDrawable) mStartButton.getBackground();
+                        final AnimationDrawable countdownAnimation = (AnimationDrawable) mStartButton.getBackground();
                         countdownAnimation.setCallback(new TakePictureAnimationDrawableCallback(countdownAnimation,
                                 mStartButton));
-                        countdownAnimation.start();
+
+                        mStartButton.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                countdownAnimation.start();
+                            }
+                        });
                     } else {
                         // Start auto-focus. Take picture when auto-focus completes.
                         mCamera.autoFocus(new TakePictureAutoFocusCallback());
