@@ -56,9 +56,9 @@ public class CenteredPreview extends ViewGroup implements SurfaceHolder.Callback
     private static final int DEFAULT_MASK_COLOR = Color.BLACK;
 
     /**
-     * Flag to indicate whether the surface has been created.
+     * Flag to indicate whether the surface is ready for preview to start.
      */
-    private boolean mSurfaceCreated = false;
+    private boolean mSurfaceReady = false;
 
     /**
      * The preview display orientation. Valid values are {@link #PREVIEW_DISPLAY_ORIENTATION_0},
@@ -114,7 +114,6 @@ public class CenteredPreview extends ViewGroup implements SurfaceHolder.Callback
      */
     public CenteredPreview(Context context) {
         super(context);
-        init(context);
     }
 
     /**
@@ -128,7 +127,6 @@ public class CenteredPreview extends ViewGroup implements SurfaceHolder.Callback
      */
     public CenteredPreview(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init(context);
     }
 
     /**
@@ -146,7 +144,6 @@ public class CenteredPreview extends ViewGroup implements SurfaceHolder.Callback
      */
     public CenteredPreview(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        init(context);
     }
 
     @Override
@@ -158,7 +155,8 @@ public class CenteredPreview extends ViewGroup implements SurfaceHolder.Callback
         // Set layout size.
         setMeasuredDimension(width, height);
 
-        if (mCamera != null && mSupportedPreviewSizes != null && mPictureWidth > 0 && mPictureHeight > 0) {
+        if (mCamera != null && mSurfaceView != null && mSupportedPreviewSizes != null && mPictureWidth > 0
+                && mPictureHeight > 0) {
             // Calculate the optimal supported preview size based on the picture size.
             mPreviewSize = CameraHelper.getOptimalPreviewSize(mSupportedPreviewSizes, mPictureWidth, mPictureHeight);
             if (mPreviewSize != null) {
@@ -172,53 +170,56 @@ public class CenteredPreview extends ViewGroup implements SurfaceHolder.Callback
 
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
-        // Calculate the maximum dimensions that the preview can take.
-        final int parentWidth = right - left;
-        final int parentHeight = bottom - top;
+        if (mSurfaceView != null) {
+            // Calculate the maximum dimensions that the preview can take.
+            final int parentWidth = right - left;
+            final int parentHeight = bottom - top;
 
-        // Calculate the preview dimensions after any applicable rotations.
-        int previewWidth = parentWidth;
-        int previewHeight = parentHeight;
-        if (mPreviewSize != null) {
-            if (mPreviewDisplayOrientation == CameraHelper.CAMERA_SCREEN_ORIENTATION_0
-                    || mPreviewDisplayOrientation == CameraHelper.CAMERA_SCREEN_ORIENTATION_180) {
-                previewWidth = mPreviewSize.width;
-                previewHeight = mPreviewSize.height;
-            } else if (mPreviewDisplayOrientation == CameraHelper.CAMERA_SCREEN_ORIENTATION_90
-                    || mPreviewDisplayOrientation == CameraHelper.CAMERA_SCREEN_ORIENTATION_270) {
-                previewWidth = mPreviewSize.height;
-                previewHeight = mPreviewSize.width;
-            } else {
-                throw new IllegalArgumentException("Invalid value specified for preview display orientation");
+            // Calculate the preview dimensions after any applicable rotations.
+            int previewWidth = parentWidth;
+            int previewHeight = parentHeight;
+            if (mPreviewSize != null) {
+                if (mPreviewDisplayOrientation == CameraHelper.CAMERA_SCREEN_ORIENTATION_0
+                        || mPreviewDisplayOrientation == CameraHelper.CAMERA_SCREEN_ORIENTATION_180) {
+                    previewWidth = mPreviewSize.width;
+                    previewHeight = mPreviewSize.height;
+                } else if (mPreviewDisplayOrientation == CameraHelper.CAMERA_SCREEN_ORIENTATION_90
+                        || mPreviewDisplayOrientation == CameraHelper.CAMERA_SCREEN_ORIENTATION_270) {
+                    previewWidth = mPreviewSize.height;
+                    previewHeight = mPreviewSize.width;
+                } else {
+                    throw new IllegalArgumentException("Invalid value specified for preview display orientation");
+                }
             }
-        }
 
-        /*
-         * Layout children views.
-         */
-        Point previewSurfaceSize = ImageHelper.getAspectFitSize(parentWidth, parentHeight, previewWidth, previewHeight);
-        int previewSurfaceWidth = previewSurfaceSize.x;
-        int previewSurfaceHeight = previewSurfaceSize.y;
+            /*
+             * Layout children views.
+             */
+            Point previewSurfaceSize = ImageHelper.getAspectFitSize(parentWidth, parentHeight, previewWidth,
+                    previewHeight);
+            int previewSurfaceWidth = previewSurfaceSize.x;
+            int previewSurfaceHeight = previewSurfaceSize.y;
 
-        // Ensure preview dimensions are multiples of a preview size factor.
-        previewSurfaceWidth -= previewSurfaceWidth % PREVIEW_SIZE_BLOCK;
-        previewSurfaceHeight -= previewSurfaceHeight % PREVIEW_SIZE_BLOCK;
+            // Ensure preview dimensions are multiples of a preview size factor.
+            previewSurfaceWidth -= previewSurfaceWidth % PREVIEW_SIZE_BLOCK;
+            previewSurfaceHeight -= previewSurfaceHeight % PREVIEW_SIZE_BLOCK;
 
-        // Center the preview surface within the parent container.
-        mSurfaceView.layout((parentWidth - previewSurfaceWidth) / 2, (parentHeight - previewSurfaceHeight) / 2,
-                (parentWidth + previewSurfaceWidth) / 2, (parentHeight + previewSurfaceHeight) / 2);
+            // Center the preview surface within the parent container.
+            mSurfaceView.layout((parentWidth - previewSurfaceWidth) / 2, (parentHeight - previewSurfaceHeight) / 2,
+                    (parentWidth + previewSurfaceWidth) / 2, (parentHeight + previewSurfaceHeight) / 2);
 
-        // Set masks to show only a square region at the center.
-        if (previewSurfaceWidth > previewSurfaceHeight) {
-            // Mask left and right edges.
-            mTopOrLeftMask.layout(0, 0, (parentWidth - previewSurfaceHeight) / 2, parentHeight);
-            mBottomOrRightMask.layout((parentWidth + previewSurfaceHeight) / 2, 0, parentWidth, parentHeight);
-        } else if (previewSurfaceWidth < previewSurfaceHeight) {
-            // Mask top and bottom edges.
-            mTopOrLeftMask.layout(0, 0, parentWidth, (parentHeight - previewSurfaceWidth) / 2);
-            mBottomOrRightMask.layout(0, (parentHeight + previewSurfaceWidth) / 2, parentWidth, parentHeight);
-        } else {
-            // Do not layout mask.
+            // Set masks to show only a square region at the center.
+            if (previewSurfaceWidth > previewSurfaceHeight) {
+                // Mask left and right edges.
+                mTopOrLeftMask.layout(0, 0, (parentWidth - previewSurfaceHeight) / 2, parentHeight);
+                mBottomOrRightMask.layout((parentWidth + previewSurfaceHeight) / 2, 0, parentWidth, parentHeight);
+            } else if (previewSurfaceWidth < previewSurfaceHeight) {
+                // Mask top and bottom edges.
+                mTopOrLeftMask.layout(0, 0, parentWidth, (parentHeight - previewSurfaceWidth) / 2);
+                mBottomOrRightMask.layout(0, (parentHeight + previewSurfaceWidth) / 2, parentWidth, parentHeight);
+            } else {
+                // Do not layout mask.
+            }
         }
     }
 
@@ -228,28 +229,25 @@ public class CenteredPreview extends ViewGroup implements SurfaceHolder.Callback
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-        if (mCamera != null) {
-            try {
-                mCamera.setPreviewDisplay(holder);
-
-                if (mPreviewSize == null) {
-                    // The preview size will be set when the view is measured.
-                    requestLayout();
-                }
-            } catch (IOException exception) {
-                Log.e(TAG, "IOException caused by setPreviewDisplay()", exception);
-            }
-        }
-
-        mSurfaceCreated = true;
+        // Do nothing.
     }
 
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-        try {
-            start();
-        } catch (RuntimeException exception) {
-            Log.e(TAG, "RuntimeException caused by startPreview()", exception);
+        if (mCamera != null) {
+            try {
+                mCamera.setPreviewDisplay(holder);
+
+                // Set flag to indicate the surface is created and attached to the camera for preview to start.
+                mSurfaceReady = true;
+
+                // Start preview.
+                restart();
+            } catch (IOException exception) {
+                Log.e(TAG, "IOException caused by setPreviewDisplay()", exception);
+            } catch (RuntimeException exception) {
+                Log.e(TAG, "RuntimeException caused by startPreview()", exception);
+            }
         }
     }
 
@@ -259,7 +257,7 @@ public class CenteredPreview extends ViewGroup implements SurfaceHolder.Callback
             mCamera.stopPreview();
         }
 
-        mSurfaceCreated = false;
+        mSurfaceReady = false;
     }
 
     //
@@ -272,7 +270,7 @@ public class CenteredPreview extends ViewGroup implements SurfaceHolder.Callback
      * @param context
      *            the Context.
      */
-    private void init(Context context) {
+    private void initViews(Context context) {
         /*
          * Init preview surface.
          */
@@ -306,8 +304,8 @@ public class CenteredPreview extends ViewGroup implements SurfaceHolder.Callback
     //
 
     /**
-     * Sets the camera to use. The client is responsible for locking the camera, and clearing the camera reference by
-     * passing null before releasing.
+     * Starts preview with the selected {@link Camera}. The client is responsible for locking the camera, and calling
+     * {@link CenteredPreview#stop()} before releasing the lock.
      * 
      * @param camera
      *            the Camera to use for preview.
@@ -320,7 +318,7 @@ public class CenteredPreview extends ViewGroup implements SurfaceHolder.Callback
      *            {@link #PREVIEW_DISPLAY_ORIENTATION_90}, {@link #PREVIEW_DISPLAY_ORIENTATION_180}, and
      *            {@link #PREVIEW_DISPLAY_ORIENTATION_270}.
      */
-    public void setCamera(Camera camera, int pictureWidth, int pictureHeight, int previewDisplayOrientation) {
+    public void start(Camera camera, int pictureWidth, int pictureHeight, int previewDisplayOrientation) {
         mCamera = camera;
         mPictureWidth = pictureWidth;
         mPictureHeight = pictureHeight;
@@ -329,22 +327,30 @@ public class CenteredPreview extends ViewGroup implements SurfaceHolder.Callback
         if (camera != null) {
             mSupportedPreviewSizes = camera.getParameters().getSupportedPreviewSizes();
 
-            if (mSurfaceCreated) {
-                // Invalidate the layout since camera has changed.
-                requestLayout();
-            }
+            // Initialize the layout and preview surface.
+            initViews(getContext());
         }
     }
 
     /**
-     * Starts the preview if both camera and surface are ready.
+     * Restarts the preview.
      * 
      * @throws RuntimeException
      *             an exception thrown by the native method {@link Camera#startPreview()}.
      */
-    public void start() throws RuntimeException {
-        if (mCamera != null && mSurfaceCreated) {
+    public void restart() throws RuntimeException {
+        if (mCamera != null && mSurfaceReady) {
             mCamera.startPreview();
         }
+    }
+
+    /**
+     * Stops the preview. This should be called before releasing the lock on the {@link Camera}.
+     */
+    public void stop() {
+        mCamera = null;
+        mPictureWidth = 0;
+        mPictureHeight = 0;
+        mPreviewDisplayOrientation = CameraHelper.CAMERA_SCREEN_ORIENTATION_0;
     }
 }

@@ -223,7 +223,7 @@ public class CaptureFragment extends Fragment {
                  */
                 mPreviewDisplayOrientation = CameraHelper.getCameraScreenOrientation(getActivity(), mCameraId);
                 mCamera.setDisplayOrientation(mPreviewDisplayOrientation);
-                mPreview.setCamera(mCamera, pictureSize.width, pictureSize.height, mPreviewDisplayOrientation);
+                mPreview.start(mCamera, pictureSize.width, pictureSize.height, mPreviewDisplayOrientation);
             } catch (RuntimeException e) {
                 // Call to client.
                 ICallbacks callbacks = getCallbacks();
@@ -243,7 +243,7 @@ public class CaptureFragment extends Fragment {
     @Override
     public void onPause() {
         if (mCamera != null) {
-            mPreview.setCamera(null, 0, 0, CameraHelper.CAMERA_SCREEN_ORIENTATION_0);
+            mPreview.stop();
             mCamera.release();
             mCamera = null;
         }

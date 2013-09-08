@@ -455,7 +455,7 @@ public class CaptureFragment extends Fragment {
                      */
                     mPreviewDisplayOrientation = CameraHelper.getCameraScreenOrientation(activity, mCameraId);
                     mCamera.setDisplayOrientation(mPreviewDisplayOrientation);
-                    mPreview.setCamera(mCamera, pictureSize.width, pictureSize.height, mPreviewDisplayOrientation);
+                    mPreview.start(mCamera, pictureSize.width, pictureSize.height, mPreviewDisplayOrientation);
                 } catch (RuntimeException e) {
                     String title = getString(R.string.capture__error_camera_dialog_title);
                     String message = getString(R.string.capture__error_camera_dialog_message_in_use);
@@ -478,7 +478,7 @@ public class CaptureFragment extends Fragment {
         }
 
         if (mCamera != null) {
-            mPreview.setCamera(null, 0, 0, CameraHelper.CAMERA_SCREEN_ORIENTATION_0);
+            mPreview.stop();
             mCamera.release();
             mCamera = null;
         }
@@ -838,7 +838,7 @@ public class CaptureFragment extends Fragment {
                 // Restart preview.
                 if (mCamera != null && mPreview != null) {
                     try {
-                        mPreview.start();
+                        mPreview.restart();
                     } catch (RuntimeException exception) {
                         final LaunchActivity activity = (LaunchActivity) getActivity();
                         if (activity != null && !activity.isFinishing()) {
