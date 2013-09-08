@@ -246,7 +246,11 @@ public class CenteredPreview extends ViewGroup implements SurfaceHolder.Callback
 
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-        start();
+        try {
+            start();
+        } catch (RuntimeException exception) {
+            Log.e(TAG, "RuntimeException caused by startPreview()", exception);
+        }
     }
 
     @Override
@@ -334,8 +338,11 @@ public class CenteredPreview extends ViewGroup implements SurfaceHolder.Callback
 
     /**
      * Starts the preview if both camera and surface are ready.
+     * 
+     * @throws RuntimeException
+     *             an exception thrown by the native method {@link Camera#startPreview()}.
      */
-    public void start() {
+    public void start() throws RuntimeException {
         if (mCamera != null && mSurfaceCreated) {
             mCamera.startPreview();
         }

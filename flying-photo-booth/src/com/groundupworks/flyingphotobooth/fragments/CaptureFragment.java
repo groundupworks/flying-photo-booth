@@ -837,7 +837,16 @@ public class CaptureFragment extends Fragment {
 
                 // Restart preview.
                 if (mCamera != null && mPreview != null) {
-                    mPreview.start();
+                    try {
+                        mPreview.start();
+                    } catch (RuntimeException exception) {
+                        final LaunchActivity activity = (LaunchActivity) getActivity();
+                        if (activity != null && !activity.isFinishing()) {
+                            String title = getString(R.string.capture__error_camera_dialog_title);
+                            String message = getString(R.string.capture__error_camera_dialog_message_dead);
+                            activity.showDialogFragment(ErrorDialogFragment.newInstance(title, message));
+                        }
+                    }
                 }
 
                 // Fade out review overlay.
