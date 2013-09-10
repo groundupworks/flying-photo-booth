@@ -157,15 +157,31 @@ public class ShareController extends BaseController {
 
                 // Do the image processing.
                 Bitmap[] bitmaps = new Bitmap[jpegDataLength];
+                boolean isFramesValid = true;
                 for (int i = 0; i < jpegDataLength; i++) {
-                    bitmaps[i] = ImageHelper.createImage(jpegData[i], rotation, reflection, filters[i]);
+                    // Create frame.
+                    Bitmap frame = ImageHelper.createImage(jpegData[i], rotation, reflection, filters[i]);
+
+                    // Ensure frame is non-null.
+                    if (frame != null) {
+                        bitmaps[i] = frame;
+                    } else {
+                        isFramesValid = false;
+                        break;
+                    }
                 }
 
-                Bitmap photoStrip = ImageHelper.createPhotoStrip(bitmaps, arrangement);
+                // Create photo strip if all frames are valid.
+                Bitmap photoStrip = null;
+                if (isFramesValid) {
+                    photoStrip = ImageHelper.createPhotoStrip(bitmaps, arrangement);
+                }
 
                 // Recycle original bitmaps.
                 for (Bitmap bitmap : bitmaps) {
-                    bitmap.recycle();
+                    if (bitmap != null) {
+                        bitmap.recycle();
+                    }
                 }
                 bitmaps = null;
 
