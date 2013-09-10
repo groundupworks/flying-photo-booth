@@ -255,6 +255,12 @@ public class PhotoStripFragment extends ControllerBackedFragment<PhotoStripContr
                     callbacks.onErrorNewPhoto();
                 }
                 break;
+            case PhotoStripController.ERROR_PHOTO_MISSING:
+                // Call to client.
+                if (callbacks != null) {
+                    callbacks.onErrorMissingPhoto();
+                }
+                break;
             case PhotoStripController.ERROR_PHOTO_STRIP_SUBMIT:
                 // Call to client.
                 if (callbacks != null) {
@@ -503,6 +509,11 @@ public class PhotoStripFragment extends ControllerBackedFragment<PhotoStripContr
          * An error occurred while attempting to add a new photo.
          */
         public void onErrorNewPhoto();
+
+        /**
+         * An error occurred while attempting to compile a photo strip. One or more photos are needed.
+         */
+        public void onErrorMissingPhoto();
 
         /**
          * An error occurred while attempting to submit the current photo strip.

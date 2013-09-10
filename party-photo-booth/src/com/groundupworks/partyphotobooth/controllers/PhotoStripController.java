@@ -46,7 +46,9 @@ public class PhotoStripController extends BaseController {
 
     public static final int ERROR_JPEG_DATA = -1;
 
-    public static final int ERROR_PHOTO_STRIP_SUBMIT = -2;
+    public static final int ERROR_PHOTO_MISSING = -2;
+
+    public static final int ERROR_PHOTO_STRIP_SUBMIT = -3;
 
     public static final int THUMB_BITMAP_READY = 0;
 
@@ -248,7 +250,15 @@ public class PhotoStripController extends BaseController {
         // Create photo strip as a single bitmap.
         Bitmap[] bitmaps = new Bitmap[mFramesTotalPref];
         for (int i = 0; i < mFramesTotalPref; i++) {
-            bitmaps[i] = mFramesMap.get(i);
+            Bitmap b = mFramesMap.get(i);
+
+            // Ensure all bitmaps in the array are non-null.
+            if (b != null) {
+                bitmaps[i] = b;
+            } else {
+                reportError(ERROR_PHOTO_MISSING);
+                return;
+            }
         }
         Bitmap photoStrip = ImageHelper.createPhotoStrip(bitmaps, arrangement);
 

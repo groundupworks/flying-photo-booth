@@ -301,7 +301,7 @@ public class ImageHelper {
     }
 
     /**
-     * An arrangement of bitmaps to create a photo strip. Only supports exactly four bitmaps of the same size.
+     * An arrangement of bitmaps to create a photo strip. Only supports bitmaps of the same size.
      */
     public interface Arrangement {
 
@@ -309,7 +309,8 @@ public class ImageHelper {
          * Creates a photo strip.
          * 
          * @param srcBitmaps
-         *            the array of bitmaps to join into one photo strip. Must not be null.
+         *            the array of bitmaps to join into one photo strip. The entire array must be populated with bitmaps
+         *            of the same size, and none of the slots may be null.
          * @return the photo strip; or null if unsuccessful.
          */
         public Bitmap createPhotoStrip(Bitmap[] srcBitmaps);

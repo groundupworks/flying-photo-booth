@@ -222,6 +222,13 @@ public class KioskActivity extends FragmentActivity implements KioskSetupFragmen
     }
 
     @Override
+    public void onErrorMissingPhoto() {
+        // More photos are needed to compile a photo strip. Self-recover by relaunching capture fragment.
+        Toast.makeText(this, getString(R.string.photostrip__error_missing_photo), Toast.LENGTH_LONG).show();
+        launchCaptureFragment();
+    }
+
+    @Override
     public void onErrorPhotoStripSubmit() {
         // An error occurred while trying to submit the current photo strip. Self-recover by relaunching photo booth ui.
         Toast.makeText(this, getString(R.string.photostrip__error_submission), Toast.LENGTH_LONG).show();
