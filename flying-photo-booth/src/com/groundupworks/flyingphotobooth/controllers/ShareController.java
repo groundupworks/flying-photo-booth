@@ -245,12 +245,12 @@ public class ShareController extends BaseController {
                 }
 
                 /*
-                 * Recycle photo strip bitmap.
+                 * Recycle photo strip bitmap if it is not the same object referenced by mThumb.
                  */
-                if (photoStrip != null) {
+                if (photoStrip != null && photoStrip != mThumb) {
                     photoStrip.recycle();
-                    photoStrip = null;
                 }
+                photoStrip = null;
 
                 break;
             case ShareFragment.FACEBOOK_SHARE_REQUESTED:

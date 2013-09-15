@@ -219,8 +219,11 @@ public class ImageHelper {
                 Bitmap scaledBitmap = Bitmap.createBitmap(decodedBitmap, 0, 0, options.outWidth, options.outHeight,
                         scaleMatrix, true);
 
-                // Recycle old decoded bitmap.
-                decodedBitmap.recycle();
+                // Recycle old decoded bitmap if it is not the same object referenced by scaledBitmap.
+                if (decodedBitmap != scaledBitmap) {
+                    decodedBitmap.recycle();
+                }
+                decodedBitmap = null;
 
                 if (scaledBitmap != null) {
                     int scaledBitmapWidth = scaledBitmap.getWidth();
@@ -246,16 +249,22 @@ public class ImageHelper {
                             if (filter != null) {
                                 returnBitmap = filter.applyFilter(croppedBitmap);
 
-                                // Recycle old cropped bitmap.
-                                croppedBitmap.recycle();
+                                // Recycle old cropped bitmap if it is not the same object referenced by returnBitmap.
+                                if (croppedBitmap != returnBitmap) {
+                                    croppedBitmap.recycle();
+                                }
+                                croppedBitmap = null;
                             } else {
                                 returnBitmap = croppedBitmap;
                             }
                         }
                     }
 
-                    // Recycle old scaled bitmap.
-                    scaledBitmap.recycle();
+                    // Recycle old scaled bitmap if it is not the same object referenced by returnBitmap.
+                    if (scaledBitmap != returnBitmap) {
+                        scaledBitmap.recycle();
+                    }
+                    scaledBitmap = null;
                 }
             }
         }
