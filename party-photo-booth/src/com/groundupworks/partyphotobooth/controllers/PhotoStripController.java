@@ -11,6 +11,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.LinkedList;
+import java.util.List;
 import android.app.Application;
 import android.content.Context;
 import android.content.res.Resources;
@@ -107,9 +109,19 @@ public class PhotoStripController extends BaseController {
     private int mThumbSize;
 
     /**
-     * Map storing captured frames of bitmap for constructing a photo strip.
+     * List storing the frame bitmaps used to construct the photo strip.
+     */
+    private List<Bitmap> mFramesList;
+
+    /**
+     * Map storing the mapping between unique keys used to identify each frame bitmap and the bitmaps themselves.
      */
     private SparseArray<Bitmap> mFramesMap;
+
+    /**
+     * The unique key for the current frame.
+     */
+    private int mFramesCurrKey;
 
     /**
      * Constructor.
@@ -129,8 +141,12 @@ public class PhotoStripController extends BaseController {
 
         PhotoStripTemplate template = mPreferencesHelper.getPhotoStripTemplate(mContext);
         mArrangementPref = template.getArrangement();
+
+        // Set params for frame management.
         mFramesTotalPref = template.getNumPhotos();
+        mFramesList = new LinkedList<Bitmap>();
         mFramesMap = new SparseArray<Bitmap>(mFramesTotalPref);
+        mFramesCurrKey = 0;
 
         // Set params from resources.
         Resources res = mContext.getResources();
@@ -222,6 +238,11 @@ public class PhotoStripController extends BaseController {
      *            the key of the frame to remove.
      */
     private void processFrameRemoval(int key) {
+        // Remove frame.
+        Bitmap frame = mFramesMap.get(key);
+        mFramesList.remove(frame);
+
+        // Remove mapping.
         mFramesMap.delete(key);
 
         // Notify ui.
@@ -234,6 +255,14 @@ public class PhotoStripController extends BaseController {
      * Processes a photo strip submission request and notifies ui.
      */
     private void processPhotoStripSubmission() {
+        /*
+         * Confirm frame count.
+         */
+        if (mFramesList.size() < mFramesTotalPref) {
+            reportError(ERROR_PHOTO_MISSING);
+            return;
+        }
+
         /*
          * Create photo strip.
          */
@@ -249,21 +278,16 @@ public class PhotoStripController extends BaseController {
 
         // Create photo strip as a single bitmap.
         Bitmap[] bitmaps = new Bitmap[mFramesTotalPref];
-        for (int i = 0; i < mFramesTotalPref; i++) {
-            Bitmap b = mFramesMap.get(i);
-
-            // Ensure all bitmaps in the array are non-null.
-            if (b != null) {
-                bitmaps[i] = b;
-            } else {
-                reportError(ERROR_PHOTO_MISSING);
-                return;
-            }
+        int i = 0;
+        for (Bitmap frame : mFramesList) {
+            bitmaps[i++] = frame;
         }
         Bitmap photoStrip = ImageHelper.createPhotoStrip(bitmaps, arrangement);
 
-        // Clear frames map.
+        // Reset frame management params.
+        mFramesList.clear();
         mFramesMap.clear();
+        mFramesCurrKey = 0;
 
         /*
          * Save photo strip bitmap as Jpeg.
@@ -342,30 +366,25 @@ public class PhotoStripController extends BaseController {
      * @return the key of the stored frame.
      */
     private int storeFrame(Bitmap frame) {
-        int key;
-        for (key = 0; key < mFramesTotalPref; key++) {
-            if (mFramesMap.get(key) == null) {
-                mFramesMap.put(key, frame);
-                break;
-            }
-        }
+        int key = mFramesCurrKey;
+
+        // Add frame to list and map.
+        mFramesList.add(frame);
+        mFramesMap.put(key, frame);
+
+        // Increment frame key.
+        mFramesCurrKey++;
+
         return key;
     }
 
     /**
-     * Checks whether the {@link #mFramesMap} has all the frames needed to construct a photo strip.
+     * Checks whether we have all the frames needed to construct a photo strip.
      * 
-     * @return true if the {@link #mFramesMap} is complete; false otherwise.
+     * @return true if we have enough frames; false otherwise.
      */
     private boolean isPhotoStripComplete() {
-        boolean isPhotoStripComplete = true;
-        for (int key = 0; key < mFramesTotalPref; key++) {
-            if (mFramesMap.get(key) == null) {
-                isPhotoStripComplete = false;
-                break;
-            }
-        }
-        return isPhotoStripComplete;
+        return mFramesList.size() == mFramesTotalPref;
     }
 
     /**
