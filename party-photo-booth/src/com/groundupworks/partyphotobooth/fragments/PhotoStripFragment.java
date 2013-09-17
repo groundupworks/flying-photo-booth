@@ -78,6 +78,11 @@ public class PhotoStripFragment extends ControllerBackedFragment<PhotoStripContr
      */
     private WeakReference<PhotoStripFragment.ICallbacks> mCallbacks = null;
 
+    /**
+     * Flag to track whether the photo strip is auto-scrolling.
+     */
+    private boolean mIsAutoScrolling = false;
+
     //
     // Views.
     //
@@ -333,47 +338,50 @@ public class PhotoStripFragment extends ControllerBackedFragment<PhotoStripContr
         discardButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Disable and remove view.
-                v.setEnabled(false);
+                // Temporarily disable discard button when the photo strip auto-scrolls.
+                if (!mIsAutoScrolling) {
+                    // Disable and remove view.
+                    v.setEnabled(false);
 
-                // Post runnable to start animation.
-                mContainer.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        // Remove view with animation.
-                        animation.setAnimationListener(new AnimationListener() {
+                    // Post runnable to start animation.
+                    mContainer.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            // Remove view with animation.
+                            animation.setAnimationListener(new AnimationListener() {
 
-                            @Override
-                            public void onAnimationStart(Animation animation) {
-                                // Do nothing.
-                            }
+                                @Override
+                                public void onAnimationStart(Animation animation) {
+                                    // Do nothing.
+                                }
 
-                            @Override
-                            public void onAnimationRepeat(Animation animation) {
-                                // Do nothing.
-                            }
+                                @Override
+                                public void onAnimationRepeat(Animation animation) {
+                                    // Do nothing.
+                                }
 
-                            @Override
-                            public void onAnimationEnd(Animation animation) {
-                                // Make view invisible and post a runnable to remove it from the photo strip.
-                                frame.setVisibility(View.GONE);
-                                mContainer.post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        mContainer.removeView(frame);
-                                    }
-                                });
-                            }
-                        });
-                        frame.startAnimation(animation);
-                    }
-                }, FADE_ANIMATION_DELAY);
+                                @Override
+                                public void onAnimationEnd(Animation animation) {
+                                    // Make view invisible and post a runnable to remove it from the photo strip.
+                                    frame.setVisibility(View.GONE);
+                                    mContainer.post(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            mContainer.removeView(frame);
+                                        }
+                                    });
+                                }
+                            });
+                            frame.startAnimation(animation);
+                        }
+                    }, FADE_ANIMATION_DELAY);
 
-                // Notify controller of the frame removal request.
-                Message msg = Message.obtain();
-                msg.what = FRAME_REMOVAL;
-                msg.arg1 = key;
-                sendEvent(msg);
+                    // Notify controller of the frame removal request.
+                    Message msg = Message.obtain();
+                    msg.what = FRAME_REMOVAL;
+                    msg.arg1 = key;
+                    sendEvent(msg);
+                }
             }
         });
 
@@ -413,6 +421,7 @@ public class PhotoStripFragment extends ControllerBackedFragment<PhotoStripContr
 
             @Override
             public void onAnimationStart(Animation animation) {
+                mIsAutoScrolling = true;
                 mScroller.fullScroll(ScrollView.FOCUS_DOWN);
 
                 // Call to client.
@@ -430,6 +439,7 @@ public class PhotoStripFragment extends ControllerBackedFragment<PhotoStripContr
             @Override
             public void onAnimationEnd(Animation animation) {
                 mScroller.fullScroll(ScrollView.FOCUS_DOWN);
+                mIsAutoScrolling = false;
             }
         });
 
