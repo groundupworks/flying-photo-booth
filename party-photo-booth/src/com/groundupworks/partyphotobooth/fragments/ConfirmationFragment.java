@@ -65,6 +65,9 @@ public class ConfirmationFragment extends Fragment {
         mSubmit.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Disable to prevent multiple clicks.
+                v.setEnabled(false);
+
                 // Call to client.
                 ICallbacks callbacks = getCallbacks();
                 if (callbacks != null) {
