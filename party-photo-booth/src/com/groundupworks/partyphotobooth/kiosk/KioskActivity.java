@@ -49,6 +49,21 @@ public class KioskActivity extends FragmentActivity implements KioskSetupFragmen
      */
     private KioskModeHelper mKioskModeHelper;
 
+    /**
+     * The {@link PreferencesHelper}.
+     */
+    private PreferencesHelper mPreferencesHelper;
+
+    /**
+     * The current frame number to capture.
+     */
+    private int mCurrentFrame;
+
+    /**
+     * The total number of frames to capture.
+     */
+    private int mTotalFrames;
+
     //
     // Fragments.
     //
@@ -70,6 +85,9 @@ public class KioskActivity extends FragmentActivity implements KioskSetupFragmen
         super.onCreate(savedInstanceState);
 
         mKioskModeHelper = new KioskModeHelper(this);
+        mPreferencesHelper = new PreferencesHelper();
+        mCurrentFrame = 1;
+        mTotalFrames = mPreferencesHelper.getPhotoStripTemplate(this).getNumPhotos();
 
         // Show on top of lock screen.
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
@@ -90,7 +108,6 @@ public class KioskActivity extends FragmentActivity implements KioskSetupFragmen
                 return true;
             }
         });
-
     }
 
     @Override
@@ -100,8 +117,7 @@ public class KioskActivity extends FragmentActivity implements KioskSetupFragmen
 
         // Choose fragments to start with based on whether Kiosk mode setup has completed.
         if (mKioskModeHelper.isSetupCompleted()) {
-            launchPhotoStripFragment();
-            launchCaptureFragment();
+            launchPhotoBoothUi();
 
             // Dismiss the notice fragment after resume.
             dismissNoticeFragment();
@@ -152,8 +168,7 @@ public class KioskActivity extends FragmentActivity implements KioskSetupFragmen
         dismissKioskSetupFragment();
 
         // Launch photo booth ui.
-        launchPhotoStripFragment();
-        launchCaptureFragment();
+        launchPhotoBoothUi();
     }
 
     //
@@ -162,6 +177,9 @@ public class KioskActivity extends FragmentActivity implements KioskSetupFragmen
 
     @Override
     public void onNewPhotoAdded(boolean isPhotoStripComplete) {
+        // Update current frame count.
+        mCurrentFrame++;
+
         // Fade out flash screen.
         Animation animation = AnimationUtils.loadAnimation(this, R.anim.fade_out);
         animation.setAnimationListener(new AnimationListener() {
@@ -195,6 +213,9 @@ public class KioskActivity extends FragmentActivity implements KioskSetupFragmen
 
     @Override
     public void onPhotoRemoved() {
+        // Update current frame count.
+        mCurrentFrame--;
+
         // Capture next frame.
         launchCaptureFragment();
     }
@@ -202,12 +223,10 @@ public class KioskActivity extends FragmentActivity implements KioskSetupFragmen
     @Override
     public void onPhotoStripSubmitted(boolean facebookShared, boolean dropboxShared) {
         // Reset photo booth ui.
-        launchPhotoStripFragment();
-        launchCaptureFragment();
+        launchPhotoBoothUi();
 
         if (facebookShared || dropboxShared) {
-            PreferencesHelper preferencesHelper = new PreferencesHelper();
-            if (preferencesHelper.getNoticeEnabled(this)) {
+            if (mPreferencesHelper.getNoticeEnabled(this)) {
                 // Show notice fragment.
                 launchNoticeFragment(facebookShared, dropboxShared);
             }
@@ -232,8 +251,7 @@ public class KioskActivity extends FragmentActivity implements KioskSetupFragmen
     public void onErrorPhotoStripSubmit() {
         // An error occurred while trying to submit the current photo strip. Self-recover by relaunching photo booth ui.
         Toast.makeText(this, getString(R.string.photostrip__error_submission), Toast.LENGTH_LONG).show();
-        launchPhotoStripFragment();
-        launchCaptureFragment();
+        launchPhotoBoothUi();
     }
 
     //
@@ -311,18 +329,25 @@ public class KioskActivity extends FragmentActivity implements KioskSetupFragmen
     }
 
     /**
-     * Launches a new {@link PhotoStripFragment} in the left side container.
+     * Launches the photo booth ui.
      */
-    private void launchPhotoStripFragment() {
+    private void launchPhotoBoothUi() {
+        // Reset current frame count whenever the photo booth ui is relaunched.
+        mCurrentFrame = 1;
+
+        // Launch photo strip ui in the left side container.
         mPhotoStripFragment = PhotoStripFragment.newInstance();
         replaceLeftFragment(mPhotoStripFragment);
+
+        // Launch capture ui in the right side container.
+        launchCaptureFragment();
     }
 
     /**
      * Launches a new {@link CaptureFragment} in the right side container.
      */
     private void launchCaptureFragment() {
-        replaceRightFragment(CaptureFragment.newInstance());
+        replaceRightFragment(CaptureFragment.newInstance(mCurrentFrame, mTotalFrames));
     }
 
     /**

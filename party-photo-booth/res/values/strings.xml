@@ -74,6 +74,7 @@
     <string name="kiosk_mode__error_password">Passcode does not match</string>
 
     <!-- Capture Fragment -->
+    <string name="capture__frame_count">%1$d of %2$d</string>
     <string name="capture__error_camera_dialog_title">Camera unavailable</string>
     <string name="capture__error_camera_dialog_message_none">This application requires a camera on your device.</string>
     <string name="capture__error_camera_dialog_message_in_use">Your camera may be in use by another application.</string>

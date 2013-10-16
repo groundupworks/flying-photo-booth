@@ -22,6 +22,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 import com.groundupworks.lib.photobooth.helpers.CameraHelper;
 import com.groundupworks.lib.photobooth.helpers.ImageHelper;
 import com.groundupworks.lib.photobooth.views.AnimationDrawableCallback;
@@ -36,6 +37,14 @@ import com.groundupworks.partyphotobooth.helpers.PreferencesHelper.PhotoBoothMod
  * @author Benedict Lau
  */
 public class CaptureFragment extends Fragment {
+
+    //
+    // Fragment bundle keys.
+    //
+
+    public static final String FRAGMENT_BUNDLE_KEY_CURRENT_FRAME = "currentFrame";
+
+    public static final String FRAGMENT_BUNDLE_KEY_TOTAL_FRAMES = "totalFrames";
 
     /**
      * Invalid camera id.
@@ -75,6 +84,8 @@ public class CaptureFragment extends Fragment {
 
     private Button mStartButton;
 
+    private TextView mFrameCount;
+
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -90,6 +101,7 @@ public class CaptureFragment extends Fragment {
 
         mPreview = (CenteredPreview) view.findViewById(R.id.camera_preview);
         mStartButton = (Button) view.findViewById(R.id.capture_button);
+        mFrameCount = (TextView) view.findViewById(R.id.frame_count);
 
         return view;
     }
@@ -163,6 +175,16 @@ public class CaptureFragment extends Fragment {
                 }
             }
         });
+
+        // Show frame count only if more than one frame is to be captured.
+        Bundle args = getArguments();
+        int totalFrames = args.getInt(FRAGMENT_BUNDLE_KEY_TOTAL_FRAMES);
+        if (totalFrames > 1) {
+            int currentFrame = args.getInt(FRAGMENT_BUNDLE_KEY_CURRENT_FRAME);
+            String frameCountText = getString(R.string.capture__frame_count, currentFrame, totalFrames);
+            mFrameCount.setText(frameCountText);
+            mFrameCount.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -360,10 +382,20 @@ public class CaptureFragment extends Fragment {
     /**
      * Creates a new {@link CaptureFragment} instance.
      * 
+     * @param currentFrame
+     *            the current frame number to capture.
+     * @param totalFrames
+     *            the total number of frames to capture.
      * @return the new {@link CaptureFragment} instance.
      */
-    public static CaptureFragment newInstance() {
+    public static CaptureFragment newInstance(int currentFrame, int totalFrames) {
         CaptureFragment fragment = new CaptureFragment();
+
+        Bundle args = new Bundle();
+        args.putInt(FRAGMENT_BUNDLE_KEY_CURRENT_FRAME, currentFrame);
+        args.putInt(FRAGMENT_BUNDLE_KEY_TOTAL_FRAMES, totalFrames);
+        fragment.setArguments(args);
+
         return fragment;
     }
 
