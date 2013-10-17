@@ -7,6 +7,7 @@ package com.groundupworks.partyphotobooth.fragments;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.drawable.AnimationDrawable;
@@ -16,6 +17,7 @@ import android.hardware.Camera.AutoFocusCallback;
 import android.hardware.Camera.CameraInfo;
 import android.hardware.Camera.Parameters;
 import android.hardware.Camera.Size;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -191,6 +193,9 @@ public class CaptureFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
+        // Dim system ui for more immersive ui experience.
+        dimSystemUi();
+
         if (mCameraId != INVALID_CAMERA_ID) {
             try {
                 mCamera = Camera.open(mCameraId);
@@ -356,6 +361,24 @@ public class CaptureFragment extends Fragment {
     private boolean isActivityAlive() {
         Activity activity = getActivity();
         return activity != null && !activity.isFinishing();
+    }
+
+    /**
+     * Requests system ui to enter low profile mode.
+     */
+    @SuppressLint("NewApi")
+    private void dimSystemUi() {
+        // View.SYSTEM_UI_FLAG_LOW_PROFILE only available in ICS and above.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+            mStartButton.post(new Runnable() {
+                @Override
+                public void run() {
+                    if (isActivityAlive()) {
+                        mStartButton.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE);
+                    }
+                }
+            });
+        }
     }
 
     /**
