@@ -60,7 +60,7 @@ Create and share photo strips!
 
 NEW FEATURES
  
-¥ Fixed Dropbox linking and sharing (as a result of Dropbox's change in security policy, photo strips are now stored in your Dropbox's "Apps/Party PhotoBooth/Photo Strips" directory)
+¥ Fixed Dropbox linking and sharing (as a result of Dropbox's change in security policy, photo strips are now stored in your Dropbox's "Apps/Flying PhotoBooth/Photo Strips" directory)
 
 
 VERSION 3.2

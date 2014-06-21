@@ -67,8 +67,6 @@ Need a photo booth at your event?
 
 
 NEW FEATURES
-
-This release contains UI optimizations and fixes for all reported bugs.
  
 ¥ Added frame counter to capture screen
 ¥ Dimming of system UI for a more immersive experience (on supported platforms) 
