@@ -17,8 +17,7 @@
     <string name="dropbox__app_secret">null</string> <!-- Client must override -->
     <string name="dropbox__account_name_key">dropbox__account_name_key</string>
     <string name="dropbox__share_url_key">dropbox__share_url_key</string>
-    <string name="dropbox__access_token_key_key">dropbox__access_token_key</string>
-    <string name="dropbox__access_token_secret_key">dropbox__access_token_secret</string>
+    <string name="dropbox__access_token_key">dropbox__access_token_key</string>
 
     <!-- Camera Preferences -->
     <string name="pref__camera_key">pref__camera</string>

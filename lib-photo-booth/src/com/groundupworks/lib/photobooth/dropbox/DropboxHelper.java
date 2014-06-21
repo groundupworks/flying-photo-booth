@@ -32,10 +32,9 @@ import android.widget.Toast;
 import com.dropbox.client2.DropboxAPI;
 import com.dropbox.client2.android.AndroidAuthSession;
 import com.dropbox.client2.exception.DropboxException;
+import com.dropbox.client2.exception.DropboxServerException;
 import com.dropbox.client2.exception.DropboxUnlinkedException;
-import com.dropbox.client2.session.AccessTokenPair;
 import com.dropbox.client2.session.AppKeyPair;
-import com.dropbox.client2.session.Session.AccessType;
 import com.groundupworks.lib.photobooth.R;
 import com.groundupworks.lib.photobooth.framework.BaseApplication;
 import com.groundupworks.lib.photobooth.wings.IWingsNotification;
@@ -50,9 +49,14 @@ import com.groundupworks.lib.photobooth.wings.WingsDbHelper;
 public class DropboxHelper {
 
     /**
-     * Limit access level to a specific folder in the user's Dropbox.
+     * Name of the folder for storing photo strips.
      */
-    final static private AccessType ACCESS_TYPE = AccessType.APP_FOLDER;
+    private static final String FOLDER_NAME_PHOTO_STRIPS = "Photo Strips";
+
+    /**
+     * Path to the directory for storing photo strips.
+     */
+    private static final String PATH_PHOTO_STRIPS = "/" + FOLDER_NAME_PHOTO_STRIPS;
 
     /**
      * A lock object used to synchronize access on {@link #mDropboxApi}.
@@ -126,21 +130,23 @@ public class DropboxHelper {
                     public void run() {
                         String accountName = null;
                         String shareUrl = null;
-                        AccessTokenPair accessTokenPair = null;
+                        String accessToken = null;
 
                         // Request params.
                         synchronized (mDropboxApiLock) {
-                            // Get account params.
-                            accountName = requestAccountName(dropboxApi);
-                            shareUrl = requestShareUrl(dropboxApi);
-                            accessTokenPair = dropboxApi.getSession().getAccessTokenPair();
+                            // Create directory for storing photo strips.
+                            if (createPhotoStripFolder(dropboxApi)) {
+                                // Get account params.
+                                accountName = requestAccountName(dropboxApi);
+                                shareUrl = requestShareUrl(dropboxApi);
+                                accessToken = dropboxApi.getSession().getOAuth2AccessToken();
+                            }
                         }
 
                         // Validate account settings and store.
                         if (accountName != null && accountName.length() > 0 && shareUrl != null
-                                && shareUrl.length() > 0 && accessTokenPair != null) {
-                            storeAccountParams(appContext, accountName, shareUrl, accessTokenPair.key,
-                                    accessTokenPair.secret);
+                                && shareUrl.length() > 0 && accessToken != null) {
+                            storeAccountParams(appContext, accountName, shareUrl, accessToken);
                         } else {
                             // Handle error on ui thread.
                             Handler uiHandler = new Handler(Looper.getMainLooper());
@@ -184,6 +190,30 @@ public class DropboxHelper {
     }
 
     /**
+     * Creates a directory for photo strips if one does not already exist. If the folder already exists, this call will
+     * do nothing.
+     * 
+     * @param dropboxApi
+     *            the {@link DropboxAPI}.
+     * @return true if the directory is created or it already exists; false otherwise.
+     */
+    private boolean createPhotoStripFolder(DropboxAPI<AndroidAuthSession> dropboxApi) {
+        boolean folderCreated = false;
+        if (dropboxApi != null) {
+            try {
+                dropboxApi.createFolder(FOLDER_NAME_PHOTO_STRIPS);
+                folderCreated = true;
+            } catch (DropboxException e) {
+                // Consider the folder created if the folder already exists.
+                if (e instanceof DropboxServerException) {
+                    folderCreated = DropboxServerException._403_FORBIDDEN == ((DropboxServerException) e).error;
+                }
+            }
+        }
+        return folderCreated;
+    }
+
+    /**
      * Requests the linked account name.
      * 
      * @param dropboxApi
@@ -213,7 +243,7 @@ public class DropboxHelper {
         String shareUrl = null;
         if (dropboxApi != null) {
             try {
-                shareUrl = dropboxApi.share("").url;
+                shareUrl = dropboxApi.share(PATH_PHOTO_STRIPS).url;
             } catch (DropboxException e) {
                 // Do nothing.
             }
@@ -230,19 +260,15 @@ public class DropboxHelper {
      *            the user name associated with the account.
      * @param shareUrl
      *            the share url associated with the account.
-     * @param accessTokenKey
-     *            the access token key.
-     * @param accessTokenSecret
-     *            the access token secret.
+     * @param accessToken
+     *            the access token.
      */
-    private void storeAccountParams(Context context, String accountName, String shareUrl, String accessTokenKey,
-            String accessTokenSecret) {
+    private void storeAccountParams(Context context, String accountName, String shareUrl, String accessToken) {
         Context appContext = context.getApplicationContext();
         Editor editor = PreferenceManager.getDefaultSharedPreferences(appContext).edit();
         editor.putString(appContext.getString(R.string.dropbox__account_name_key), accountName);
         editor.putString(appContext.getString(R.string.dropbox__share_url_key), shareUrl);
-        editor.putString(appContext.getString(R.string.dropbox__access_token_key_key), accessTokenKey);
-        editor.putString(appContext.getString(R.string.dropbox__access_token_secret_key), accessTokenSecret);
+        editor.putString(appContext.getString(R.string.dropbox__access_token_key), accessToken);
 
         // Set preference to linked.
         editor.putBoolean(appContext.getString(R.string.pref__dropbox_link_key), true);
@@ -260,8 +286,7 @@ public class DropboxHelper {
         Editor editor = PreferenceManager.getDefaultSharedPreferences(appContext).edit();
         editor.remove(appContext.getString(R.string.dropbox__account_name_key));
         editor.remove(appContext.getString(R.string.dropbox__share_url_key));
-        editor.remove(appContext.getString(R.string.dropbox__access_token_key_key));
-        editor.remove(appContext.getString(R.string.dropbox__access_token_secret_key));
+        editor.remove(appContext.getString(R.string.dropbox__access_token_key));
 
         // Set preference to unlinked.
         editor.putBoolean(appContext.getString(R.string.pref__dropbox_link_key), false);
@@ -275,17 +300,10 @@ public class DropboxHelper {
      *            the {@link Context}.
      * @return the access token; or null if unlinked.
      */
-    private AccessTokenPair getLinkedAccessToken(Context context) {
-        AccessTokenPair accessTokenPair = null;
-
+    private String getLinkedAccessToken(Context context) {
         Context appContext = context.getApplicationContext();
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(appContext);
-        String key = preferences.getString(appContext.getString(R.string.dropbox__access_token_key_key), null);
-        String secret = preferences.getString(appContext.getString(R.string.dropbox__access_token_secret_key), null);
-        if (key != null && secret != null) {
-            accessTokenPair = new AccessTokenPair(key, secret);
-        }
-        return accessTokenPair;
+        return preferences.getString(appContext.getString(R.string.dropbox__access_token_key), null);
     }
 
     //
@@ -303,10 +321,10 @@ public class DropboxHelper {
 
         AppKeyPair appKeyPair = new AppKeyPair(context.getString(R.string.dropbox__app_key),
                 context.getString(R.string.dropbox__app_secret));
-        AndroidAuthSession session = new AndroidAuthSession(appKeyPair, ACCESS_TYPE);
+        AndroidAuthSession session = new AndroidAuthSession(appKeyPair);
         synchronized (mDropboxApiLock) {
             mDropboxApi = new DropboxAPI<AndroidAuthSession>(session);
-            mDropboxApi.getSession().startAuthentication(context);
+            mDropboxApi.getSession().startOAuth2Authentication(context);
         }
     }
 
@@ -423,7 +441,7 @@ public class DropboxHelper {
         int shared = 0;
 
         // Get access token associated with the linked account.
-        AccessTokenPair accessToken = getLinkedAccessToken(context);
+        String accessToken = getLinkedAccessToken(context);
         String shareUrl = getLinkedShareUrl(context);
         if (accessToken != null && shareUrl != null) {
             // Get share requests for Dropbox.
@@ -434,8 +452,8 @@ public class DropboxHelper {
                 // Start new session with the persisted access token.
                 AppKeyPair appKeys = new AppKeyPair(context.getString(R.string.dropbox__app_key),
                         context.getString(R.string.dropbox__app_secret));
-                AndroidAuthSession session = new AndroidAuthSession(appKeys, ACCESS_TYPE);
-                session.setAccessTokenPair(accessToken);
+                AndroidAuthSession session = new AndroidAuthSession(appKeys);
+                session.setOAuth2AccessToken(accessToken);
                 DropboxAPI<AndroidAuthSession> dropboxApi = new DropboxAPI<AndroidAuthSession>(session);
 
                 // Process share requests.
@@ -446,7 +464,8 @@ public class DropboxHelper {
                         inputStream = new FileInputStream(file);
 
                         // Upload file.
-                        dropboxApi.putFile(file.getName(), inputStream, file.length(), null, null);
+                        dropboxApi.putFile(PATH_PHOTO_STRIPS + "/" + file.getName(), inputStream, file.length(), null,
+                                null);
 
                         // Mark as successfully processed.
                         wingsDbHelper.markSuccessful(shareRequest.getId());
