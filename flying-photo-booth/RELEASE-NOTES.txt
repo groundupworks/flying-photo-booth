@@ -1,3 +1,68 @@
+VERSION 3.3
+
+Create, review, save and share photo strips all in less than 30 seconds.
+
+
+FEATURES
+
+Create Photo Strip
+
+¥ Selection of photo strip arrangements and photo filters
+¥ Shoot up to 4 photos manually or use the photo booth style timer
+¥ Unique swipe-to-retake feature to quickly review each photo
+¥ Front- and back-facing camera support
+
+Basic Save and Share
+
+¥ Photo strips are auto-saved and added to the Gallery
+¥ Beam to compatible devices using Android Beam
+¥ Share through Facebook, Twitter, WhatsApp, Email, etc.
+
+Share with "Wings"
+
+¥ Link your Facebook or Dropbox account to enable one-click or auto share
+¥ Automatically schedule retries in the background if sharing fails
+¥ Share to any of your Facebook albums and control privacy level
+¥ Grant access to a dedicated app folder in your Dropbox and share to that folder
+
+DIY Photo Booth
+
+If you are looking to set up a DIY photo booth at an event, check out Party PhotoBooth. It runs on the same engine as Flying PhotoBooth, but with added features and guest-friendly UX specially designed for setting up a self-serve kiosk at parties. There is also a step-by-step Instructable on how to do this: http://www.instructables.com/id/5-minute-Photo-Booth/
+
+
+INTERVIEW WITH MYSELF
+
+Me: How is Flying PhotoBooth different from other photo booth apps or photo strip creation tools?
+
+Myself: My goal is to help you put together and share a photo strip in the least amount of time possible, hence the "Flying" before the PhotoBooth. This is achieved through a minimal and responsive UI, and a streamlined work flow that includes: CAPTURE, REVIEW, SAVE and SHARE. While most photo strip apps focus on photo editing capabilities, I spend my time polishing this work flow to get you through with the fewest clicks in the shortest time, as well as adding sharing options, such as Sharing with "Wings".
+
+Me: How is Sharing with Wings any different from the standard way we share via the Facebook app?
+
+Myself: "Wings" is the sharing engine that integrates with SDKs published by Facebook and Dropbox. It gives Flying PhotoBooth a lot more control throughout the sharing process. The one-click and auto share features allow you to share a photo strip without launching the Facebook or Dropbox app. If you decide to take photos in a tunnel without connectivity, Wings will queue up those share requests and try them later. Not only is Wings the faster and more reliable way to share, it also lets you share to any Facebook album and control the privacy level, thanks to the fine-grained control we have in the sharing process.
+
+Me: Are there some more cool features?
+
+Myself: The swipe-to-retake feature is a unique picture review process that fits really well into the work flow. Android Beam support is another unique feature among photo apps. I initially added the functionality for fun, but it turns out to be a very convenient way to share. You can beam a photo strip to your friend even without a network connection!
+
+Me: Will your app work on my device?
+
+Myself: Yes, as long as your phone or tablet has a camera. The app is very stable across devices, it will not crash or "force close". If you have read this far, you may as well give it a try?
+
+Me: Well, is it free?
+
+Myself: Absolutely, and also free of ads.
+
+
+TAGLINE
+
+Create and share photo strips!
+
+
+NEW FEATURES
+ 
+¥ Fixed Dropbox linking and sharing (as a result of Dropbox's change in security policy, photo strips are now stored in your Dropbox's "Apps/Party PhotoBooth/Photo Strips" directory)
+
+
 VERSION 3.2
 
 Create, review, save and share photo strips all in less than 30 seconds.
