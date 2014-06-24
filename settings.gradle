@@ -1,0 +1,4 @@
+include ':third-party/facebook-android-sdk-3.0/facebook'
+include ':lib-photo-booth'
+include ':flying-photo-booth'
+include ':party-photo-booth'
