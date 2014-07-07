@@ -10,11 +10,12 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.preference.PreferenceManager;
+
 import com.groundupworks.partyphotobooth.R;
 
 /**
  * Helper class to manage Kiosk mode.
- * 
+ *
  * @author Benedict Lau
  */
 public class KioskModeHelper {
@@ -33,9 +34,8 @@ public class KioskModeHelper {
 
     /**
      * Constructor.
-     * 
-     * @param context
-     *            the {@link Context}.
+     *
+     * @param context the {@link Context}.
      */
     public KioskModeHelper(Context context) {
         mContext = context.getApplicationContext();
@@ -47,9 +47,8 @@ public class KioskModeHelper {
 
     /**
      * Initiates a Kiosk mode state transition.
-     * 
-     * @param state
-     *            the {@link KioskModeHelper.State} to transition to.
+     *
+     * @param state the {@link KioskModeHelper.State} to transition to.
      */
     public void transitionState(State state) {
         Editor editor = PreferenceManager.getDefaultSharedPreferences(mContext).edit();
@@ -76,7 +75,7 @@ public class KioskModeHelper {
 
     /**
      * Checks whether Kiosk mode is enabled.
-     * 
+     *
      * @return true if enabled; false otherwise.
      */
     public boolean isEnabled() {
@@ -86,7 +85,7 @@ public class KioskModeHelper {
 
     /**
      * Checks whether Kiosk mode setup is completed.
-     * 
+     *
      * @return true if completed; false otherwise.
      */
     public boolean isSetupCompleted() {
@@ -96,9 +95,8 @@ public class KioskModeHelper {
 
     /**
      * Sets the Kiosk mode password.
-     * 
-     * @param password
-     *            the password to use.
+     *
+     * @param password the password to use.
      */
     public void setPassword(String password) {
         Editor editor = PreferenceManager.getDefaultSharedPreferences(mContext).edit();
@@ -108,7 +106,7 @@ public class KioskModeHelper {
 
     /**
      * Checks whether Kiosk mode requires a password to unlock.
-     * 
+     *
      * @return true if password is required; false otherwise.
      */
     public boolean isPasswordRequired() {
@@ -118,9 +116,8 @@ public class KioskModeHelper {
 
     /**
      * Verifies the Kiosk mode password.
-     * 
-     * @param password
-     *            the password to verify.
+     *
+     * @param password the password to verify.
      * @return true if password matches; false otherwise.
      */
     public boolean verifyPassword(String password) {

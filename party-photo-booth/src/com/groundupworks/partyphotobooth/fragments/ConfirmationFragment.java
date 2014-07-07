@@ -5,7 +5,6 @@
  */
 package com.groundupworks.partyphotobooth.fragments;
 
-import java.lang.ref.WeakReference;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -15,11 +14,14 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+
 import com.groundupworks.partyphotobooth.R;
+
+import java.lang.ref.WeakReference;
 
 /**
  * Confirmation screen for photo strip submission.
- * 
+ *
  * @author Benedict Lau
  */
 public class ConfirmationFragment extends Fragment {
@@ -83,7 +85,7 @@ public class ConfirmationFragment extends Fragment {
 
     /**
      * Gets the callbacks for this fragment.
-     * 
+     *
      * @return the callbacks; or null if not set.
      */
     private ConfirmationFragment.ICallbacks getCallbacks() {
@@ -100,7 +102,7 @@ public class ConfirmationFragment extends Fragment {
 
     /**
      * Creates a new {@link ConfirmationFragment} instance.
-     * 
+     *
      * @return the new {@link ConfirmationFragment} instance.
      */
     public static ConfirmationFragment newInstance() {

@@ -20,6 +20,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+
 import com.groundupworks.flyingphotobooth.fragments.CaptureFragment;
 import com.groundupworks.flyingphotobooth.fragments.ErrorDialogFragment;
 import com.groundupworks.lib.photobooth.framework.BaseFragmentActivity;
@@ -27,7 +28,7 @@ import com.groundupworks.lib.photobooth.helpers.StorageHelper;
 
 /**
  * The launch {@link Activity}.
- * 
+ *
  * @author Benedict Lau
  */
 public class LaunchActivity extends BaseFragmentActivity {
@@ -111,9 +112,8 @@ public class LaunchActivity extends BaseFragmentActivity {
 
     /**
      * Sets a handler for the back pressed event.
-     * 
-     * @param handler
-     *            the handler for the back pressed event. Pass null to clear.
+     *
+     * @param handler the handler for the back pressed event. Pass null to clear.
      */
     public void setBackPressedHandler(BackPressedHandler handler) {
         mBackPressedHandler = handler;

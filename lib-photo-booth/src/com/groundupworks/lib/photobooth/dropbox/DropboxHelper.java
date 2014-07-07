@@ -15,11 +15,6 @@
  */
 package com.groundupworks.lib.photobooth.dropbox;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.List;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -29,6 +24,7 @@ import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.widget.Toast;
+
 import com.dropbox.client2.DropboxAPI;
 import com.dropbox.client2.android.AndroidAuthSession;
 import com.dropbox.client2.exception.DropboxException;
@@ -41,9 +37,15 @@ import com.groundupworks.lib.photobooth.wings.IWingsNotification;
 import com.groundupworks.lib.photobooth.wings.ShareRequest;
 import com.groundupworks.lib.photobooth.wings.WingsDbHelper;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.List;
+
 /**
  * A helper class for linking and sharing to Dropbox.
- * 
+ *
  * @author Benedict Lau
  */
 public class DropboxHelper {
@@ -79,10 +81,8 @@ public class DropboxHelper {
 
     /**
      * Finishes a link request. Does nothing if {@link #isLinkRequested()} is false prior to this call.
-     * 
-     * 
-     * @param context
-     *            the {@link Context}.
+     *
+     * @param context the {@link Context}.
      * @return true if linking is successful; false otherwise.
      */
     private boolean finishLinkRequest(Context context) {
@@ -113,9 +113,8 @@ public class DropboxHelper {
     /**
      * Links an account in a background thread. If unsuccessful, the link error is handled on a ui thread and a
      * {@link Toast} will be displayed.
-     * 
-     * @param context
-     *            the {@link Context}.
+     *
+     * @param context the {@link Context}.
      */
     private void link(Context context) {
         synchronized (mDropboxApiLock) {
@@ -165,9 +164,8 @@ public class DropboxHelper {
 
     /**
      * Handles an error case during the linking process.
-     * 
-     * @param context
-     *            the {@link Context}.
+     *
+     * @param context the {@link Context}.
      */
     private void handleLinkError(Context context) {
         Context appContext = context.getApplicationContext();
@@ -181,9 +179,8 @@ public class DropboxHelper {
 
     /**
      * Displays the link error message.
-     * 
-     * @param context
-     *            the {@link Context}.
+     *
+     * @param context the {@link Context}.
      */
     private void showLinkError(Context context) {
         Toast.makeText(context, context.getString(R.string.dropbox__error_link), Toast.LENGTH_SHORT).show();
@@ -192,9 +189,8 @@ public class DropboxHelper {
     /**
      * Creates a directory for photo strips if one does not already exist. If the folder already exists, this call will
      * do nothing.
-     * 
-     * @param dropboxApi
-     *            the {@link DropboxAPI}.
+     *
+     * @param dropboxApi the {@link DropboxAPI}.
      * @return true if the directory is created or it already exists; false otherwise.
      */
     private boolean createPhotoStripFolder(DropboxAPI<AndroidAuthSession> dropboxApi) {
@@ -215,9 +211,8 @@ public class DropboxHelper {
 
     /**
      * Requests the linked account name.
-     * 
-     * @param dropboxApi
-     *            the {@link DropboxAPI}.
+     *
+     * @param dropboxApi the {@link DropboxAPI}.
      * @return the account name; or null if not linked.
      */
     private String requestAccountName(DropboxAPI<AndroidAuthSession> dropboxApi) {
@@ -234,9 +229,8 @@ public class DropboxHelper {
 
     /**
      * Requests the share url of the linked folder.
-     * 
-     * @param dropboxApi
-     *            the {@link DropboxAPI}.
+     *
+     * @param dropboxApi the {@link DropboxAPI}.
      * @return the url; or null if not linked.
      */
     private String requestShareUrl(DropboxAPI<AndroidAuthSession> dropboxApi) {
@@ -253,15 +247,11 @@ public class DropboxHelper {
 
     /**
      * Stores the account params in persisted storage.
-     * 
-     * @param context
-     *            the {@link Context}.
-     * @param accountName
-     *            the user name associated with the account.
-     * @param shareUrl
-     *            the share url associated with the account.
-     * @param accessToken
-     *            the access token.
+     *
+     * @param context     the {@link Context}.
+     * @param accountName the user name associated with the account.
+     * @param shareUrl    the share url associated with the account.
+     * @param accessToken the access token.
      */
     private void storeAccountParams(Context context, String accountName, String shareUrl, String accessToken) {
         Context appContext = context.getApplicationContext();
@@ -277,9 +267,8 @@ public class DropboxHelper {
 
     /**
      * Removes the account params from persisted storage.
-     * 
-     * @param context
-     *            the {@link Context}.
+     *
+     * @param context the {@link Context}.
      */
     private void removeAccountParams(Context context) {
         Context appContext = context.getApplicationContext();
@@ -295,9 +284,8 @@ public class DropboxHelper {
 
     /**
      * Gets the stored access token associated with the linked account.
-     * 
-     * @param context
-     *            the {@link Context}.
+     *
+     * @param context the {@link Context}.
      * @return the access token; or null if unlinked.
      */
     private String getLinkedAccessToken(Context context) {
@@ -312,9 +300,8 @@ public class DropboxHelper {
 
     /**
      * Starts a link request. The user will be authenticated through the native Dropbox app or the default web browser.
-     * 
-     * @param context
-     *            the {@link Context}.
+     *
+     * @param context the {@link Context}.
      */
     public void startLinkRequest(Context context) {
         mIsLinkRequested = true;
@@ -330,9 +317,8 @@ public class DropboxHelper {
 
     /**
      * Unlinks an account.
-     * 
-     * @param context
-     *            the {@link Context}.
+     *
+     * @param context the {@link Context}.
      */
     public void unlink(Context context) {
         // Unlink in persisted storage.
@@ -363,9 +349,8 @@ public class DropboxHelper {
 
     /**
      * Checks if the user is linked to Dropbox.
-     * 
-     * @param context
-     *            the {@link Context}.
+     *
+     * @param context the {@link Context}.
      */
     public boolean isLinked(Context context) {
         Context appContext = context.getApplicationContext();
@@ -375,9 +360,8 @@ public class DropboxHelper {
 
     /**
      * Checks if the user has auto share turned on for Dropbox.
-     * 
-     * @param context
-     *            the {@link Context}.
+     *
+     * @param context the {@link Context}.
      */
     public boolean isAutoShare(Context context) {
         Context appContext = context.getApplicationContext();
@@ -389,9 +373,8 @@ public class DropboxHelper {
     /**
      * A convenience method to be called in the onResume() of any {@link Activity} or {@link Fragment} that uses
      * {@link #startLinkRequest(Context)}.
-     * 
-     * @param context
-     *            the {@link Context}.
+     *
+     * @param context the {@link Context}.
      */
     public void onResumeImpl(Context context) {
         if (mIsLinkRequested) {
@@ -406,9 +389,8 @@ public class DropboxHelper {
 
     /**
      * Gets the user name associated with the linked account.
-     * 
-     * @param context
-     *            the {@link Context}.
+     *
+     * @param context the {@link Context}.
      * @return the user name; or null if unlinked.
      */
     public String getLinkedAccountName(Context context) {
@@ -419,9 +401,8 @@ public class DropboxHelper {
 
     /**
      * Gets the share url associated with the linked account.
-     * 
-     * @param context
-     *            the {@link Context}.
+     *
+     * @param context the {@link Context}.
      * @return the url; or null if unlinked.
      */
     public String getLinkedShareUrl(Context context) {
@@ -432,9 +413,8 @@ public class DropboxHelper {
 
     /**
      * Process share requests by sharing to the linked account. This should be called in a background thread.
-     * 
-     * @param context
-     *            the {@link Context}.
+     *
+     * @param context the {@link Context}.
      * @return a {@link IWingsNotification} representing the results of the processed {@link ShareRequest}. May be null.
      */
     public IWingsNotification processShareRequests(Context context) {

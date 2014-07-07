@@ -19,12 +19,13 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.preference.PreferenceManager;
+
 import com.groundupworks.lib.photobooth.R;
 
 /**
  * A class that calculates how far in the future to schedule the next attempt to share. The logic will space out retries
  * in incrementally larger time intervals.
- * 
+ *
  * @author Benedict Lau
  */
 public class RetryPolicy {
@@ -40,9 +41,8 @@ public class RetryPolicy {
 
     /**
      * Gets the Fibonacci number.
-     * 
-     * @param n
-     *            the index.
+     *
+     * @param n the index.
      * @return the Fibonacci number.
      */
     private static long getFibonacci(int n) {
@@ -62,9 +62,8 @@ public class RetryPolicy {
     /**
      * Gets how far in the future to schedule the next attempt to share. An internal counter is incremented every time
      * this method gets called, so a subsequent call will return a different time.
-     * 
-     * @param context
-     *            the {@link Context}.
+     *
+     * @param context the {@link Context}.
      * @return the time in milliseconds.
      */
     static long incrementAndGetTime(Context context) {
@@ -86,9 +85,8 @@ public class RetryPolicy {
     /**
      * Resets the internal counter. This should be called whenever a new record is added, and whenever all
      * {@link ShareRequest} completed successfully.
-     * 
-     * @param context
-     *            the {@link Context}.
+     *
+     * @param context the {@link Context}.
      */
     static void reset(Context context) {
         Context appContext = context.getApplicationContext();

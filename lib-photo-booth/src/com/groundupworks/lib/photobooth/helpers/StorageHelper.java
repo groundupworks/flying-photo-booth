@@ -15,12 +15,13 @@
  */
 package com.groundupworks.lib.photobooth.helpers;
 
-import java.io.File;
 import android.os.Environment;
+
+import java.io.File;
 
 /**
  * A helper class containing methods to read and write to external storage.
- * 
+ *
  * @author Benedict Lau
  */
 public class StorageHelper {
@@ -31,7 +32,7 @@ public class StorageHelper {
 
     /**
      * Checks if external storage is available.
-     * 
+     *
      * @return true if available; false otherwise.
      */
     public static boolean isExternalStorageAvailable() {
@@ -41,9 +42,8 @@ public class StorageHelper {
     /**
      * Gets the full path to the writable directory in external storage. The directory will be created if it does not
      * exist.
-     * 
-     * @param folder
-     *            the directory relative to external storage root.
+     *
+     * @param folder the directory relative to external storage root.
      * @return the full path to the directory; or null if unsuccessful.
      */
     public synchronized static String getDirectory(String folder) {

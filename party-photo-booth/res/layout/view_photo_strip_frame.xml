@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="@dimen/photo_thumb_size"
-    android:layout_height="@dimen/photo_thumb_size" >
+    android:layout_height="@dimen/photo_thumb_size">
 
     <ImageView
         android:id="@+id/frame_photo"

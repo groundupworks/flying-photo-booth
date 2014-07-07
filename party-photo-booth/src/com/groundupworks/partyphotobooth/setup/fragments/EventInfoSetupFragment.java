@@ -5,9 +5,6 @@
  */
 package com.groundupworks.partyphotobooth.setup.fragments;
 
-import java.lang.ref.WeakReference;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
@@ -23,13 +20,18 @@ import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.DatePicker;
 import android.widget.EditText;
+
 import com.groundupworks.partyphotobooth.R;
 import com.groundupworks.partyphotobooth.helpers.PreferencesHelper;
 import com.groundupworks.partyphotobooth.helpers.TextHelper;
 
+import java.lang.ref.WeakReference;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+
 /**
  * Ui for setting up the event information.
- * 
+ *
  * @author Benedict Lau
  */
 public class EventInfoSetupFragment extends Fragment {
@@ -167,7 +169,7 @@ public class EventInfoSetupFragment extends Fragment {
 
     /**
      * Gets the callbacks for this fragment.
-     * 
+     *
      * @return the callbacks; or null if not set.
      */
     private EventInfoSetupFragment.ICallbacks getCallbacks() {
@@ -184,7 +186,7 @@ public class EventInfoSetupFragment extends Fragment {
 
     /**
      * Creates a new {@link EventInfoSetupFragment} instance.
-     * 
+     *
      * @return the new {@link EventInfoSetupFragment} instance.
      */
     public static EventInfoSetupFragment newInstance() {

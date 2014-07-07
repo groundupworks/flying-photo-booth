@@ -18,11 +18,12 @@ package com.groundupworks.lib.photobooth.facebook;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+
 import com.groundupworks.lib.photobooth.framework.BaseFragmentActivity;
 
 /**
  * {@link Activity} to configure how a Facebook account is linked.
- * 
+ *
  * @author Benedict Lau
  */
 public class FacebookSettingsActivity extends BaseFragmentActivity {

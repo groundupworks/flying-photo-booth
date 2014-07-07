@@ -24,7 +24,7 @@ import android.view.View;
  * Provides a callback when a non-looping {@link AnimationDrawable} completes its animation sequence. More precisely,
  * {@link #onAnimationComplete()} is triggered when {@link View#invalidateDrawable(Drawable)} has been called on the
  * last frame.
- * 
+ *
  * @author Benedict Lau
  */
 public abstract class AnimationDrawableCallback implements Callback {
@@ -48,12 +48,10 @@ public abstract class AnimationDrawableCallback implements Callback {
 
     /**
      * Constructor.
-     * 
-     * @param animationDrawable
-     *            the {@link AnimationDrawable}.
-     * @param callback
-     *            the client's {@link Callback} implementation. This is usually the {@link View} the has the
-     *            {@link AnimationDrawable} as background.
+     *
+     * @param animationDrawable the {@link AnimationDrawable}.
+     * @param callback          the client's {@link Callback} implementation. This is usually the {@link View} the has the
+     *                          {@link AnimationDrawable} as background.
      */
     public AnimationDrawableCallback(AnimationDrawable animationDrawable, Callback callback) {
         mLastFrame = animationDrawable.getFrame(animationDrawable.getNumberOfFrames() - 1);

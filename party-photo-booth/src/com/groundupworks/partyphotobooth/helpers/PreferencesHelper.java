@@ -5,15 +5,16 @@
  */
 package com.groundupworks.partyphotobooth.helpers;
 
-import java.util.Date;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.preference.PreferenceManager;
 
+import java.util.Date;
+
 /**
  * Helper for storing and retrieving user preferences.
- * 
+ *
  * @author Benedict Lau
  */
 public class PreferencesHelper {
@@ -32,7 +33,9 @@ public class PreferencesHelper {
          * Photographer mode uses back-facing camera and no count down.
          */
         PHOTOGRAPHER;
-    };
+    }
+
+    ;
 
     /**
      * Photo booth themes.
@@ -117,11 +120,9 @@ public class PreferencesHelper {
 
         /**
          * Constructor.
-         * 
-         * @param arrangement
-         *            the arrangement of the photo strip.
-         * @param numPhotos
-         *            the number of photos in the photo strip.
+         *
+         * @param arrangement the arrangement of the photo strip.
+         * @param numPhotos   the number of photos in the photo strip.
          */
         private PhotoStripTemplate(PhotoStripArrangement arrangement, int numPhotos) {
             mArrangement = arrangement;
@@ -130,7 +131,7 @@ public class PreferencesHelper {
 
         /**
          * Gets the arrangement of the photo strip.
-         * 
+         *
          * @return the {@link PhotoStripArrangement}.
          */
         public PhotoStripArrangement getArrangement() {
@@ -139,13 +140,15 @@ public class PreferencesHelper {
 
         /**
          * Gets the number of photos in the photo strip.
-         * 
+         *
          * @return the stored number of photos.
          */
         public int getNumPhotos() {
             return mNumPhotos;
         }
-    };
+    }
+
+    ;
 
     /**
      * Photo strip arrangements.
@@ -166,7 +169,9 @@ public class PreferencesHelper {
          * Box arrangement of photos.
          */
         BOX;
-    };
+    }
+
+    ;
 
     /**
      * Preference value to hide the event date.
@@ -219,11 +224,9 @@ public class PreferencesHelper {
 
     /**
      * Stores the photo booth mode preference.
-     * 
-     * @param context
-     *            the {@link Context}.
-     * @param mode
-     *            one of {@link PhotoBoothMode}. Must not be null.
+     *
+     * @param context the {@link Context}.
+     * @param mode    one of {@link PhotoBoothMode}. Must not be null.
      */
     public void storePhotoBoothMode(Context context, PhotoBoothMode mode) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
@@ -232,9 +235,8 @@ public class PreferencesHelper {
 
     /**
      * Reads the photo booth mode preference.
-     * 
-     * @param context
-     *            the {@link Context}.
+     *
+     * @param context the {@link Context}.
      * @return the stored {@link PhotoBoothMode}.
      */
     public PhotoBoothMode getPhotoBoothMode(Context context) {
@@ -245,11 +247,9 @@ public class PreferencesHelper {
 
     /**
      * Stores the photo booth theme preference.
-     * 
-     * @param context
-     *            the {@link Context}.
-     * @param mode
-     *            one of {@link PhotoBoothTheme}. Must not be null.
+     *
+     * @param context the {@link Context}.
+     * @param mode    one of {@link PhotoBoothTheme}. Must not be null.
      */
     public void storePhotoBoothTheme(Context context, PhotoBoothTheme theme) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
@@ -258,9 +258,8 @@ public class PreferencesHelper {
 
     /**
      * Reads the photo booth theme preference.
-     * 
-     * @param context
-     *            the {@link Context}.
+     *
+     * @param context the {@link Context}.
      * @return the stored {@link PhotoBoothTheme}.
      */
     public PhotoBoothTheme getPhotoBoothTheme(Context context) {
@@ -271,11 +270,9 @@ public class PreferencesHelper {
 
     /**
      * Stores the photo strip template preference.
-     * 
-     * @param context
-     *            the {@link Context}.
-     * @param template
-     *            one of {@link PhotoStripTemplate}. Must not be null.
+     *
+     * @param context  the {@link Context}.
+     * @param template one of {@link PhotoStripTemplate}. Must not be null.
      */
     public void storePhotoStripTemplate(Context context, PhotoStripTemplate template) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
@@ -284,9 +281,8 @@ public class PreferencesHelper {
 
     /**
      * Reads the photo strip template preference.
-     * 
-     * @param context
-     *            the {@link Context}.
+     *
+     * @param context the {@link Context}.
      * @return the stored {@link PhotoStripTemplate}.
      */
     public PhotoStripTemplate getPhotoStripTemplate(Context context) {
@@ -297,11 +293,9 @@ public class PreferencesHelper {
 
     /**
      * Stores the first line of the event title.
-     * 
-     * @param context
-     *            the {@link Context}.
-     * @param eventLineOne
-     *            the first line of the event title; or an empty string. Pass null to clear.
+     *
+     * @param context      the {@link Context}.
+     * @param eventLineOne the first line of the event title; or an empty string. Pass null to clear.
      */
     public void storeEventLineOne(Context context, String eventLineOne) {
         Editor editor = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext()).edit();
@@ -314,9 +308,8 @@ public class PreferencesHelper {
 
     /**
      * Reads the first line of the event title.
-     * 
-     * @param context
-     *            the {@link Context}.
+     *
+     * @param context the {@link Context}.
      * @return the first line of the event title; or an empty string.
      */
     public String getEventLineOne(Context context) {
@@ -326,11 +319,9 @@ public class PreferencesHelper {
 
     /**
      * Stores the second line of the event title.
-     * 
-     * @param context
-     *            the {@link Context}.
-     * @param eventLineTwo
-     *            the second line of the event title; or an empty string. Pass null to clear.
+     *
+     * @param context      the {@link Context}.
+     * @param eventLineTwo the second line of the event title; or an empty string. Pass null to clear.
      */
     public void storeEventLineTwo(Context context, String eventLineTwo) {
         Editor editor = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext()).edit();
@@ -343,9 +334,8 @@ public class PreferencesHelper {
 
     /**
      * Reads the second line of the event title.
-     * 
-     * @param context
-     *            the {@link Context}.
+     *
+     * @param context the {@link Context}.
      * @return the second line of the event title; or an empty string.
      */
     public String getEventLineTwo(Context context) {
@@ -355,11 +345,9 @@ public class PreferencesHelper {
 
     /**
      * Stores the date of the event in milliseconds since Jan. 1, 1970, midnight GMT.
-     * 
-     * @param context
-     *            the {@link Context}.
-     * @param eventDate
-     *            the event date in milliseconds. Pass {@link PreferencesHelper#EVENT_DATE_HIDDEN} to hide event date.
+     *
+     * @param context   the {@link Context}.
+     * @param eventDate the event date in milliseconds. Pass {@link PreferencesHelper#EVENT_DATE_HIDDEN} to hide event date.
      */
     public void storeEventDate(Context context, long eventDate) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
@@ -368,11 +356,10 @@ public class PreferencesHelper {
 
     /**
      * Reads the date of the event in milliseconds since Jan. 1, 1970, midnight GMT.
-     * 
-     * @param context
-     *            the {@link Context}.
+     *
+     * @param context the {@link Context}.
      * @return the event date in milliseconds; or {@link PreferencesHelper#EVENT_DATE_HIDDEN} if hidden. The current
-     *         date is returned if no record is stored.
+     * date is returned if no record is stored.
      */
     public long getEventDate(Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
@@ -381,11 +368,9 @@ public class PreferencesHelper {
 
     /**
      * Stores whether enabled share services are shown in a notice screen.
-     * 
-     * @param context
-     *            the {@link Context}.
-     * @param isEnabled
-     *            true to enable; false otherwise.
+     *
+     * @param context   the {@link Context}.
+     * @param isEnabled true to enable; false otherwise.
      */
     public void storeNoticeEnabled(Context context, boolean isEnabled) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
@@ -394,9 +379,8 @@ public class PreferencesHelper {
 
     /**
      * Reads whether enabled share services are shown in a notice screen.
-     * 
-     * @param context
-     *            the {@link Context}.
+     *
+     * @param context the {@link Context}.
      * @return true if enabled; false otherwise.
      */
     public boolean getNoticeEnabled(Context context) {

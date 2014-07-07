@@ -11,13 +11,14 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.Align;
 import android.graphics.Typeface;
+
 import com.groundupworks.lib.photobooth.arrangements.BaseArrangement;
 import com.groundupworks.lib.photobooth.helpers.ImageHelper;
 import com.groundupworks.partyphotobooth.helpers.TextHelper;
 
 /**
  * An {@link IPhotoStripHeader} implementation that prints two lines of event title text followed by the event date.
- * 
+ *
  * @author Benedict Lau
  */
 public class BaseTitleHeader implements IPhotoStripHeader {
@@ -64,13 +65,10 @@ public class BaseTitleHeader implements IPhotoStripHeader {
 
     /**
      * Constructor.
-     * 
-     * @param lineOne
-     *            the first line of the event title; or null to hide.
-     * @param lineTwo
-     *            the second line of the event title; or null to hide.
-     * @param date
-     *            the date of the event; or null to hide.
+     *
+     * @param lineOne the first line of the event title; or null to hide.
+     * @param lineTwo the second line of the event title; or null to hide.
+     * @param date    the date of the event; or null to hide.
      */
     public BaseTitleHeader(String lineOne, String lineTwo, String date) {
         mLineOne = lineOne;

@@ -9,16 +9,15 @@ import android.graphics.Bitmap;
 
 /**
  * Interface for a photo strip header.
- * 
+ *
  * @author Benedict Lau
  */
 public interface IPhotoStripHeader {
 
     /**
      * Gets the header bitmap to be drawn.
-     * 
-     * @param width
-     *            the width of the header bitmap.
+     *
+     * @param width the width of the header bitmap.
      * @return the header bitmap.
      */
     Bitmap getHeaderBitmap(int width);

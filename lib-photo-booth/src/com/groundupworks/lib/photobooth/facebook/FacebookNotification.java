@@ -18,13 +18,14 @@ package com.groundupworks.lib.photobooth.facebook;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+
 import com.groundupworks.lib.photobooth.R;
 import com.groundupworks.lib.photobooth.wings.IWingsNotification;
 import com.groundupworks.lib.photobooth.wings.ShareRequest;
 
 /**
  * {@link IWingsNotification} for Facebook shares.
- * 
+ *
  * @author Benedict Lau
  */
 public class FacebookNotification implements IWingsNotification {
@@ -39,15 +40,11 @@ public class FacebookNotification implements IWingsNotification {
 
     /**
      * Package private constructor.
-     * 
-     * @param context
-     *            the {@link Context}.
-     * @param albumName
-     *            the name of the album to share to.
-     * @param shared
-     *            the number of successful shares. Must be larger than 0.
-     * @param intentUri
-     *            the uri to deep link into the Facebook native app. May be null.
+     *
+     * @param context   the {@link Context}.
+     * @param albumName the name of the album to share to.
+     * @param shared    the number of successful shares. Must be larger than 0.
+     * @param intentUri the uri to deep link into the Facebook native app. May be null.
      */
     FacebookNotification(Context context, String albumName, int shared, String intentUri) {
         mTitle = context.getString(R.string.facebook__notification_shared_title);

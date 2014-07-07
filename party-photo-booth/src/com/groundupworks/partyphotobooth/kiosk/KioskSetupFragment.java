@@ -5,7 +5,6 @@
  */
 package com.groundupworks.partyphotobooth.kiosk;
 
-import java.lang.ref.WeakReference;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -16,11 +15,14 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+
 import com.groundupworks.partyphotobooth.R;
+
+import java.lang.ref.WeakReference;
 
 /**
  * {@link Fragment} containing instructions and configurations for Kiosk mode.
- * 
+ *
  * @author Benedict Lau
  */
 public class KioskSetupFragment extends Fragment {
@@ -84,7 +86,7 @@ public class KioskSetupFragment extends Fragment {
 
     /**
      * Gets the callbacks for this fragment.
-     * 
+     *
      * @return the callbacks; or null if not set.
      */
     private KioskSetupFragment.ICallbacks getCallbacks() {
@@ -101,7 +103,7 @@ public class KioskSetupFragment extends Fragment {
 
     /**
      * Creates a new {@link KioskSetupFragment} instance.
-     * 
+     *
      * @return the new {@link KioskSetupFragment} instance.
      */
     public static KioskSetupFragment newInstance() {
@@ -120,9 +122,8 @@ public class KioskSetupFragment extends Fragment {
 
         /**
          * Kiosk setup completed.
-         * 
-         * @param password
-         *            the password; or null if not set.
+         *
+         * @param password the password; or null if not set.
          */
         public void onKioskSetupComplete(String password);
     }

@@ -25,19 +25,19 @@ import android.os.Build;
 /**
  * Android Beam is only available for JellyBean and above. No action is taken for lower SDK levels or devices with no
  * NFC support. In order for Android Beam to work, both devices must have:
- * 
+ * <p/>
  * (1) Hardware that supports NFC
- * 
+ * <p/>
  * (2) Android JellyBean or above
- * 
+ * <p/>
  * (3) Screen on and unlocked
- * 
+ * <p/>
  * (4) NFC enabled in Settings
- * 
+ * <p/>
  * (5) Bluetooth enabled in Settings
- * 
+ * <p/>
  * (6) Android Beam enabled in Settings
- * 
+ *
  * @author Benedict Lau
  */
 @SuppressLint("NewApi")
@@ -49,9 +49,8 @@ public class BeamHelper {
 
     /**
      * Gets the default NFC adapter.
-     * 
-     * @param context
-     *            the {@link Context}.
+     *
+     * @param context the {@link Context}.
      * @return the NFC adapter; or null if the device does not support NFC.
      */
     private static NfcAdapter getNfcAdapter(Context context) {
@@ -69,9 +68,8 @@ public class BeamHelper {
 
     /**
      * Checks if the device supports NFC.
-     * 
-     * @param context
-     *            the {@link Context}.
+     *
+     * @param context the {@link Context}.
      * @return true if hardware supports NFC; false otherwise.
      */
     public static boolean supportsBeam(Context context) {
@@ -81,11 +79,9 @@ public class BeamHelper {
     /**
      * Sets up the NFC adapter to send a list of {@link Uri} with 'file' or 'content' scheme. To clear the NFC adapter
      * of the list of {@link Uri}, null should be passed as the second parameter.
-     * 
-     * @param activity
-     *            the {@link Activity}.
-     * @param uris
-     *            the list of {@link Uri} to beam. Pass null to clear NFC adapter.
+     *
+     * @param activity the {@link Activity}.
+     * @param uris     the list of {@link Uri} to beam. Pass null to clear NFC adapter.
      */
     public static void beamUris(Activity activity, Uri[] uris) {
         if (activity != null && !activity.isFinishing()) {

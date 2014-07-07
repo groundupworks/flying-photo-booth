@@ -23,11 +23,12 @@ import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+
 import com.groundupworks.flyingphotobooth.R;
 
 /**
  * A blocking error dialog that requires the user to exit the application.
- * 
+ *
  * @author Benedict Lau
  */
 public class ErrorDialogFragment extends DialogFragment {
@@ -70,11 +71,9 @@ public class ErrorDialogFragment extends DialogFragment {
 
     /**
      * Creates a new {@link ErrorDialogFragment} instance.
-     * 
-     * @param title
-     *            the title of the error dialog.
-     * @param message
-     *            the message of the error dialog.
+     *
+     * @param title   the title of the error dialog.
+     * @param message the message of the error dialog.
      * @return the new {@link ErrorDialogFragment} instance.
      */
     public static ErrorDialogFragment newInstance(String title, String message) {

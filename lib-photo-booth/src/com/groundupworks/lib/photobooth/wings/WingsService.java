@@ -25,6 +25,7 @@ import android.content.Intent;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.support.v4.app.NotificationCompat;
+
 import com.groundupworks.lib.photobooth.R;
 import com.groundupworks.lib.photobooth.dropbox.DropboxHelper;
 import com.groundupworks.lib.photobooth.facebook.FacebookHelper;
@@ -34,7 +35,7 @@ import com.groundupworks.lib.photobooth.helpers.LogsHelper;
  * An {@link IntentService} that processes {@link ShareRequest}. To ensure the device does not sleep before the service
  * is started or during {@link #onHandleIntent(Intent)}, use {@link #startWakefulService(Context)} instead of
  * {@link Context#startService(Intent)} to start this service.
- * 
+ *
  * @author Benedict Lau
  */
 public class WingsService extends IntentService {
@@ -114,9 +115,8 @@ public class WingsService extends IntentService {
 
     /**
      * Acquires a wake lock.
-     * 
-     * @param context
-     *            the {@link Context}.
+     *
+     * @param context the {@link Context}.
      */
     private synchronized static void acquireWakeLock(Context context) {
         // Setup wake lock.
@@ -192,11 +192,9 @@ public class WingsService extends IntentService {
 
     /**
      * Schedules an alarm to start the {@link WingsService}.
-     * 
-     * @param context
-     *            the {@link Context}.
-     * @param delay
-     *            how far in the future to schedule the alarm.
+     *
+     * @param context the {@link Context}.
+     * @param delay   how far in the future to schedule the alarm.
      */
     static void scheduleWingsService(Context context, long delay) {
         Context appContext = context.getApplicationContext();
@@ -218,9 +216,8 @@ public class WingsService extends IntentService {
     /**
      * Starts this {@link IntentService}, ensuring the device does not sleep before the service is started or during
      * {@link #onHandleIntent(Intent)}.
-     * 
-     * @param context
-     *            the {@link Context}.
+     *
+     * @param context the {@link Context}.
      */
     public static void startWakefulService(Context context) {
         acquireWakeLock(context);

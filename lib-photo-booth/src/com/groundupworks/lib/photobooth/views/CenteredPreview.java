@@ -15,8 +15,6 @@
  */
 package com.groundupworks.lib.photobooth.views;
 
-import java.io.IOException;
-import java.util.List;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Point;
@@ -30,14 +28,18 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
+
 import com.groundupworks.lib.photobooth.helpers.CameraHelper;
 import com.groundupworks.lib.photobooth.helpers.ImageHelper;
+
+import java.io.IOException;
+import java.util.List;
 
 /**
  * Layout containing a centered preview resized to fit inside the layout while preserving the aspect ratio. The view
  * applies a mask to reveal only the center square region of the preview. The view also configures the camera, set
  * through {@link #setCamera(Camera, int)}, to use the optimal supported preview size.
- * 
+ *
  * @author Benedict Lau
  */
 public class CenteredPreview extends ViewGroup implements SurfaceHolder.Callback {
@@ -107,10 +109,9 @@ public class CenteredPreview extends ViewGroup implements SurfaceHolder.Callback
 
     /**
      * Constructor.
-     * 
-     * @param context
-     *            the {@link Context} the view is running in, through which it can access the current theme, resources,
-     *            etc.
+     *
+     * @param context the {@link Context} the view is running in, through which it can access the current theme, resources,
+     *                etc.
      */
     public CenteredPreview(Context context) {
         super(context);
@@ -118,12 +119,10 @@ public class CenteredPreview extends ViewGroup implements SurfaceHolder.Callback
 
     /**
      * Constructor.
-     * 
-     * @param context
-     *            the {@link Context} the view is running in, through which it can access the current theme, resources,
-     *            etc.
-     * @param attrs
-     *            the attributes of the XML tag that is inflating the view.
+     *
+     * @param context the {@link Context} the view is running in, through which it can access the current theme, resources,
+     *                etc.
+     * @param attrs   the attributes of the XML tag that is inflating the view.
      */
     public CenteredPreview(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -131,16 +130,13 @@ public class CenteredPreview extends ViewGroup implements SurfaceHolder.Callback
 
     /**
      * Constructor.
-     * 
-     * @param context
-     *            the {@link Context} the view is running in, through which it can access the current theme, resources,
-     *            etc.
-     * @param attrs
-     *            the attributes of the XML tag that is inflating the view.
-     * @param defStyle
-     *            the default style to apply to this view. If 0, no style will be applied (beyond what is included in
-     *            the theme). This may either be an attribute resource, whose value will be retrieved from the current
-     *            theme, or an explicit style resource.
+     *
+     * @param context  the {@link Context} the view is running in, through which it can access the current theme, resources,
+     *                 etc.
+     * @param attrs    the attributes of the XML tag that is inflating the view.
+     * @param defStyle the default style to apply to this view. If 0, no style will be applied (beyond what is included in
+     *                 the theme). This may either be an attribute resource, whose value will be retrieved from the current
+     *                 theme, or an explicit style resource.
      */
     public CenteredPreview(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
@@ -266,9 +262,8 @@ public class CenteredPreview extends ViewGroup implements SurfaceHolder.Callback
 
     /**
      * Initializes the layout by adding a preview surface and the masking views to indicate a crop region.
-     * 
-     * @param context
-     *            the Context.
+     *
+     * @param context the Context.
      */
     private void initViews(Context context) {
         /*
@@ -306,17 +301,13 @@ public class CenteredPreview extends ViewGroup implements SurfaceHolder.Callback
     /**
      * Starts preview with the selected {@link Camera}. The client is responsible for locking the camera, and calling
      * {@link CenteredPreview#stop()} before releasing the lock.
-     * 
-     * @param camera
-     *            the Camera to use for preview.
-     * @param pictureWidth
-     *            the width of the picture the camera is configured to capture.
-     * @param pictureHeight
-     *            the height of the picture the camera is configured to capture.
-     * @param previewDisplayOrientation
-     *            the display orientation of the preview. Valid values are {@link #PREVIEW_DISPLAY_ORIENTATION_0},
-     *            {@link #PREVIEW_DISPLAY_ORIENTATION_90}, {@link #PREVIEW_DISPLAY_ORIENTATION_180}, and
-     *            {@link #PREVIEW_DISPLAY_ORIENTATION_270}.
+     *
+     * @param camera                    the Camera to use for preview.
+     * @param pictureWidth              the width of the picture the camera is configured to capture.
+     * @param pictureHeight             the height of the picture the camera is configured to capture.
+     * @param previewDisplayOrientation the display orientation of the preview. Valid values are {@link #PREVIEW_DISPLAY_ORIENTATION_0},
+     *                                  {@link #PREVIEW_DISPLAY_ORIENTATION_90}, {@link #PREVIEW_DISPLAY_ORIENTATION_180}, and
+     *                                  {@link #PREVIEW_DISPLAY_ORIENTATION_270}.
      */
     public void start(Camera camera, int pictureWidth, int pictureHeight, int previewDisplayOrientation) {
         mCamera = camera;
@@ -334,9 +325,8 @@ public class CenteredPreview extends ViewGroup implements SurfaceHolder.Callback
 
     /**
      * Restarts the preview.
-     * 
-     * @throws RuntimeException
-     *             an exception thrown by the native method {@link Camera#startPreview()}.
+     *
+     * @throws RuntimeException an exception thrown by the native method {@link Camera#startPreview()}.
      */
     public void restart() throws RuntimeException {
         if (mCamera != null && mSurfaceReady) {

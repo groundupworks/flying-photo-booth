@@ -15,7 +15,6 @@
  */
 package com.groundupworks.lib.photobooth.helpers;
 
-import java.io.OutputStream;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
@@ -25,11 +24,14 @@ import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Point;
 import android.util.DisplayMetrics;
+
 import com.groundupworks.lib.photobooth.R;
+
+import java.io.OutputStream;
 
 /**
  * A helper class containing image processing-related methods and configurations.
- * 
+ *
  * @author Benedict Lau
  */
 public class ImageHelper {
@@ -75,11 +77,9 @@ public class ImageHelper {
 
     /**
      * Gets the max thumbnail size based on the arrangement.
-     * 
-     * @param res
-     *            the {@link Resources}.
-     * @param arrangementPref
-     *            the bitmap arrangement preference.
+     *
+     * @param res             the {@link Resources}.
+     * @param arrangementPref the bitmap arrangement preference.
      * @return a {@link Point} where the (x, y) corresponds to the (width, height) of the max thumbnail size.
      */
     public static Point getMaxThumbSize(Resources res, String arrangementPref) {
@@ -105,17 +105,13 @@ public class ImageHelper {
 
     /**
      * Gets the size of content fitted inside a container while maintaining its aspect ratio.
-     * 
-     * @param containerWidth
-     *            width of the container.
-     * @param containerHeight
-     *            height of the container.
-     * @param contentWidth
-     *            width of the content.
-     * @param contentHeight
-     *            height of the content.
+     *
+     * @param containerWidth  width of the container.
+     * @param containerHeight height of the container.
+     * @param contentWidth    width of the content.
+     * @param contentHeight   height of the content.
      * @return a {@link Point} where the (x, y) corresponds to the (width, height) of the content fitted inside the
-     *         container.
+     * container.
      */
     public static Point getAspectFitSize(int containerWidth, int containerHeight, int contentWidth, int contentHeight) {
         int fittedContentWidth = containerWidth;
@@ -137,9 +133,8 @@ public class ImageHelper {
 
     /**
      * Gets the path to the writable captured image directory.
-     * 
-     * @param the
-     *            image folder name.
+     *
+     * @param the image folder name.
      * @return the path to the captured image directory; or null if unsuccessful.
      */
     public static String getCapturedImageDirectory(String imageFolder) {
@@ -148,9 +143,8 @@ public class ImageHelper {
 
     /**
      * Generates a file name for the captured Jpeg.
-     * 
-     * @param the
-     *            prefix for the saved Jpeg filename.
+     *
+     * @param the prefix for the saved Jpeg filename.
      * @return the automatically generated file name.
      */
     public static String generateCapturedImageName(String filenamePrefix) {
@@ -159,11 +153,9 @@ public class ImageHelper {
 
     /**
      * Compresses a bitmap to Jpeg and write the Jpeg data to an output stream.
-     * 
-     * @param bitmap
-     *            the bitmap to compress.
-     * @param outputStream
-     *            the outputstream to write the compressed data.
+     *
+     * @param bitmap       the bitmap to compress.
+     * @param outputStream the outputstream to write the compressed data.
      * @return true if successful; false otherwise.
      */
     public static boolean toJpegOutputStream(Bitmap bitmap, OutputStream outputStream) {
@@ -178,15 +170,11 @@ public class ImageHelper {
     /**
      * Creates a processed bitmap image from Jpeg data in a byte array. Transformations and image filters are applied to
      * the original image in the process.
-     * 
-     * @param jpegData
-     *            byte array of Jpeg data.
-     * @param rotation
-     *            clockwise rotation applied to image in degrees.
-     * @param reflection
-     *            horizontal reflection applied to image.
-     * @param filter
-     *            an optional {@link ImageFilter} to apply. Pass null to disable.
+     *
+     * @param jpegData   byte array of Jpeg data.
+     * @param rotation   clockwise rotation applied to image in degrees.
+     * @param reflection horizontal reflection applied to image.
+     * @param filter     an optional {@link ImageFilter} to apply. Pass null to disable.
      * @return the image; or null if unsuccessful.
      */
     public static Bitmap createImage(byte[] jpegData, float rotation, boolean reflection, ImageFilter filter) {
@@ -274,11 +262,9 @@ public class ImageHelper {
 
     /**
      * Creates a photo strip consisting of an array of bitmaps. The bitmaps must be identical in size.
-     * 
-     * @param bitmaps
-     *            the array of bitmaps to join into one photo strip.
-     * @param arrangement
-     *            the arrangement of the bitmaps.
+     *
+     * @param bitmaps     the array of bitmaps to join into one photo strip.
+     * @param arrangement the arrangement of the bitmaps.
      * @return the photo strip as a single bitmap.
      */
     public static Bitmap createPhotoStrip(Bitmap[] bitmaps, Arrangement arrangement) {
@@ -301,9 +287,8 @@ public class ImageHelper {
 
         /**
          * Applies filter to the source bitmap.
-         * 
-         * @param srcBitmap
-         *            the source bitmap. Must not be null.
+         *
+         * @param srcBitmap the source bitmap. Must not be null.
          * @return the filtered bitmap; or null if unsuccessful.
          */
         public Bitmap applyFilter(Bitmap srcBitmap);
@@ -316,10 +301,9 @@ public class ImageHelper {
 
         /**
          * Creates a photo strip.
-         * 
-         * @param srcBitmaps
-         *            the array of bitmaps to join into one photo strip. The entire array must be populated with bitmaps
-         *            of the same size, and none of the slots may be null.
+         *
+         * @param srcBitmaps the array of bitmaps to join into one photo strip. The entire array must be populated with bitmaps
+         *                   of the same size, and none of the slots may be null.
          * @return the photo strip; or null if unsuccessful.
          */
         public Bitmap createPhotoStrip(Bitmap[] srcBitmaps);

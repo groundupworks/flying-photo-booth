@@ -6,12 +6,13 @@
 package com.groundupworks.partyphotobooth.arrangements;
 
 import android.graphics.Bitmap;
+
 import com.groundupworks.lib.photobooth.arrangements.BoxArrangement;
 import com.groundupworks.partyphotobooth.helpers.TextHelper;
 
 /**
  * Box arrangement with title and date as the header.
- * 
+ *
  * @author Benedict Lau
  */
 public class TitledBoxArrangement extends BoxArrangement {
@@ -28,13 +29,10 @@ public class TitledBoxArrangement extends BoxArrangement {
 
     /**
      * Constructor.
-     * 
-     * @param lineOne
-     *            the first line of the event title; or null to hide.
-     * @param lineTwo
-     *            the second line of the event title; or null to hide.
-     * @param date
-     *            the date of the event; or null to hide.
+     *
+     * @param lineOne the first line of the event title; or null to hide.
+     * @param lineTwo the second line of the event title; or null to hide.
+     * @param date    the date of the event; or null to hide.
      */
     public TitledBoxArrangement(String lineOne, String lineTwo, String date) {
         mTitle = TextHelper.joinStrings(lineOne, lineTwo);

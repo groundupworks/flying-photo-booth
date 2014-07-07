@@ -9,21 +9,21 @@ import android.content.Context;
 import android.util.SparseArray;
 import android.view.View;
 import android.widget.TextView;
+
 import com.groundupworks.partyphotobooth.R;
 import com.groundupworks.partyphotobooth.helpers.PreferencesHelper.PhotoBoothMode;
 
 /**
  * Adapter for the {@link PhotoBoothMode} selection ui.
- * 
+ *
  * @author Benedict Lau
  */
 public class PhotoBoothModeAdapter extends BaseSpinnerAdapter<PhotoBoothModeAdapter.Mode> {
 
     /**
      * Constructor.
-     * 
-     * @param context
-     *            the {@link Context}.
+     *
+     * @param context the {@link Context}.
      */
     public PhotoBoothModeAdapter(Context context) {
         super(context, createItems(context));
@@ -45,9 +45,8 @@ public class PhotoBoothModeAdapter extends BaseSpinnerAdapter<PhotoBoothModeAdap
 
     /**
      * Creates the list of {@link PhotoBoothModeAdapter.Mode} for the selection ui.
-     * 
-     * @param context
-     *            the {@link Context}.
+     *
+     * @param context the {@link Context}.
      * @return the {@link SparseArray} of {@link PhotoBoothModeAdapter.Mode}.
      */
     private static SparseArray<PhotoBoothModeAdapter.Mode> createItems(Context context) {
@@ -76,9 +75,8 @@ public class PhotoBoothModeAdapter extends BaseSpinnerAdapter<PhotoBoothModeAdap
 
     /**
      * Gets the {@link PhotoBoothMode} based on the item position.
-     * 
-     * @param position
-     *            position of the item whose data we want within the adapter's data set.
+     *
+     * @param position position of the item whose data we want within the adapter's data set.
      * @return the {@link PhotoBoothMode}.
      */
     public PhotoBoothMode getPhotoBoothMode(int position) {

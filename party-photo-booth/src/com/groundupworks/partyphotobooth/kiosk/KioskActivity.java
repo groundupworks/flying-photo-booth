@@ -21,6 +21,7 @@ import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.Toast;
+
 import com.groundupworks.partyphotobooth.R;
 import com.groundupworks.partyphotobooth.fragments.CaptureFragment;
 import com.groundupworks.partyphotobooth.fragments.ConfirmationFragment;
@@ -32,7 +33,7 @@ import com.groundupworks.partyphotobooth.kiosk.KioskModeHelper.State;
 
 /**
  * {@link Activity} that puts the device in Kiosk mode. This should only be launched from the {@link KioskService}.
- * 
+ *
  * @author Benedict Lau
  */
 public class KioskActivity extends FragmentActivity implements KioskSetupFragment.ICallbacks,
@@ -359,11 +360,9 @@ public class KioskActivity extends FragmentActivity implements KioskSetupFragmen
 
     /**
      * Launches a new {@link NoticeFragment}.
-     * 
-     * @param facebookShared
-     *            true if the photo strip is marked for Facebook sharing; false otherwise.
-     * @param dropboxShared
-     *            true if the photo strip is marked for Dropbox sharing; false otherwise.
+     *
+     * @param facebookShared true if the photo strip is marked for Facebook sharing; false otherwise.
+     * @param dropboxShared  true if the photo strip is marked for Dropbox sharing; false otherwise.
      */
     private void launchNoticeFragment(boolean facebookShared, boolean dropboxShared) {
         mNoticeFragment = NoticeFragment.newInstance(facebookShared, dropboxShared);
@@ -392,9 +391,8 @@ public class KioskActivity extends FragmentActivity implements KioskSetupFragmen
 
     /**
      * Replaces the {@link Fragment} in the top fullscreen container.
-     * 
-     * @param fragment
-     *            the new {@link Fragment} used to replace the current.
+     *
+     * @param fragment the new {@link Fragment} used to replace the current.
      */
     private void replaceTopFragment(Fragment fragment) {
         final FragmentManager fragmentManager = getSupportFragmentManager();
@@ -406,9 +404,8 @@ public class KioskActivity extends FragmentActivity implements KioskSetupFragmen
 
     /**
      * Replaces the {@link Fragment} in the left side container.
-     * 
-     * @param fragment
-     *            the new {@link Fragment} used to replace the current.
+     *
+     * @param fragment the new {@link Fragment} used to replace the current.
      */
     private void replaceLeftFragment(Fragment fragment) {
         final FragmentManager fragmentManager = getSupportFragmentManager();
@@ -419,9 +416,8 @@ public class KioskActivity extends FragmentActivity implements KioskSetupFragmen
 
     /**
      * Replaces the {@link Fragment} in the right side container.
-     * 
-     * @param fragment
-     *            the new {@link Fragment} used to replace the current.
+     *
+     * @param fragment the new {@link Fragment} used to replace the current.
      */
     private void replaceRightFragment(Fragment fragment) {
         final FragmentManager fragmentManager = getSupportFragmentManager();
@@ -432,9 +428,8 @@ public class KioskActivity extends FragmentActivity implements KioskSetupFragmen
 
     /**
      * Shows a {@link DialogFragment}.
-     * 
-     * @param fragment
-     *            the new {@link DialogFragment} to show.
+     *
+     * @param fragment the new {@link DialogFragment} to show.
      */
     private void showDialogFragment(DialogFragment fragment) {
         fragment.show(getSupportFragmentManager(), null);
@@ -442,9 +437,8 @@ public class KioskActivity extends FragmentActivity implements KioskSetupFragmen
 
     /**
      * Removes the {@link Fragment}.
-     * 
-     * @param fragment
-     *            the {@link Fragment} to remove.
+     *
+     * @param fragment the {@link Fragment} to remove.
      */
     private void removeFragment(Fragment fragment) {
         final FragmentManager fragmentManager = getSupportFragmentManager();

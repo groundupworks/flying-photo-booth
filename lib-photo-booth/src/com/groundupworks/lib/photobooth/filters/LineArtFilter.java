@@ -17,6 +17,7 @@ package com.groundupworks.lib.photobooth.filters;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;
+
 import com.groundupworks.lib.photobooth.helpers.ImageHelper.ImageFilter;
 import com.jabistudio.androidjhlabs.filter.EdgeFilter;
 import com.jabistudio.androidjhlabs.filter.MedianFilter;
@@ -25,7 +26,7 @@ import com.jabistudio.androidjhlabs.filter.util.AndroidUtils;
 
 /**
  * Filter to covert image to line art.
- * 
+ *
  * @author Benedict Lau
  */
 public class LineArtFilter implements ImageFilter {

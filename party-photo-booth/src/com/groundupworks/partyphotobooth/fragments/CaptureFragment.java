@@ -5,8 +5,6 @@
  */
 package com.groundupworks.partyphotobooth.fragments;
 
-import java.lang.ref.WeakReference;
-import java.util.List;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
@@ -25,6 +23,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+
 import com.groundupworks.lib.photobooth.helpers.CameraHelper;
 import com.groundupworks.lib.photobooth.helpers.ImageHelper;
 import com.groundupworks.lib.photobooth.views.AnimationDrawableCallback;
@@ -33,9 +32,12 @@ import com.groundupworks.partyphotobooth.R;
 import com.groundupworks.partyphotobooth.helpers.PreferencesHelper;
 import com.groundupworks.partyphotobooth.helpers.PreferencesHelper.PhotoBoothMode;
 
+import java.lang.ref.WeakReference;
+import java.util.List;
+
 /**
  * Ui for the camera preview and capture screen.
- * 
+ *
  * @author Benedict Lau
  */
 public class CaptureFragment extends Fragment {
@@ -289,12 +291,10 @@ public class CaptureFragment extends Fragment {
 
         /**
          * Constructor.
-         * 
-         * @param animationDrawable
-         *            the {@link AnimationDrawable}.
-         * @param callback
-         *            the client's {@link Callback} implementation. This is usually the {@link View} the has the
-         *            {@link AnimationDrawable} as background.
+         *
+         * @param animationDrawable the {@link AnimationDrawable}.
+         * @param callback          the client's {@link Callback} implementation. This is usually the {@link View} the has the
+         *                          {@link AnimationDrawable} as background.
          */
         public TakePictureAnimationDrawableCallback(AnimationDrawable animationDrawable, Callback callback) {
             super(animationDrawable, callback);
@@ -340,7 +340,7 @@ public class CaptureFragment extends Fragment {
 
     /**
      * Gets the callbacks for this fragment.
-     * 
+     *
      * @return the callbacks; or null if not set.
      */
     private CaptureFragment.ICallbacks getCallbacks() {
@@ -355,7 +355,7 @@ public class CaptureFragment extends Fragment {
      * Checks whether the {@link Activity} is attached and not finishing. This should be used as a validation check in a
      * runnable posted to the ui thread, and the {@link Activity} may be have detached by the time the runnable
      * executes. This method should be called on the ui thread.
-     * 
+     *
      * @return true if {@link Activity} is still alive; false otherwise.
      */
     private boolean isActivityAlive() {
@@ -404,11 +404,9 @@ public class CaptureFragment extends Fragment {
 
     /**
      * Creates a new {@link CaptureFragment} instance.
-     * 
-     * @param currentFrame
-     *            the current frame number to capture.
-     * @param totalFrames
-     *            the total number of frames to capture.
+     *
+     * @param currentFrame the current frame number to capture.
+     * @param totalFrames  the total number of frames to capture.
      * @return the new {@link CaptureFragment} instance.
      */
     public static CaptureFragment newInstance(int currentFrame, int totalFrames) {
@@ -433,13 +431,10 @@ public class CaptureFragment extends Fragment {
 
         /**
          * A picture is taken.
-         * 
-         * @param data
-         *            the picture data.
-         * @param rotation
-         *            clockwise rotation applied to image in degrees.
-         * @param reflection
-         *            horizontal reflection applied to image.
+         *
+         * @param data       the picture data.
+         * @param rotation   clockwise rotation applied to image in degrees.
+         * @param reflection horizontal reflection applied to image.
          */
         public void onPictureTaken(byte[] data, float rotation, boolean reflection);
 

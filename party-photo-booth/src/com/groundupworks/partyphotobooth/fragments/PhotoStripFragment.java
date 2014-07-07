@@ -5,7 +5,6 @@
  */
 package com.groundupworks.partyphotobooth.fragments;
 
-import java.lang.ref.WeakReference;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
@@ -29,6 +28,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+
 import com.groundupworks.lib.photobooth.framework.ControllerBackedFragment;
 import com.groundupworks.partyphotobooth.R;
 import com.groundupworks.partyphotobooth.controllers.PhotoStripController;
@@ -36,9 +36,11 @@ import com.groundupworks.partyphotobooth.helpers.PreferencesHelper;
 import com.groundupworks.partyphotobooth.helpers.PreferencesHelper.PhotoBoothTheme;
 import com.groundupworks.partyphotobooth.helpers.TextHelper;
 
+import java.lang.ref.WeakReference;
+
 /**
  * Display photos in a photo strip format.
- * 
+ *
  * @author Benedict Lau
  */
 public class PhotoStripFragment extends ControllerBackedFragment<PhotoStripController> {
@@ -283,7 +285,7 @@ public class PhotoStripFragment extends ControllerBackedFragment<PhotoStripContr
 
     /**
      * Gets the callbacks for this fragment.
-     * 
+     *
      * @return the callbacks; or null if not set.
      */
     private PhotoStripFragment.ICallbacks getCallbacks() {
@@ -298,7 +300,7 @@ public class PhotoStripFragment extends ControllerBackedFragment<PhotoStripContr
      * Checks whether the {@link Activity} is attached and not finishing. This should be used as a validation check in a
      * runnable posted to the ui thread, and the {@link Activity} may be have detached by the time the runnable
      * executes. This method should be called on the ui thread.
-     * 
+     *
      * @return true if {@link Activity} is still alive; false otherwise.
      */
     private boolean isActivityAlive() {
@@ -308,15 +310,11 @@ public class PhotoStripFragment extends ControllerBackedFragment<PhotoStripContr
 
     /**
      * Adds the thumbnail of a frame to the photo strip ui.
-     * 
-     * @param activity
-     *            the {@link Activity}.
-     * @param thumb
-     *            the thumbnail bitmap.
-     * @param key
-     *            the key for the frame.
-     * @param isPhotoStripComplete
-     *            true if this is the last frame and the photo strip is complete; false otherwise.
+     *
+     * @param activity             the {@link Activity}.
+     * @param thumb                the thumbnail bitmap.
+     * @param key                  the key for the frame.
+     * @param isPhotoStripComplete true if this is the last frame and the photo strip is complete; false otherwise.
      */
     private void addThumb(Activity activity, Bitmap thumb, final int key, boolean isPhotoStripComplete) {
         Resources res = getResources();
@@ -407,11 +405,9 @@ public class PhotoStripFragment extends ControllerBackedFragment<PhotoStripContr
 
     /**
      * Gets a {@link TranslateAnimation} for animating the photo strip when a new photo is added.
-     * 
-     * @param offset
-     *            the starting offset in pixels.
-     * @param isPhotoStripComplete
-     *            true if this is the last frame and the photo strip is complete; false otherwise.
+     *
+     * @param offset               the starting offset in pixels.
+     * @param isPhotoStripComplete true if this is the last frame and the photo strip is complete; false otherwise.
      * @return the animation.
      */
     private TranslateAnimation getTranslateAnimation(float offset, final boolean isPhotoStripComplete) {
@@ -452,7 +448,7 @@ public class PhotoStripFragment extends ControllerBackedFragment<PhotoStripContr
 
     /**
      * Creates a new {@link PhotoStripFragment} instance.
-     * 
+     *
      * @return the new {@link PhotoStripFragment} instance.
      */
     public static PhotoStripFragment newInstance() {
@@ -461,13 +457,10 @@ public class PhotoStripFragment extends ControllerBackedFragment<PhotoStripContr
 
     /**
      * Adds a new photo to the photo strip.
-     * 
-     * @param data
-     *            the picture data.
-     * @param rotation
-     *            clockwise rotation applied to image in degrees.
-     * @param reflection
-     *            horizontal reflection applied to image.
+     *
+     * @param data       the picture data.
+     * @param rotation   clockwise rotation applied to image in degrees.
+     * @param reflection horizontal reflection applied to image.
      */
     public void addPhoto(byte[] data, float rotation, boolean reflection) {
         if (isActivityAlive()) {
@@ -494,9 +487,8 @@ public class PhotoStripFragment extends ControllerBackedFragment<PhotoStripContr
 
         /**
          * A new photo is added.
-         * 
-         * @param isPhotoStripComplete
-         *            true if this is the last frame and the photo strip is complete; false otherwise.
+         *
+         * @param isPhotoStripComplete true if this is the last frame and the photo strip is complete; false otherwise.
          */
         public void onNewPhotoAdded(boolean isPhotoStripComplete);
 
@@ -507,11 +499,9 @@ public class PhotoStripFragment extends ControllerBackedFragment<PhotoStripContr
 
         /**
          * The current photo strip is submitted.
-         * 
-         * @param facebookShared
-         *            true if the photo strip is marked for Facebook sharing; false otherwise.
-         * @param dropboxShared
-         *            true if the photo strip is marked for Dropbox sharing; false otherwise.
+         *
+         * @param facebookShared true if the photo strip is marked for Facebook sharing; false otherwise.
+         * @param dropboxShared  true if the photo strip is marked for Dropbox sharing; false otherwise.
          */
         public void onPhotoStripSubmitted(boolean facebookShared, boolean dropboxShared);
 

@@ -24,11 +24,12 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.app.DialogFragment;
+
 import com.groundupworks.flyingphotobooth.R;
 
 /**
  * Android Beam details dialog.
- * 
+ *
  * @author Benedict Lau
  */
 public class BeamDetailsDialogFragment extends DialogFragment {
@@ -62,7 +63,7 @@ public class BeamDetailsDialogFragment extends DialogFragment {
 
     /**
      * Creates a new {@link BeamDetailsDialogFragment} instance.
-     * 
+     *
      * @return the new {@link BeamDetailsDialogFragment} instance.
      */
     public static BeamDetailsDialogFragment newInstance() {

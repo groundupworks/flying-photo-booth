@@ -1,20 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
 
     <!-- Retry Policy -->
     <string name="retry_policy__consecutive_fails">retry_policy__consecutive_fails</string>
 
     <!-- Facebook Helper -->
-    <string name="facebook__app_id">null</string> <!-- Client must override -->
-    <string name="facebook__app_album_default_name">null</string> <!-- Client must override -->
+    <string name="facebook__app_id">null</string>
+    <!-- Client must override -->
+    <string name="facebook__app_album_default_name">null</string>
+    <!-- Client must override -->
     <string name="facebook__account_name_key">facebook__account_name_key</string>
     <string name="facebook__photo_privacy_key">facebook__photo_privacy_key</string>
     <string name="facebook__album_name_key">facebook__album_name_key</string>
     <string name="facebook__album_graph_path_key">facebook__album_graph_path_key</string>
 
     <!-- Dropbox Helper -->
-    <string name="dropbox__app_key">null</string> <!-- Client must override -->
-    <string name="dropbox__app_secret">null</string> <!-- Client must override -->
+    <string name="dropbox__app_key">null</string>
+    <!-- Client must override -->
+    <string name="dropbox__app_secret">null</string>
+    <!-- Client must override -->
     <string name="dropbox__account_name_key">dropbox__account_name_key</string>
     <string name="dropbox__share_url_key">dropbox__share_url_key</string>
     <string name="dropbox__access_token_key">dropbox__access_token_key</string>

@@ -23,11 +23,12 @@ import android.content.DialogInterface.OnClickListener;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+
 import com.groundupworks.lib.photobooth.R;
 
 /**
  * {@link DialogFragment} for Facebook photo privacy level selection.
- * 
+ *
  * @author Benedict Lau
  */
 public class FacebookPrivacyDialogFragment extends DialogFragment {
@@ -72,13 +73,10 @@ public class FacebookPrivacyDialogFragment extends DialogFragment {
 
     /**
      * Handles the photo privacy selection.
-     * 
-     * @param photoPrivacyIndex
-     *            the index of the selected photo privacy level.
-     * @param albumName
-     *            the name of the album to share to.
-     * @param albumGraphPath
-     *            the graph path of the album to share to.
+     *
+     * @param photoPrivacyIndex the index of the selected photo privacy level.
+     * @param albumName         the name of the album to share to.
+     * @param albumGraphPath    the graph path of the album to share to.
      */
     private void handlePhotoPrivacySelection(int photoPrivacyIndex, String albumName, String albumGraphPath) {
         FacebookSettingsActivity activity = (FacebookSettingsActivity) getActivity();
@@ -119,11 +117,9 @@ public class FacebookPrivacyDialogFragment extends DialogFragment {
 
     /**
      * Creates a new {@link FacebookPrivacyDialogFragment} instance.
-     * 
-     * @param albumName
-     *            the name of the album to share to.
-     * @param albumGraphPath
-     *            the graph path of the album to share to.
+     *
+     * @param albumName      the name of the album to share to.
+     * @param albumGraphPath the graph path of the album to share to.
      * @return the new {@link FacebookPrivacyDialogFragment} instance.
      */
     public static FacebookPrivacyDialogFragment newInstance(String albumName, String albumGraphPath) {

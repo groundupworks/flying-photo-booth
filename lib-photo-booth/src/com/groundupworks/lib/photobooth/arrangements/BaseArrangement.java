@@ -19,11 +19,12 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+
 import com.groundupworks.lib.photobooth.helpers.ImageHelper.Arrangement;
 
 /**
  * Base class where other {@link Arrangement} implementations extend from.
- * 
+ *
  * @author Benedict Lau
  */
 public abstract class BaseArrangement implements Arrangement {
@@ -39,9 +40,8 @@ public abstract class BaseArrangement implements Arrangement {
 
     /**
      * Gets the header bitmap for the photo strip. The base implementation returns null.
-     * 
-     * @param width
-     *            the width of the header bitmap.
+     *
+     * @param width the width of the header bitmap.
      * @return a bitmap to be drawn as the photo strip header; or null if no header is applied.
      */
     protected Bitmap getHeader(int width) {
@@ -50,17 +50,12 @@ public abstract class BaseArrangement implements Arrangement {
 
     /**
      * Draws the border for the photo strip.
-     * 
-     * @param canvas
-     *            the canvas to draw on.
-     * @param left
-     *            the left side of the photo strip.
-     * @param top
-     *            the top of the photo strip.
-     * @param right
-     *            the right side of the photo strip.
-     * @param bottom
-     *            the bottom of the photo strip.
+     *
+     * @param canvas the canvas to draw on.
+     * @param left   the left side of the photo strip.
+     * @param top    the top of the photo strip.
+     * @param right  the right side of the photo strip.
+     * @param bottom the bottom of the photo strip.
      */
     protected static void drawPhotoStripBorders(Canvas canvas, float left, float top, float right, float bottom) {
         Paint paint = new Paint();
@@ -70,17 +65,12 @@ public abstract class BaseArrangement implements Arrangement {
 
     /**
      * Draws the border for a panel.
-     * 
-     * @param canvas
-     *            the canvas to draw on.
-     * @param left
-     *            the left side of the panel.
-     * @param top
-     *            the top of the panel.
-     * @param right
-     *            the right side of the panel.
-     * @param bottom
-     *            the bottom of the panel.
+     *
+     * @param canvas the canvas to draw on.
+     * @param left   the left side of the panel.
+     * @param top    the top of the panel.
+     * @param right  the right side of the panel.
+     * @param bottom the bottom of the panel.
      */
     protected static void drawPanelBorders(Canvas canvas, float left, float top, float right, float bottom) {
         Paint paint = new Paint();
@@ -94,19 +84,13 @@ public abstract class BaseArrangement implements Arrangement {
 
     /**
      * Draws the outline of a rectangle.
-     * 
-     * @param canvas
-     *            the canvas to draw on.
-     * @param left
-     *            the left side of the rectangle to be drawn.
-     * @param top
-     *            the top of the rectangle to be drawn.
-     * @param right
-     *            the right side of the rectangle to be drawn.
-     * @param bottom
-     *            the bottom of the rectangle to be drawn.
-     * @param paint
-     *            the {@link Paint} to use for drawing.
+     *
+     * @param canvas the canvas to draw on.
+     * @param left   the left side of the rectangle to be drawn.
+     * @param top    the top of the rectangle to be drawn.
+     * @param right  the right side of the rectangle to be drawn.
+     * @param bottom the bottom of the rectangle to be drawn.
+     * @param paint  the {@link Paint} to use for drawing.
      */
     protected static void drawRectOutline(Canvas canvas, float left, float top, float right, float bottom, Paint paint) {
         canvas.drawLine(left, top, right, top, paint);

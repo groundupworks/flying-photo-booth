@@ -15,19 +15,21 @@
  */
 package com.groundupworks.lib.photobooth.wings;
 
-import java.util.ArrayList;
-import java.util.List;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+
 import com.groundupworks.lib.photobooth.helpers.LogsHelper;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The Wings database helper that stores {@link ShareRequest} records and manages the state of those records.
- * 
+ *
  * @author Benedict Lau
  */
 public class WingsDbHelper extends SQLiteOpenHelper {
@@ -66,7 +68,7 @@ public class WingsDbHelper extends SQLiteOpenHelper {
     /**
      * SQL where clause that describes the purge policy. A query with this where clause will return all records
      * satisfying one or more of the following conditions:
-     * 
+     * <p/>
      * <pre>
      * 1. Records created before a certain time
      * 2. Records in a certain state
@@ -109,9 +111,8 @@ public class WingsDbHelper extends SQLiteOpenHelper {
 
     /**
      * Private constructor.
-     * 
-     * @param context
-     *            the {@link Context}.
+     *
+     * @param context the {@link Context}.
      */
     private WingsDbHelper(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
@@ -134,9 +135,8 @@ public class WingsDbHelper extends SQLiteOpenHelper {
 
     /**
      * Gets the {@link WingsDbHelper} singleton.
-     * 
-     * @param context
-     *            the {@link Context}.
+     *
+     * @param context the {@link Context}.
      * @return the singleton.
      */
     public synchronized static final WingsDbHelper getInstance(Context context) {
@@ -148,11 +148,9 @@ public class WingsDbHelper extends SQLiteOpenHelper {
 
     /**
      * Creates a new {@link ShareRequest}.
-     * 
-     * @param filePath
-     *            the local path to the file to share.
-     * @param destination
-     *            the destination of the share.
+     *
+     * @param filePath    the local path to the file to share.
+     * @param destination the destination of the share.
      * @return true if successful; false otherwise.
      */
     public synchronized boolean createShareRequest(String filePath, int destination) {
@@ -191,9 +189,8 @@ public class WingsDbHelper extends SQLiteOpenHelper {
      * by time of creation, from the earliest to most recent. This method internally changes the checked out records to
      * a processing state, so a call to {@link #markSuccessful(int)} or {@link #markFailed(int)} is expected to be
      * called on each of those records.
-     * 
-     * @param destination
-     *            the destination of the {@link ShareRequest} to checkout.
+     *
+     * @param destination the destination of the {@link ShareRequest} to checkout.
      * @return the list of {@link ShareRequest}; may be empty.
      */
     public synchronized List<ShareRequest> checkoutShareRequests(int destination) {
@@ -205,10 +202,11 @@ public class WingsDbHelper extends SQLiteOpenHelper {
             db = getWritableDatabase();
 
             // Get all records for the requested destination in the pending state.
-            cursor = db.query(ShareRequestTable.NAME, new String[] { ShareRequestTable.COLUMN_ID,
-                    ShareRequestTable.COLUMN_FILE_PATH }, WHERE_CLAUSE_BY_DESTINATION_AND_STATE,
-                    new String[] { String.valueOf(destination), String.valueOf(ShareRequest.STATE_PENDING) }, null,
-                    null, SORT_ORDER_TIME_CREATED);
+            cursor = db.query(ShareRequestTable.NAME, new String[]{ShareRequestTable.COLUMN_ID,
+                            ShareRequestTable.COLUMN_FILE_PATH}, WHERE_CLAUSE_BY_DESTINATION_AND_STATE,
+                    new String[]{String.valueOf(destination), String.valueOf(ShareRequest.STATE_PENDING)}, null,
+                    null, SORT_ORDER_TIME_CREATED
+            );
 
             if (cursor != null && cursor.moveToFirst()) {
                 do {
@@ -220,7 +218,7 @@ public class WingsDbHelper extends SQLiteOpenHelper {
                     values.put(ShareRequestTable.COLUMN_STATE, ShareRequest.STATE_PROCESSING);
 
                     if (db.update(ShareRequestTable.NAME, values, WHERE_CLAUSE_BY_ID,
-                            new String[] { String.valueOf(id) }) > 0) {
+                            new String[]{String.valueOf(id)}) > 0) {
                         // Add record to list.
                         shareRequests.add(new ShareRequest(id, filePath, destination));
 
@@ -243,9 +241,8 @@ public class WingsDbHelper extends SQLiteOpenHelper {
 
     /**
      * Deletes all {@link ShareRequest} based on destination.
-     * 
-     * @param destination
-     *            the destination of the list of {@link ShareRequest} to delete.
+     *
+     * @param destination the destination of the list of {@link ShareRequest} to delete.
      */
     public synchronized void deleteShareRequests(int destination) {
         SQLiteDatabase db = null;
@@ -253,7 +250,7 @@ public class WingsDbHelper extends SQLiteOpenHelper {
             db = getWritableDatabase();
 
             int recordsDeleted = db.delete(ShareRequestTable.NAME, WHERE_CLAUSE_BY_DESTINATION,
-                    new String[] { String.valueOf(destination) });
+                    new String[]{String.valueOf(destination)});
 
             LogsHelper.log(WingsDbHelper.class, "deleteShareRequests", "destination=" + destination + " rowsDeleted="
                     + recordsDeleted);
@@ -266,9 +263,8 @@ public class WingsDbHelper extends SQLiteOpenHelper {
 
     /**
      * Marks a {@link ShareRequest} as successfully processed.
-     * 
-     * @param id
-     *            the id of the {@link ShareRequest}.
+     *
+     * @param id the id of the {@link ShareRequest}.
      * @return true if successful; false otherwise.
      */
     public synchronized boolean markSuccessful(int id) {
@@ -283,7 +279,7 @@ public class WingsDbHelper extends SQLiteOpenHelper {
             values.put(ShareRequestTable.COLUMN_STATE, ShareRequest.STATE_PROCESSED);
 
             isSuccessful = db.update(ShareRequestTable.NAME, values, WHERE_CLAUSE_BY_ID,
-                    new String[] { String.valueOf(id) }) > 0;
+                    new String[]{String.valueOf(id)}) > 0;
 
             LogsHelper.log(WingsDbHelper.class, "markSuccessful", "isSuccessful=" + isSuccessful + " id=" + id);
         } catch (SQLException e) {
@@ -296,9 +292,8 @@ public class WingsDbHelper extends SQLiteOpenHelper {
 
     /**
      * Marks a {@link ShareRequest} as failed to process.
-     * 
-     * @param id
-     *            the id of the {@link ShareRequest}.
+     *
+     * @param id the id of the {@link ShareRequest}.
      * @return true if successful; false otherwise.
      */
     public synchronized boolean markFailed(int id) {
@@ -310,8 +305,8 @@ public class WingsDbHelper extends SQLiteOpenHelper {
             db = getWritableDatabase();
 
             // Get number of times this record has already failed to process.
-            cursor = db.query(ShareRequestTable.NAME, new String[] { ShareRequestTable.COLUMN_FAILS },
-                    WHERE_CLAUSE_BY_ID, new String[] { String.valueOf(id) }, null, null, null);
+            cursor = db.query(ShareRequestTable.NAME, new String[]{ShareRequestTable.COLUMN_FAILS},
+                    WHERE_CLAUSE_BY_ID, new String[]{String.valueOf(id)}, null, null, null);
             if (cursor != null && cursor.moveToFirst()) {
                 int fails = cursor.getInt(cursor.getColumnIndex(ShareRequestTable.COLUMN_FAILS));
 
@@ -321,7 +316,7 @@ public class WingsDbHelper extends SQLiteOpenHelper {
                 values.put(ShareRequestTable.COLUMN_FAILS, fails + 1);
 
                 isSuccessful = db.update(ShareRequestTable.NAME, values, WHERE_CLAUSE_BY_ID,
-                        new String[] { String.valueOf(id) }) > 0;
+                        new String[]{String.valueOf(id)}) > 0;
 
                 LogsHelper.log(WingsDbHelper.class, "markFailed", "isSuccessful=" + isSuccessful + " id=" + id);
             }
@@ -339,7 +334,7 @@ public class WingsDbHelper extends SQLiteOpenHelper {
 
     /**
      * Purges the database based on the purge policy.
-     * 
+     *
      * @return the number of records remaining after the purge; or -1 if an error occurred.
      */
     public synchronized int purge() {
@@ -352,11 +347,12 @@ public class WingsDbHelper extends SQLiteOpenHelper {
             // Purge records.
             long earliestValidTime = System.currentTimeMillis() - RECORD_EXPIRY_TIME;
             int recordsDeleted = db.delete(ShareRequestTable.NAME, WHERE_CLAUSE_PURGE_POLICY,
-                    new String[] { String.valueOf(earliestValidTime), String.valueOf(ShareRequest.STATE_PROCESSED),
-                            String.valueOf(RECORD_MAX_FAILS) });
+                    new String[]{String.valueOf(earliestValidTime), String.valueOf(ShareRequest.STATE_PROCESSED),
+                            String.valueOf(RECORD_MAX_FAILS)}
+            );
 
             // Check number of records remaining in the table.
-            cursor = db.query(ShareRequestTable.NAME, new String[] { ShareRequestTable.COLUMN_ID }, null, null, null,
+            cursor = db.query(ShareRequestTable.NAME, new String[]{ShareRequestTable.COLUMN_ID}, null, null, null,
                     null, null);
             if (cursor != null) {
                 recordsRemaining = cursor.getCount();
@@ -389,7 +385,7 @@ public class WingsDbHelper extends SQLiteOpenHelper {
             values.put(ShareRequestTable.COLUMN_STATE, ShareRequest.STATE_PENDING);
 
             int recordsUpdated = db.update(ShareRequestTable.NAME, values, WHERE_CLAUSE_BY_STATE,
-                    new String[] { String.valueOf(ShareRequest.STATE_PROCESSING) });
+                    new String[]{String.valueOf(ShareRequest.STATE_PROCESSING)});
 
             LogsHelper.log(WingsDbHelper.class, "resetProcessingShareRequests", "recordsUpdated=" + recordsUpdated);
         } catch (SQLException e) {

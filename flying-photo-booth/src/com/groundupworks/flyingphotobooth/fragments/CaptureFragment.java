@@ -15,11 +15,6 @@
  */
 package com.groundupworks.flyingphotobooth.fragments;
 
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -47,6 +42,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.groundupworks.flyingphotobooth.LaunchActivity;
 import com.groundupworks.flyingphotobooth.LaunchActivity.BackPressedHandler;
 import com.groundupworks.flyingphotobooth.MyPreferenceActivity;
@@ -55,9 +51,15 @@ import com.groundupworks.lib.photobooth.helpers.CameraHelper;
 import com.groundupworks.lib.photobooth.helpers.ImageHelper;
 import com.groundupworks.lib.photobooth.views.CenteredPreview;
 
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+
 /**
  * Ui for the camera preview and capture screen.
- * 
+ *
  * @author Benedict Lau
  */
 public class CaptureFragment extends Fragment {
@@ -583,9 +585,8 @@ public class CaptureFragment extends Fragment {
 
         /**
          * Constructor.
-         * 
-         * @param latch
-         *            the latch to countdown as a signal to proceed with capture sequence.
+         *
+         * @param latch the latch to countdown as a signal to proceed with capture sequence.
          */
         private ReviewOverlayOnTouchListener(CountDownLatch latch) {
             mReviewLatch = latch;
@@ -638,7 +639,7 @@ public class CaptureFragment extends Fragment {
      * Checks whether the {@link Activity} is attached and not finishing. This should be used as a validation check in a
      * runnable posted to the ui thread, and the {@link Activity} may be have detached by the time the runnable
      * executes. This method should be called on the ui thread.
-     * 
+     *
      * @return true if {@link Activity} is still alive; false otherwise.
      */
     private boolean isActivityAlive() {
@@ -812,7 +813,7 @@ public class CaptureFragment extends Fragment {
 
     /**
      * Checks whether the camera image is reflected.
-     * 
+     *
      * @return true if the camera image is reflected; false otherwise.
      */
     private boolean isCameraImageReflected(CameraInfo cameraInfo) {
@@ -902,9 +903,8 @@ public class CaptureFragment extends Fragment {
 
     /**
      * Saves the current camera preference.
-     * 
-     * @param context
-     *            the {@link Context}.
+     *
+     * @param context the {@link Context}.
      */
     private void saveCameraPreference(Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
@@ -917,9 +917,8 @@ public class CaptureFragment extends Fragment {
 
     /**
      * Creates a new {@link CaptureFragment} instance.
-     * 
-     * @param useFrontFacing
-     *            true to use front facing camera; false otherwise.
+     *
+     * @param useFrontFacing true to use front facing camera; false otherwise.
      * @return the new {@link CaptureFragment} instance.
      */
     public static CaptureFragment newInstance(boolean useFrontFacing) {

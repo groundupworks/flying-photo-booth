@@ -8,6 +8,7 @@ package com.groundupworks.partyphotobooth;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+
 import com.groundupworks.lib.photobooth.framework.BaseFragmentActivity;
 import com.groundupworks.partyphotobooth.kiosk.KioskModeHelper;
 import com.groundupworks.partyphotobooth.kiosk.KioskModeHelper.State;
@@ -18,7 +19,7 @@ import com.groundupworks.partyphotobooth.setup.fragments.ShareServicesSetupFragm
 
 /**
  * The {@link Activity} for setting up the photo booth for an event.
- * 
+ *
  * @author Benedict Lau
  */
 public class SetupActivity extends BaseFragmentActivity implements EventInfoSetupFragment.ICallbacks,

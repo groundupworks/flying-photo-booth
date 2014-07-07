@@ -14,15 +14,14 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.SpinnerAdapter;
 import android.widget.TextView;
+
 import com.groundupworks.partyphotobooth.R;
 
 /**
  * An base class for a {@link SpinnerAdapter} where the model objects are set at construction time and will not change.
- * 
+ *
+ * @param <T> the model object class.
  * @author Benedict Lau
- * 
- * @param <T>
- *            the model object class.
  */
 public abstract class BaseSpinnerAdapter<T> extends BaseAdapter {
 
@@ -48,11 +47,9 @@ public abstract class BaseSpinnerAdapter<T> extends BaseAdapter {
 
     /**
      * Constructor.
-     * 
-     * @param context
-     *            the {@link Context}.
-     * @param items
-     *            the {@link SparseArray} of model objects. Indices must be continuous.
+     *
+     * @param context the {@link Context}.
+     * @param items   the {@link SparseArray} of model objects. Indices must be continuous.
      */
     public BaseSpinnerAdapter(Context context, SparseArray<T> items) {
         mInflater = LayoutInflater.from(context);
@@ -112,11 +109,9 @@ public abstract class BaseSpinnerAdapter<T> extends BaseAdapter {
 
     /**
      * Binds a model object item to a view.
-     * 
-     * @param item
-     *            the model object item containing data to populate the view.
-     * @param view
-     *            the view to bind to.
+     *
+     * @param item the model object item containing data to populate the view.
+     * @param view the view to bind to.
      */
     protected abstract void bindView(T item, View view);
 }

@@ -11,21 +11,21 @@ import android.util.SparseArray;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import com.groundupworks.partyphotobooth.R;
 import com.groundupworks.partyphotobooth.helpers.PreferencesHelper.PhotoBoothTheme;
 
 /**
  * Adapter for the {@link PhotoBoothTheme} selection ui.
- * 
+ *
  * @author Benedict Lau
  */
 public class PhotoBoothThemeAdapter extends BaseSpinnerAdapter<PhotoBoothThemeAdapter.Theme> {
 
     /**
      * Constructor.
-     * 
-     * @param context
-     *            the {@link Context}.
+     *
+     * @param context the {@link Context}.
      */
     public PhotoBoothThemeAdapter(Context context) {
         super(context, createItems(context));
@@ -47,9 +47,8 @@ public class PhotoBoothThemeAdapter extends BaseSpinnerAdapter<PhotoBoothThemeAd
 
     /**
      * Creates the list of {@link PhotoBoothThemeAdapter.Theme} for the selection ui.
-     * 
-     * @param context
-     *            the {@link Context}.
+     *
+     * @param context the {@link Context}.
      * @return the {@link SparseArray} of {@link PhotoBoothThemeAdapter.Theme}.
      */
     private static SparseArray<PhotoBoothThemeAdapter.Theme> createItems(Context context) {
@@ -92,9 +91,8 @@ public class PhotoBoothThemeAdapter extends BaseSpinnerAdapter<PhotoBoothThemeAd
 
     /**
      * Gets the {@link PhotoBoothTheme} based on the item position.
-     * 
-     * @param position
-     *            position of the item whose data we want within the adapter's data set.
+     *
+     * @param position position of the item whose data we want within the adapter's data set.
      * @return the {@link PhotoBoothTheme}.
      */
     public PhotoBoothTheme getPhotoBoothTheme(int position) {

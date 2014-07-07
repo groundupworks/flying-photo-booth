@@ -22,7 +22,7 @@ import android.content.Intent;
 
 /**
  * An interface for a {@link Notification} published by Wings.
- * 
+ *
  * @author Benedict Lau
  */
 public interface IWingsNotification {
