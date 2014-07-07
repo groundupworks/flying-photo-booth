@@ -5,9 +5,6 @@
  */
 package com.groundupworks.partyphotobooth.fragments;
 
-import java.lang.ref.WeakReference;
-import java.util.Timer;
-import java.util.TimerTask;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -17,13 +14,18 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+
 import com.groundupworks.lib.photobooth.dropbox.DropboxHelper;
 import com.groundupworks.lib.photobooth.facebook.FacebookHelper;
 import com.groundupworks.partyphotobooth.R;
 
+import java.lang.ref.WeakReference;
+import java.util.Timer;
+import java.util.TimerTask;
+
 /**
  * Notice screen after photo strip submission.
- * 
+ *
  * @author Benedict Lau
  */
 public class NoticeFragment extends Fragment {
@@ -188,7 +190,7 @@ public class NoticeFragment extends Fragment {
 
     /**
      * Gets the callbacks for this fragment.
-     * 
+     *
      * @return the callbacks; or null if not set.
      */
     private NoticeFragment.ICallbacks getCallbacks() {
@@ -205,11 +207,9 @@ public class NoticeFragment extends Fragment {
 
     /**
      * Creates a new {@link NoticeFragment} instance.
-     * 
-     * @param facebookShared
-     *            true if the photo strip is marked for Facebook sharing; false otherwise.
-     * @param dropboxShared
-     *            true if the photo strip is marked for Dropbox sharing; false otherwise.
+     *
+     * @param facebookShared true if the photo strip is marked for Facebook sharing; false otherwise.
+     * @param dropboxShared  true if the photo strip is marked for Dropbox sharing; false otherwise.
      * @return the new {@link NoticeFragment} instance.
      */
     public static NoticeFragment newInstance(boolean facebookShared, boolean dropboxShared) {

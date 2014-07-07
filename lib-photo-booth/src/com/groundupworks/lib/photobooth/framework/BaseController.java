@@ -21,7 +21,7 @@ import android.support.v4.app.Fragment;
 
 /**
  * Base class for controller that works with a {@link ControllerBackedFragment}. Used to handle background tasks.
- * 
+ *
  * @author Benedict Lau
  */
 public abstract class BaseController {
@@ -48,9 +48,8 @@ public abstract class BaseController {
 
     /**
      * Requests view to handle ui update on the ui thread.
-     * 
-     * @param msg
-     *            the ui update to handle.
+     *
+     * @param msg the ui update to handle.
      */
     protected void sendUiUpdate(Message msg) {
         ControllerBackedFragment<?> fragment = mFragment;
@@ -61,9 +60,8 @@ public abstract class BaseController {
 
     /**
      * Handles events on the worker thread.
-     * 
-     * @param msg
-     *            the event to handle.
+     *
+     * @param msg the event to handle.
      */
     protected abstract void handleEvent(Message msg);
 
@@ -73,9 +71,8 @@ public abstract class BaseController {
 
     /**
      * Attaches the {@link Fragment} as the view for this controller.
-     * 
-     * @param fragment
-     *            the {@link Fragment} to attach.
+     *
+     * @param fragment the {@link Fragment} to attach.
      */
     public void attachFragment(ControllerBackedFragment<?> fragment) {
         mFragment = fragment;
@@ -90,9 +87,8 @@ public abstract class BaseController {
 
     /**
      * Sends an event to the worker handler to process.
-     * 
-     * @param msg
-     *            the event to handle.
+     *
+     * @param msg the event to handle.
      */
     public void sendToWorkerHandler(Message msg) {
         mWorkerHandler.sendMessage(msg);

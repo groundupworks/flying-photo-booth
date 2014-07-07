@@ -17,11 +17,12 @@ import android.text.Editable;
 import android.view.LayoutInflater;
 import android.widget.EditText;
 import android.widget.Toast;
+
 import com.groundupworks.partyphotobooth.R;
 
 /**
  * Password prompt to exit Kiosk mode.
- * 
+ *
  * @author Benedict Lau
  */
 public class KioskPasswordDialogFragment extends DialogFragment {
@@ -61,7 +62,8 @@ public class KioskPasswordDialogFragment extends DialogFragment {
                                     }
                                 }
                             }
-                        }).setNegativeButton(R.string.kiosk_mode__dialog_button_negative_text, null).create();
+                        }
+                ).setNegativeButton(R.string.kiosk_mode__dialog_button_negative_text, null).create();
     }
 
     //
@@ -70,7 +72,7 @@ public class KioskPasswordDialogFragment extends DialogFragment {
 
     /**
      * Creates a new {@link KioskPasswordDialogFragment} instance.
-     * 
+     *
      * @return the new {@link KioskPasswordDialogFragment} instance.
      */
     public static KioskPasswordDialogFragment newInstance() {

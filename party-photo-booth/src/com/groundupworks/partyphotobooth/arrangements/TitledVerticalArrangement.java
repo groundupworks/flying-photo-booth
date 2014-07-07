@@ -6,11 +6,12 @@
 package com.groundupworks.partyphotobooth.arrangements;
 
 import android.graphics.Bitmap;
+
 import com.groundupworks.lib.photobooth.arrangements.VerticalArrangement;
 
 /**
  * Vertical arrangement with title and date as the header.
- * 
+ *
  * @author Benedict Lau
  */
 public class TitledVerticalArrangement extends VerticalArrangement {
@@ -32,13 +33,10 @@ public class TitledVerticalArrangement extends VerticalArrangement {
 
     /**
      * Constructor.
-     * 
-     * @param lineOne
-     *            the first line of the event title; or null to hide.
-     * @param lineTwo
-     *            the second line of the event title; or null to hide.
-     * @param date
-     *            the date of the event; or null to hide.
+     *
+     * @param lineOne the first line of the event title; or null to hide.
+     * @param lineTwo the second line of the event title; or null to hide.
+     * @param date    the date of the event; or null to hide.
      */
     public TitledVerticalArrangement(String lineOne, String lineTwo, String date) {
         mLineOne = lineOne;

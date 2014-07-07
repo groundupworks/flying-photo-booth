@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-    android:title="@string/pref__preference_screen_title" >
+    android:title="@string/pref__preference_screen_title">
 
     <!-- Photo Booth -->
     <PreferenceCategory
         android:key="@string/pref__photo_booth_category_key"
-        android:title="@string/pref__photo_booth_category_title" >
+        android:title="@string/pref__photo_booth_category_title">
         <ListPreference
             android:defaultValue="@string/pref__arrangement_default"
             android:dialogTitle="@string/pref__arrangement_title"
@@ -40,7 +40,7 @@
     <!-- Facebook -->
     <PreferenceCategory
         android:key="@string/pref__facebook_category_key"
-        android:title="@string/pref__facebook_category_title" >
+        android:title="@string/pref__facebook_category_title">
         <Preference
             android:defaultValue="false"
             android:key="@string/pref__facebook_link_key"
@@ -58,7 +58,7 @@
     <!-- Dropbox -->
     <PreferenceCategory
         android:key="@string/pref__dropbox_category_key"
-        android:title="@string/pref__dropbox_category_title" >
+        android:title="@string/pref__dropbox_category_title">
         <Preference
             android:defaultValue="false"
             android:key="@string/pref__dropbox_link_key"
@@ -76,7 +76,7 @@
     <!-- About -->
     <PreferenceCategory
         android:key="@string/pref__about_category_key"
-        android:title="@string/pref__about_category_title" >
+        android:title="@string/pref__about_category_title">
         <Preference
             android:key="@string/pref__rate_key"
             android:summary="@string/pref__rate_summary"

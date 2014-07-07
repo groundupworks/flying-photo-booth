@@ -21,7 +21,7 @@ import android.os.Bundle;
  * A model object to contain Facebook settings. An instance of {@link FacebookSettings} cannot be directly constructed,
  * but through one of its static newInstance() methods, which does validation internally to ensure the validity of the
  * constructed instance.
- * 
+ *
  * @author Benedict Lau
  */
 public class FacebookSettings {
@@ -52,15 +52,11 @@ public class FacebookSettings {
 
     /**
      * Private constructor.
-     * 
-     * @param accountName
-     *            the user name associated with the account.
-     * @param photoPrivacy
-     *            the privacy level of shared photos. Only used for albums with 'custom' privacy level. May be null.
-     * @param albumName
-     *            the name of the album to share to.
-     * @param albumGraphPath
-     *            the graph path of the album to share to.
+     *
+     * @param accountName    the user name associated with the account.
+     * @param photoPrivacy   the privacy level of shared photos. Only used for albums with 'custom' privacy level. May be null.
+     * @param albumName      the name of the album to share to.
+     * @param albumGraphPath the graph path of the album to share to.
      */
     private FacebookSettings(String accountName, String photoPrivacy, String albumName, String albumGraphPath) {
         mAccountName = accountName;
@@ -75,15 +71,11 @@ public class FacebookSettings {
 
     /**
      * Creates a new {@link FacebookSettings} instance.
-     * 
-     * @param accountName
-     *            the user name associated with the account.
-     * @param photoPrivacy
-     *            the privacy level of shared photos. Only used for albums with 'custom' privacy level. May be null.
-     * @param albumName
-     *            the name of the album to share to.
-     * @param albumGraphPath
-     *            the graph path of the album to share to.
+     *
+     * @param accountName    the user name associated with the account.
+     * @param photoPrivacy   the privacy level of shared photos. Only used for albums with 'custom' privacy level. May be null.
+     * @param albumName      the name of the album to share to.
+     * @param albumGraphPath the graph path of the album to share to.
      * @return a new {@link FacebookSettings} instance; or null if any of the params are invalid.
      */
     static FacebookSettings newInstance(String accountName, String photoPrivacy, String albumName, String albumGraphPath) {
@@ -99,9 +91,8 @@ public class FacebookSettings {
 
     /**
      * Creates a new {@link FacebookSettings} instance from a {@link Bundle} created by the {@link #toBundle()} method.
-     * 
-     * @param bundle
-     *            the {@link Bundle}.
+     *
+     * @param bundle the {@link Bundle}.
      * @return a new {@link FacebookSettings} instance; or null if the {@link Bundle} is invalid.
      */
     static FacebookSettings newInstance(Bundle bundle) {
@@ -121,7 +112,7 @@ public class FacebookSettings {
 
     /**
      * Creates a {@link Bundle} from the {@link FacebookSettings}.
-     * 
+     *
      * @return the {@link Bundle}.
      */
     Bundle toBundle() {

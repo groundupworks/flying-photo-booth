@@ -5,8 +5,6 @@
  */
 package com.groundupworks.partyphotobooth.kiosk;
 
-import java.util.Timer;
-import java.util.TimerTask;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -14,11 +12,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
+
 import com.groundupworks.partyphotobooth.R;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * {@link Service} that launches the {@link KioskActivity} and keeps it in the foreground.
- * 
+ *
  * @author Benedict Lau
  */
 public class KioskService extends Service {
@@ -83,9 +85,8 @@ public class KioskService extends Service {
     /**
      * Starts a timer to launch and relaunch the {@link KioskActivity} in order to keep it in foreground until Kiosk
      * mode is disabled.
-     * 
-     * @param context
-     *            the {@link Context}.
+     *
+     * @param context the {@link Context}.
      */
     private void startKioskLauncher(final Context context) {
         final KioskModeHelper kioskModeHelper = new KioskModeHelper(context);

@@ -17,7 +17,7 @@ package com.groundupworks.lib.photobooth.wings;
 
 /**
  * A model object representing a share request.
- * 
+ *
  * @author Benedict Lau
  */
 public class ShareRequest {
@@ -57,13 +57,10 @@ public class ShareRequest {
 
     /**
      * Package private constructor.
-     * 
-     * @param id
-     *            the record id.
-     * @param filePath
-     *            the local path to the file to share.
-     * @param destination
-     *            the destination of the share.
+     *
+     * @param id          the record id.
+     * @param filePath    the local path to the file to share.
+     * @param destination the destination of the share.
      */
     ShareRequest(int id, String filePath, int destination) {
         mId = id;

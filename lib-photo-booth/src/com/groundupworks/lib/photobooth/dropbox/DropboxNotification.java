@@ -18,13 +18,14 @@ package com.groundupworks.lib.photobooth.dropbox;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+
 import com.groundupworks.lib.photobooth.R;
 import com.groundupworks.lib.photobooth.wings.IWingsNotification;
 import com.groundupworks.lib.photobooth.wings.ShareRequest;
 
 /**
  * {@link IWingsNotification} for Dropbox shares.
- * 
+ *
  * @author Benedict Lau
  */
 public class DropboxNotification implements IWingsNotification {
@@ -39,15 +40,11 @@ public class DropboxNotification implements IWingsNotification {
 
     /**
      * Package private constructor.
-     * 
-     * @param context
-     *            the {@link Context}.
-     * @param shareUrl
-     *            the share url associated with the account.
-     * @param shared
-     *            the number of successful shares. Must be larger than 0.
-     * @param intentUri
-     *            the uri to display the Dropbox app folder. May be null.
+     *
+     * @param context   the {@link Context}.
+     * @param shareUrl  the share url associated with the account.
+     * @param shared    the number of successful shares. Must be larger than 0.
+     * @param intentUri the uri to display the Dropbox app folder. May be null.
      */
     DropboxNotification(Context context, String shareUrl, int shared, String intentUri) {
         // Construct notification title and message text.

@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.groundupworks.flyingphotobooth"
     android:versionCode="12"
-    android:versionName="3.3" >
+    android:versionName="3.3">
 
     <uses-sdk
         android:minSdkVersion="9"
@@ -36,7 +36,7 @@
         android:name=".MyApplication"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
-        android:label="@string/app_name" >
+        android:label="@string/app_name">
 
         <!-- Prevent the Android OS from sending default NDEF messages for all activities -->
         <meta-data
@@ -51,7 +51,7 @@
         <activity
             android:name=".LaunchActivity"
             android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar" >
+            android:theme="@android:style/Theme.NoTitleBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -79,7 +79,7 @@
         <activity
             android:name="com.dropbox.client2.android.AuthActivity"
             android:configChanges="orientation|keyboard"
-            android:launchMode="singleTask" >
+            android:launchMode="singleTask">
             <intent-filter>
 
                 <!-- Change this to be db- followed by your app key -->
@@ -96,7 +96,7 @@
         <service android:name="com.groundupworks.lib.photobooth.wings.WingsService" />
 
         <receiver android:name="com.groundupworks.lib.photobooth.wings.AlarmReceiver" />
-        <receiver android:name="com.groundupworks.lib.photobooth.wings.BootReceiver" >
+        <receiver android:name="com.groundupworks.lib.photobooth.wings.BootReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>

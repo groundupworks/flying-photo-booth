@@ -1,0 +1,43 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:0.12.1'
+    }
+}
+
+apply plugin: 'android-library'
+
+dependencies {
+    compile files('libs/android-support-v4.jar')
+    compile files('libs/androidjhlabs.jar')
+    compile files('libs/commons-logging-1.1.1.jar')
+    compile files('libs/dropbox-android-sdk-1.6.1.jar')
+    compile files('libs/httpclient-4.0.3.jar')
+    compile files('libs/httpcore-4.0.1.jar')
+    compile files('libs/httpmime-4.0.3.jar')
+    compile files('libs/json_simple-1.1.jar')
+    compile files('libs/junit-4.10.jar')
+
+    compile project(':third-party/facebook-android-sdk-3.0/facebook')
+}
+
+android {
+    buildToolsVersion "19.1.0"
+    compileSdkVersion 19
+    sourceSets {
+        main {
+            manifest.srcFile 'AndroidManifest.xml'
+            java.srcDirs = ['src']
+            resources.srcDirs = ['src']
+            aidl.srcDirs = ['src']
+            renderscript.srcDirs = ['src']
+            res.srcDirs = ['res']
+            assets.srcDirs = ['assets']
+        }
+
+        androidTest.setRoot('tests')
+    }
+}

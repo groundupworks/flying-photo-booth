@@ -16,13 +16,14 @@
 package com.groundupworks.lib.photobooth.filters;
 
 import android.graphics.Bitmap;
+
 import com.groundupworks.lib.photobooth.helpers.ImageHelper.ImageFilter;
 import com.jabistudio.androidjhlabs.filter.GrayscaleFilter;
 import com.jabistudio.androidjhlabs.filter.util.AndroidUtils;
 
 /**
  * Filter to covert image to black and white.
- * 
+ *
  * @author Benedict Lau
  */
 public class BlackAndWhiteFilter implements ImageFilter {

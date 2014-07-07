@@ -9,7 +9,7 @@ import com.groundupworks.lib.photobooth.framework.BaseApplication;
 
 /**
  * A concrete {@link BaseApplication} class.
- * 
+ *
  * @author Benedict Lau
  */
 public class MyApplication extends BaseApplication {

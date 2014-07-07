@@ -16,11 +16,12 @@
 package com.groundupworks.lib.photobooth.helpers;
 
 import android.util.Log;
+
 import com.groundupworks.lib.photobooth.BuildConfig;
 
 /**
  * Wrapper for {@link Log} to log only in debug builds.
- * 
+ *
  * @author Benedict Lau
  */
 public class LogsHelper {
@@ -36,13 +37,10 @@ public class LogsHelper {
 
     /**
      * Logs to logcat only in debug builds.
-     * 
-     * @param clazz
-     *            the {@link Class}.
-     * @param methodName
-     *            the name of the methods.
-     * @param msg
-     *            the debug message.
+     *
+     * @param clazz      the {@link Class}.
+     * @param methodName the name of the methods.
+     * @param msg        the debug message.
      */
     public static void log(Class<?> clazz, String methodName, String msg) {
         if (BuildConfig.DEBUG) {

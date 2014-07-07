@@ -5,7 +5,6 @@
  */
 package com.groundupworks.partyphotobooth.setup.fragments;
 
-import java.lang.ref.WeakReference;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
@@ -18,6 +17,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.Button;
 import android.widget.Spinner;
+
 import com.groundupworks.partyphotobooth.R;
 import com.groundupworks.partyphotobooth.helpers.PreferencesHelper;
 import com.groundupworks.partyphotobooth.helpers.PreferencesHelper.PhotoBoothMode;
@@ -27,9 +27,11 @@ import com.groundupworks.partyphotobooth.setup.model.PhotoBoothModeAdapter;
 import com.groundupworks.partyphotobooth.setup.model.PhotoBoothThemeAdapter;
 import com.groundupworks.partyphotobooth.setup.model.PhotoStripTemplateAdapter;
 
+import java.lang.ref.WeakReference;
+
 /**
  * Ui for setting up the photo booth.
- * 
+ *
  * @author Benedict Lau
  */
 public class PhotoBoothSetupFragment extends Fragment {
@@ -156,7 +158,7 @@ public class PhotoBoothSetupFragment extends Fragment {
 
     /**
      * Gets the callbacks for this fragment.
-     * 
+     *
      * @return the callbacks; or null if not set.
      */
     private PhotoBoothSetupFragment.ICallbacks getCallbacks() {
@@ -173,7 +175,7 @@ public class PhotoBoothSetupFragment extends Fragment {
 
     /**
      * Creates a new {@link PhotoBoothSetupFragment} instance.
-     * 
+     *
      * @return the new {@link PhotoBoothSetupFragment} instance.
      */
     public static PhotoBoothSetupFragment newInstance() {

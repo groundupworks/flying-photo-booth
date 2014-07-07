@@ -5,7 +5,6 @@
  */
 package com.groundupworks.partyphotobooth.setup.fragments;
 
-import java.lang.ref.WeakReference;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -25,14 +24,17 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ImageView;
 import android.widget.TableRow;
 import android.widget.TextView;
+
 import com.groundupworks.lib.photobooth.dropbox.DropboxHelper;
 import com.groundupworks.lib.photobooth.facebook.FacebookHelper;
 import com.groundupworks.partyphotobooth.R;
 import com.groundupworks.partyphotobooth.helpers.PreferencesHelper;
 
+import java.lang.ref.WeakReference;
+
 /**
  * Ui for setting up the sharing services.
- * 
+ *
  * @author Benedict Lau
  */
 public class ShareServicesSetupFragment extends Fragment {
@@ -210,7 +212,7 @@ public class ShareServicesSetupFragment extends Fragment {
 
     /**
      * Gets the callbacks for this fragment.
-     * 
+     *
      * @return the callbacks; or null if not set.
      */
     private ShareServicesSetupFragment.ICallbacks getCallbacks() {
@@ -223,9 +225,8 @@ public class ShareServicesSetupFragment extends Fragment {
 
     /**
      * Updates the Facebook link ui.
-     * 
-     * @param context
-     *            the {@link Context}.
+     *
+     * @param context the {@link Context}.
      */
     private void updateFacebook(Context context) {
         if (mFacebookHelper.isLinked(context)) {
@@ -243,9 +244,8 @@ public class ShareServicesSetupFragment extends Fragment {
 
     /**
      * Updates the Dropbox link ui.
-     * 
-     * @param context
-     *            the {@link Context}.
+     *
+     * @param context the {@link Context}.
      */
     private void updateDropbox(Context context) {
         if (mDropboxHelper.isLinked(context)) {
@@ -263,9 +263,8 @@ public class ShareServicesSetupFragment extends Fragment {
 
     /**
      * Updates the notice enabled {@link CheckBox} ui.
-     * 
-     * @param context
-     *            the {@link Context}.
+     *
+     * @param context the {@link Context}.
      */
     private void updateNoticeEnabled(Context context) {
         // The notice screen is only relevant if there is at least one share service enabled.
@@ -279,7 +278,7 @@ public class ShareServicesSetupFragment extends Fragment {
 
     /**
      * Creates a new {@link ShareServicesSetupFragment} instance.
-     * 
+     *
      * @return the new {@link ShareServicesSetupFragment} instance.
      */
     public static ShareServicesSetupFragment newInstance() {

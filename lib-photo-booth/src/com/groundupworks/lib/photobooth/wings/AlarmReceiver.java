@@ -21,7 +21,7 @@ import android.content.Intent;
 
 /**
  * Receiver for alarms to trigger the {@link WingsService}.
- * 
+ *
  * @author Benedict Lau
  */
 public class AlarmReceiver extends BroadcastReceiver {

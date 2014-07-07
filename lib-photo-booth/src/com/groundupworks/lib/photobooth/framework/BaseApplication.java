@@ -22,7 +22,7 @@ import android.os.Looper;
 
 /**
  * Main {@link Application} class.
- * 
+ *
  * @author Benedict Lau
  */
 public abstract class BaseApplication extends Application {

@@ -21,7 +21,7 @@ import android.content.Intent;
 
 /**
  * Receiver for system boot event schedule a trigger to the {@link WingsService}.
- * 
+ *
  * @author Benedict Lau
  */
 public class BootReceiver extends BroadcastReceiver {

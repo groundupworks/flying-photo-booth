@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent">
 
     <TextView
         android:id="@+id/title"
@@ -23,13 +23,13 @@
         android:layout_alignParentBottom="true"
         android:fadingEdge="none"
         android:requiresFadingEdge="none"
-        android:scrollbars="none" >
+        android:scrollbars="none">
 
         <LinearLayout
             android:id="@+id/photo_strip_shadow_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal" >
+            android:orientation="horizontal">
 
             <LinearLayout
                 android:id="@+id/photo_strip_container"
@@ -39,7 +39,7 @@
                 android:orientation="vertical"
                 android:paddingLeft="@dimen/kiosk_spacing"
                 android:paddingRight="@dimen/kiosk_spacing"
-                android:paddingTop="@dimen/kiosk_spacing" >
+                android:paddingTop="@dimen/kiosk_spacing">
 
                 <TextView
                     android:id="@+id/event_line_one"

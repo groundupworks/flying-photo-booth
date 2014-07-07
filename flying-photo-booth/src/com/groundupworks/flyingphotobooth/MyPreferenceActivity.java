@@ -29,12 +29,13 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
+
 import com.groundupworks.lib.photobooth.dropbox.DropboxHelper;
 import com.groundupworks.lib.photobooth.facebook.FacebookHelper;
 
 /**
  * The {@link Activity} to configure user preferences.
- * 
+ *
  * @author Benedict Lau
  */
 public class MyPreferenceActivity extends PreferenceActivity {
@@ -248,9 +249,8 @@ public class MyPreferenceActivity extends PreferenceActivity {
 
     /**
      * Updates the summary for the arrangement and the number of photos preferences.
-     * 
-     * @param preferences
-     *            the {@link SharedPreferences} storing the preference.
+     *
+     * @param preferences the {@link SharedPreferences} storing the preference.
      */
     private void updateArrangementPrefAndDependents(SharedPreferences preferences) {
         String summary = "";
@@ -276,9 +276,8 @@ public class MyPreferenceActivity extends PreferenceActivity {
 
     /**
      * Updates the summary for the number of photos preference.
-     * 
-     * @param preferences
-     *            the {@link SharedPreferences} storing the preference.
+     *
+     * @param preferences the {@link SharedPreferences} storing the preference.
      */
     private void updateNumPhotosPref(SharedPreferences preferences) {
         String summary = "";
@@ -298,9 +297,8 @@ public class MyPreferenceActivity extends PreferenceActivity {
 
     /**
      * Updates the summary for the filter preference.
-     * 
-     * @param preferences
-     *            the {@link SharedPreferences} storing the preference.
+     *
+     * @param preferences the {@link SharedPreferences} storing the preference.
      */
     private void updateFilterPref(SharedPreferences preferences) {
         String summary = "";
@@ -319,9 +317,8 @@ public class MyPreferenceActivity extends PreferenceActivity {
 
     /**
      * Updates the summary for the trigger preference.
-     * 
-     * @param preferences
-     *            the {@link SharedPreferences} storing the preference.
+     *
+     * @param preferences the {@link SharedPreferences} storing the preference.
      */
     private void updateTriggerPref(SharedPreferences preferences) {
         String summary = "";
@@ -340,9 +337,8 @@ public class MyPreferenceActivity extends PreferenceActivity {
 
     /**
      * Updates the title, summary, and check box for the Facebook preference.
-     * 
-     * @param preferences
-     *            the {@link SharedPreferences} storing the preference.
+     *
+     * @param preferences the {@link SharedPreferences} storing the preference.
      */
     private void updateFacebookPref(SharedPreferences preferences) {
         int titleRes = R.string.pref__facebook_link_title_default;
@@ -384,9 +380,8 @@ public class MyPreferenceActivity extends PreferenceActivity {
 
     /**
      * Updates the title, summary, and check box for the Dropbox preference.
-     * 
-     * @param preferences
-     *            the {@link SharedPreferences} storing the preference.
+     *
+     * @param preferences the {@link SharedPreferences} storing the preference.
      */
     private void updateDropboxPref(SharedPreferences preferences) {
         int titleRes = R.string.pref__dropbox_link_title_default;
@@ -428,11 +423,9 @@ public class MyPreferenceActivity extends PreferenceActivity {
 
     /**
      * Finds the index of a selected option from a list of options.
-     * 
-     * @param selectedOption
-     *            the selected option.
-     * @param options
-     *            the list of options.
+     *
+     * @param selectedOption the selected option.
+     * @param options        the list of options.
      * @return the index of the selected option; or -1 if not found.
      */
     private int findIndex(String selectedOption, String[] options) {

@@ -15,17 +15,12 @@
  */
 package com.groundupworks.flyingphotobooth.controllers;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Message;
+
 import com.groundupworks.flyingphotobooth.MyApplication;
 import com.groundupworks.flyingphotobooth.R;
 import com.groundupworks.flyingphotobooth.fragments.ShareFragment;
@@ -43,9 +38,16 @@ import com.groundupworks.lib.photobooth.wings.ShareRequest;
 import com.groundupworks.lib.photobooth.wings.WingsDbHelper;
 import com.groundupworks.lib.photobooth.wings.WingsService;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+
 /**
  * Controller class for the {@link ShareFragment}.
- * 
+ *
  * @author Benedict Lau
  */
 public class ShareController extends BaseController {
@@ -258,7 +260,7 @@ public class ShareController extends BaseController {
                 if (mIsFacebookShareActive) {
                     if (mJpegPath != null
                             && WingsDbHelper.getInstance(context).createShareRequest(mJpegPath,
-                                    ShareRequest.DESTINATION_FACEBOOK)) {
+                            ShareRequest.DESTINATION_FACEBOOK)) {
                         // Disable to ensure we only make one share request.
                         mIsFacebookShareActive = false;
 
@@ -279,7 +281,7 @@ public class ShareController extends BaseController {
                 if (mIsDropboxShareActive) {
                     if (mJpegPath != null
                             && WingsDbHelper.getInstance(context).createShareRequest(mJpegPath,
-                                    ShareRequest.DESTINATION_DROPBOX)) {
+                            ShareRequest.DESTINATION_DROPBOX)) {
                         // Disable to ensure we only make one share request.
                         mIsDropboxShareActive = false;
 

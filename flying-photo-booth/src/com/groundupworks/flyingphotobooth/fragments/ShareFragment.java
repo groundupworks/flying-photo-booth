@@ -34,6 +34,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
+
 import com.groundupworks.flyingphotobooth.LaunchActivity;
 import com.groundupworks.flyingphotobooth.R;
 import com.groundupworks.flyingphotobooth.controllers.ShareController;
@@ -45,7 +46,7 @@ import com.groundupworks.lib.photobooth.helpers.ImageHelper;
 
 /**
  * Ui for the image confirmation screen.
- * 
+ *
  * @author Benedict Lau
  */
 public class ShareFragment extends ControllerBackedFragment<ShareController> {
@@ -54,7 +55,7 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
     // Fragment bundle keys.
     //
 
-    private static final String[] FRAGMENT_BUNDLE_KEY_JPEG_DATA = { "jpegData0", "jpegData1", "jpegData2", "jpegData3" };
+    private static final String[] FRAGMENT_BUNDLE_KEY_JPEG_DATA = {"jpegData0", "jpegData1", "jpegData2", "jpegData3"};
 
     private static final String FRAGMENT_BUNDLE_KEY_ROTATION = "rotation";
 
@@ -399,11 +400,11 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
                 }
 
                 // Setup Android Beam.
-                BeamHelper.beamUris(activity, new Uri[] { mJpegUri });
+                BeamHelper.beamUris(activity, new Uri[]{mJpegUri});
 
                 // Request adding Jpeg to Android Gallery.
-                MediaScannerConnection.scanFile(appContext, new String[] { mJpegUri.getPath() },
-                        new String[] { ImageHelper.JPEG_MIME_TYPE }, null);
+                MediaScannerConnection.scanFile(appContext, new String[]{mJpegUri.getPath()},
+                        new String[]{ImageHelper.JPEG_MIME_TYPE}, null);
                 break;
             case ShareController.FACEBOOK_SHARE_MARKED:
                 mFacebookButton.setEnabled(false);
@@ -444,13 +445,10 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
 
     /**
      * Creates a new {@link ShareFragment} instance.
-     * 
-     * @param jpegData
-     *            byte arrays of Jpeg data.
-     * @param rotation
-     *            clockwise rotation applied to image in degrees.
-     * @param reflection
-     *            horizontal reflection applied to image.
+     *
+     * @param jpegData   byte arrays of Jpeg data.
+     * @param rotation   clockwise rotation applied to image in degrees.
+     * @param reflection horizontal reflection applied to image.
      * @return the new {@link ShareFragment} instance.
      */
     public static ShareFragment newInstance(byte[][] jpegData, float rotation, boolean reflection) {

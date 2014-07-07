@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:fadingEdge="horizontal"
     android:requiresFadingEdge="horizontal"
-    android:scrollbars="none" >
+    android:scrollbars="none">
 
     <ImageView
         android:id="@+id/image"

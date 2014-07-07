@@ -18,11 +18,12 @@ package com.groundupworks.lib.photobooth.arrangements;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+
 import com.groundupworks.lib.photobooth.helpers.ImageHelper;
 
 /**
  * Vertical arrangement of bitmaps to create a photo strip.
- * 
+ *
  * @author Benedict Lau
  */
 public class VerticalArrangement extends BaseArrangement {

@@ -5,14 +5,6 @@
  */
 package com.groundupworks.partyphotobooth.controllers;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.LinkedList;
-import java.util.List;
 import android.app.Application;
 import android.content.Context;
 import android.content.res.Resources;
@@ -21,6 +13,7 @@ import android.media.MediaScannerConnection;
 import android.os.Bundle;
 import android.os.Message;
 import android.util.SparseArray;
+
 import com.groundupworks.lib.photobooth.dropbox.DropboxHelper;
 import com.groundupworks.lib.photobooth.facebook.FacebookHelper;
 import com.groundupworks.lib.photobooth.framework.BaseController;
@@ -39,6 +32,15 @@ import com.groundupworks.partyphotobooth.helpers.PreferencesHelper;
 import com.groundupworks.partyphotobooth.helpers.PreferencesHelper.PhotoStripArrangement;
 import com.groundupworks.partyphotobooth.helpers.PreferencesHelper.PhotoStripTemplate;
 import com.groundupworks.partyphotobooth.helpers.TextHelper;
+
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.LinkedList;
+import java.util.List;
 
 public class PhotoStripController extends BaseController {
 
@@ -180,9 +182,8 @@ public class PhotoStripController extends BaseController {
 
     /**
      * Reports an error event to ui.
-     * 
-     * @param error
-     *            the error.
+     *
+     * @param error the error.
      */
     private void reportError(int error) {
         Message uiMsg = Message.obtain();
@@ -192,13 +193,10 @@ public class PhotoStripController extends BaseController {
 
     /**
      * Processes Jpeg data and notifies ui.
-     * 
-     * @param jpegData
-     *            byte array of Jpeg data.
-     * @param rotation
-     *            clockwise rotation applied to image in degrees.
-     * @param reflection
-     *            horizontal reflection applied to image.
+     *
+     * @param jpegData   byte array of Jpeg data.
+     * @param rotation   clockwise rotation applied to image in degrees.
+     * @param reflection horizontal reflection applied to image.
      */
     private void processJpegData(byte[] jpegData, float rotation, boolean reflection) {
         Bitmap frame = ImageHelper.createImage(jpegData, rotation, reflection, null);
@@ -233,9 +231,8 @@ public class PhotoStripController extends BaseController {
 
     /**
      * Processes a frame removal request and notifies ui.
-     * 
-     * @param key
-     *            the key of the frame to remove.
+     *
+     * @param key the key of the frame to remove.
      */
     private void processFrameRemoval(int key) {
         // Remove frame.
@@ -311,8 +308,8 @@ public class PhotoStripController extends BaseController {
                     String jpegPath = file.getPath();
 
                     // Request adding Jpeg to Android Gallery.
-                    MediaScannerConnection.scanFile(context, new String[] { jpegPath },
-                            new String[] { ImageHelper.JPEG_MIME_TYPE }, null);
+                    MediaScannerConnection.scanFile(context, new String[]{jpegPath},
+                            new String[]{ImageHelper.JPEG_MIME_TYPE}, null);
 
                     // Share to Facebook.
                     boolean facebookShared = false;
@@ -360,9 +357,8 @@ public class PhotoStripController extends BaseController {
 
     /**
      * Stores frame bitmap in next available slot in frames map.
-     * 
-     * @param frame
-     *            the bitmap to store. Must not be null.
+     *
+     * @param frame the bitmap to store. Must not be null.
      * @return the key of the stored frame.
      */
     private int storeFrame(Bitmap frame) {
@@ -380,7 +376,7 @@ public class PhotoStripController extends BaseController {
 
     /**
      * Checks whether we have all the frames needed to construct a photo strip.
-     * 
+     *
      * @return true if we have enough frames; false otherwise.
      */
     private boolean isPhotoStripComplete() {
@@ -389,13 +385,10 @@ public class PhotoStripController extends BaseController {
 
     /**
      * Shares a photo strip to a sharing service.
-     * 
-     * @param context
-     *            the {@link Context}.
-     * @param jpegPath
-     *            The path to the Jpeg to share.
-     * @param destination
-     *            The sharing service to share to.
+     *
+     * @param context     the {@link Context}.
+     * @param jpegPath    The path to the Jpeg to share.
+     * @param destination The sharing service to share to.
      * @return true if successful; false otherwise.
      */
     private boolean share(Context context, String jpegPath, int destination) {

@@ -23,11 +23,9 @@ import android.support.v4.app.Fragment;
 
 /**
  * Base {@link Fragment} class that works with a {@link BaseController} for handling background tasks.
- * 
+ *
+ * @param <T> the {@link BaseController} subclass.
  * @author Benedict Lau
- * 
- * @param <T>
- *            the {@link BaseController} subclass.
  */
 public abstract class ControllerBackedFragment<T extends BaseController> extends Fragment {
 
@@ -68,9 +66,8 @@ public abstract class ControllerBackedFragment<T extends BaseController> extends
 
     /**
      * Requests controller to handle event on the background thread.
-     * 
-     * @param msg
-     *            the event to handle.
+     *
+     * @param msg the event to handle.
      */
     protected void sendEvent(Message msg) {
         T controller = mController;
@@ -81,7 +78,7 @@ public abstract class ControllerBackedFragment<T extends BaseController> extends
 
     /**
      * Gets the controller instance associated with this {@link ControllerBackedFragment}.
-     * 
+     *
      * @return the {@link BaseController} subclass backing this {@link ControllerBackedFragment}.
      */
     protected T getController() {
@@ -90,16 +87,15 @@ public abstract class ControllerBackedFragment<T extends BaseController> extends
 
     /**
      * Initializes a controller instance to back this {@link ControllerBackedFragment}.
-     * 
+     *
      * @return the {@link BaseController} subclass backing this {@link ControllerBackedFragment}.
      */
     protected abstract T initController();
 
     /**
      * Handles ui update messages on the ui thread.
-     * 
-     * @param msg
-     *            the ui update to handle.
+     *
+     * @param msg the ui update to handle.
      */
     protected abstract void handleUiUpdate(Message msg);
 
@@ -109,9 +105,8 @@ public abstract class ControllerBackedFragment<T extends BaseController> extends
 
     /**
      * Send update to the ui handler to process.
-     * 
-     * @param msg
-     *            the ui update to handle.
+     *
+     * @param msg the ui update to handle.
      */
     public void sendToUiHandler(Message msg) {
         mUiHandler.sendMessage(msg);

@@ -15,11 +15,6 @@
  */
 package com.groundupworks.lib.photobooth.facebook;
 
-import java.util.ArrayList;
-import java.util.List;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 import android.database.MatrixCursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -28,6 +23,7 @@ import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.View;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+
 import com.facebook.Request.Callback;
 import com.facebook.Request.GraphUserCallback;
 import com.facebook.Response;
@@ -35,9 +31,16 @@ import com.facebook.model.GraphObject;
 import com.facebook.model.GraphUser;
 import com.groundupworks.lib.photobooth.R;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * {@link Fragment} for Facebook photo album selection.
- * 
+ *
  * @author Benedict Lau
  */
 public class FacebookAlbumListFragment extends ListFragment {
@@ -75,8 +78,8 @@ public class FacebookAlbumListFragment extends ListFragment {
     /**
      * Cursor to back the albums list.
      */
-    private MatrixCursor mAlbumCursor = new MatrixCursor(new String[] { CURSOR_ID, CURSOR_ALBUM_NAME,
-            CURSOR_ALBUM_GRAPH_PATH, CURSOR_ALBUM_PRIVACY });
+    private MatrixCursor mAlbumCursor = new MatrixCursor(new String[]{CURSOR_ID, CURSOR_ALBUM_NAME,
+            CURSOR_ALBUM_GRAPH_PATH, CURSOR_ALBUM_PRIVACY});
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -194,10 +197,10 @@ public class FacebookAlbumListFragment extends ListFragment {
                                             && privacy.length() > 0) {
                                         String graphPath = id + FacebookHelper.ALBUM_ID_TO_GRAPH_PATH;
                                         if (FacebookHelper.DEFAULT_ALBUM_TYPE.equals(type)) {
-                                            appAlbum = new Object[] { APP_ALBUM_CURSOR_ID, name, graphPath,
-                                                    FacebookHelper.APP_ALBUM_PRIVACY };
+                                            appAlbum = new Object[]{APP_ALBUM_CURSOR_ID, name, graphPath,
+                                                    FacebookHelper.APP_ALBUM_PRIVACY};
                                         } else {
-                                            albums.add(new Object[] { cursorId, name, graphPath, privacy });
+                                            albums.add(new Object[]{cursorId, name, graphPath, privacy});
                                             cursorId++;
                                         }
                                     }
@@ -213,9 +216,9 @@ public class FacebookAlbumListFragment extends ListFragment {
                     // If not already present, construct row to represent the default app album that will be auto
                     // created.
                     if (appAlbum == null) {
-                        appAlbum = new Object[] { APP_ALBUM_CURSOR_ID,
+                        appAlbum = new Object[]{APP_ALBUM_CURSOR_ID,
                                 activity.getString(R.string.facebook__app_album_default_name),
-                                FacebookHelper.APP_ALBUM_GRAPH_PATH, FacebookHelper.APP_ALBUM_PRIVACY };
+                                FacebookHelper.APP_ALBUM_GRAPH_PATH, FacebookHelper.APP_ALBUM_PRIVACY};
                     }
 
                     // Construct matrix cursor.
@@ -226,8 +229,9 @@ public class FacebookAlbumListFragment extends ListFragment {
 
                     // Set adapter.
                     setListAdapter(new SimpleCursorAdapter(activity, R.layout.facebook_album_list_view_item,
-                            mAlbumCursor, new String[] { CURSOR_ALBUM_NAME, CURSOR_ALBUM_PRIVACY }, new int[] {
-                                    R.id.album_name, R.id.album_privacy }));
+                            mAlbumCursor, new String[]{CURSOR_ALBUM_NAME, CURSOR_ALBUM_PRIVACY}, new int[]{
+                            R.id.album_name, R.id.album_privacy}
+                    ));
                 } else {
                     // Finish Activity with error.
                     activity.mHasErrorOccurred = true;
@@ -245,7 +249,7 @@ public class FacebookAlbumListFragment extends ListFragment {
 
     /**
      * Creates a new {@link FacebookAlbumListFragment} instance.
-     * 
+     *
      * @return the new {@link FacebookAlbumListFragment} instance.
      */
     public static FacebookAlbumListFragment newInstance() {

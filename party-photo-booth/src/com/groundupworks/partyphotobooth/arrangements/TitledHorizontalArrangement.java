@@ -6,6 +6,7 @@
 package com.groundupworks.partyphotobooth.arrangements;
 
 import android.graphics.Bitmap;
+
 import com.groundupworks.lib.photobooth.arrangements.BaseArrangement;
 import com.groundupworks.lib.photobooth.arrangements.HorizontalArrangement;
 import com.groundupworks.lib.photobooth.helpers.ImageHelper;
@@ -13,7 +14,7 @@ import com.groundupworks.partyphotobooth.helpers.TextHelper;
 
 /**
  * Horizontal arrangement with title and date as the header.
- * 
+ *
  * @author Benedict Lau
  */
 public class TitledHorizontalArrangement extends HorizontalArrangement {
@@ -42,13 +43,10 @@ public class TitledHorizontalArrangement extends HorizontalArrangement {
 
     /**
      * Constructor.
-     * 
-     * @param lineOne
-     *            the first line of the event title; or null to hide.
-     * @param lineTwo
-     *            the second line of the event title; or null to hide.
-     * @param date
-     *            the date of the event; or null to hide.
+     *
+     * @param lineOne the first line of the event title; or null to hide.
+     * @param lineTwo the second line of the event title; or null to hide.
+     * @param date    the date of the event; or null to hide.
      */
     public TitledHorizontalArrangement(String lineOne, String lineTwo, String date) {
         mLineOne = lineOne;

@@ -15,12 +15,6 @@
  */
 package com.groundupworks.lib.photobooth.facebook;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
-import org.json.JSONObject;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -33,6 +27,7 @@ import android.os.ParcelFileDescriptor;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.widget.Toast;
+
 import com.facebook.FacebookException;
 import com.facebook.FacebookRequestError;
 import com.facebook.FacebookRequestError.Category;
@@ -55,9 +50,17 @@ import com.groundupworks.lib.photobooth.wings.IWingsNotification;
 import com.groundupworks.lib.photobooth.wings.ShareRequest;
 import com.groundupworks.lib.photobooth.wings.WingsDbHelper;
 
+import org.json.JSONObject;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
+
 /**
  * A helper class for linking and sharing to Facebook.
- * 
+ *
  * @author Benedict Lau
  */
 public class FacebookHelper {
@@ -221,13 +224,10 @@ public class FacebookHelper {
 
     /**
      * Opens a new session with read permissions.
-     * 
-     * @param activity
-     *            the {@link Activity}.
-     * @param fragment
-     *            the {@link Fragment}. May be null.
-     * @param statusCallback
-     *            callback when the {@link Session} state changes.
+     *
+     * @param activity       the {@link Activity}.
+     * @param fragment       the {@link Fragment}. May be null.
+     * @param statusCallback callback when the {@link Session} state changes.
      */
     private void startOpenSessionRequest(Activity activity, Fragment fragment, Session.StatusCallback statusCallback) {
         // State transition.
@@ -263,18 +263,13 @@ public class FacebookHelper {
 
     /**
      * Finishes a {@link #startOpenSessionRequest(Activity, com.facebook.Session.StatusCallback)}.
-     * 
-     * 
-     * @param activity
-     *            the {@link Activity}.
-     * @param requestCode
-     *            the integer request code originally supplied to startActivityForResult(), allowing you to identify who
-     *            this result came from.
-     * @param resultCode
-     *            the integer result code returned by the child activity through its setResult().
-     * @param data
-     *            an Intent, which can return result data to the caller (various data can be attached to Intent
-     *            "extras").
+     *
+     * @param activity    the {@link Activity}.
+     * @param requestCode the integer request code originally supplied to startActivityForResult(), allowing you to identify who
+     *                    this result came from.
+     * @param resultCode  the integer result code returned by the child activity through its setResult().
+     * @param data        an Intent, which can return result data to the caller (various data can be attached to Intent
+     *                    "extras").
      * @return true if open session request is successful; false otherwise.
      */
     private boolean finishOpenSessionRequest(final Activity activity, int requestCode, int resultCode, Intent data) {
@@ -293,11 +288,9 @@ public class FacebookHelper {
 
     /**
      * Requests for permissions to publish publicly. Requires an opened active {@link Session}.
-     * 
-     * @param activity
-     *            the {@link Activity}.
-     * @param fragment
-     *            the {@link Fragment}. May be null.
+     *
+     * @param activity the {@link Activity}.
+     * @param fragment the {@link Fragment}. May be null.
      * @return true if the request is made; false if no opened {@link Session} is active.
      */
     private boolean startPublishPermissionsRequest(Activity activity, Fragment fragment) {
@@ -330,17 +323,13 @@ public class FacebookHelper {
 
     /**
      * Finishes a {@link #startPublishPermissionsRequest(Activity)}.
-     * 
-     * @param activity
-     *            the {@link Activity}.
-     * @param requestCode
-     *            the integer request code originally supplied to startActivityForResult(), allowing you to identify who
-     *            this result came from.
-     * @param resultCode
-     *            the integer result code returned by the child activity through its setResult().
-     * @param data
-     *            an Intent, which can return result data to the caller (various data can be attached to Intent
-     *            "extras").
+     *
+     * @param activity    the {@link Activity}.
+     * @param requestCode the integer request code originally supplied to startActivityForResult(), allowing you to identify who
+     *                    this result came from.
+     * @param resultCode  the integer result code returned by the child activity through its setResult().
+     * @param data        an Intent, which can return result data to the caller (various data can be attached to Intent
+     *                    "extras").
      * @return true if publish permissions request is successful; false otherwise.
      */
     private boolean finishPublishPermissionsRequest(Activity activity, int requestCode, int resultCode, Intent data) {
@@ -359,11 +348,9 @@ public class FacebookHelper {
 
     /**
      * Requests for permissions to publish publicly. Requires an opened active {@link Session}.
-     * 
-     * @param activity
-     *            the {@link Activity}.
-     * @param fragment
-     *            the {@link Fragment}. May be null.
+     *
+     * @param activity the {@link Activity}.
+     * @param fragment the {@link Fragment}. May be null.
      * @return true if the request is made; false if no opened {@link Session} is active.
      */
     private boolean startSettingsRequest(Activity activity, Fragment fragment) {
@@ -389,17 +376,13 @@ public class FacebookHelper {
 
     /**
      * Finishes a {@link #startSettingsRequest(Activity)}.
-     * 
-     * @param activity
-     *            the {@link Activity}.
-     * @param requestCode
-     *            the integer request code originally supplied to startActivityForResult(), allowing you to identify who
-     *            this result came from.
-     * @param resultCode
-     *            the integer result code returned by the child activity through its setResult().
-     * @param data
-     *            an Intent, which can return result data to the caller (various data can be attached to Intent
-     *            "extras").
+     *
+     * @param activity    the {@link Activity}.
+     * @param requestCode the integer request code originally supplied to startActivityForResult(), allowing you to identify who
+     *                    this result came from.
+     * @param resultCode  the integer result code returned by the child activity through its setResult().
+     * @param data        an Intent, which can return result data to the caller (various data can be attached to Intent
+     *                    "extras").
      * @return the settings; or null if failed.
      */
     private FacebookSettings finishSettingsRequest(Activity activity, int requestCode, int resultCode, Intent data) {
@@ -414,9 +397,8 @@ public class FacebookHelper {
 
     /**
      * Checks if the Facebook native app is installed on the device.
-     * 
-     * @param context
-     *            the {@link Context}.
+     *
+     * @param context the {@link Context}.
      * @return true if installed; false otherwise.
      */
     private boolean isFacebookAppInstalled(Context context) {
@@ -433,21 +415,16 @@ public class FacebookHelper {
 
     /**
      * Links an account.
-     * 
-     * @param context
-     *            the {@link Context}.
-     * @param accountName
-     *            the user name associated with the account.
-     * @param photoPrivacy
-     *            the privacy level of shared photos. Only used for albums with 'custom' privacy level. May be null.
-     * @param albumName
-     *            the name of the album to share to.
-     * @param albumGraphPath
-     *            the graph path of the album to share to.
+     *
+     * @param context        the {@link Context}.
+     * @param accountName    the user name associated with the account.
+     * @param photoPrivacy   the privacy level of shared photos. Only used for albums with 'custom' privacy level. May be null.
+     * @param albumName      the name of the album to share to.
+     * @param albumGraphPath the graph path of the album to share to.
      * @return true if successful; false otherwise.
      */
     private boolean link(Context context, String accountName, String photoPrivacy, String albumName,
-            String albumGraphPath) {
+                         String albumGraphPath) {
         boolean isSuccessful = false;
 
         // Validate account params and store.
@@ -461,9 +438,8 @@ public class FacebookHelper {
 
     /**
      * Handles an error case during the linking process.
-     * 
-     * @param context
-     *            the {@link Context}.
+     *
+     * @param context the {@link Context}.
      */
     private void handleLinkError(Context context) {
         Context appContext = context.getApplicationContext();
@@ -484,9 +460,8 @@ public class FacebookHelper {
 
     /**
      * Displays the link error message.
-     * 
-     * @param context
-     *            the {@link Context}.
+     *
+     * @param context the {@link Context}.
      */
     private void showLinkError(Context context) {
         Toast.makeText(context, context.getString(R.string.facebook__error_link), Toast.LENGTH_SHORT).show();
@@ -494,9 +469,8 @@ public class FacebookHelper {
 
     /**
      * Displays the Facebook app error message.
-     * 
-     * @param context
-     *            the {@link Context}.
+     *
+     * @param context the {@link Context}.
      */
     private void showFacebookAppError(Context context) {
         Toast.makeText(context, context.getString(R.string.facebook__error_facebook_app), Toast.LENGTH_SHORT).show();
@@ -504,20 +478,15 @@ public class FacebookHelper {
 
     /**
      * Stores the account params in persisted storage.
-     * 
-     * @param context
-     *            the {@link Context}.
-     * @param accountName
-     *            the user name associated with the account.
-     * @param photoPrivacy
-     *            the privacy level of shared photos. Only used for albums with 'custom' privacy level. May be null.
-     * @param albumName
-     *            the name of the album to share to.
-     * @param albumGraphPath
-     *            the graph path of the album to share to.
+     *
+     * @param context        the {@link Context}.
+     * @param accountName    the user name associated with the account.
+     * @param photoPrivacy   the privacy level of shared photos. Only used for albums with 'custom' privacy level. May be null.
+     * @param albumName      the name of the album to share to.
+     * @param albumGraphPath the graph path of the album to share to.
      */
     private void storeAccountParams(Context context, String accountName, String photoPrivacy, String albumName,
-            String albumGraphPath) {
+                                    String albumGraphPath) {
         Context appContext = context.getApplicationContext();
         Editor editor = PreferenceManager.getDefaultSharedPreferences(appContext).edit();
         editor.putString(appContext.getString(R.string.facebook__account_name_key), accountName);
@@ -534,9 +503,8 @@ public class FacebookHelper {
 
     /**
      * Removes the account params from persisted storage.
-     * 
-     * @param context
-     *            the {@link Context}.
+     *
+     * @param context the {@link Context}.
      */
     private void removeAccountParams(Context context) {
         Context appContext = context.getApplicationContext();
@@ -553,9 +521,8 @@ public class FacebookHelper {
 
     /**
      * Gets the privacy level of shared photos.
-     * 
-     * @param context
-     *            the {@link Context}.
+     *
+     * @param context the {@link Context}.
      * @return the privacy level; or null if unlinked.
      */
     private String optLinkedPhotoPrivacy(Context context) {
@@ -566,9 +533,8 @@ public class FacebookHelper {
 
     /**
      * Gets the graph path of the album to share to.
-     * 
-     * @param context
-     *            the {@link Context}.
+     *
+     * @param context the {@link Context}.
      * @return the graph path; or null if unlinked.
      */
     private String getLinkedAlbumGraphPath(Context context) {
@@ -579,10 +545,8 @@ public class FacebookHelper {
 
     /**
      * Parses the photo id from a {@link GraphObject}.
-     * 
-     * @param graphObject
-     *            the {@link GraphObject} to parse.
-     * 
+     *
+     * @param graphObject the {@link GraphObject} to parse.
      * @return the photo id; or null if not found.
      */
     private String parsePhotoId(GraphObject graphObject) {
@@ -604,9 +568,8 @@ public class FacebookHelper {
     /**
      * Asynchronously requests the user name associated with the linked account. Requires an opened active
      * {@link Session}.
-     * 
-     * @param graphUserCallback
-     *            a {@link GraphUserCallback} when the request completes.
+     *
+     * @param graphUserCallback a {@link GraphUserCallback} when the request completes.
      * @return true if the request is made; false if no opened {@link Session} is active.
      */
     boolean requestAccountName(GraphUserCallback graphUserCallback) {
@@ -622,9 +585,8 @@ public class FacebookHelper {
 
     /**
      * Asynchronously requests the albums associated with the linked account. Requires an opened active {@link Session}.
-     * 
-     * @param callback
-     *            a {@link Callback} when the request completes.
+     *
+     * @param callback a {@link Callback} when the request completes.
      * @return true if the request is made; false if no opened {@link Session} is active.
      */
     boolean requestAlbums(Callback callback) {
@@ -652,11 +614,9 @@ public class FacebookHelper {
 
     /**
      * Starts a link request. The user will be authenticated through the native Facebook app or the default web browser.
-     * 
-     * @param activity
-     *            the {@link Activity}.
-     * @param fragment
-     *            the {@link Fragment}. May be null.
+     *
+     * @param activity the {@link Activity}.
+     * @param fragment the {@link Fragment}. May be null.
      */
     public void startLinkRequest(final Activity activity, final Fragment fragment) {
         // Construct status callback.
@@ -678,9 +638,8 @@ public class FacebookHelper {
 
     /**
      * Unlinks an account.
-     * 
-     * @param context
-     *            the {@link Context}.
+     *
+     * @param context the {@link Context}.
      */
     public void unlink(Context context) {
         // Unlink in persisted storage.
@@ -706,9 +665,8 @@ public class FacebookHelper {
 
     /**
      * Checks if the user is linked to Facebook.
-     * 
-     * @param context
-     *            the {@link Context}.
+     *
+     * @param context the {@link Context}.
      */
     public boolean isLinked(Context context) {
         Context appContext = context.getApplicationContext();
@@ -718,9 +676,8 @@ public class FacebookHelper {
 
     /**
      * Checks if the user has auto share turned on for Facebook.
-     * 
-     * @param context
-     *            the {@link Context}.
+     *
+     * @param context the {@link Context}.
      */
     public boolean isAutoShare(Context context) {
         Context appContext = context.getApplicationContext();
@@ -732,19 +689,14 @@ public class FacebookHelper {
     /**
      * A convenience method to be called in the onActivityResult() of any {@link Activity} or {@link Fragment} that uses
      * {@link #startLinkRequest(Context)}.
-     * 
-     * @param activity
-     *            the {@link Activity}.
-     * @param fragment
-     *            the {@link Fragment}. May be null.
-     * @param requestCode
-     *            the integer request code originally supplied to startActivityForResult(), allowing you to identify who
-     *            this result came from.
-     * @param resultCode
-     *            the integer result code returned by the child activity through its setResult().
-     * @param data
-     *            an Intent, which can return result data to the caller (various data can be attached to Intent
-     *            "extras").
+     *
+     * @param activity    the {@link Activity}.
+     * @param fragment    the {@link Fragment}. May be null.
+     * @param requestCode the integer request code originally supplied to startActivityForResult(), allowing you to identify who
+     *                    this result came from.
+     * @param resultCode  the integer result code returned by the child activity through its setResult().
+     * @param data        an Intent, which can return result data to the caller (various data can be attached to Intent
+     *                    "extras").
      */
     public void onActivityResultImpl(Activity activity, Fragment fragment, int requestCode, int resultCode, Intent data) {
         // State machine to handle the linking process.
@@ -795,9 +747,8 @@ public class FacebookHelper {
 
     /**
      * Gets the user name associated with the linked account.
-     * 
-     * @param context
-     *            the {@link Context}.
+     *
+     * @param context the {@link Context}.
      * @return the user name; or null if unlinked.
      */
     public String getLinkedAccountName(Context context) {
@@ -808,9 +759,8 @@ public class FacebookHelper {
 
     /**
      * Gets the name of the album to share to.
-     * 
-     * @param context
-     *            the {@link Context}.
+     *
+     * @param context the {@link Context}.
      * @return the album name; or null if unlinked.
      */
     public String getLinkedAlbumName(Context context) {
@@ -821,9 +771,8 @@ public class FacebookHelper {
 
     /**
      * Process share requests by sharing to the linked account. This should be called in a background thread.
-     * 
-     * @param context
-     *            the {@link Context}.
+     *
+     * @param context the {@link Context}.
      * @return a {@link IWingsNotification} representing the results of the processed {@link ShareRequest}. May be null.
      */
     public IWingsNotification processShareRequests(Context context) {

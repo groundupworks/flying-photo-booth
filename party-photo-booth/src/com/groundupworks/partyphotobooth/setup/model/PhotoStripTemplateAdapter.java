@@ -9,21 +9,21 @@ import android.content.Context;
 import android.util.SparseArray;
 import android.view.View;
 import android.widget.TextView;
+
 import com.groundupworks.partyphotobooth.R;
 import com.groundupworks.partyphotobooth.helpers.PreferencesHelper.PhotoStripTemplate;
 
 /**
  * Adapter for the {@link PhotoStripTemplate} selection ui.
- * 
+ *
  * @author Benedict Lau
  */
 public class PhotoStripTemplateAdapter extends BaseSpinnerAdapter<PhotoStripTemplateAdapter.Template> {
 
     /**
      * Constructor.
-     * 
-     * @param context
-     *            the {@link Context}.
+     *
+     * @param context the {@link Context}.
      */
     public PhotoStripTemplateAdapter(Context context) {
         super(context, createItems(context));
@@ -45,9 +45,8 @@ public class PhotoStripTemplateAdapter extends BaseSpinnerAdapter<PhotoStripTemp
 
     /**
      * Creates the list of {@link PhotoStripTemplateAdapter.Template} for the selection ui.
-     * 
-     * @param context
-     *            the {@link Context}.
+     *
+     * @param context the {@link Context}.
      * @return the {@link SparseArray} of {@link PhotoStripTemplateAdapter.Template}.
      */
     private static SparseArray<PhotoStripTemplateAdapter.Template> createItems(Context context) {
@@ -118,9 +117,8 @@ public class PhotoStripTemplateAdapter extends BaseSpinnerAdapter<PhotoStripTemp
 
     /**
      * Gets the {@link PhotoStripTemplate} based on the item position.
-     * 
-     * @param position
-     *            position of the item whose data we want within the adapter's data set.
+     *
+     * @param position position of the item whose data we want within the adapter's data set.
      * @return the {@link PhotoStripTemplate}.
      */
     public PhotoStripTemplate getPhotoStripTemplate(int position) {

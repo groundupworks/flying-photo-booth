@@ -15,16 +15,17 @@
  */
 package com.groundupworks.lib.photobooth.helpers;
 
-import java.util.List;
 import android.app.Activity;
 import android.hardware.Camera;
 import android.hardware.Camera.CameraInfo;
 import android.hardware.Camera.Size;
 import android.view.Surface;
 
+import java.util.List;
+
 /**
  * A helper class containing methods for configuring the camera.
- * 
+ *
  * @author Benedict Lau
  */
 public class CameraHelper {
@@ -69,25 +70,18 @@ public class CameraHelper {
 
     /**
      * Selects the optimal picture size with flags to toggle filtering criteria.
-     * 
-     * @param previewSizes
-     *            the list of supported preview sizes.
-     * @param pictureSizes
-     *            the list of supported picture sizes.
-     * @param targetWidth
-     *            the target picture width.
-     * @param targetHeight
-     *            the target picture height.
-     * @param filterMinSize
-     *            true to block sizes smaller than target dimensions; false otherwise.
-     * @param filterAspectRatio
-     *            true to block sizes above the aspect ratio tolerance; false otherwise.
-     * @param filterPreviewSizes
-     *            true to block sizes without a corresponding preview size; false otherwise.
+     *
+     * @param previewSizes       the list of supported preview sizes.
+     * @param pictureSizes       the list of supported picture sizes.
+     * @param targetWidth        the target picture width.
+     * @param targetHeight       the target picture height.
+     * @param filterMinSize      true to block sizes smaller than target dimensions; false otherwise.
+     * @param filterAspectRatio  true to block sizes above the aspect ratio tolerance; false otherwise.
+     * @param filterPreviewSizes true to block sizes without a corresponding preview size; false otherwise.
      * @return the optimal supported picture size; or null if failed.
      */
     private static Size selectPictureSize(List<Size> previewSizes, List<Size> pictureSizes, final int targetWidth,
-            final int targetHeight, boolean filterMinSize, boolean filterAspectRatio, boolean filterPreviewSizes) {
+                                          final int targetHeight, boolean filterMinSize, boolean filterAspectRatio, boolean filterPreviewSizes) {
         Size optimalSize = null;
 
         double targetAspectRatio = (double) targetWidth / targetHeight;
@@ -127,11 +121,9 @@ public class CameraHelper {
     /**
      * Calculates the clockwise rotation applied to the camera such that the picture will be aligned with the screen
      * orientation.
-     * 
-     * @param activity
-     *            the {@link Activity}.
-     * @param cameraId
-     *            id of the camera.
+     *
+     * @param activity the {@link Activity}.
+     * @param cameraId id of the camera.
      * @return the clockwise rotation in degrees.
      */
     public static int getCameraScreenOrientation(Activity activity, int cameraId) {
@@ -178,13 +170,10 @@ public class CameraHelper {
 
     /**
      * Selects the optimal preview size based on the target aspect ratio and size.
-     * 
-     * @param previewSizes
-     *            the list of supported preview sizes.
-     * @param targetWidth
-     *            the target preview width.
-     * @param targetHeight
-     *            the target preview height.
+     *
+     * @param previewSizes the list of supported preview sizes.
+     * @param targetWidth  the target preview width.
+     * @param targetHeight the target preview height.
      * @return the optimal supported preview size; or null if an empty list is passed.
      */
     public static Size getOptimalPreviewSize(List<Size> previewSizes, int targetWidth, int targetHeight) {
@@ -239,19 +228,15 @@ public class CameraHelper {
      * Selects the optimal picture size by selecting the smallest supported size with dimensions larger than the target
      * dimensions. The algorithm also prefers picture sizes with a similar aspect ratio as the target dimensions, and
      * have a corresponding preview size. If the ideal case fails, the largest supported size is returned.
-     * 
-     * @param previewSizes
-     *            the list of supported preview sizes.
-     * @param pictureSizes
-     *            the list of supported picture sizes.
-     * @param targetWidth
-     *            the target picture width.
-     * @param targetHeight
-     *            the target picture height.
+     *
+     * @param previewSizes the list of supported preview sizes.
+     * @param pictureSizes the list of supported picture sizes.
+     * @param targetWidth  the target picture width.
+     * @param targetHeight the target picture height.
      * @return the optimal supported picture size; or null if an empty list is passed.
      */
     public static Size getOptimalPictureSize(List<Size> previewSizes, List<Size> pictureSizes, int targetWidth,
-            int targetHeight) {
+                                             int targetHeight) {
         // Check for null or empty lists.
         if (previewSizes == null || pictureSizes == null || previewSizes.isEmpty() || pictureSizes.isEmpty()) {
             return null;

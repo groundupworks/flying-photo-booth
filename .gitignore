@@ -1,3 +1,10 @@
+# Android Studio
+.idea/workspace.xml
+
+# gradle build
+**/build/
+.gradle
+
 # built application files
 *.apk
 *.ap_

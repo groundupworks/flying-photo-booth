@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background_color"
-    android:keepScreenOn="true" >
+    android:keepScreenOn="true">
 
     <!-- Two-pane fragment containers -->
 
@@ -12,7 +12,7 @@
         android:layout_height="match_parent"
         android:orientation="horizontal"
         android:paddingLeft="@dimen/kiosk_spacing"
-        android:paddingRight="@dimen/photo_strip_shadow_size" >
+        android:paddingRight="@dimen/photo_strip_shadow_size">
 
         <FrameLayout
             android:id="@+id/fragment_container_left"
