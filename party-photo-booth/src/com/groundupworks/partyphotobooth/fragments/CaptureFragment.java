@@ -17,6 +17,7 @@ import android.hardware.Camera.Parameters;
 import android.hardware.Camera.Size;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,6 +25,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.groundupworks.lib.photobooth.framework.BaseApplication;
+import com.groundupworks.lib.photobooth.helpers.CameraAudioHelper;
 import com.groundupworks.lib.photobooth.helpers.CameraHelper;
 import com.groundupworks.lib.photobooth.helpers.ImageHelper;
 import com.groundupworks.lib.photobooth.views.AnimationDrawableCallback;
@@ -90,10 +93,27 @@ public class CaptureFragment extends Fragment {
 
     private TextView mFrameCount;
 
+    private CameraAudioHelper mCameraAudioHelper;
+
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         mCallbacks = new WeakReference<CaptureFragment.ICallbacks>((CaptureFragment.ICallbacks) activity);
+
+        mCameraAudioHelper = new CameraAudioHelper(activity, R.raw.beep_once);
+        final Handler handler = new Handler(BaseApplication.getWorkerLooper());
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                mCameraAudioHelper.prepare();
+            }
+        });
+    }
+
+    @Override
+    public void onDetach() {
+        mCameraAudioHelper.release();
+        super.onDetach();
     }
 
     @Override
@@ -304,6 +324,13 @@ public class CaptureFragment extends Fragment {
         public void onAnimationComplete() {
             takePicture();
         }
+
+        @Override
+        public void onAnimationAdvanced(int currentFrame, int totalFrame) {
+            if (currentFrame > 0) {
+                mCameraAudioHelper.beep();
+            }
+        }
     }
 
     /**
@@ -387,7 +414,12 @@ public class CaptureFragment extends Fragment {
     private void takePicture() {
         if (isActivityAlive() && mCamera != null) {
             try {
-                mCamera.takePicture(null, null, new JpegPictureCallback());
+                mCamera.takePicture(new Camera.ShutterCallback() {
+                    @Override
+                    public void onShutter() {
+                        // This enables the system shutter sound.
+                    }
+                }, null, new JpegPictureCallback());
             } catch (RuntimeException e) {
                 // Call to client.
                 ICallbacks callbacks = getCallbacks();

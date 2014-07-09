@@ -29,6 +29,9 @@ import android.view.View;
  */
 public abstract class AnimationDrawableCallback implements Callback {
 
+    private final int mFrameCount;
+
+    private int mCurrentFrame;
     /**
      * The last frame of {@link Drawable} in the {@link AnimationDrawable}.
      */
@@ -54,7 +57,8 @@ public abstract class AnimationDrawableCallback implements Callback {
      *                          {@link AnimationDrawable} as background.
      */
     public AnimationDrawableCallback(AnimationDrawable animationDrawable, Callback callback) {
-        mLastFrame = animationDrawable.getFrame(animationDrawable.getNumberOfFrames() - 1);
+        mFrameCount = animationDrawable.getNumberOfFrames();
+        mLastFrame = animationDrawable.getFrame(mFrameCount - 1);
         mWrappedCallback = callback;
     }
 
@@ -75,6 +79,9 @@ public abstract class AnimationDrawableCallback implements Callback {
         if (mWrappedCallback != null) {
             mWrappedCallback.scheduleDrawable(who, what, when);
         }
+
+        onAnimationAdvanced(mCurrentFrame, mFrameCount);
+        mCurrentFrame++;
     }
 
     @Override
@@ -93,4 +100,6 @@ public abstract class AnimationDrawableCallback implements Callback {
      * the end of a non-looping animation sequence.
      */
     public abstract void onAnimationComplete();
+
+    public abstract void onAnimationAdvanced(int currentFrame, int totalFrame);
 }
