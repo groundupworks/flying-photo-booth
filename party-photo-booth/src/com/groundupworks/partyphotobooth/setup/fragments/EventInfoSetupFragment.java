@@ -1,12 +1,14 @@
 /*
  * Copyright (C) 2013 Benedict Lau
- * 
+ *
  * All rights reserved.
  */
 package com.groundupworks.partyphotobooth.setup.fragments;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
@@ -20,6 +22,8 @@ import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.groundupworks.partyphotobooth.R;
 import com.groundupworks.partyphotobooth.helpers.PreferencesHelper;
@@ -35,6 +39,16 @@ import java.util.GregorianCalendar;
  * @author Benedict Lau
  */
 public class EventInfoSetupFragment extends Fragment {
+
+    /**
+     * Image mime type for event logo selection.
+     */
+    private static final String EVENT_LOGO_MIME_TYPE = "image/*";
+
+    /**
+     * Request code to use for {@link Fragment#startActivityForResult(android.content.Intent, int)}.
+     */
+    private static final int EVENT_LOGO_REQUEST_CODE = 369;
 
     /**
      * Callbacks for this fragment.
@@ -53,6 +67,10 @@ public class EventInfoSetupFragment extends Fragment {
     private EditText mLineOne;
 
     private EditText mLineTwo;
+
+    private TextView mLogoPath;
+
+    private ImageView mLogoClear;
 
     private DatePicker mDate;
 
@@ -74,6 +92,8 @@ public class EventInfoSetupFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_event_info_setup, container, false);
         mLineOne = (EditText) view.findViewById(R.id.setup_event_info_line_one);
         mLineTwo = (EditText) view.findViewById(R.id.setup_event_info_line_two);
+        mLogoPath = (TextView) view.findViewById(R.id.setup_event_info_logo_path);
+        mLogoClear = (ImageView) view.findViewById(R.id.setup_event_info_logo_clear);
         mDate = (DatePicker) view.findViewById(R.id.setup_event_info_date);
         mDateHidden = (CheckBox) view.findViewById(R.id.setup_event_info_date_hidden);
         mNext = (Button) view.findViewById(R.id.setup_event_info_button_next);
@@ -85,9 +105,10 @@ public class EventInfoSetupFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        Context appContext = getActivity().getApplicationContext();
+        final Context appContext = getActivity().getApplicationContext();
         String lineOnePref = mPreferencesHelper.getEventLineOne(appContext);
         String lineTwoPref = mPreferencesHelper.getEventLineTwo(appContext);
+        String logoPathPref = mPreferencesHelper.getEventLogoPath(appContext);
         long datePref = mPreferencesHelper.getEventDate(appContext);
 
         /*
@@ -101,6 +122,28 @@ public class EventInfoSetupFragment extends Fragment {
         if (TextHelper.isValid(lineTwoPref)) {
             mLineTwo.setText(lineTwoPref);
         }
+
+        if (TextHelper.isValid(logoPathPref)) {
+            mLogoPath.setText(logoPathPref);
+            mLogoClear.setVisibility(View.VISIBLE);
+        } else {
+            mLogoClear.setVisibility(View.GONE);
+        }
+
+        mLogoPath.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                launchLogoSelection(appContext);
+            }
+        });
+
+        mLogoClear.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mLogoClear.setVisibility(View.GONE);
+                mLogoPath.setText("");
+            }
+        });
 
         if (datePref != PreferencesHelper.EVENT_DATE_HIDDEN) {
             Calendar calendar = new GregorianCalendar();
@@ -134,6 +177,20 @@ public class EventInfoSetupFragment extends Fragment {
     }
 
     @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        // Set logo path to the selected image.
+        if (requestCode == EVENT_LOGO_REQUEST_CODE && resultCode == Activity.RESULT_OK && data != null) {
+            Uri uri = data.getData();
+            if (TextHelper.isValid(uri.toString())) {
+                mLogoPath.setText(uri.toString());
+                mLogoClear.setVisibility(View.VISIBLE);
+            }
+        }
+    }
+
+    @Override
     public void onPause() {
         Context appContext = getActivity().getApplicationContext();
 
@@ -151,6 +208,13 @@ public class EventInfoSetupFragment extends Fragment {
             lineTwoString = lineTwo.toString();
         }
         mPreferencesHelper.storeEventLineTwo(appContext, lineTwoString);
+
+        String logoPathString = null;
+        CharSequence logoPath = mLogoPath.getText();
+        if (logoPath != null && logoPath.length() > 0) {
+            logoPathString = logoPath.toString();
+        }
+        mPreferencesHelper.storeEventLogoPath(appContext, logoPathString);
 
         // Store date.
         if (mDateHidden.isChecked()) {
@@ -178,6 +242,21 @@ public class EventInfoSetupFragment extends Fragment {
             callbacks = mCallbacks.get();
         }
         return callbacks;
+    }
+
+    /**
+     * Starts the {@link Activity} for logo selection.
+     *
+     * @param context the {@link Context}.
+     */
+    private void launchLogoSelection(Context context) {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType(EVENT_LOGO_MIME_TYPE);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
+
+        Intent chooserIntent = Intent.createChooser(intent, context.getString(R.string.event_info_setup__event_logo_chooser_title));
+        startActivityForResult(chooserIntent, EVENT_LOGO_REQUEST_CODE);
     }
 
     //

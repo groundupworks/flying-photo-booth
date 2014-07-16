@@ -204,6 +204,11 @@ public class PreferencesHelper {
     private static final String KEY_EVENT_LINE_TWO = "eventLineTwo";
 
     /**
+     * Key for the event logo path record.
+     */
+    private static final String KEY_EVENT_LOGO_PATH = "eventLogoPath";
+
+    /**
      * Key for the event date record.
      */
     private static final String KEY_EVENT_DATE = "eventDate";
@@ -217,6 +222,11 @@ public class PreferencesHelper {
      * The default preferences for the event title.
      */
     private static final String DEFAULT_EVENT_TITLE_PREFERENCE = "";
+
+    /**
+     * The default preferences for the event logo path.
+     */
+    private static final String DEFAULT_EVENT_LOGO_PATH_PREFERENCE = "";
 
     //
     // Public methods.
@@ -249,7 +259,7 @@ public class PreferencesHelper {
      * Stores the photo booth theme preference.
      *
      * @param context the {@link Context}.
-     * @param mode    one of {@link PhotoBoothTheme}. Must not be null.
+     * @param theme   one of {@link PhotoBoothTheme}. Must not be null.
      */
     public void storePhotoBoothTheme(Context context, PhotoBoothTheme theme) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
@@ -341,6 +351,32 @@ public class PreferencesHelper {
     public String getEventLineTwo(Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
         return preferences.getString(KEY_EVENT_LINE_TWO, DEFAULT_EVENT_TITLE_PREFERENCE);
+    }
+
+    /**
+     * Stores the path to the event logo image.
+     *
+     * @param context the {@link Context}.
+     * @param path    the path to the event logo image; or an empty string. Pass null to clear.
+     */
+    public void storeEventLogoPath(Context context, String path) {
+        Editor editor = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext()).edit();
+        if (path != null && path.length() > 0) {
+            editor.putString(KEY_EVENT_LOGO_PATH, path).apply();
+        } else {
+            editor.remove(KEY_EVENT_LOGO_PATH).apply();
+        }
+    }
+
+    /**
+     * Reads the path to the event logo image.
+     *
+     * @param context the {@link Context}.
+     * @return the path to the event logo image; or an empty string.
+     */
+    public String getEventLogoPath(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
+        return preferences.getString(KEY_EVENT_LOGO_PATH, DEFAULT_EVENT_LOGO_PATH_PREFERENCE);
     }
 
     /**

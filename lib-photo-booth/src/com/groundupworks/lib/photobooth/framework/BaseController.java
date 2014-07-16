@@ -66,7 +66,7 @@ public abstract class BaseController {
     protected abstract void handleEvent(Message msg);
 
     //
-    // Public methods.
+    // Package private methods.
     //
 
     /**
@@ -74,14 +74,14 @@ public abstract class BaseController {
      *
      * @param fragment the {@link Fragment} to attach.
      */
-    public void attachFragment(ControllerBackedFragment<?> fragment) {
+    void attachFragment(ControllerBackedFragment<?> fragment) {
         mFragment = fragment;
     }
 
     /**
      * Detaches the {@link Fragment} from this controller.
      */
-    public void detachFragment() {
+    void detachFragment() {
         mFragment = null;
     }
 
@@ -90,7 +90,7 @@ public abstract class BaseController {
      *
      * @param msg the event to handle.
      */
-    public void sendToWorkerHandler(Message msg) {
+    void sendToWorkerHandler(Message msg) {
         mWorkerHandler.sendMessage(msg);
     }
 }

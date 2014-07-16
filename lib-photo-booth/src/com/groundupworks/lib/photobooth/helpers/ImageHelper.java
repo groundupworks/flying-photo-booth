@@ -134,7 +134,7 @@ public class ImageHelper {
     /**
      * Gets the path to the writable captured image directory.
      *
-     * @param the image folder name.
+     * @param imageFolder the image folder name.
      * @return the path to the captured image directory; or null if unsuccessful.
      */
     public static String getCapturedImageDirectory(String imageFolder) {
@@ -144,7 +144,7 @@ public class ImageHelper {
     /**
      * Generates a file name for the captured Jpeg.
      *
-     * @param the prefix for the saved Jpeg filename.
+     * @param filenamePrefix the prefix for the saved Jpeg filename.
      * @return the automatically generated file name.
      */
     public static String generateCapturedImageName(String filenamePrefix) {
