@@ -100,20 +100,20 @@ public class CaptureFragment extends Fragment {
         super.onAttach(activity);
         mCallbacks = new WeakReference<CaptureFragment.ICallbacks>((CaptureFragment.ICallbacks) activity);
 
-        mCameraAudioHelper = new CameraAudioHelper(activity, R.raw.beep_once);
         final Handler handler = new Handler(BaseApplication.getWorkerLooper());
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                mCameraAudioHelper.prepare();
-            }
-        });
+        mCameraAudioHelper = new CameraAudioHelper(activity, R.raw.beep_once, handler);
     }
 
     @Override
-    public void onDetach() {
+    public void onStart() {
+        super.onStart();
+        mCameraAudioHelper.prepare();
+    }
+
+    @Override
+    public void onStop() {
         mCameraAudioHelper.release();
-        super.onDetach();
+        super.onStop();
     }
 
     @Override

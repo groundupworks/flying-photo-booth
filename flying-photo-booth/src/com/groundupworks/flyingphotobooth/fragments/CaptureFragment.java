@@ -26,6 +26,7 @@ import android.hardware.Camera.CameraInfo;
 import android.hardware.Camera.Parameters;
 import android.hardware.Camera.Size;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -47,6 +48,8 @@ import com.groundupworks.flyingphotobooth.LaunchActivity;
 import com.groundupworks.flyingphotobooth.LaunchActivity.BackPressedHandler;
 import com.groundupworks.flyingphotobooth.MyPreferenceActivity;
 import com.groundupworks.flyingphotobooth.R;
+import com.groundupworks.lib.photobooth.framework.BaseApplication;
+import com.groundupworks.lib.photobooth.helpers.CameraAudioHelper;
 import com.groundupworks.lib.photobooth.helpers.CameraHelper;
 import com.groundupworks.lib.photobooth.helpers.ImageHelper;
 import com.groundupworks.lib.photobooth.views.CenteredPreview;
@@ -212,6 +215,8 @@ public class CaptureFragment extends Fragment {
     private TextView mReviewStatus;
 
     private ImageView mReviewImage;
+
+    private CameraAudioHelper mCameraAudioHelper;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -493,6 +498,26 @@ public class CaptureFragment extends Fragment {
         super.onPause();
     }
 
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+
+        final Handler handler = new Handler(BaseApplication.getWorkerLooper());
+        mCameraAudioHelper = new CameraAudioHelper(activity, R.raw.beep_once, handler);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        mCameraAudioHelper.prepare();
+    }
+
+    @Override
+    public void onStop() {
+        mCameraAudioHelper.release();
+        super.onStop();
+    }
+
     //
     // Private inner classes.
     //
@@ -653,7 +678,12 @@ public class CaptureFragment extends Fragment {
     private void takePicture() {
         if (isActivityAlive() && mCamera != null) {
             try {
-                mCamera.takePicture(null, null, new JpegPictureCallback());
+                mCamera.takePicture(new Camera.ShutterCallback() {
+                    @Override
+                    public void onShutter() {
+                        // Setting a listener will enable sound for shutter
+                    }
+                }, null, new JpegPictureCallback());
             } catch (RuntimeException e) {
                 // The native camera crashes occasionally. Self-recover by relaunching fragment.
                 final LaunchActivity activity = (LaunchActivity) getActivity();
@@ -715,6 +745,7 @@ public class CaptureFragment extends Fragment {
                                     if (mCamera != null) {
                                         mCamera.autoFocus(new MyAutoFocusCallback());
                                     }
+                                    mCameraAudioHelper.beep();
                                 }
                             }
                         });
@@ -736,6 +767,7 @@ public class CaptureFragment extends Fragment {
                                     if (mCountdownTwo != null) {
                                         mCountdownTwo.setTextColor(getResources().getColor(R.color.selection_color));
                                     }
+                                    mCameraAudioHelper.beep();
                                 }
                             }
                         });
@@ -757,6 +789,7 @@ public class CaptureFragment extends Fragment {
                                     if (mCountdownOne != null) {
                                         mCountdownOne.setTextColor(getResources().getColor(R.color.selection_color));
                                     }
+                                    mCameraAudioHelper.beep();
                                 }
                             }
                         });
