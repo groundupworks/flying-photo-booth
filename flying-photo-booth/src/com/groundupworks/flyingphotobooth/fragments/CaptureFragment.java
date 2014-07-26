@@ -26,6 +26,7 @@ import android.hardware.Camera.CameraInfo;
 import android.hardware.Camera.Parameters;
 import android.hardware.Camera.Size;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -47,6 +48,8 @@ import com.groundupworks.flyingphotobooth.LaunchActivity;
 import com.groundupworks.flyingphotobooth.LaunchActivity.BackPressedHandler;
 import com.groundupworks.flyingphotobooth.MyPreferenceActivity;
 import com.groundupworks.flyingphotobooth.R;
+import com.groundupworks.lib.photobooth.framework.BaseApplication;
+import com.groundupworks.lib.photobooth.helpers.CameraAudioHelper;
 import com.groundupworks.lib.photobooth.helpers.CameraHelper;
 import com.groundupworks.lib.photobooth.helpers.ImageHelper;
 import com.groundupworks.lib.photobooth.views.CenteredPreview;
@@ -161,6 +164,11 @@ public class CaptureFragment extends Fragment {
     private Camera mCamera = null;
 
     /**
+     * Helper for audio feedback.
+     */
+    private CameraAudioHelper mCameraAudioHelper = null;
+
+    /**
      * The preview display orientation.
      */
     private int mPreviewDisplayOrientation = CameraHelper.CAMERA_SCREEN_ORIENTATION_0;
@@ -212,6 +220,14 @@ public class CaptureFragment extends Fragment {
     private TextView mReviewStatus;
 
     private ImageView mReviewImage;
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+
+        final Handler handler = new Handler(BaseApplication.getWorkerLooper());
+        mCameraAudioHelper = new CameraAudioHelper(activity, R.raw.beep_once, handler);
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -387,6 +403,12 @@ public class CaptureFragment extends Fragment {
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        mCameraAudioHelper.prepare();
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
 
@@ -491,6 +513,12 @@ public class CaptureFragment extends Fragment {
         saveCameraPreference(getActivity());
 
         super.onPause();
+    }
+
+    @Override
+    public void onStop() {
+        mCameraAudioHelper.release();
+        super.onStop();
     }
 
     //
@@ -653,7 +681,12 @@ public class CaptureFragment extends Fragment {
     private void takePicture() {
         if (isActivityAlive() && mCamera != null) {
             try {
-                mCamera.takePicture(null, null, new JpegPictureCallback());
+                mCamera.takePicture(new Camera.ShutterCallback() {
+                    @Override
+                    public void onShutter() {
+                        // Setting a listener enables the system shutter sound.
+                    }
+                }, null, new JpegPictureCallback());
             } catch (RuntimeException e) {
                 // The native camera crashes occasionally. Self-recover by relaunching fragment.
                 final LaunchActivity activity = (LaunchActivity) getActivity();
@@ -710,6 +743,7 @@ public class CaptureFragment extends Fragment {
                                     if (mCountdownThree != null) {
                                         mCountdownThree.setTextColor(getResources().getColor(R.color.selection_color));
                                     }
+                                    mCameraAudioHelper.beep();
 
                                     // Kick off auto-focus and indicate status.
                                     if (mCamera != null) {
@@ -736,6 +770,7 @@ public class CaptureFragment extends Fragment {
                                     if (mCountdownTwo != null) {
                                         mCountdownTwo.setTextColor(getResources().getColor(R.color.selection_color));
                                     }
+                                    mCameraAudioHelper.beep();
                                 }
                             }
                         });
@@ -757,6 +792,7 @@ public class CaptureFragment extends Fragment {
                                     if (mCountdownOne != null) {
                                         mCountdownOne.setTextColor(getResources().getColor(R.color.selection_color));
                                     }
+                                    mCameraAudioHelper.beep();
                                 }
                             }
                         });

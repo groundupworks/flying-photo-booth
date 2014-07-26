@@ -17,6 +17,7 @@ import android.hardware.Camera.Parameters;
 import android.hardware.Camera.Size;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,6 +25,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.groundupworks.lib.photobooth.framework.BaseApplication;
+import com.groundupworks.lib.photobooth.helpers.CameraAudioHelper;
 import com.groundupworks.lib.photobooth.helpers.CameraHelper;
 import com.groundupworks.lib.photobooth.helpers.ImageHelper;
 import com.groundupworks.lib.photobooth.views.AnimationDrawableCallback;
@@ -76,6 +79,11 @@ public class CaptureFragment extends Fragment {
     private Camera mCamera = null;
 
     /**
+     * Helper for audio feedback.
+     */
+    private CameraAudioHelper mCameraAudioHelper = null;
+
+    /**
      * The preview display orientation.
      */
     private int mPreviewDisplayOrientation = CameraHelper.CAMERA_SCREEN_ORIENTATION_0;
@@ -94,6 +102,9 @@ public class CaptureFragment extends Fragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         mCallbacks = new WeakReference<CaptureFragment.ICallbacks>((CaptureFragment.ICallbacks) activity);
+
+        final Handler handler = new Handler(BaseApplication.getWorkerLooper());
+        mCameraAudioHelper = new CameraAudioHelper(activity, R.raw.beep_once, handler);
     }
 
     @Override
@@ -192,6 +203,12 @@ public class CaptureFragment extends Fragment {
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        mCameraAudioHelper.prepare();
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
 
@@ -280,6 +297,12 @@ public class CaptureFragment extends Fragment {
         super.onPause();
     }
 
+    @Override
+    public void onStop() {
+        mCameraAudioHelper.release();
+        super.onStop();
+    }
+
     //
     // Private inner classes.
     //
@@ -301,7 +324,14 @@ public class CaptureFragment extends Fragment {
         }
 
         @Override
-        public void onAnimationComplete() {
+        public void onAnimationAdvanced(int currentFrame, int totalFrames) {
+            if (currentFrame > 0) {
+                mCameraAudioHelper.beep();
+            }
+        }
+
+        @Override
+        public void onAnimationCompleted() {
             takePicture();
         }
     }
@@ -387,7 +417,12 @@ public class CaptureFragment extends Fragment {
     private void takePicture() {
         if (isActivityAlive() && mCamera != null) {
             try {
-                mCamera.takePicture(null, null, new JpegPictureCallback());
+                mCamera.takePicture(new Camera.ShutterCallback() {
+                    @Override
+                    public void onShutter() {
+                        // Setting a listener enables the system shutter sound.
+                    }
+                }, null, new JpegPictureCallback());
             } catch (RuntimeException e) {
                 // Call to client.
                 ICallbacks callbacks = getCallbacks();
