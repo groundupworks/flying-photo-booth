@@ -164,6 +164,11 @@ public class CaptureFragment extends Fragment {
     private Camera mCamera = null;
 
     /**
+     * Helper for audio feedback.
+     */
+    private CameraAudioHelper mCameraAudioHelper = null;
+
+    /**
      * The preview display orientation.
      */
     private int mPreviewDisplayOrientation = CameraHelper.CAMERA_SCREEN_ORIENTATION_0;
@@ -216,7 +221,13 @@ public class CaptureFragment extends Fragment {
 
     private ImageView mReviewImage;
 
-    private CameraAudioHelper mCameraAudioHelper;
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+
+        final Handler handler = new Handler(BaseApplication.getWorkerLooper());
+        mCameraAudioHelper = new CameraAudioHelper(activity, R.raw.beep_once, handler);
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -392,6 +403,12 @@ public class CaptureFragment extends Fragment {
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        mCameraAudioHelper.prepare();
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
 
@@ -496,20 +513,6 @@ public class CaptureFragment extends Fragment {
         saveCameraPreference(getActivity());
 
         super.onPause();
-    }
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-
-        final Handler handler = new Handler(BaseApplication.getWorkerLooper());
-        mCameraAudioHelper = new CameraAudioHelper(activity, R.raw.beep_once, handler);
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        mCameraAudioHelper.prepare();
     }
 
     @Override
@@ -681,7 +684,7 @@ public class CaptureFragment extends Fragment {
                 mCamera.takePicture(new Camera.ShutterCallback() {
                     @Override
                     public void onShutter() {
-                        // Setting a listener will enable sound for shutter
+                        // Setting a listener enables the system shutter sound.
                     }
                 }, null, new JpegPictureCallback());
             } catch (RuntimeException e) {
@@ -740,12 +743,12 @@ public class CaptureFragment extends Fragment {
                                     if (mCountdownThree != null) {
                                         mCountdownThree.setTextColor(getResources().getColor(R.color.selection_color));
                                     }
+                                    mCameraAudioHelper.beep();
 
                                     // Kick off auto-focus and indicate status.
                                     if (mCamera != null) {
                                         mCamera.autoFocus(new MyAutoFocusCallback());
                                     }
-                                    mCameraAudioHelper.beep();
                                 }
                             }
                         });

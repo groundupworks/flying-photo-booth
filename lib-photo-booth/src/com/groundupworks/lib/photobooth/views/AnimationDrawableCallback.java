@@ -22,20 +22,27 @@ import android.view.View;
 
 /**
  * Provides a callback when a non-looping {@link AnimationDrawable} completes its animation sequence. More precisely,
- * {@link #onAnimationComplete()} is triggered when {@link View#invalidateDrawable(Drawable)} has been called on the
+ * {@link #onAnimationCompleted()} is triggered when {@link View#invalidateDrawable(Drawable)} has been called on the
  * last frame.
  *
  * @author Benedict Lau
  */
 public abstract class AnimationDrawableCallback implements Callback {
 
-    private final int mFrameCount;
+    /**
+     * The total number of frames in the {@link AnimationDrawable}.
+     */
+    private final int mTotalFrames;
 
-    private int mCurrentFrame;
     /**
      * The last frame of {@link Drawable} in the {@link AnimationDrawable}.
      */
-    private Drawable mLastFrame;
+    private final Drawable mLastFrame;
+
+    /**
+     * The current frame of {@link Drawable} in the {@link AnimationDrawable}.
+     */
+    private int mCurrentFrame = 0;
 
     /**
      * The client's {@link Callback} implementation. All calls are proxied to this wrapped {@link Callback}
@@ -44,7 +51,7 @@ public abstract class AnimationDrawableCallback implements Callback {
     private Callback mWrappedCallback;
 
     /**
-     * Flag to ensure that {@link #onAnimationComplete()} is called only once, since
+     * Flag to ensure that {@link #onAnimationCompleted()} is called only once, since
      * {@link #invalidateDrawable(Drawable)} may be called multiple times.
      */
     private boolean mIsCallbackTriggered = false;
@@ -57,8 +64,8 @@ public abstract class AnimationDrawableCallback implements Callback {
      *                          {@link AnimationDrawable} as background.
      */
     public AnimationDrawableCallback(AnimationDrawable animationDrawable, Callback callback) {
-        mFrameCount = animationDrawable.getNumberOfFrames();
-        mLastFrame = animationDrawable.getFrame(mFrameCount - 1);
+        mTotalFrames = animationDrawable.getNumberOfFrames();
+        mLastFrame = animationDrawable.getFrame(mTotalFrames - 1);
         mWrappedCallback = callback;
     }
 
@@ -70,7 +77,7 @@ public abstract class AnimationDrawableCallback implements Callback {
 
         if (!mIsCallbackTriggered && mLastFrame != null && mLastFrame.equals(who.getCurrent())) {
             mIsCallbackTriggered = true;
-            onAnimationComplete();
+            onAnimationCompleted();
         }
     }
 
@@ -80,7 +87,7 @@ public abstract class AnimationDrawableCallback implements Callback {
             mWrappedCallback.scheduleDrawable(who, what, when);
         }
 
-        onAnimationAdvanced(mCurrentFrame, mFrameCount);
+        onAnimationAdvanced(mCurrentFrame, mTotalFrames);
         mCurrentFrame++;
     }
 
@@ -96,10 +103,16 @@ public abstract class AnimationDrawableCallback implements Callback {
     //
 
     /**
+     * Callback triggered when a new frame of {@link Drawable} has been scheduled.
+     *
+     * @param currentFrame the current frame number.
+     * @param totalFrames  the total number of frames in the {@link AnimationDrawable}.
+     */
+    public abstract void onAnimationAdvanced(int currentFrame, int totalFrames);
+
+    /**
      * Callback triggered when {@link View#invalidateDrawable(Drawable)} has been called on the last frame, which marks
      * the end of a non-looping animation sequence.
      */
-    public abstract void onAnimationComplete();
-
-    public abstract void onAnimationAdvanced(int currentFrame, int totalFrame);
+    public abstract void onAnimationCompleted();
 }
