@@ -278,6 +278,22 @@ public class ImageHelper {
     }
 
     /**
+     * Compresses a bitmap to PNG and write the PNG data to an output stream.
+     *
+     * @param bitmap       the bitmap to compress.
+     * @param outputStream the outputstream to write the compressed data.
+     * @return true if successful; false otherwise.
+     */
+    public static boolean toPngOutputStream(Bitmap bitmap, OutputStream outputStream) {
+        boolean isSuccessful = false;
+        if (bitmap != null) {
+            isSuccessful = bitmap.compress(CompressFormat.PNG, 0, outputStream);
+        }
+
+        return isSuccessful;
+    }
+
+    /**
      * Creates a processed bitmap image from Jpeg data in a byte array. Transformations and image filters are applied to
      * the original image in the process.
      *

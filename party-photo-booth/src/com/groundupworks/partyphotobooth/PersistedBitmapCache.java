@@ -87,15 +87,15 @@ public class PersistedBitmapCache {
     private boolean put(String key, Bitmap bitmap) {
         boolean isSuccessful = true;
 
-        // Get unique Jpeg filename based on key.
+        // Get unique filename based on key.
         final String filename = StorageHelper.generateValidFilename(key);
         if (TextHelper.isValid(filename)) {
             final File file = new File(mDiskCacheDir, filename);
 
-            // Store Jpeg in disk cache.
+            // Store PNG in disk cache.
             try {
                 final OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(file));
-                isSuccessful = ImageHelper.toJpegOutputStream(bitmap, outputStream);
+                isSuccessful = ImageHelper.toPngOutputStream(bitmap, outputStream);
                 outputStream.flush();
                 outputStream.close();
             } catch (FileNotFoundException e) {
@@ -105,7 +105,7 @@ public class PersistedBitmapCache {
             }
 
             if (isSuccessful) {
-                // Read Jpeg from disk cache and put bitmap in memory cache.
+                // Read PNG from disk cache and put bitmap in memory cache.
                 Bitmap storedBitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
                 if (storedBitmap != null) {
                     mMemCache.put(key, storedBitmap);
@@ -128,9 +128,9 @@ public class PersistedBitmapCache {
         // Try to get bitmap from memory cache.
         Bitmap bitmap = mMemCache.get(key);
 
-        // Try to get Jpeg from disk cache if bitmap not found in memory cache.
+        // Try to get PNG from disk cache if bitmap not found in memory cache.
         if (bitmap == null) {
-            // Get unique Jpeg filename based on key.
+            // Get unique filename based on key.
             String filename = StorageHelper.generateValidFilename(key);
             if (TextHelper.isValid(filename)) {
                 final File file = new File(mDiskCacheDir, filename);
@@ -154,10 +154,10 @@ public class PersistedBitmapCache {
     private boolean remove(String key) {
         boolean isSuccessful = true;
 
-        // Get unique Jpeg filename based on key.
+        // Get unique filename based on key.
         final String filename = StorageHelper.generateValidFilename(key);
         if (TextHelper.isValid(filename)) {
-            // Remove Jpeg from disk cache.
+            // Remove PNG from disk cache.
             final File file = new File(mDiskCacheDir, filename);
             isSuccessful = file.delete();
 
