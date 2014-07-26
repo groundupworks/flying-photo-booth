@@ -204,9 +204,9 @@ public class PreferencesHelper {
     private static final String KEY_EVENT_LINE_TWO = "eventLineTwo";
 
     /**
-     * Key for the event logo path record.
+     * Key for the event logo uri record.
      */
-    private static final String KEY_EVENT_LOGO_PATH = "eventLogoPath";
+    private static final String KEY_EVENT_LOGO_URI = "eventLogoUri";
 
     /**
      * Key for the event date record.
@@ -224,9 +224,9 @@ public class PreferencesHelper {
     private static final String DEFAULT_EVENT_TITLE_PREFERENCE = "";
 
     /**
-     * The default preferences for the event logo path.
+     * The default preferences for the event logo uri.
      */
-    private static final String DEFAULT_EVENT_LOGO_PATH_PREFERENCE = "";
+    private static final String DEFAULT_EVENT_LOGO_URI_PREFERENCE = "";
 
     //
     // Public methods.
@@ -354,29 +354,29 @@ public class PreferencesHelper {
     }
 
     /**
-     * Stores the path to the event logo image.
+     * Stores the uri to the event logo image.
      *
      * @param context the {@link Context}.
-     * @param path    the path to the event logo image; or an empty string. Pass null to clear.
+     * @param uri     the uri to the event logo image; or an empty string. Pass null to clear.
      */
-    public void storeEventLogoPath(Context context, String path) {
+    public void storeEventLogoUri(Context context, String uri) {
         Editor editor = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext()).edit();
-        if (path != null && path.length() > 0) {
-            editor.putString(KEY_EVENT_LOGO_PATH, path).apply();
+        if (uri != null && uri.length() > 0) {
+            editor.putString(KEY_EVENT_LOGO_URI, uri).apply();
         } else {
-            editor.remove(KEY_EVENT_LOGO_PATH).apply();
+            editor.remove(KEY_EVENT_LOGO_URI).apply();
         }
     }
 
     /**
-     * Reads the path to the event logo image.
+     * Reads the uri to the event logo image.
      *
      * @param context the {@link Context}.
-     * @return the path to the event logo image; or an empty string.
+     * @return the uri to the event logo image; or an empty string.
      */
-    public String getEventLogoPath(Context context) {
+    public String getEventLogoUri(Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
-        return preferences.getString(KEY_EVENT_LOGO_PATH, DEFAULT_EVENT_LOGO_PATH_PREFERENCE);
+        return preferences.getString(KEY_EVENT_LOGO_URI, DEFAULT_EVENT_LOGO_URI_PREFERENCE);
     }
 
     /**

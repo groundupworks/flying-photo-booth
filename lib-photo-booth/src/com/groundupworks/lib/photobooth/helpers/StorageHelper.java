@@ -16,8 +16,12 @@
 package com.groundupworks.lib.photobooth.helpers;
 
 import android.os.Environment;
+import android.util.Base64;
 
 import java.io.File;
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 /**
  * A helper class containing methods to read and write to external storage.
@@ -25,6 +29,16 @@ import java.io.File;
  * @author Benedict Lau
  */
 public class StorageHelper {
+
+    /**
+     * Encoding used to generate a valid filename.
+     */
+    private static final String DEFAULT_ENCODING = "UTF-8";
+
+    /**
+     * Hash algorithm used to generate a valid filename.
+     */
+    private static final String DEFAULT_HASH_ALGORITHM = "SHA-1";
 
     //
     // Public methods.
@@ -37,6 +51,39 @@ public class StorageHelper {
      */
     public static boolean isExternalStorageAvailable() {
         return Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED);
+    }
+
+    /**
+     * Generates a unique and valid filename based on the input text. The same input text always gives
+     * consistent output.
+     *
+     * @param text the input text. Must not be null.
+     * @return a valid filename; or null if failed.
+     */
+    public static String generateValidFilename(String text) {
+        String filename = null;
+        byte[] digest = null;
+
+        try {
+            // Get bytes from input text.
+            final byte[] bytes = text.getBytes(DEFAULT_ENCODING);
+
+            // Generate unique hash from bytes.
+            MessageDigest digester = MessageDigest.getInstance(DEFAULT_HASH_ALGORITHM);
+            digester.update(bytes, 0, bytes.length);
+            digest = digester.digest();
+        } catch (NoSuchAlgorithmException e) {
+            // Do nothing.
+        } catch (UnsupportedEncodingException e) {
+            // Do nothing.
+        }
+
+        if (digest != null && digest.length > 0) {
+            // Encode bytes to valid characters for a filename.
+            filename = Base64.encodeToString(digest, Base64.URL_SAFE | Base64.NO_WRAP | Base64.NO_PADDING);
+        }
+
+        return filename;
     }
 
     /**

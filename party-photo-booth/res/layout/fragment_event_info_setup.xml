@@ -76,12 +76,12 @@
                 android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/setup_event_info_logo_path"
+                    android:id="@+id/setup_event_info_logo_uri"
                     style="@style/Text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:ellipsize="start"
-                    android:hint="@string/event_info_setup__event_logo_path_none"
+                    android:hint="@string/event_info_setup__event_logo_uri_none"
                     android:maxEms="12"
                     android:padding="@dimen/kiosk_spacing"
                     android:singleLine="true" />

@@ -12,10 +12,11 @@
     <string name="event_info_setup__event_line_one_hint">Line one</string>
     <string name="event_info_setup__event_line_two_hint">Line two</string>
     <string name="event_info_setup__event_logo">Logo</string>
-    <string name="event_info_setup__event_logo_path_none">None</string>
+    <string name="event_info_setup__event_logo_uri_none">None</string>
     <string name="event_info_setup__event_logo_chooser_title">Select logo</string>
     <string name="event_info_setup__event_date">Date</string>
     <string name="event_info_setup__event_date_hidden">Hide date</string>
+    <string name="event_info_setup__error_logo">Unable to load selected logo</string>
 
     <!-- Photo Booth Setup Fragment -->
     <string name="photo_booth_setup__title">Photo Booth Setup</string>
