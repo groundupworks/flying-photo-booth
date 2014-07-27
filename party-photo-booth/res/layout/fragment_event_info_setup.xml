@@ -80,6 +80,7 @@
                     style="@style/Text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:drawablePadding="@dimen/kiosk_spacing"
                     android:ellipsize="start"
                     android:hint="@string/event_info_setup__event_logo_uri_none"
                     android:maxEms="12"
