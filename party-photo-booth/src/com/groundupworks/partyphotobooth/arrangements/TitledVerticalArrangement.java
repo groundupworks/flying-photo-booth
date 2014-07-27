@@ -32,21 +32,28 @@ public class TitledVerticalArrangement extends VerticalArrangement {
     private String mDate = null;
 
     /**
+     * The event logo.
+     */
+    private Bitmap mLogo = null;
+
+    /**
      * Constructor.
      *
      * @param lineOne the first line of the event title; or null to hide.
      * @param lineTwo the second line of the event title; or null to hide.
      * @param date    the date of the event; or null to hide.
+     * @param logo    the event logo; or null to hide.
      */
-    public TitledVerticalArrangement(String lineOne, String lineTwo, String date) {
+    public TitledVerticalArrangement(String lineOne, String lineTwo, String date, Bitmap logo) {
         mLineOne = lineOne;
         mLineTwo = lineTwo;
         mDate = date;
+        mLogo = logo;
     }
 
     @Override
     protected Bitmap getHeader(int width) {
-        IPhotoStripHeader header = new BaseTitleHeader(mLineOne, mLineTwo, mDate);
+        IPhotoStripHeader header = new BaseTitleHeader(mLineOne, mLineTwo, mDate, mLogo);
         return header.getHeaderBitmap(width);
     }
 }

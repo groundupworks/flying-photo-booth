@@ -94,6 +94,11 @@ public class FacebookHelper {
      */
     private static final String PERMISSION_PUBLISH_ACTIONS = "publish_actions";
 
+    /**
+     * Request code to use for {@link Activity#startActivityForResult(android.content.Intent, int)}.
+     */
+    private static final int SETTINGS_REQUEST_CODE = 369;
+
     //
     // Link request state machine.
     //
@@ -105,8 +110,6 @@ public class FacebookHelper {
     private static final int STATE_PUBLISH_PERMISSIONS_REQUEST = 1;
 
     private static final int STATE_SETTINGS_REQUEST = 2;
-
-    private static final int SETTINGS_REQUEST_CODE = 369;
 
     //
     // Albums listing params.

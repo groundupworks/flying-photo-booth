@@ -68,6 +68,15 @@
                     android:singleLine="true"
                     android:visibility="gone" />
 
+                <ImageView
+                    android:id="@+id/event_logo"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/photo_thumb_logo_height"
+                    android:paddingBottom="@dimen/kiosk_spacing"
+                    android:paddingTop="@dimen/kiosk_spacing"
+                    android:scaleType="fitCenter"
+                    android:visibility="gone" />
+
                 <View
                     android:layout_width="wrap_content"
                     android:layout_height="@dimen/kiosk_spacing" />

@@ -24,6 +24,21 @@ import com.groundupworks.partyphotobooth.helpers.TextHelper;
 public class BaseTitleHeader implements IPhotoStripHeader {
 
     /**
+     * The max pixel width of the stored event logo.
+     */
+    public static final int EVENT_LOGO_MAX_WIDTH = ImageHelper.IMAGE_SIZE;
+
+    /**
+     * The max pixel height of the stored event logo.
+     */
+    public static final int EVENT_LOGO_MAX_HEIGHT = EVENT_LOGO_MAX_WIDTH * 2 / 3;
+
+    /**
+     * The cache key used to store to event logo.
+     */
+    public static final String EVENT_LOGO_CACHE_KEY = "eventLogo";
+
+    /**
      * The top and bottom padding of the header.
      */
     private static final int HEADER_PADDING = BaseArrangement.PHOTO_STRIP_PANEL_PADDING;
@@ -64,16 +79,23 @@ public class BaseTitleHeader implements IPhotoStripHeader {
     private String mDate = null;
 
     /**
+     * The event logo.
+     */
+    private Bitmap mLogo = null;
+
+    /**
      * Constructor.
      *
      * @param lineOne the first line of the event title; or null to hide.
      * @param lineTwo the second line of the event title; or null to hide.
      * @param date    the date of the event; or null to hide.
+     * @param logo    the event logo; or null to hide.
      */
-    public BaseTitleHeader(String lineOne, String lineTwo, String date) {
+    public BaseTitleHeader(String lineOne, String lineTwo, String date, Bitmap logo) {
         mLineOne = lineOne;
         mLineTwo = lineTwo;
         mDate = date;
+        mLogo = logo;
     }
 
     @Override
@@ -83,8 +105,9 @@ public class BaseTitleHeader implements IPhotoStripHeader {
         boolean hasLineOne = TextHelper.isValid(mLineOne);
         boolean hasLineTwo = TextHelper.isValid(mLineTwo);
         boolean hasDate = TextHelper.isValid(mDate);
+        boolean hasLogo = mLogo != null;
 
-        if (hasLineOne || hasLineTwo || hasDate) {
+        if (hasLineOne || hasLineTwo || hasDate || hasLogo) {
             // Configure paint for drawing text.
             Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
             paint.setTypeface(Typeface.SANS_SERIF);
@@ -108,6 +131,9 @@ public class BaseTitleHeader implements IPhotoStripHeader {
                 height += TEXT_LINE_HEIGHT;
                 dateTextSize = TextHelper.getFittedTextSize(mDate, width, TEXT_LINE_HEIGHT, paint);
             }
+            if (hasLogo) {
+                height += HEADER_PADDING + mLogo.getHeight();
+            }
 
             // Calculate optimal size by using the smallest non-zero text size.
             float optimalTextSize = Float.MAX_VALUE;
@@ -121,13 +147,14 @@ public class BaseTitleHeader implements IPhotoStripHeader {
                 optimalTextSize = dateTextSize;
             }
 
-            // Proceed only if the optimal text size is valid.
-            if (optimalTextSize < Float.MAX_VALUE) {
-                // Create header bitmap.
-                bitmap = Bitmap.createBitmap(width, height, ImageHelper.BITMAP_CONFIG);
-                if (bitmap != null) {
-                    Canvas canvas = new Canvas(bitmap);
-                    int yOffset = HEADER_PADDING;
+            // Create header bitmap.
+            bitmap = Bitmap.createBitmap(width, height, ImageHelper.BITMAP_CONFIG);
+            if (bitmap != null) {
+                Canvas canvas = new Canvas(bitmap);
+                int yOffset = HEADER_PADDING;
+
+                // Proceed only if the optimal text size is valid.
+                if (optimalTextSize < Float.MAX_VALUE) {
                     paint.setTextSize(optimalTextSize);
 
                     // Draw line one in black.
@@ -151,6 +178,12 @@ public class BaseTitleHeader implements IPhotoStripHeader {
                         paint.setColor(Color.GRAY);
                         canvas.drawText(mDate, width / 2, yOffset, paint);
                     }
+                }
+
+                // Draw event logo.
+                if (hasLogo) {
+                    yOffset += HEADER_PADDING;
+                    canvas.drawBitmap(mLogo, (width - mLogo.getWidth()) / 2, yOffset, null);
                 }
             }
         }

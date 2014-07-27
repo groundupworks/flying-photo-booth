@@ -100,7 +100,7 @@ public abstract class ControllerBackedFragment<T extends BaseController> extends
     protected abstract void handleUiUpdate(Message msg);
 
     //
-    // Public methods.
+    // Package private methods.
     //
 
     /**
@@ -108,7 +108,7 @@ public abstract class ControllerBackedFragment<T extends BaseController> extends
      *
      * @param msg the ui update to handle.
      */
-    public void sendToUiHandler(Message msg) {
+    void sendToUiHandler(Message msg) {
         mUiHandler.sendMessage(msg);
     }
 }

@@ -28,20 +28,27 @@ public class TitledBoxArrangement extends BoxArrangement {
     private String mDate = null;
 
     /**
+     * The event logo.
+     */
+    private Bitmap mLogo = null;
+
+    /**
      * Constructor.
      *
      * @param lineOne the first line of the event title; or null to hide.
      * @param lineTwo the second line of the event title; or null to hide.
      * @param date    the date of the event; or null to hide.
+     * @param logo    the event logo; or null to hide.
      */
-    public TitledBoxArrangement(String lineOne, String lineTwo, String date) {
+    public TitledBoxArrangement(String lineOne, String lineTwo, String date, Bitmap logo) {
         mTitle = TextHelper.joinStrings(lineOne, lineTwo);
         mDate = date;
+        mLogo = logo;
     }
 
     @Override
     protected Bitmap getHeader(int width) {
-        IPhotoStripHeader header = new WideTitleHeader(mTitle, mDate);
+        IPhotoStripHeader header = new WideTitleHeader(mTitle, mDate, mLogo);
         return header.getHeaderBitmap(width);
     }
 }

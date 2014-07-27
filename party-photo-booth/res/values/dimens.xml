@@ -6,6 +6,9 @@
     <dimen name="kiosk_spacing">12dp</dimen>
     <dimen name="photo_strip_shadow_size">6dp</dimen>
 
+    <!-- This should be approximately photo_thumb_size * 2 / 3 -->
+    <dimen name="photo_thumb_logo_height">133dp</dimen>
+
     <!-- This must be photo_thumb_size + kiosk_spacing * 2 -->
     <dimen name="photo_strip_content_width">224dp</dimen>
 

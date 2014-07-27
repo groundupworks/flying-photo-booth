@@ -42,16 +42,23 @@ public class TitledHorizontalArrangement extends HorizontalArrangement {
     private String mDate = null;
 
     /**
+     * The event logo.
+     */
+    private Bitmap mLogo = null;
+
+    /**
      * Constructor.
      *
      * @param lineOne the first line of the event title; or null to hide.
      * @param lineTwo the second line of the event title; or null to hide.
      * @param date    the date of the event; or null to hide.
+     * @param logo    the event logo; or null to hide.
      */
-    public TitledHorizontalArrangement(String lineOne, String lineTwo, String date) {
+    public TitledHorizontalArrangement(String lineOne, String lineTwo, String date, Bitmap logo) {
         mLineOne = lineOne;
         mLineTwo = lineTwo;
         mDate = date;
+        mLogo = logo;
     }
 
     @Override
@@ -59,9 +66,9 @@ public class TitledHorizontalArrangement extends HorizontalArrangement {
         IPhotoStripHeader header;
         if (width > WIDE_TITLE_THRESHOLD) {
             String title = TextHelper.joinStrings(mLineOne, mLineTwo);
-            header = new WideTitleHeader(title, mDate);
+            header = new WideTitleHeader(title, mDate, mLogo);
         } else {
-            header = new BaseTitleHeader(mLineOne, mLineTwo, mDate);
+            header = new BaseTitleHeader(mLineOne, mLineTwo, mDate, mLogo);
         }
         return header.getHeaderBitmap(width);
     }

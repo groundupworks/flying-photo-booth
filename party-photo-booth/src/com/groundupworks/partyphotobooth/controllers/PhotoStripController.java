@@ -24,6 +24,7 @@ import com.groundupworks.lib.photobooth.wings.WingsDbHelper;
 import com.groundupworks.lib.photobooth.wings.WingsService;
 import com.groundupworks.partyphotobooth.MyApplication;
 import com.groundupworks.partyphotobooth.R;
+import com.groundupworks.partyphotobooth.arrangements.BaseTitleHeader;
 import com.groundupworks.partyphotobooth.arrangements.TitledBoxArrangement;
 import com.groundupworks.partyphotobooth.arrangements.TitledHorizontalArrangement;
 import com.groundupworks.partyphotobooth.arrangements.TitledVerticalArrangement;
@@ -96,6 +97,11 @@ public class PhotoStripController extends BaseController {
     private String mDate = null;
 
     /**
+     * The event logo.
+     */
+    private Bitmap mLogo = null;
+
+    /**
      * The photo strip arrangement.
      */
     private PhotoStripArrangement mArrangementPref;
@@ -139,6 +145,10 @@ public class PhotoStripController extends BaseController {
         long date = mPreferencesHelper.getEventDate(mContext);
         if (date != PreferencesHelper.EVENT_DATE_HIDDEN) {
             mDate = TextHelper.getDateString(mContext, date);
+        }
+
+        if (TextHelper.isValid(mPreferencesHelper.getEventLogoUri(mContext))) {
+            mLogo = MyApplication.getBitmapCache().tryGet(BaseTitleHeader.EVENT_LOGO_CACHE_KEY);
         }
 
         PhotoStripTemplate template = mPreferencesHelper.getPhotoStripTemplate(mContext);
@@ -266,11 +276,11 @@ public class PhotoStripController extends BaseController {
         // Select arrangement.
         Arrangement arrangement = null;
         if (PhotoStripArrangement.HORIZONTAL.equals(mArrangementPref)) {
-            arrangement = new TitledHorizontalArrangement(mLineOne, mLineTwo, mDate);
+            arrangement = new TitledHorizontalArrangement(mLineOne, mLineTwo, mDate, mLogo);
         } else if (PhotoStripArrangement.BOX.equals(mArrangementPref)) {
-            arrangement = new TitledBoxArrangement(mLineOne, mLineTwo, mDate);
+            arrangement = new TitledBoxArrangement(mLineOne, mLineTwo, mDate, mLogo);
         } else {
-            arrangement = new TitledVerticalArrangement(mLineOne, mLineTwo, mDate);
+            arrangement = new TitledVerticalArrangement(mLineOne, mLineTwo, mDate, mLogo);
         }
 
         // Create photo strip as a single bitmap.

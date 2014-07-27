@@ -15,6 +15,7 @@
  */
 package com.groundupworks.lib.photobooth.helpers;
 
+import android.content.ContentResolver;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
@@ -23,10 +24,14 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Point;
+import android.net.Uri;
 import android.util.DisplayMetrics;
 
 import com.groundupworks.lib.photobooth.R;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 
 /**
@@ -132,9 +137,114 @@ public class ImageHelper {
     }
 
     /**
+     * Gets a scaled bitmap that fits inside the container dimensions. If the bitmap is smaller than
+     * the container, it will not be stretched to match the container dimensions.
+     *
+     * @param resolver        the {@link ContentResolver}.
+     * @param uri             the {@link Uri} of the source bitmap.
+     * @param containerWidth  width of the container.
+     * @param containerHeight height of the container.
+     * @return the scaled bitmap; or null if failed.
+     */
+    public static Bitmap getScaledBitmap(ContentResolver resolver, Uri uri, int containerWidth, int containerHeight) {
+        Bitmap dstBitmap = null;
+
+        // Get the source bitmap size.
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+
+        InputStream in = null;
+        try {
+            in = resolver.openInputStream(uri);
+            BitmapFactory.decodeStream(in, null, options);
+        } catch (FileNotFoundException e) {
+            // Do nothing.
+        } finally {
+            if (in != null) {
+                try {
+                    in.close();
+                    in = null;
+                } catch (IOException e) {
+                    // Do nothing.
+                }
+            }
+        }
+
+        final int srcWidth = options.outWidth;
+        final int srcHeight = options.outHeight;
+
+        // Check if bitmap is available.
+        if (srcWidth > 0 && srcHeight > 0) {
+            // Calculate the required size and subsampling factor.
+            int dstWidth = srcWidth;
+            int dstHeight = srcHeight;
+            int inSampleSize = 1;
+            if (srcWidth > containerWidth || srcHeight > containerHeight) {
+                // Fit in container since source bitmap is too large.
+                final Point size = getAspectFitSize(containerWidth, containerHeight, srcWidth, srcHeight);
+                dstWidth = size.x;
+                dstHeight = size.y;
+
+                // Calculate the optimal subsampling factor.
+                if (srcWidth > dstWidth || srcHeight > dstHeight) {
+                    final int halfWidth = srcWidth / 2;
+                    final int halfHeight = srcHeight / 2;
+
+                    // Calculate the largest subsampling factor that is a power of 2 and keeps both the
+                    // width an height larger than the required size.
+                    while ((halfWidth / inSampleSize) > dstWidth && (halfHeight / inSampleSize) > dstHeight) {
+                        inSampleSize *= 2;
+                    }
+                }
+            }
+
+            // Decode bitmap with subsampling.
+            options.inJustDecodeBounds = false;
+            options.inSampleSize = inSampleSize;
+
+            Bitmap srcBitmap = null;
+            try {
+                in = resolver.openInputStream(uri);
+                srcBitmap = BitmapFactory.decodeStream(in, null, options);
+            } catch (FileNotFoundException e) {
+                // Do nothing.
+            } finally {
+                if (in != null) {
+                    try {
+                        in.close();
+                        in = null;
+                    } catch (IOException e) {
+                        // Do nothing.
+                    }
+                }
+            }
+
+            // Scale bitmap to exact size.
+            if (srcBitmap != null) {
+                // Create matrix to scale bitmap.
+                float scaleFactor = (float) dstWidth / options.outWidth;
+                Matrix scaleMatrix = new Matrix();
+                scaleMatrix.setScale(scaleFactor, scaleFactor);
+
+                // Create new scaled bitmap.
+                dstBitmap = Bitmap.createBitmap(srcBitmap, 0, 0, options.outWidth, options.outHeight,
+                        scaleMatrix, true);
+
+                // Recycle srcBitmap if it is not the same object referenced by dstBitmap.
+                if (srcBitmap != dstBitmap) {
+                    srcBitmap.recycle();
+                }
+                srcBitmap = null;
+            }
+        }
+
+        return dstBitmap;
+    }
+
+    /**
      * Gets the path to the writable captured image directory.
      *
-     * @param the image folder name.
+     * @param imageFolder the image folder name.
      * @return the path to the captured image directory; or null if unsuccessful.
      */
     public static String getCapturedImageDirectory(String imageFolder) {
@@ -144,7 +254,7 @@ public class ImageHelper {
     /**
      * Generates a file name for the captured Jpeg.
      *
-     * @param the prefix for the saved Jpeg filename.
+     * @param filenamePrefix the prefix for the saved Jpeg filename.
      * @return the automatically generated file name.
      */
     public static String generateCapturedImageName(String filenamePrefix) {
@@ -162,6 +272,22 @@ public class ImageHelper {
         boolean isSuccessful = false;
         if (bitmap != null) {
             isSuccessful = bitmap.compress(CompressFormat.JPEG, JPEG_COMPRESSION, outputStream);
+        }
+
+        return isSuccessful;
+    }
+
+    /**
+     * Compresses a bitmap to PNG and write the PNG data to an output stream.
+     *
+     * @param bitmap       the bitmap to compress.
+     * @param outputStream the outputstream to write the compressed data.
+     * @return true if successful; false otherwise.
+     */
+    public static boolean toPngOutputStream(Bitmap bitmap, OutputStream outputStream) {
+        boolean isSuccessful = false;
+        if (bitmap != null) {
+            isSuccessful = bitmap.compress(CompressFormat.PNG, 0, outputStream);
         }
 
         return isSuccessful;

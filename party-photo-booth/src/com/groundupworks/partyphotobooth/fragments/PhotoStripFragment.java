@@ -30,7 +30,9 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.groundupworks.lib.photobooth.framework.ControllerBackedFragment;
+import com.groundupworks.partyphotobooth.MyApplication;
 import com.groundupworks.partyphotobooth.R;
+import com.groundupworks.partyphotobooth.arrangements.BaseTitleHeader;
 import com.groundupworks.partyphotobooth.controllers.PhotoStripController;
 import com.groundupworks.partyphotobooth.helpers.PreferencesHelper;
 import com.groundupworks.partyphotobooth.helpers.PreferencesHelper.PhotoBoothTheme;
@@ -103,6 +105,8 @@ public class PhotoStripFragment extends ControllerBackedFragment<PhotoStripContr
 
     private TextView mEventDate;
 
+    private ImageView mEventLogo;
+
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -123,6 +127,7 @@ public class PhotoStripFragment extends ControllerBackedFragment<PhotoStripContr
         mEventLineOne = (TextView) view.findViewById(R.id.event_line_one);
         mEventLineTwo = (TextView) view.findViewById(R.id.event_line_two);
         mEventDate = (TextView) view.findViewById(R.id.event_date);
+        mEventLogo = (ImageView) view.findViewById(R.id.event_logo);
 
         return view;
     }
@@ -210,12 +215,22 @@ public class PhotoStripFragment extends ControllerBackedFragment<PhotoStripContr
         }
 
         // Display event date.
-        if (eventDateString != null) {
+        if (TextHelper.isValid(eventDateString)) {
             mEventDate.setTextSize(TypedValue.COMPLEX_UNIT_PX, optimalTextSize);
             mEventDate.setText(eventDateString);
             mEventDate.setVisibility(View.VISIBLE);
         } else {
             mEventDate.setVisibility(View.GONE);
+        }
+
+        // Display event logo.
+        String eventLogoUri = preferencesHelper.getEventLogoUri(appContext);
+        Bitmap eventLogo = MyApplication.getBitmapCache().tryGet(BaseTitleHeader.EVENT_LOGO_CACHE_KEY);
+        if (TextHelper.isValid(eventLogoUri) && eventLogo != null) {
+            mEventLogo.setImageBitmap(eventLogo);
+            mEventLogo.setVisibility(View.VISIBLE);
+        } else {
+            mEventLogo.setVisibility(View.GONE);
         }
     }
 
