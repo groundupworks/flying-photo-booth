@@ -262,13 +262,13 @@ public class ImageHelper {
     }
 
     /**
-     * Compresses a bitmap to Jpeg and write the Jpeg data to an output stream.
+     * Compresses a bitmap to Jpeg and writes the Jpeg data to an output stream.
      *
      * @param bitmap       the bitmap to compress.
      * @param outputStream the outputstream to write the compressed data.
      * @return true if successful; false otherwise.
      */
-    public static boolean toJpegOutputStream(Bitmap bitmap, OutputStream outputStream) {
+    public static boolean writeJpeg(Bitmap bitmap, OutputStream outputStream) {
         boolean isSuccessful = false;
         if (bitmap != null) {
             isSuccessful = bitmap.compress(CompressFormat.JPEG, JPEG_COMPRESSION, outputStream);
@@ -278,13 +278,13 @@ public class ImageHelper {
     }
 
     /**
-     * Compresses a bitmap to PNG and write the PNG data to an output stream.
+     * Compresses a bitmap to PNG and writes the PNG data to an output stream.
      *
      * @param bitmap       the bitmap to compress.
      * @param outputStream the outputstream to write the compressed data.
      * @return true if successful; false otherwise.
      */
-    public static boolean toPngOutputStream(Bitmap bitmap, OutputStream outputStream) {
+    public static boolean writePng(Bitmap bitmap, OutputStream outputStream) {
         boolean isSuccessful = false;
         if (bitmap != null) {
             isSuccessful = bitmap.compress(CompressFormat.PNG, 0, outputStream);

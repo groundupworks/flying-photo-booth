@@ -95,7 +95,7 @@ public class PersistedBitmapCache {
             // Store PNG in disk cache.
             try {
                 final OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(file));
-                isSuccessful = ImageHelper.toPngOutputStream(bitmap, outputStream);
+                isSuccessful = ImageHelper.writePng(bitmap, outputStream);
                 outputStream.flush();
                 outputStream.close();
             } catch (FileNotFoundException e) {

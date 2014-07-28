@@ -221,7 +221,7 @@ public class ShareController extends BaseController {
                         final OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(file));
 
                         // Convert to Jpeg and writes to file.
-                        boolean isSuccessful = ImageHelper.toJpegOutputStream(photoStrip, outputStream);
+                        boolean isSuccessful = ImageHelper.writeJpeg(photoStrip, outputStream);
                         outputStream.flush();
                         outputStream.close();
 
