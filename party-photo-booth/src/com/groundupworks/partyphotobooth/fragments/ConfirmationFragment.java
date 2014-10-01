@@ -16,8 +16,11 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.groundupworks.partyphotobooth.R;
+import com.groundupworks.partyphotobooth.helpers.PreferencesHelper;
 
 import java.lang.ref.WeakReference;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Confirmation screen for photo strip submission.
@@ -25,6 +28,31 @@ import java.lang.ref.WeakReference;
  * @author Benedict Lau
  */
 public class ConfirmationFragment extends Fragment {
+
+    /**
+     * The name of the auto-submission timer.
+     */
+    private static final String AUTO_SUBMISSION_TIMER_NAME = "submissionTimer";
+
+    /**
+     * The short timeout for auto-submission to trigger in milliseconds.
+     */
+    private static final long AUTO_SUBMISSION_TIMEOUT_SHORT = 15000L;
+
+    /**
+     * The long timeout for auto-submission to trigger in milliseconds.
+     */
+    private static final long AUTO_SUBMISSION_TIMEOUT_LONG = 60000L;
+
+    /**
+     * Timer for scheduling auto-submission of photo strip.
+     */
+    private Timer mSubmissionTimer = null;
+
+    /**
+     * The selected auto-submission timeout.
+     */
+    private long mAutoSubmissionTimeout = AUTO_SUBMISSION_TIMEOUT_LONG;
 
     /**
      * Callbacks for this fragment.
@@ -64,19 +92,73 @@ public class ConfirmationFragment extends Fragment {
         String message = getString(R.string.confirmation__message, getString(R.string.app_name));
         mMessage.setText(message);
 
-        mSubmit.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Disable to prevent multiple clicks.
-                v.setEnabled(false);
+        // Get from preference.
+        PreferencesHelper preferencesHelper = new PreferencesHelper();
+        PreferencesHelper.PhotoBoothMode mode = preferencesHelper.getPhotoBoothMode(getActivity());
 
-                // Call to client.
-                ICallbacks callbacks = getCallbacks();
-                if (callbacks != null) {
-                    callbacks.onSubmit();
+        // Set submission mode.
+        if (PreferencesHelper.PhotoBoothMode.AUTOMATIC.equals(mode)) {
+            mAutoSubmissionTimeout = AUTO_SUBMISSION_TIMEOUT_SHORT;
+        } else {
+            mSubmit.setVisibility(View.VISIBLE);
+            mSubmit.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // Disable to prevent multiple clicks.
+                    v.setEnabled(false);
+
+                    // Call to client.
+                    ICallbacks callbacks = getCallbacks();
+                    if (callbacks != null) {
+                        callbacks.onSubmit();
+
+                        // Clear weak reference to prevent possibility of duplicate calls.
+                        mCallbacks.clear();
+                    }
+                }
+            });
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        // Schedule auto-submission of the fragment.
+        mSubmissionTimer = new Timer(AUTO_SUBMISSION_TIMER_NAME);
+        mSubmissionTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                // Post submission request to ui thread.
+                final Activity activity = getActivity();
+                if (activity != null && !activity.isFinishing()) {
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            // Call to client.
+                            ICallbacks callbacks = getCallbacks();
+                            if (callbacks != null) {
+                                callbacks.onSubmit();
+
+                                // Clear weak reference to prevent possibility of duplicate calls.
+                                mCallbacks.clear();
+                            }
+                        }
+                    });
                 }
             }
-        });
+        }, mAutoSubmissionTimeout);
+    }
+
+    @Override
+    public void onPause() {
+        // Cancel timer for auto-submission.
+        if (mSubmissionTimer != null) {
+            mSubmissionTimer.cancel();
+            mSubmissionTimer = null;
+        }
+
+        super.onPause();
     }
 
     //

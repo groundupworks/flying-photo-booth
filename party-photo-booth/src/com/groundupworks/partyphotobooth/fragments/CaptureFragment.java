@@ -88,6 +88,11 @@ public class CaptureFragment extends Fragment {
      */
     private int mPreviewDisplayOrientation = CameraHelper.CAMERA_SCREEN_ORIENTATION_0;
 
+    /**
+     * Flag to enable auto-triggering of count down capture sequence as soon as camera is ready.
+     */
+    private boolean mIsAutoTriggerEnabled = false;
+
     //
     // Views.
     //
@@ -126,6 +131,9 @@ public class CaptureFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
         final Context appContext = getActivity().getApplicationContext();
+        final Bundle args = getArguments();
+        final int totalFrames = args.getInt(FRAGMENT_BUNDLE_KEY_TOTAL_FRAMES);
+        final int currentFrame = args.getInt(FRAGMENT_BUNDLE_KEY_CURRENT_FRAME);
 
         /*
          * Select camera from preference.
@@ -133,10 +141,9 @@ public class CaptureFragment extends Fragment {
         // Get from preference.
         PreferencesHelper preferencesHelper = new PreferencesHelper();
         PhotoBoothMode mode = preferencesHelper.getPhotoBoothMode(appContext);
-        final boolean isSelfServeMode = PhotoBoothMode.SELF_SERVE.equals(mode);
 
         int cameraPreference = CameraInfo.CAMERA_FACING_FRONT;
-        if (!isSelfServeMode) {
+        if (PhotoBoothMode.PHOTOGRAPHER.equals(mode)) {
             cameraPreference = CameraInfo.CAMERA_FACING_BACK;
         }
 
@@ -162,40 +169,35 @@ public class CaptureFragment extends Fragment {
          * Functionalize views.
          */
         // Configure start button behaviour.
-        mStartButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mCamera != null) {
-                    mStartButton.setEnabled(false);
-
-                    if (isSelfServeMode) {
-                        // Start auto-focus.
-                        mCamera.autoFocus(null);
-
-                        // Start animation. Take picture when count down animation completes.
-                        final AnimationDrawable countdownAnimation = (AnimationDrawable) mStartButton.getBackground();
-                        countdownAnimation.setCallback(new TakePictureAnimationDrawableCallback(countdownAnimation,
-                                mStartButton));
-
-                        mStartButton.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                countdownAnimation.start();
-                            }
-                        });
-                    } else {
-                        // Start auto-focus. Take picture when auto-focus completes.
-                        mCamera.autoFocus(new TakePictureAutoFocusCallback());
+        switch (mode) {
+            case PHOTOGRAPHER:
+                mStartButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        initiateCapture();
                     }
+                });
+                break;
+            case AUTOMATIC:
+                if (currentFrame > 1) {
+                    // Enable auto-trigger when camera is ready.
+                    mIsAutoTriggerEnabled = true;
+                    break;
+                } else {
+                    // Fall through to self-serve behaviour. Do not break.
                 }
-            }
-        });
+            case SELF_SERVE:
+            default:
+                mStartButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        initiateCountdownCapture();
+                    }
+                });
+        }
 
         // Show frame count only if more than one frame is to be captured.
-        Bundle args = getArguments();
-        int totalFrames = args.getInt(FRAGMENT_BUNDLE_KEY_TOTAL_FRAMES);
         if (totalFrames > 1) {
-            int currentFrame = args.getInt(FRAGMENT_BUNDLE_KEY_CURRENT_FRAME);
             String frameCountText = getString(R.string.capture__frame_count, currentFrame, totalFrames);
             mFrameCount.setText(frameCountText);
             mFrameCount.setVisibility(View.VISIBLE);
@@ -283,6 +285,11 @@ public class CaptureFragment extends Fragment {
             if (callbacks != null) {
                 callbacks.onErrorCameraNone();
             }
+        }
+
+        // Handle auto-trigger flag.
+        if (mIsAutoTriggerEnabled) {
+            initiateCountdownCapture();
         }
     }
 
@@ -406,6 +413,42 @@ public class CaptureFragment extends Fragment {
                     if (isActivityAlive()) {
                         mStartButton.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE);
                     }
+                }
+            });
+        }
+    }
+
+    /**
+     * Initiates the capture sequence.
+     */
+    private void initiateCapture() {
+        if (mCamera != null) {
+            mStartButton.setEnabled(false);
+
+            // Start auto-focus. Take picture when auto-focus completes.
+            mCamera.autoFocus(new TakePictureAutoFocusCallback());
+        }
+    }
+
+    /**
+     * Initiates the capture sequence with count down.
+     */
+    private void initiateCountdownCapture() {
+        if (mCamera != null) {
+            mStartButton.setEnabled(false);
+
+            // Start auto-focus.
+            mCamera.autoFocus(null);
+
+            // Start animation. Take picture when count down animation completes.
+            final AnimationDrawable countdownAnimation = (AnimationDrawable) mStartButton.getBackground();
+            countdownAnimation.setCallback(new TakePictureAnimationDrawableCallback(countdownAnimation,
+                    mStartButton));
+
+            mStartButton.post(new Runnable() {
+                @Override
+                public void run() {
+                    countdownAnimation.start();
                 }
             });
         }

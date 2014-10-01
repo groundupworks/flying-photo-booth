@@ -59,6 +59,13 @@ public class PhotoBoothModeAdapter extends BaseSpinnerAdapter<PhotoBoothModeAdap
         selfServeMode.mDescription = context.getString(R.string.photo_booth_mode_adapter__self_serve_description);
         modes.put(PhotoBoothMode.SELF_SERVE.ordinal(), selfServeMode);
 
+        // Add automatic mode.
+        PhotoBoothModeAdapter.Mode automaticMode = new PhotoBoothModeAdapter.Mode();
+        automaticMode.mMode = PhotoBoothMode.AUTOMATIC;
+        automaticMode.mDisplayName = context.getString(R.string.photo_booth_mode_adapter__automatic_display_name);
+        automaticMode.mDescription = context.getString(R.string.photo_booth_mode_adapter__automatic_description);
+        modes.put(PhotoBoothMode.AUTOMATIC.ordinal(), automaticMode);
+
         // Add photographer mode.
         PhotoBoothModeAdapter.Mode photographerMode = new PhotoBoothModeAdapter.Mode();
         photographerMode.mMode = PhotoBoothMode.PHOTOGRAPHER;

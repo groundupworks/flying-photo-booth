@@ -348,55 +348,62 @@ public class PhotoStripFragment extends ControllerBackedFragment<PhotoStripContr
         // Set thumbnail and click listener.
         photo.setImageDrawable(drawable);
         final Animation animation = AnimationUtils.loadAnimation(activity, R.anim.fade_out);
-        discardButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Temporarily disable discard button when the photo strip auto-scrolls.
-                if (!mIsAutoScrolling) {
-                    // Disable and remove view.
-                    v.setEnabled(false);
 
-                    // Post runnable to start animation.
-                    mContainer.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            // Remove view with animation.
-                            animation.setAnimationListener(new AnimationListener() {
+        // Configure discard button.
+        PreferencesHelper preferencesHelper = new PreferencesHelper();
+        PreferencesHelper.PhotoBoothMode mode = preferencesHelper.getPhotoBoothMode(activity);
+        if (!PreferencesHelper.PhotoBoothMode.AUTOMATIC.equals(mode)) {
+            discardButton.setVisibility(View.VISIBLE);
+            discardButton.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // Temporarily disable discard button when the photo strip auto-scrolls.
+                    if (!mIsAutoScrolling) {
+                        // Disable and remove view.
+                        v.setEnabled(false);
 
-                                @Override
-                                public void onAnimationStart(Animation animation) {
-                                    // Do nothing.
-                                }
+                        // Post runnable to start animation.
+                        mContainer.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                // Remove view with animation.
+                                animation.setAnimationListener(new AnimationListener() {
 
-                                @Override
-                                public void onAnimationRepeat(Animation animation) {
-                                    // Do nothing.
-                                }
+                                    @Override
+                                    public void onAnimationStart(Animation animation) {
+                                        // Do nothing.
+                                    }
 
-                                @Override
-                                public void onAnimationEnd(Animation animation) {
-                                    // Make view invisible and post a runnable to remove it from the photo strip.
-                                    frame.setVisibility(View.GONE);
-                                    mContainer.post(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            mContainer.removeView(frame);
-                                        }
-                                    });
-                                }
-                            });
-                            frame.startAnimation(animation);
-                        }
-                    }, FADE_ANIMATION_DELAY);
+                                    @Override
+                                    public void onAnimationRepeat(Animation animation) {
+                                        // Do nothing.
+                                    }
 
-                    // Notify controller of the frame removal request.
-                    Message msg = Message.obtain();
-                    msg.what = FRAME_REMOVAL;
-                    msg.arg1 = key;
-                    sendEvent(msg);
+                                    @Override
+                                    public void onAnimationEnd(Animation animation) {
+                                        // Make view invisible and post a runnable to remove it from the photo strip.
+                                        frame.setVisibility(View.GONE);
+                                        mContainer.post(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                mContainer.removeView(frame);
+                                            }
+                                        });
+                                    }
+                                });
+                                frame.startAnimation(animation);
+                            }
+                        }, FADE_ANIMATION_DELAY);
+
+                        // Notify controller of the frame removal request.
+                        Message msg = Message.obtain();
+                        msg.what = FRAME_REMOVAL;
+                        msg.arg1 = key;
+                        sendEvent(msg);
+                    }
                 }
-            }
-        });
+            });
+        }
 
         // Create layout params for frame view.
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(photoSize, photoSize);

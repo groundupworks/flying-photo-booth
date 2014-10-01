@@ -30,12 +30,16 @@ public class PreferencesHelper {
         SELF_SERVE,
 
         /**
+         * Automatic mode uses the front-facing camera and auto-triggers count down after capturing
+         * the first frame. Discard is disabled in this mode.
+         */
+        AUTOMATIC,
+
+        /**
          * Photographer mode uses back-facing camera and no count down.
          */
         PHOTOGRAPHER;
     }
-
-    ;
 
     /**
      * Photo booth themes.

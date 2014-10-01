@@ -36,6 +36,8 @@
     <!-- Photo Booth Mode Adapter -->
     <string name="photo_booth_mode_adapter__self_serve_display_name">Self-serve</string>
     <string name="photo_booth_mode_adapter__self_serve_description">Front-facing camera &amp; count down</string>
+    <string name="photo_booth_mode_adapter__automatic_display_name">Automatic</string>
+    <string name="photo_booth_mode_adapter__automatic_description">Self-serve with a single click</string>
     <string name="photo_booth_mode_adapter__photographer_display_name">Photographer</string>
     <string name="photo_booth_mode_adapter__photographer_description">Back-facing camera</string>
 

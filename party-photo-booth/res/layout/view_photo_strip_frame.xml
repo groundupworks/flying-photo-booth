@@ -22,6 +22,7 @@
         android:layout_alignParentRight="true"
         android:background="@drawable/selector_button_discard"
         android:gravity="center"
-        android:text="@string/photostrip__button_text_discard" />
+        android:text="@string/photostrip__button_text_discard"
+        android:visibility="gone" />
 
 </RelativeLayout>
