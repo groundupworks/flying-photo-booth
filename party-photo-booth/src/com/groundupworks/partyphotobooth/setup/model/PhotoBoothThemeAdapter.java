@@ -82,6 +82,13 @@ public class PhotoBoothThemeAdapter extends BaseSpinnerAdapter<PhotoBoothThemeAd
         green.mIcon = context.getResources().getDrawable(R.drawable.tile_green);
         themes.put(PhotoBoothTheme.STRIPES_GREEN.ordinal(), green);
 
+        // Add minimalist theme.
+        PhotoBoothThemeAdapter.Theme minimalist = new PhotoBoothThemeAdapter.Theme();
+        minimalist.mTheme = PhotoBoothTheme.MINIMALIST;
+        minimalist.mDisplayName = context.getString(R.string.photo_booth_theme_adapter__minimalist_display_name);
+        minimalist.mIcon = null;
+        themes.put(PhotoBoothTheme.MINIMALIST.ordinal(), minimalist);
+
         return themes;
     }
 

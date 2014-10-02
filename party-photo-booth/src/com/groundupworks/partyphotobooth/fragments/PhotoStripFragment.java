@@ -151,6 +151,8 @@ public class PhotoStripFragment extends ControllerBackedFragment<PhotoStripContr
             mTitle.setBackgroundResource(R.drawable.bitmap_tile_orange);
         } else if (PhotoBoothTheme.STRIPES_GREEN.equals(theme)) {
             mTitle.setBackgroundResource(R.drawable.bitmap_tile_green);
+        } else if (PhotoBoothTheme.MINIMALIST.equals(theme)) {
+            // No background.
         }
 
         /*

@@ -64,7 +64,12 @@ public class PreferencesHelper {
         /**
          * Green stripes.
          */
-        STRIPES_GREEN;
+        STRIPES_GREEN,
+
+        /**
+         * Minimalist theme.
+         */
+        MINIMALIST;
     }
 
     /**
