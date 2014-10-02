@@ -1,4 +1,4 @@
-VERSION 1.6
+VERSION 1.7
 
 Need a photo booth at your event? There is an app for that!
 
@@ -70,6 +70,11 @@ NEW FEATURES
  
 ¥ Added automated Self-serve mode
 ¥ Added Minimalist theme
+
+
+VERSION 1.6
+
+(Abandoned)
 
 
 VERSION 1.5

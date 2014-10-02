@@ -33,6 +33,7 @@ import com.groundupworks.lib.photobooth.helpers.CameraHelper;
 import com.groundupworks.lib.photobooth.helpers.ImageHelper;
 
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.util.List;
 
 /**
@@ -98,6 +99,11 @@ public class CenteredPreview extends ViewGroup implements SurfaceHolder.Callback
      * The surface to draw the camera preview.
      */
     private SurfaceView mSurfaceView = null;
+
+    /**
+     * Weak reference to preview listener.
+     */
+    private WeakReference<OnPreviewListener> mWeakListener = new WeakReference<OnPreviewListener>(null);
 
     //
     // Masks to indicate crop region.
@@ -251,6 +257,12 @@ public class CenteredPreview extends ViewGroup implements SurfaceHolder.Callback
     public void surfaceDestroyed(SurfaceHolder holder) {
         if (mCamera != null) {
             mCamera.stopPreview();
+
+            // Notify preview stop if a listener is set.
+            final OnPreviewListener listener = mWeakListener.get();
+            if (listener != null) {
+                listener.onStopped();
+            }
         }
 
         mSurfaceReady = false;
@@ -299,6 +311,15 @@ public class CenteredPreview extends ViewGroup implements SurfaceHolder.Callback
     //
 
     /**
+     * Sets the listener for the preview state changes.
+     *
+     * @param listener the listener.
+     */
+    public void setOnPreviewListener(OnPreviewListener listener) {
+        mWeakListener = new WeakReference<OnPreviewListener>(listener);
+    }
+
+    /**
      * Starts preview with the selected {@link Camera}. The client is responsible for locking the camera, and calling
      * {@link CenteredPreview#stop()} before releasing the lock.
      *
@@ -331,6 +352,12 @@ public class CenteredPreview extends ViewGroup implements SurfaceHolder.Callback
     public void restart() throws RuntimeException {
         if (mCamera != null && mSurfaceReady) {
             mCamera.startPreview();
+
+            // Notify preview start if a listener is set.
+            final OnPreviewListener listener = mWeakListener.get();
+            if (listener != null) {
+                listener.onStarted();
+            }
         }
     }
 
@@ -342,5 +369,26 @@ public class CenteredPreview extends ViewGroup implements SurfaceHolder.Callback
         mPictureWidth = 0;
         mPictureHeight = 0;
         mPreviewDisplayOrientation = CameraHelper.CAMERA_SCREEN_ORIENTATION_0;
+    }
+
+
+    //
+    // Interfaces.
+    //
+
+    /**
+     * Listener to communicate state changes of the preview.
+     */
+    public interface OnPreviewListener {
+
+        /**
+         * Called when preview is started by this {@link #CenteredPreview(android.content.Context)}.
+         */
+        void onStarted();
+
+        /**
+         * Called when preview is stopped by this {@link #CenteredPreview(android.content.Context)}.
+         */
+        void onStopped();
     }
 }

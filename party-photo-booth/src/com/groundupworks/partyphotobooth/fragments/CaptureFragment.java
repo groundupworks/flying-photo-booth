@@ -88,11 +88,6 @@ public class CaptureFragment extends Fragment {
      */
     private int mPreviewDisplayOrientation = CameraHelper.CAMERA_SCREEN_ORIENTATION_0;
 
-    /**
-     * Flag to enable auto-triggering of count down capture sequence as soon as camera is ready.
-     */
-    private boolean mIsAutoTriggerEnabled = false;
-
     //
     // Views.
     //
@@ -168,7 +163,7 @@ public class CaptureFragment extends Fragment {
         /*
          * Functionalize views.
          */
-        // Configure start button behaviour.
+        // Configure start button and trigger behaviour.
         switch (mode) {
             case PHOTOGRAPHER:
                 mStartButton.setOnClickListener(new View.OnClickListener() {
@@ -177,11 +172,31 @@ public class CaptureFragment extends Fragment {
                         initiateCapture();
                     }
                 });
+                linkStartButton();
                 break;
             case AUTOMATIC:
                 if (currentFrame > 1) {
-                    // Enable auto-trigger when camera is ready.
-                    mIsAutoTriggerEnabled = true;
+                    // Auto-trigger when camera is ready and preview has started.
+                    mPreview.setOnPreviewListener(new CenteredPreview.OnPreviewListener() {
+                        @Override
+                        public void onStarted() {
+                            if (isActivityAlive()) {
+                                mPreview.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if (isActivityAlive()) {
+                                            initiateCountdownCapture();
+                                        }
+                                    }
+                                });
+                            }
+                        }
+
+                        @Override
+                        public void onStopped() {
+                            // Do nothing.
+                        }
+                    });
                     break;
                 } else {
                     // Fall through to self-serve behaviour. Do not break.
@@ -194,6 +209,7 @@ public class CaptureFragment extends Fragment {
                         initiateCountdownCapture();
                     }
                 });
+                linkStartButton();
         }
 
         // Show frame count only if more than one frame is to be captured.
@@ -285,11 +301,6 @@ public class CaptureFragment extends Fragment {
             if (callbacks != null) {
                 callbacks.onErrorCameraNone();
             }
-        }
-
-        // Handle auto-trigger flag.
-        if (mIsAutoTriggerEnabled) {
-            initiateCountdownCapture();
         }
     }
 
@@ -416,6 +427,27 @@ public class CaptureFragment extends Fragment {
                 }
             });
         }
+    }
+
+    /**
+     * Sets the enabled state of the start button based on the preview state.
+     */
+    private void linkStartButton() {
+        mPreview.setOnPreviewListener(new CenteredPreview.OnPreviewListener() {
+            @Override
+            public void onStarted() {
+                if (isActivityAlive()) {
+                    mStartButton.setEnabled(true);
+                }
+            }
+
+            @Override
+            public void onStopped() {
+                if (isActivityAlive()) {
+                    mStartButton.setEnabled(false);
+                }
+            }
+        });
     }
 
     /**
