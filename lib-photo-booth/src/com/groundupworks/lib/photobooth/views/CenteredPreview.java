@@ -33,7 +33,6 @@ import com.groundupworks.lib.photobooth.helpers.CameraHelper;
 import com.groundupworks.lib.photobooth.helpers.ImageHelper;
 
 import java.io.IOException;
-import java.lang.ref.WeakReference;
 import java.util.List;
 
 /**
@@ -101,9 +100,9 @@ public class CenteredPreview extends ViewGroup implements SurfaceHolder.Callback
     private SurfaceView mSurfaceView = null;
 
     /**
-     * Weak reference to preview listener.
+     * The listener for the preview state changes.
      */
-    private WeakReference<OnPreviewListener> mWeakListener = new WeakReference<OnPreviewListener>(null);
+    private CenteredPreview.OnPreviewListener mPreviewListener = null;
 
     //
     // Masks to indicate crop region.
@@ -259,7 +258,7 @@ public class CenteredPreview extends ViewGroup implements SurfaceHolder.Callback
             mCamera.stopPreview();
 
             // Notify preview stop if a listener is set.
-            final OnPreviewListener listener = mWeakListener.get();
+            final OnPreviewListener listener = mPreviewListener;
             if (listener != null) {
                 listener.onStopped();
             }
@@ -316,7 +315,7 @@ public class CenteredPreview extends ViewGroup implements SurfaceHolder.Callback
      * @param listener the listener.
      */
     public void setOnPreviewListener(OnPreviewListener listener) {
-        mWeakListener = new WeakReference<OnPreviewListener>(listener);
+        mPreviewListener = listener;
     }
 
     /**
@@ -354,7 +353,7 @@ public class CenteredPreview extends ViewGroup implements SurfaceHolder.Callback
             mCamera.startPreview();
 
             // Notify preview start if a listener is set.
-            final OnPreviewListener listener = mWeakListener.get();
+            final OnPreviewListener listener = mPreviewListener;
             if (listener != null) {
                 listener.onStarted();
             }
