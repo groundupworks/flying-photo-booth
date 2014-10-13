@@ -15,8 +15,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.groundupworks.lib.photobooth.dropbox.DropboxHelper;
-import com.groundupworks.lib.photobooth.facebook.FacebookHelper;
+import com.groundupworks.wings.dropbox.DropboxHelper;
+import com.groundupworks.wings.facebook.FacebookHelper;
 import com.groundupworks.partyphotobooth.R;
 
 import java.lang.ref.WeakReference;

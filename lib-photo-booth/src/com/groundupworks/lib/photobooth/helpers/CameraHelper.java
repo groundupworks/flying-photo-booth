@@ -218,7 +218,7 @@ public class CameraHelper {
             }
         }
 
-        LogsHelper.log(CameraHelper.class, "getOptimalPreviewSize", "size=[" + optimalSize.width + ", "
+        LogsHelper.slog(CameraHelper.class, "getOptimalPreviewSize", "size=[" + optimalSize.width + ", "
                 + optimalSize.height + "]");
 
         return optimalSize;
@@ -274,7 +274,7 @@ public class CameraHelper {
             }
         }
 
-        LogsHelper.log(CameraHelper.class, "getOptimalPictureSize", "size=[" + optimalSize.width + ", "
+        LogsHelper.slog(CameraHelper.class, "getOptimalPictureSize", "size=[" + optimalSize.width + ", "
                 + optimalSize.height + "]");
 
         return optimalSize;

@@ -1,7 +1,7 @@
 <component name="libraryTable">
   <library name="commons-logging-1.1.1">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/lib-photo-booth/libs/commons-logging-1.1.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/wings/libs/commons-logging-1.1.1.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -25,8 +26,9 @@ import android.widget.ImageView;
 import android.widget.TableRow;
 import android.widget.TextView;
 
-import com.groundupworks.lib.photobooth.dropbox.DropboxHelper;
-import com.groundupworks.lib.photobooth.facebook.FacebookHelper;
+import com.groundupworks.lib.photobooth.framework.BaseApplication;
+import com.groundupworks.wings.dropbox.DropboxHelper;
+import com.groundupworks.wings.facebook.FacebookHelper;
 import com.groundupworks.partyphotobooth.R;
 import com.groundupworks.partyphotobooth.helpers.PreferencesHelper;
 
@@ -120,10 +122,10 @@ public class ShareServicesSetupFragment extends Fragment {
                 if (activity != null && !activity.isFinishing()) {
                     if (mFacebookHelper.isLinked(appContext)) {
                         // Unlink from Facebook.
-                        mFacebookHelper.unlink(appContext);
+                        mFacebookHelper.unlink(appContext, new Handler(BaseApplication.getWorkerLooper()));
                     } else {
                         // Start Facebook link request.
-                        mFacebookHelper.startLinkRequest(activity, ShareServicesSetupFragment.this);
+                        mFacebookHelper.startLinkRequest(activity, ShareServicesSetupFragment.this, new Handler(BaseApplication.getWorkerLooper()));
                     }
                 }
             }
@@ -136,7 +138,7 @@ public class ShareServicesSetupFragment extends Fragment {
                 if (activity != null && !activity.isFinishing()) {
                     if (mDropboxHelper.isLinked(appContext)) {
                         // Unlink from Dropbox.
-                        mDropboxHelper.unlink(appContext);
+                        mDropboxHelper.unlink(appContext, new Handler(BaseApplication.getWorkerLooper()));
                     } else {
                         // Start Dropbox link request.
                         mDropboxHelper.startLinkRequest(activity);
@@ -175,7 +177,7 @@ public class ShareServicesSetupFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
 
         // Finish Facebook link request.
-        mFacebookHelper.onActivityResultImpl(getActivity(), this, requestCode, resultCode, data);
+        mFacebookHelper.onActivityResultImpl(getActivity(), this, new Handler(BaseApplication.getWorkerLooper()), requestCode, resultCode, data);
     }
 
     @Override
@@ -194,7 +196,7 @@ public class ShareServicesSetupFragment extends Fragment {
         updateNoticeEnabled(appContext);
 
         // Finish Dropbox link request.
-        mDropboxHelper.onResumeImpl(getActivity().getApplicationContext());
+        mDropboxHelper.onResumeImpl(getActivity().getApplicationContext(), new Handler(BaseApplication.getWorkerLooper()));
     }
 
     @Override

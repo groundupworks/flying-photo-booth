@@ -25,6 +25,7 @@ import android.graphics.Point;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
@@ -38,11 +39,12 @@ import android.widget.Toast;
 import com.groundupworks.flyingphotobooth.LaunchActivity;
 import com.groundupworks.flyingphotobooth.R;
 import com.groundupworks.flyingphotobooth.controllers.ShareController;
-import com.groundupworks.lib.photobooth.dropbox.DropboxHelper;
-import com.groundupworks.lib.photobooth.facebook.FacebookHelper;
+import com.groundupworks.lib.photobooth.framework.BaseApplication;
 import com.groundupworks.lib.photobooth.framework.ControllerBackedFragment;
 import com.groundupworks.lib.photobooth.helpers.BeamHelper;
 import com.groundupworks.lib.photobooth.helpers.ImageHelper;
+import com.groundupworks.wings.dropbox.DropboxHelper;
+import com.groundupworks.wings.facebook.FacebookHelper;
 
 /**
  * Ui for the image confirmation screen.
@@ -247,7 +249,7 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
                         preferences.registerOnSharedPreferenceChangeListener(mFacebookLinkListener);
 
                         // Start Facebook link request.
-                        mFacebookHelper.startLinkRequest(activity, ShareFragment.this);
+                        mFacebookHelper.startLinkRequest(activity, ShareFragment.this, new Handler(BaseApplication.getWorkerLooper()));
                     }
                 }
             }
@@ -293,7 +295,7 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
         super.onActivityResult(requestCode, resultCode, data);
 
         // Finish Facebook link request.
-        mFacebookHelper.onActivityResultImpl(getActivity(), ShareFragment.this, requestCode, resultCode, data);
+        mFacebookHelper.onActivityResultImpl(getActivity(), ShareFragment.this, new Handler(BaseApplication.getWorkerLooper()), requestCode, resultCode, data);
     }
 
     @Override
@@ -301,7 +303,7 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
         super.onResume();
 
         // Finish Dropbox link request.
-        mDropboxHelper.onResumeImpl(getActivity().getApplicationContext());
+        mDropboxHelper.onResumeImpl(getActivity().getApplicationContext(), new Handler(BaseApplication.getWorkerLooper()));
     }
 
     @Override

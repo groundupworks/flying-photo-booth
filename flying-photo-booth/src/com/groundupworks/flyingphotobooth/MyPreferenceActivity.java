@@ -24,14 +24,16 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 
-import com.groundupworks.lib.photobooth.dropbox.DropboxHelper;
-import com.groundupworks.lib.photobooth.facebook.FacebookHelper;
+import com.groundupworks.lib.photobooth.framework.BaseApplication;
+import com.groundupworks.wings.dropbox.DropboxHelper;
+import com.groundupworks.wings.facebook.FacebookHelper;
 
 /**
  * The {@link Activity} to configure user preferences.
@@ -132,10 +134,10 @@ public class MyPreferenceActivity extends PreferenceActivity {
                 Context appContext = MyPreferenceActivity.this.getApplicationContext();
                 if (mFacebookHelper.isLinked(appContext)) {
                     // Unlink from Facebook.
-                    mFacebookHelper.unlink(appContext);
+                    mFacebookHelper.unlink(appContext, new Handler(BaseApplication.getWorkerLooper()));
                 } else {
                     // Start Facebook link request.
-                    mFacebookHelper.startLinkRequest(MyPreferenceActivity.this, null);
+                    mFacebookHelper.startLinkRequest(MyPreferenceActivity.this, null, new Handler(BaseApplication.getWorkerLooper()));
                 }
                 return false;
             }
@@ -148,7 +150,7 @@ public class MyPreferenceActivity extends PreferenceActivity {
                 Context appContext = MyPreferenceActivity.this.getApplicationContext();
                 if (mDropboxHelper.isLinked(appContext)) {
                     // Unlink from Dropbox.
-                    mDropboxHelper.unlink(appContext);
+                    mDropboxHelper.unlink(appContext, new Handler(BaseApplication.getWorkerLooper()));
                 } else {
                     // Start Dropbox link request.
                     mDropboxHelper.startLinkRequest(appContext);
@@ -180,7 +182,7 @@ public class MyPreferenceActivity extends PreferenceActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         // Finish Facebook link request.
-        mFacebookHelper.onActivityResultImpl(this, null, requestCode, resultCode, data);
+        mFacebookHelper.onActivityResultImpl(this, null, new Handler(BaseApplication.getWorkerLooper()), requestCode, resultCode, data);
     }
 
     @Override
@@ -200,7 +202,7 @@ public class MyPreferenceActivity extends PreferenceActivity {
         updateDropboxPref(preferences);
 
         // Finish Dropbox link request.
-        mDropboxHelper.onResumeImpl(getApplicationContext());
+        mDropboxHelper.onResumeImpl(getApplicationContext(), new Handler(BaseApplication.getWorkerLooper()));
     }
 
     @Override
