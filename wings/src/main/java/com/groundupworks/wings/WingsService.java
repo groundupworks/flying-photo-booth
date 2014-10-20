@@ -61,11 +61,22 @@ public class WingsService extends IntentService {
     Handler mWorkerHandler;
 
     /**
+     * Static initializer.
+     */
+    static {
+        // Inject static dependencies.
+        WingsInjector.injectStatics();
+    }
+
+    /**
      * Constructor.
      */
     public WingsService() {
         super(NAME);
         setIntentRedelivery(true);
+
+        // Inject dependencies.
+        WingsInjector.inject(this);
     }
 
     @Override
@@ -82,11 +93,6 @@ public class WingsService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         try {
-            // Inject dependencies.
-            IWingsInjector injector = (IWingsInjector) getApplication();
-            injector.injectStatics();
-            injector.inject(this);
-
             Context appContext = getApplicationContext();
             WingsDbHelper wingsDbHelper = WingsDbHelper.getInstance(appContext);
 

@@ -116,6 +116,14 @@ public class WingsDbHelper extends SQLiteOpenHelper {
     private Context mContext;
 
     /**
+     * Static initializer.
+     */
+    static {
+        // Inject static dependencies.
+        WingsInjector.injectStatics();
+    }
+
+    /**
      * Private constructor.
      *
      * @param context the {@link Context}.
@@ -123,10 +131,6 @@ public class WingsDbHelper extends SQLiteOpenHelper {
     private WingsDbHelper(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
         mContext = context;
-
-        // Inject dependencies.
-        IWingsInjector injector = (IWingsInjector) context.getApplicationContext();
-        injector.injectStatics();
     }
 
     @Override

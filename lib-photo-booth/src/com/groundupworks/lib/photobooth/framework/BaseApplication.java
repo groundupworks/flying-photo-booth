@@ -23,20 +23,16 @@ import android.os.Looper;
 
 import com.groundupworks.lib.photobooth.helpers.LogsHelper;
 import com.groundupworks.lib.photobooth.wings.MyWingsModule;
-import com.groundupworks.wings.IWingsInjector;
-
-import dagger.ObjectGraph;
+import com.groundupworks.wings.WingsInjector;
 
 /**
  * Main {@link Application} class.
  *
  * @author Benedict Lau
  */
-public abstract class BaseApplication extends Application implements IWingsInjector {
+public abstract class BaseApplication extends Application {
 
     private static final String WORKER_THREAD_NAME = "workerThread";
-
-    private static ObjectGraph sObjectGraph;
 
     private static Context sInstance;
 
@@ -53,18 +49,8 @@ public abstract class BaseApplication extends Application implements IWingsInjec
         sWorkerThread = new HandlerThread(WORKER_THREAD_NAME);
         sWorkerThread.start();
 
-        sObjectGraph = ObjectGraph.create(new MyWingsModule(new LogsHelper(), new Handler(getWorkerLooper())));
-    }
-
-
-    @Override
-    public void injectStatics() {
-        sObjectGraph.injectStatics();
-    }
-
-    @Override
-    public <T> void inject(T instance) {
-        sObjectGraph.inject(instance);
+        // Initialize Wings.
+        WingsInjector.init(new MyWingsModule(new LogsHelper(), new Handler(getWorkerLooper())));
     }
 
     //
