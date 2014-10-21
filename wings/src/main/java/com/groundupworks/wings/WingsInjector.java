@@ -19,7 +19,7 @@ import dagger.ObjectGraph;
 
 /**
  * Injector for passing dependencies to Wings. The client application must provide the dependencies
- * via {@link com.groundupworks.wings.WingsInjector#init(IWingsModule)} in its
+ * via {@link WingsInjector#init(IWingsModule)} in its
  * {@link android.app.Application#onCreate()}.
  *
  * @author Benedict Lau
@@ -33,9 +33,9 @@ public final class WingsInjector {
 
     /**
      * Initializer used to pass Wings dependencies via a concrete implementation of the
-     * {@link com.groundupworks.wings.IWingsModule} interface.
+     * {@link IWingsModule} interface.
      *
-     * @param module the Dagger module implementing {@link com.groundupworks.wings.IWingsModule}.
+     * @param module the Dagger module implementing {@link IWingsModule}.
      */
     public static final void init(IWingsModule module) {
         sObjectGraph = ObjectGraph.create(module);

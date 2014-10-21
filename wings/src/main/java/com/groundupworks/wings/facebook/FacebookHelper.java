@@ -46,8 +46,8 @@ import com.facebook.SessionState;
 import com.facebook.model.GraphObject;
 import com.groundupworks.wings.R;
 import com.groundupworks.wings.IWingsNotification;
-import com.groundupworks.wings.ShareRequest;
-import com.groundupworks.wings.WingsDbHelper;
+import com.groundupworks.wings.core.ShareRequest;
+import com.groundupworks.wings.core.WingsDbHelper;
 
 import org.json.JSONObject;
 

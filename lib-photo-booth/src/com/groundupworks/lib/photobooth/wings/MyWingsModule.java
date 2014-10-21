@@ -19,8 +19,8 @@ import android.os.Handler;
 
 import com.groundupworks.wings.IWingsLogger;
 import com.groundupworks.wings.IWingsModule;
-import com.groundupworks.wings.WingsDbHelper;
-import com.groundupworks.wings.WingsService;
+import com.groundupworks.wings.core.WingsDbHelper;
+import com.groundupworks.wings.core.WingsService;
 
 import javax.inject.Singleton;
 

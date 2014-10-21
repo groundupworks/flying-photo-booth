@@ -33,8 +33,8 @@ import com.dropbox.client2.exception.DropboxUnlinkedException;
 import com.dropbox.client2.session.AppKeyPair;
 import com.groundupworks.wings.R;
 import com.groundupworks.wings.IWingsNotification;
-import com.groundupworks.wings.ShareRequest;
-import com.groundupworks.wings.WingsDbHelper;
+import com.groundupworks.wings.core.ShareRequest;
+import com.groundupworks.wings.core.WingsDbHelper;
 
 import java.io.File;
 import java.io.FileInputStream;

@@ -364,7 +364,7 @@ public class MyPreferenceActivity extends PreferenceActivity {
                     // Build auto share string.
                     summary = getString(R.string.pref__facebook_link_summary_linked_auto_share, accountName, albumName);
                 } else {
-                    // Build on
+                    // Build one-click share string.
                     summary = getString(R.string.pref__facebook_link_summary_linked_one_click_share, accountName,
                             albumName);
                 }

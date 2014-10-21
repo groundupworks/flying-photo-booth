@@ -34,9 +34,9 @@ import com.groundupworks.lib.photobooth.framework.BaseController;
 import com.groundupworks.lib.photobooth.helpers.ImageHelper;
 import com.groundupworks.lib.photobooth.helpers.ImageHelper.Arrangement;
 import com.groundupworks.lib.photobooth.helpers.ImageHelper.ImageFilter;
-import com.groundupworks.wings.ShareRequest;
-import com.groundupworks.wings.WingsDbHelper;
-import com.groundupworks.wings.WingsService;
+import com.groundupworks.wings.core.ShareRequest;
+import com.groundupworks.wings.core.WingsDbHelper;
+import com.groundupworks.wings.core.WingsService;
 
 import java.io.BufferedOutputStream;
 import java.io.File;

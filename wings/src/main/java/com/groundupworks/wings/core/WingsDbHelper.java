@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.groundupworks.wings;
+package com.groundupworks.wings.core;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -21,6 +21,9 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+
+import com.groundupworks.wings.IWingsLogger;
+import com.groundupworks.wings.WingsInjector;
 
 import java.util.ArrayList;
 import java.util.List;

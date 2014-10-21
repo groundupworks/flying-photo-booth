@@ -93,10 +93,10 @@
         </activity>
 
         <!-- Wings service -->
-        <service android:name="com.groundupworks.wings.WingsService" />
+        <service android:name="com.groundupworks.wings.core.WingsService" />
 
-        <receiver android:name="com.groundupworks.wings.AlarmReceiver" />
-        <receiver android:name="com.groundupworks.wings.BootReceiver">
+        <receiver android:name="com.groundupworks.wings.core.AlarmReceiver" />
+        <receiver android:name="com.groundupworks.wings.core.BootReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>

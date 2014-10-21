@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.groundupworks.wings;
+package com.groundupworks.wings.core;
 
 import android.app.AlarmManager;
 import android.app.IntentService;
@@ -27,6 +27,10 @@ import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.support.v4.app.NotificationCompat;
 
+import com.groundupworks.wings.IWingsLogger;
+import com.groundupworks.wings.IWingsNotification;
+import com.groundupworks.wings.R;
+import com.groundupworks.wings.WingsInjector;
 import com.groundupworks.wings.dropbox.DropboxHelper;
 import com.groundupworks.wings.facebook.FacebookHelper;
 
@@ -41,7 +45,7 @@ import javax.inject.Inject;
  */
 public class WingsService extends IntentService {
 
-    private static final String NAME = "com.groundupworks.wings.WingsService";
+    private static final String NAME = "com.groundupworks.wings.internal.WingsService";
 
     /**
      * Static {@link WakeLock} to ensure device does not sleep before service starts and completes its work.

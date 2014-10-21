@@ -13,21 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.groundupworks.wings;
+package com.groundupworks.wings.core;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
 /**
- * Receiver for alarms to trigger the {@link WingsService}.
+ * Receiver for system boot event schedule a trigger to the {@link WingsService}.
  *
  * @author Benedict Lau
  */
-public class AlarmReceiver extends BroadcastReceiver {
+public class BootReceiver extends BroadcastReceiver {
+
+    /**
+     * Delay after boot to schedule {@link com.groundupworks.wings.core.WingsService}. 5 minutes in milliseconds.
+     */
+    private static final long AFTER_BOOT_DELAY = 300000L;
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        WingsService.startWakefulService(context);
+        WingsService.scheduleWingsService(context, AFTER_BOOT_DELAY);
     }
 }

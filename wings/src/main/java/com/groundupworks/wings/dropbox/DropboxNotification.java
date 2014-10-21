@@ -21,7 +21,7 @@ import android.net.Uri;
 
 import com.groundupworks.wings.R;
 import com.groundupworks.wings.IWingsNotification;
-import com.groundupworks.wings.ShareRequest;
+import com.groundupworks.wings.core.ShareRequest;
 
 /**
  * {@link IWingsNotification} for Dropbox shares.
