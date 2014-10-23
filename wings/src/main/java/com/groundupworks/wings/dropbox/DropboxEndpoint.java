@@ -17,6 +17,7 @@ package com.groundupworks.wings.dropbox;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Handler;
@@ -31,8 +32,11 @@ import com.dropbox.client2.exception.DropboxException;
 import com.dropbox.client2.exception.DropboxServerException;
 import com.dropbox.client2.exception.DropboxUnlinkedException;
 import com.dropbox.client2.session.AppKeyPair;
-import com.groundupworks.wings.R;
+import com.groundupworks.wings.IWingsEndpoint;
 import com.groundupworks.wings.IWingsNotification;
+import com.groundupworks.wings.R;
+import com.groundupworks.wings.Wings;
+import com.groundupworks.wings.core.PersistenceFactory;
 import com.groundupworks.wings.core.ShareRequest;
 import com.groundupworks.wings.core.WingsDbHelper;
 
@@ -47,7 +51,7 @@ import java.util.List;
  *
  * @author Benedict Lau
  */
-public class DropboxHelper {
+public class DropboxEndpoint implements IWingsEndpoint {
 
     /**
      * Name of the folder for storing photo strips.
@@ -79,7 +83,7 @@ public class DropboxHelper {
     //
 
     /**
-     * Finishes a link request. Does nothing if {@link #isLinkRequested()} is false prior to this call.
+     * Finishes a link request. Does nothing if {@link #mIsLinkRequested} is false prior to this call.
      *
      * @return true if linking is successful; false otherwise.
      */
@@ -112,7 +116,7 @@ public class DropboxHelper {
      * Links an account in a background thread. If unsuccessful, the link error is handled on a ui thread and a
      * {@link Toast} will be displayed.
      *
-     * @param context the {@link Context}.
+     * @param context       the {@link Context}.
      * @param workerHandler a {@link android.os.Handler} to post background tasks.
      */
     private void link(Context context, final Handler workerHandler) {
@@ -163,7 +167,7 @@ public class DropboxHelper {
     /**
      * Handles an error case during the linking process.
      *
-     * @param context the {@link Context}.
+     * @param context       the {@link Context}.
      * @param workerHandler a {@link android.os.Handler} to post background tasks.
      */
     private void handleLinkError(Context context, Handler workerHandler) {
@@ -293,33 +297,37 @@ public class DropboxHelper {
         return preferences.getString(appContext.getString(R.string.dropbox__access_token_key), null);
     }
 
+    /**
+     * Gets the share url associated with the linked account.
+     *
+     * @param context the {@link Context}.
+     * @return the url; or null if unlinked.
+     */
+    private String getLinkedShareUrl(Context context) {
+        Context appContext = context.getApplicationContext();
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(appContext);
+        return preferences.getString(appContext.getString(R.string.dropbox__share_url_key), null);
+    }
+
     //
     // Public methods.
     //
 
-    /**
-     * Starts a link request. The user will be authenticated through the native Dropbox app or the default web browser.
-     *
-     * @param context the {@link Context}.
-     */
-    public void startLinkRequest(Context context) {
+    @Override
+    public void startLinkRequest(Activity activity, Fragment fragment, Handler workerHandler) {
+        Context appContext = activity.getApplicationContext();
         mIsLinkRequested = true;
 
-        AppKeyPair appKeyPair = new AppKeyPair(context.getString(R.string.dropbox__app_key),
-                context.getString(R.string.dropbox__app_secret));
+        AppKeyPair appKeyPair = new AppKeyPair(appContext.getString(R.string.dropbox__app_key),
+                appContext.getString(R.string.dropbox__app_secret));
         AndroidAuthSession session = new AndroidAuthSession(appKeyPair);
         synchronized (mDropboxApiLock) {
             mDropboxApi = new DropboxAPI<AndroidAuthSession>(session);
-            mDropboxApi.getSession().startOAuth2Authentication(context);
+            mDropboxApi.getSession().startOAuth2Authentication(appContext);
         }
     }
 
-    /**
-     * Unlinks an account.
-     *
-     * @param context the {@link Context}.
-     * @param workerHandler a {@link android.os.Handler} to post background tasks.
-     */
+    @Override
     public void unlink(Context context, Handler workerHandler) {
         // Unlink in persisted storage.
         removeAccountParams(context);
@@ -336,32 +344,23 @@ public class DropboxHelper {
         }
 
         // Remove existing share requests in a background thread.
-        final Context appContext = context.getApplicationContext();
         workerHandler.post(new Runnable() {
 
             @Override
             public void run() {
-                WingsDbHelper.getInstance(appContext).deleteShareRequests(ShareRequest.DESTINATION_DROPBOX);
+                PersistenceFactory.getInstance().getPersistence().deleteShareRequests(Wings.DESTINATION_DROPBOX);
             }
         });
     }
 
-    /**
-     * Checks if the user is linked to Dropbox.
-     *
-     * @param context the {@link Context}.
-     */
+    @Override
     public boolean isLinked(Context context) {
         Context appContext = context.getApplicationContext();
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(appContext);
         return preferences.getBoolean(appContext.getString(R.string.pref__dropbox_link_key), false);
     }
 
-    /**
-     * Checks if the user has auto share turned on for Dropbox.
-     *
-     * @param context the {@link Context}.
-     */
+    @Override
     public boolean isAutoShare(Context context) {
         Context appContext = context.getApplicationContext();
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(appContext);
@@ -369,13 +368,7 @@ public class DropboxHelper {
                 && preferences.getBoolean(appContext.getString(R.string.pref__dropbox_auto_share_key), false);
     }
 
-    /**
-     * A convenience method to be called in the onResume() of any {@link Activity} or {@link Fragment} that uses
-     * {@link #startLinkRequest(Context)}.
-     *
-     * @param context the {@link Context}.
-     * @param workerHandler a {@link android.os.Handler} to post background tasks.
-     */
+    @Override
     public void onResumeImpl(Context context, Handler workerHandler) {
         if (mIsLinkRequested) {
             // Check if link request was successful.
@@ -387,37 +380,30 @@ public class DropboxHelper {
         }
     }
 
-    /**
-     * Gets the user name associated with the linked account.
-     *
-     * @param context the {@link Context}.
-     * @return the user name; or null if unlinked.
-     */
+    @Override
+    public void onActivityResultImpl(Activity activity, Fragment fragment, Handler workerHandler, int requestCode, int resultCode, Intent data) {
+        // Do nothing.
+    }
+
+    @Override
     public String getLinkedAccountName(Context context) {
         Context appContext = context.getApplicationContext();
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(appContext);
         return preferences.getString(appContext.getString(R.string.dropbox__account_name_key), null);
     }
 
-    /**
-     * Gets the share url associated with the linked account.
-     *
-     * @param context the {@link Context}.
-     * @return the url; or null if unlinked.
-     */
-    public String getLinkedShareUrl(Context context) {
-        Context appContext = context.getApplicationContext();
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(appContext);
-        return preferences.getString(appContext.getString(R.string.dropbox__share_url_key), null);
+    @Override
+    public String getDestinationDescription(Context context) {
+        String destinationDescription = null;
+        String accountName = getLinkedAccountName(context);
+        String shareUrl = getLinkedShareUrl(context);
+        if (accountName != null && accountName.length() > 0 && shareUrl != null && shareUrl.length() > 0) {
+            destinationDescription = context.getString(R.string.dropbox__destination_description, accountName, shareUrl);
+        }
+        return destinationDescription;
     }
 
-    /**
-     * Process share requests by sharing to the linked account. This should be called in a background thread.
-     *
-     * @param context the {@link Context}.
-     * @param workerHandler a {@link android.os.Handler} to post background tasks.
-     * @return a {@link IWingsNotification} representing the results of the processed {@link ShareRequest}. May be null.
-     */
+    @Override
     public IWingsNotification processShareRequests(Context context, Handler workerHandler) {
         int shared = 0;
 
@@ -426,8 +412,8 @@ public class DropboxHelper {
         String shareUrl = getLinkedShareUrl(context);
         if (accessToken != null && shareUrl != null) {
             // Get share requests for Dropbox.
-            WingsDbHelper wingsDbHelper = WingsDbHelper.getInstance(context);
-            List<ShareRequest> shareRequests = wingsDbHelper.checkoutShareRequests(ShareRequest.DESTINATION_DROPBOX);
+            WingsDbHelper wingsDbHelper = PersistenceFactory.getInstance().getPersistence();
+            List<ShareRequest> shareRequests = wingsDbHelper.checkoutShareRequests(Wings.DESTINATION_DROPBOX);
 
             if (!shareRequests.isEmpty()) {
                 // Start new session with the persisted access token.

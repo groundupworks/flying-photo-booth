@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.groundupworks.wings;
+package com.groundupworks.wings.core;
+
+import com.groundupworks.wings.IWingsModule;
 
 import dagger.ObjectGraph;
 
 /**
- * Injector for passing dependencies to Wings. The client application must provide the dependencies
- * via {@link WingsInjector#init(IWingsModule)} in its
- * {@link android.app.Application#onCreate()}.
+ * Injector for passing dependencies to Wings.
  *
  * @author Benedict Lau
  */
@@ -33,9 +33,9 @@ public final class WingsInjector {
 
     /**
      * Initializer used to pass Wings dependencies via a concrete implementation of the
-     * {@link IWingsModule} interface.
+     * {@link com.groundupworks.wings.IWingsModule} interface.
      *
-     * @param module the Dagger module implementing {@link IWingsModule}.
+     * @param module the Dagger module implementing {@link com.groundupworks.wings.IWingsModule}.
      */
     public static final void init(IWingsModule module) {
         sObjectGraph = ObjectGraph.create(module);

@@ -87,13 +87,13 @@ public class FacebookPrivacyDialogFragment extends DialogFragment {
 
             String photoPrivacy = null;
             if (getString(R.string.facebook_privacy__photo_privacy_self).equals(privacyString)) {
-                photoPrivacy = FacebookHelper.PHOTO_PRIVACY_SELF;
+                photoPrivacy = FacebookEndpoint.PHOTO_PRIVACY_SELF;
             } else if (getString(R.string.facebook_privacy__photo_privacy_friends).equals(privacyString)) {
-                photoPrivacy = FacebookHelper.PHOTO_PRIVACY_FRIENDS;
+                photoPrivacy = FacebookEndpoint.PHOTO_PRIVACY_FRIENDS;
             } else if (getString(R.string.facebook_privacy__photo_privacy_friends_of_friends).equals(privacyString)) {
-                photoPrivacy = FacebookHelper.PHOTO_PRIVACY_FRIENDS_OF_FRIENDS;
+                photoPrivacy = FacebookEndpoint.PHOTO_PRIVACY_FRIENDS_OF_FRIENDS;
             } else if (getString(R.string.facebook_privacy__photo_privacy_everyone).equals(privacyString)) {
-                photoPrivacy = FacebookHelper.PHOTO_PRIVACY_EVERYONE;
+                photoPrivacy = FacebookEndpoint.PHOTO_PRIVACY_EVERYONE;
             }
 
             // Set Facebook settings.

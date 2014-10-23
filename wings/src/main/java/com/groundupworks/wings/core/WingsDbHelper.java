@@ -23,18 +23,19 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.groundupworks.wings.IWingsLogger;
-import com.groundupworks.wings.WingsInjector;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 /**
  * The Wings database helper that stores {@link ShareRequest} records and manages the state of those records.
  *
  * @author Benedict Lau
  */
+@Singleton
 public class WingsDbHelper extends SQLiteOpenHelper {
 
     private static final String DB_NAME = "wings.db";
@@ -103,12 +104,7 @@ public class WingsDbHelper extends SQLiteOpenHelper {
     private static int RECORD_MAX_FAILS = 500;
 
     /**
-     * Singleton.
-     */
-    private static WingsDbHelper sInstance;
-
-    /**
-     * Logger for debug messages.
+     * The logger for debug messages.
      */
     @Inject
     static IWingsLogger sLogger;
@@ -127,11 +123,12 @@ public class WingsDbHelper extends SQLiteOpenHelper {
     }
 
     /**
-     * Private constructor.
+     * Constructor.
      *
      * @param context the {@link Context}.
      */
-    private WingsDbHelper(Context context) {
+    @Inject
+    WingsDbHelper(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
         mContext = context;
     }
@@ -149,19 +146,6 @@ public class WingsDbHelper extends SQLiteOpenHelper {
     //
     // Public methods.
     //
-
-    /**
-     * Gets the {@link WingsDbHelper} singleton.
-     *
-     * @param context the {@link Context}.
-     * @return the singleton.
-     */
-    public synchronized static final WingsDbHelper getInstance(Context context) {
-        if (sInstance == null) {
-            sInstance = new WingsDbHelper(context.getApplicationContext());
-        }
-        return sInstance;
-    }
 
     /**
      * Creates a new {@link ShareRequest}.

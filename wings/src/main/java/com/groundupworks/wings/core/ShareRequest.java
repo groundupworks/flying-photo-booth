@@ -23,14 +23,6 @@ package com.groundupworks.wings.core;
 public class ShareRequest {
 
     //
-    // Valid values for destination.
-    //
-
-    public static final int DESTINATION_FACEBOOK = 0;
-
-    public static final int DESTINATION_DROPBOX = 1;
-
-    //
     // Valid values for state. Package private because they are internally used.
     //
 

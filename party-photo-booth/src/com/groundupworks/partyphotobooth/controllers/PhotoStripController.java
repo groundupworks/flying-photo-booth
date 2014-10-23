@@ -14,14 +14,9 @@ import android.os.Bundle;
 import android.os.Message;
 import android.util.SparseArray;
 
-import com.groundupworks.wings.dropbox.DropboxHelper;
-import com.groundupworks.wings.facebook.FacebookHelper;
 import com.groundupworks.lib.photobooth.framework.BaseController;
 import com.groundupworks.lib.photobooth.helpers.ImageHelper;
 import com.groundupworks.lib.photobooth.helpers.ImageHelper.Arrangement;
-import com.groundupworks.wings.core.ShareRequest;
-import com.groundupworks.wings.core.WingsDbHelper;
-import com.groundupworks.wings.core.WingsService;
 import com.groundupworks.partyphotobooth.MyApplication;
 import com.groundupworks.partyphotobooth.R;
 import com.groundupworks.partyphotobooth.arrangements.BaseTitleHeader;
@@ -33,6 +28,10 @@ import com.groundupworks.partyphotobooth.helpers.PreferencesHelper;
 import com.groundupworks.partyphotobooth.helpers.PreferencesHelper.PhotoStripArrangement;
 import com.groundupworks.partyphotobooth.helpers.PreferencesHelper.PhotoStripTemplate;
 import com.groundupworks.partyphotobooth.helpers.TextHelper;
+import com.groundupworks.wings.Wings;
+import com.groundupworks.wings.core.WingsService;
+import com.groundupworks.wings.dropbox.DropboxEndpoint;
+import com.groundupworks.wings.facebook.FacebookEndpoint;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -323,16 +322,16 @@ public class PhotoStripController extends BaseController {
 
                     // Share to Facebook.
                     boolean facebookShared = false;
-                    FacebookHelper facebookHelper = new FacebookHelper();
-                    if (facebookHelper.isLinked(context)) {
-                        facebookShared = share(context, jpegPath, ShareRequest.DESTINATION_FACEBOOK);
+                    FacebookEndpoint facebookEndpoint = new FacebookEndpoint();
+                    if (facebookEndpoint.isLinked(context)) {
+                        facebookShared = share(context, jpegPath, Wings.DESTINATION_FACEBOOK);
                     }
 
                     // Share to Dropbox.
                     boolean dropboxShared = false;
-                    DropboxHelper dropboxHelper = new DropboxHelper();
-                    if (dropboxHelper.isLinked(context)) {
-                        dropboxShared = share(context, jpegPath, ShareRequest.DESTINATION_DROPBOX);
+                    DropboxEndpoint dropboxEndpoint = new DropboxEndpoint();
+                    if (dropboxEndpoint.isLinked(context)) {
+                        dropboxShared = share(context, jpegPath, Wings.DESTINATION_DROPBOX);
                     }
 
                     // Notify ui the Jpeg is saved and shared to linked services.
@@ -403,7 +402,7 @@ public class PhotoStripController extends BaseController {
      */
     private boolean share(Context context, String jpegPath, int destination) {
         boolean isSuccessful = false;
-        if (jpegPath != null && WingsDbHelper.getInstance(context).createShareRequest(jpegPath, destination)) {
+        if (jpegPath != null && Wings.share(jpegPath, destination)) {
             // Start Wings service.
             WingsService.startWakefulService(context);
 

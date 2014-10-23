@@ -15,10 +15,12 @@
  */
 package com.groundupworks.lib.photobooth.wings;
 
+import android.content.Context;
 import android.os.Handler;
 
 import com.groundupworks.wings.IWingsLogger;
 import com.groundupworks.wings.IWingsModule;
+import com.groundupworks.wings.core.PersistenceFactory;
 import com.groundupworks.wings.core.WingsDbHelper;
 import com.groundupworks.wings.core.WingsService;
 
@@ -34,12 +36,17 @@ import dagger.Provides;
  */
 @Module(
         staticInjections = {WingsService.class, WingsDbHelper.class},
-        injects = {WingsService.class}
+        injects = {WingsService.class, PersistenceFactory.class}
 )
 public class MyWingsModule implements IWingsModule {
 
     /**
-     * Logger for debug messages.
+     * The {@link android.content.Context} to run Wings.
+     */
+    private final Context mContext;
+
+    /**
+     * THe logger for debug messages.
      */
     private final IWingsLogger mLogger;
 
@@ -51,10 +58,12 @@ public class MyWingsModule implements IWingsModule {
     /**
      * Constructor.
      *
-     * @param logger        logger for debug messages.
+     * @param context       the {@link android.content.Context} to run Wings.
+     * @param logger        the logger for debug messages.
      * @param workerHandler the {@link android.os.Handler} to post background tasks.
      */
-    public MyWingsModule(IWingsLogger logger, Handler workerHandler) {
+    public MyWingsModule(Context context, IWingsLogger logger, Handler workerHandler) {
+        mContext = context.getApplicationContext();
         mLogger = logger;
         mWorkerHandler = workerHandler;
     }
@@ -62,14 +71,21 @@ public class MyWingsModule implements IWingsModule {
     @Override
     @Singleton
     @Provides
-    public IWingsLogger providesLogger() {
+    public Context provideContext() {
+        return mContext;
+    }
+
+    @Override
+    @Singleton
+    @Provides
+    public IWingsLogger provideLogger() {
         return mLogger;
     }
 
     @Override
     @Singleton
     @Provides
-    public Handler providesWorkerHandler() {
+    public Handler provideWorkerHandler() {
         return mWorkerHandler;
     }
 }

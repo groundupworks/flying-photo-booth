@@ -27,9 +27,7 @@
     <!-- Share Services Setup Fragment -->
     <string name="share_services_setup__title">Share Services</string>
     <string name="share_services_setup__facebook_title">Upload photo strips to Facebook</string>
-    <string name="share_services_setup__facebook_enabled">%1$s\'s album %2$s</string>
     <string name="share_services_setup__dropbox_title">Upload photo strips to Dropbox</string>
-    <string name="share_services_setup__dropbox_enabled">%1$s\'s folder %2$s</string>
     <string name="share_services_setup__disabled">Disabled</string>
     <string name="share_services_setup__notice_enabled">Tell guests where to find their photos</string>
 
@@ -103,8 +101,6 @@
 
     <!-- Notice Fragment -->
     <string name="notice__title_text">Find your photo strip</string>
-    <string name="notice__facebook_text">%1$s\'s Facebook album %2$s</string>
-    <string name="notice__dropbox_text">%1$s\'s Dropbox folder %2$s</string>
     <string name="notice__button_ok_text">OK</string>
 
 </resources>

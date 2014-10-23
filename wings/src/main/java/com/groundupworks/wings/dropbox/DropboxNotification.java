@@ -19,9 +19,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 
-import com.groundupworks.wings.R;
 import com.groundupworks.wings.IWingsNotification;
-import com.groundupworks.wings.core.ShareRequest;
+import com.groundupworks.wings.R;
+import com.groundupworks.wings.Wings;
 
 /**
  * {@link IWingsNotification} for Dropbox shares.
@@ -60,7 +60,7 @@ public class DropboxNotification implements IWingsNotification {
 
     @Override
     public int getId() {
-        return ShareRequest.DESTINATION_DROPBOX;
+        return Wings.DESTINATION_DROPBOX;
     }
 
     @Override

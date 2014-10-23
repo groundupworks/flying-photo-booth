@@ -71,9 +71,9 @@ public class FacebookAlbumListFragment extends ListFragment {
     private static final long APP_ALBUM_CURSOR_ID = 0L;
 
     /**
-     * A {@link FacebookHelper} instance.
+     * A {@link FacebookEndpoint} instance.
      */
-    private FacebookHelper mFacebookHelper = new FacebookHelper();
+    private FacebookEndpoint mFacebookEndpoint = new FacebookEndpoint();
 
     /**
      * Cursor to back the albums list.
@@ -105,7 +105,7 @@ public class FacebookAlbumListFragment extends ListFragment {
                     String albumPrivacy = mAlbumCursor.getString(CURSOR_ALBUM_PRIVACY_INDEX);
                     String albumName = mAlbumCursor.getString(CURSOR_ALBUM_NAME_INDEX);
                     String albumGraphPath = mAlbumCursor.getString(CURSOR_ALBUM_GRAPH_PATH_INDEX);
-                    if (FacebookHelper.APP_ALBUM_PRIVACY.equals(albumPrivacy)) {
+                    if (FacebookEndpoint.APP_ALBUM_PRIVACY.equals(albumPrivacy)) {
                         // Request for photo privacy.
                         activity.showDialogFragment(FacebookPrivacyDialogFragment
                                 .newInstance(albumName, albumGraphPath));
@@ -153,7 +153,7 @@ public class FacebookAlbumListFragment extends ListFragment {
             }
         };
 
-        mFacebookHelper.requestAccountName(callback);
+        mFacebookEndpoint.requestAccountName(callback);
     }
 
     /**
@@ -178,27 +178,27 @@ public class FacebookAlbumListFragment extends ListFragment {
                         JSONObject jsonObject = graphObject.getInnerJSONObject();
                         try {
                             JSONArray jsonArray = jsonObject
-                                    .getJSONArray(FacebookHelper.ALBUMS_LISTING_RESULT_DATA_KEY);
+                                    .getJSONArray(FacebookEndpoint.ALBUMS_LISTING_RESULT_DATA_KEY);
                             long cursorId = 1L;
                             for (int i = 0; i < jsonArray.length(); i++) {
                                 try {
                                     // Get data from json.
                                     JSONObject album = jsonArray.getJSONObject(i);
-                                    String id = album.getString(FacebookHelper.ALBUMS_LISTING_FIELD_ID);
-                                    String name = album.getString(FacebookHelper.ALBUMS_LISTING_FIELD_NAME);
-                                    String type = album.getString(FacebookHelper.ALBUMS_LISTING_FIELD_TYPE);
-                                    String privacy = album.getString(FacebookHelper.ALBUMS_LISTING_FIELD_PRIVACY);
+                                    String id = album.getString(FacebookEndpoint.ALBUMS_LISTING_FIELD_ID);
+                                    String name = album.getString(FacebookEndpoint.ALBUMS_LISTING_FIELD_NAME);
+                                    String type = album.getString(FacebookEndpoint.ALBUMS_LISTING_FIELD_TYPE);
+                                    String privacy = album.getString(FacebookEndpoint.ALBUMS_LISTING_FIELD_PRIVACY);
                                     boolean canUpload = album
-                                            .getBoolean(FacebookHelper.ALBUMS_LISTING_FIELD_CAN_UPLOAD);
+                                            .getBoolean(FacebookEndpoint.ALBUMS_LISTING_FIELD_CAN_UPLOAD);
 
                                     // Filter out albums that do not allow upload.
                                     if (canUpload && id != null && id.length() > 0 && name != null && name.length() > 0
                                             && type != null && type.length() > 0 && privacy != null
                                             && privacy.length() > 0) {
-                                        String graphPath = id + FacebookHelper.ALBUM_ID_TO_GRAPH_PATH;
-                                        if (FacebookHelper.DEFAULT_ALBUM_TYPE.equals(type)) {
+                                        String graphPath = id + FacebookEndpoint.ALBUM_ID_TO_GRAPH_PATH;
+                                        if (FacebookEndpoint.DEFAULT_ALBUM_TYPE.equals(type)) {
                                             appAlbum = new Object[]{APP_ALBUM_CURSOR_ID, name, graphPath,
-                                                    FacebookHelper.APP_ALBUM_PRIVACY};
+                                                    FacebookEndpoint.APP_ALBUM_PRIVACY};
                                         } else {
                                             albums.add(new Object[]{cursorId, name, graphPath, privacy});
                                             cursorId++;
@@ -218,7 +218,7 @@ public class FacebookAlbumListFragment extends ListFragment {
                     if (appAlbum == null) {
                         appAlbum = new Object[]{APP_ALBUM_CURSOR_ID,
                                 activity.getString(R.string.facebook__app_album_default_name),
-                                FacebookHelper.APP_ALBUM_GRAPH_PATH, FacebookHelper.APP_ALBUM_PRIVACY};
+                                FacebookEndpoint.APP_ALBUM_GRAPH_PATH, FacebookEndpoint.APP_ALBUM_PRIVACY};
                     }
 
                     // Construct matrix cursor.
@@ -240,7 +240,7 @@ public class FacebookAlbumListFragment extends ListFragment {
             }
         };
 
-        mFacebookHelper.requestAlbums(callback);
+        mFacebookEndpoint.requestAlbums(callback);
     }
 
     //

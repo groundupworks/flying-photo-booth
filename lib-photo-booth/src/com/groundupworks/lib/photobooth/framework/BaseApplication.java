@@ -23,7 +23,7 @@ import android.os.Looper;
 
 import com.groundupworks.lib.photobooth.helpers.LogsHelper;
 import com.groundupworks.lib.photobooth.wings.MyWingsModule;
-import com.groundupworks.wings.WingsInjector;
+import com.groundupworks.wings.Wings;
 
 /**
  * Main {@link Application} class.
@@ -50,7 +50,7 @@ public abstract class BaseApplication extends Application {
         sWorkerThread.start();
 
         // Initialize Wings.
-        WingsInjector.init(new MyWingsModule(new LogsHelper(), new Handler(getWorkerLooper())));
+        Wings.init(new MyWingsModule(getApplicationContext(), new LogsHelper(), new Handler(getWorkerLooper())));
     }
 
     //

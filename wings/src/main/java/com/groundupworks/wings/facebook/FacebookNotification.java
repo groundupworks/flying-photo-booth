@@ -19,9 +19,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 
-import com.groundupworks.wings.R;
 import com.groundupworks.wings.IWingsNotification;
-import com.groundupworks.wings.core.ShareRequest;
+import com.groundupworks.wings.R;
+import com.groundupworks.wings.Wings;
 
 /**
  * {@link IWingsNotification} for Facebook shares.
@@ -59,7 +59,7 @@ public class FacebookNotification implements IWingsNotification {
 
     @Override
     public int getId() {
-        return ShareRequest.DESTINATION_FACEBOOK;
+        return Wings.DESTINATION_FACEBOOK;
     }
 
     @Override

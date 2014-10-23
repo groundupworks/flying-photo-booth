@@ -30,9 +30,8 @@ import android.support.v4.app.NotificationCompat;
 import com.groundupworks.wings.IWingsLogger;
 import com.groundupworks.wings.IWingsNotification;
 import com.groundupworks.wings.R;
-import com.groundupworks.wings.WingsInjector;
-import com.groundupworks.wings.dropbox.DropboxHelper;
-import com.groundupworks.wings.facebook.FacebookHelper;
+import com.groundupworks.wings.dropbox.DropboxEndpoint;
+import com.groundupworks.wings.facebook.FacebookEndpoint;
 
 import javax.inject.Inject;
 
@@ -53,7 +52,7 @@ public class WingsService extends IntentService {
     private static volatile PowerManager.WakeLock sWakeLock = null;
 
     /**
-     * Logger for debug messages.
+     * The logger for debug messages.
      */
     @Inject
     static IWingsLogger sLogger;
@@ -98,24 +97,24 @@ public class WingsService extends IntentService {
     protected void onHandleIntent(Intent intent) {
         try {
             Context appContext = getApplicationContext();
-            WingsDbHelper wingsDbHelper = WingsDbHelper.getInstance(appContext);
+            WingsDbHelper wingsDbHelper = PersistenceFactory.getInstance().getPersistence();
 
             // Reset all records that somehow got stuck in a processing state.
             wingsDbHelper.resetProcessingShareRequests();
 
             // Process share requests to Facebook.
-            FacebookHelper facebookHelper = new FacebookHelper();
-            if (facebookHelper.isLinked(appContext)) {
-                IWingsNotification notification = facebookHelper.processShareRequests(appContext, mWorkerHandler);
+            FacebookEndpoint facebookEndpoint = new FacebookEndpoint();
+            if (facebookEndpoint.isLinked(appContext)) {
+                IWingsNotification notification = facebookEndpoint.processShareRequests(appContext, mWorkerHandler);
                 if (notification != null) {
                     sendNotification(appContext, notification);
                 }
             }
 
             // Process share requests to Dropbox.
-            DropboxHelper dropboxHelper = new DropboxHelper();
-            if (dropboxHelper.isLinked(appContext)) {
-                IWingsNotification notification = dropboxHelper.processShareRequests(appContext, mWorkerHandler);
+            DropboxEndpoint dropboxEndpoint = new DropboxEndpoint();
+            if (dropboxEndpoint.isLinked(appContext)) {
+                IWingsNotification notification = dropboxEndpoint.processShareRequests(appContext, mWorkerHandler);
                 if (notification != null) {
                     sendNotification(appContext, notification);
                 }

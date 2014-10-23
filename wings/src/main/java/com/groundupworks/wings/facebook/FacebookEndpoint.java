@@ -44,8 +44,11 @@ import com.facebook.SessionDefaultAudience;
 import com.facebook.SessionLoginBehavior;
 import com.facebook.SessionState;
 import com.facebook.model.GraphObject;
-import com.groundupworks.wings.R;
+import com.groundupworks.wings.IWingsEndpoint;
 import com.groundupworks.wings.IWingsNotification;
+import com.groundupworks.wings.R;
+import com.groundupworks.wings.Wings;
+import com.groundupworks.wings.core.PersistenceFactory;
 import com.groundupworks.wings.core.ShareRequest;
 import com.groundupworks.wings.core.WingsDbHelper;
 
@@ -62,7 +65,7 @@ import java.util.List;
  *
  * @author Benedict Lau
  */
-public class FacebookHelper {
+public class FacebookEndpoint implements IWingsEndpoint {
 
     /**
      * Timeout value for http requests.
@@ -264,7 +267,7 @@ public class FacebookHelper {
     }
 
     /**
-     * Finishes a {@link #startOpenSessionRequest(Activity, com.facebook.Session.StatusCallback)}.
+     * Finishes a {@link com.groundupworks.wings.facebook.FacebookEndpoint#startOpenSessionRequest(android.app.Activity, android.support.v4.app.Fragment, com.facebook.Session.StatusCallback)}.
      *
      * @param activity    the {@link Activity}.
      * @param requestCode the integer request code originally supplied to startActivityForResult(), allowing you to identify who
@@ -324,7 +327,7 @@ public class FacebookHelper {
     }
 
     /**
-     * Finishes a {@link #startPublishPermissionsRequest(Activity)}.
+     * Finishes a {@link com.groundupworks.wings.facebook.FacebookEndpoint#startPublishPermissionsRequest(android.app.Activity, android.support.v4.app.Fragment)}.
      *
      * @param activity    the {@link Activity}.
      * @param requestCode the integer request code originally supplied to startActivityForResult(), allowing you to identify who
@@ -377,7 +380,7 @@ public class FacebookHelper {
     }
 
     /**
-     * Finishes a {@link #startSettingsRequest(Activity)}.
+     * Finishes a {@link com.groundupworks.wings.facebook.FacebookEndpoint#startSettingsRequest(android.app.Activity, android.support.v4.app.Fragment)}.
      *
      * @param requestCode the integer request code originally supplied to startActivityForResult(), allowing you to identify who
      *                    this result came from.
@@ -440,7 +443,7 @@ public class FacebookHelper {
     /**
      * Handles an error case during the linking process.
      *
-     * @param context the {@link Context}.
+     * @param context       the {@link Context}.
      * @param workerHandler a {@link android.os.Handler} to post background tasks.
      */
     private void handleLinkError(Context context, Handler workerHandler) {
@@ -563,6 +566,18 @@ public class FacebookHelper {
         return photoId;
     }
 
+    /**
+     * Gets the name of the album to share to.
+     *
+     * @param context the {@link Context}.
+     * @return the album name; or null if unlinked.
+     */
+    private String getLinkedAlbumName(Context context) {
+        Context appContext = context.getApplicationContext();
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(appContext);
+        return preferences.getString(appContext.getString(R.string.facebook__album_name_key), null);
+    }
+
     //
     // Package private methods.
     //
@@ -614,13 +629,7 @@ public class FacebookHelper {
     // Public methods.
     //
 
-    /**
-     * Starts a link request. The user will be authenticated through the native Facebook app or the default web browser.
-     *
-     * @param activity the {@link Activity}.
-     * @param fragment the {@link Fragment}. May be null.
-     * @param workerHandler a {@link android.os.Handler} to post background tasks.
-     */
+    @Override
     public void startLinkRequest(final Activity activity, final Fragment fragment, final Handler workerHandler) {
         // Construct status callback.
         Session.StatusCallback statusCallback = new Session.StatusCallback() {
@@ -639,12 +648,7 @@ public class FacebookHelper {
         startOpenSessionRequest(activity, fragment, statusCallback);
     }
 
-    /**
-     * Unlinks an account.
-     *
-     * @param context the {@link Context}.
-     * @param workerHandler a {@link android.os.Handler} to post background tasks.
-     */
+    @Override
     public void unlink(Context context, Handler workerHandler) {
         // Unlink in persisted storage.
         removeAccountParams(context);
@@ -656,32 +660,23 @@ public class FacebookHelper {
         }
 
         // Remove existing share requests in a background thread.
-        final Context appContext = context.getApplicationContext();
         workerHandler.post(new Runnable() {
 
             @Override
             public void run() {
-                WingsDbHelper.getInstance(appContext).deleteShareRequests(ShareRequest.DESTINATION_FACEBOOK);
+                PersistenceFactory.getInstance().getPersistence().deleteShareRequests(Wings.DESTINATION_FACEBOOK);
             }
         });
     }
 
-    /**
-     * Checks if the user is linked to Facebook.
-     *
-     * @param context the {@link Context}.
-     */
+    @Override
     public boolean isLinked(Context context) {
         Context appContext = context.getApplicationContext();
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(appContext);
         return preferences.getBoolean(appContext.getString(R.string.pref__facebook_link_key), false);
     }
 
-    /**
-     * Checks if the user has auto share turned on for Facebook.
-     *
-     * @param context the {@link Context}.
-     */
+    @Override
     public boolean isAutoShare(Context context) {
         Context appContext = context.getApplicationContext();
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(appContext);
@@ -689,19 +684,12 @@ public class FacebookHelper {
                 && preferences.getBoolean(appContext.getString(R.string.pref__facebook_auto_share_key), false);
     }
 
-    /**
-     * A convenience method to be called in the onActivityResult() of any {@link Activity} or {@link Fragment} that uses
-     * {@link #startLinkRequest(Context)}.
-     *
-     * @param activity    the {@link Activity}.
-     * @param fragment    the {@link Fragment}. May be null.
-     * @param workerHandler a {@link android.os.Handler} to post background tasks.
-     * @param requestCode the integer request code originally supplied to startActivityForResult(), allowing you to identify who
-     *                    this result came from.
-     * @param resultCode  the integer result code returned by the child activity through its setResult().
-     * @param data        an Intent, which can return result data to the caller (various data can be attached to Intent
-     *                    "extras").
-     */
+    @Override
+    public void onResumeImpl(Context context, Handler workerHandler) {
+        // Do nothing.
+    }
+
+    @Override
     public void onActivityResultImpl(Activity activity, Fragment fragment, Handler workerHandler, int requestCode, int resultCode, Intent data) {
         // State machine to handle the linking process.
         switch (mLinkRequestState) {
@@ -749,37 +737,25 @@ public class FacebookHelper {
         }
     }
 
-    /**
-     * Gets the user name associated with the linked account.
-     *
-     * @param context the {@link Context}.
-     * @return the user name; or null if unlinked.
-     */
+    @Override
     public String getLinkedAccountName(Context context) {
         Context appContext = context.getApplicationContext();
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(appContext);
         return preferences.getString(appContext.getString(R.string.facebook__account_name_key), null);
     }
 
-    /**
-     * Gets the name of the album to share to.
-     *
-     * @param context the {@link Context}.
-     * @return the album name; or null if unlinked.
-     */
-    public String getLinkedAlbumName(Context context) {
-        Context appContext = context.getApplicationContext();
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(appContext);
-        return preferences.getString(appContext.getString(R.string.facebook__album_name_key), null);
+    @Override
+    public String getDestinationDescription(Context context) {
+        String destinationDescription = null;
+        String accountName = getLinkedAccountName(context);
+        String albumName = getLinkedAlbumName(context);
+        if (accountName != null && accountName.length() > 0 && albumName != null && albumName.length() > 0) {
+            destinationDescription = context.getString(R.string.facebook__destination_description, accountName, albumName);
+        }
+        return destinationDescription;
     }
 
-    /**
-     * Process share requests by sharing to the linked account. This should be called in a background thread.
-     *
-     * @param context the {@link Context}.
-     * @param workerHandler a {@link android.os.Handler} to post background tasks.
-     * @return a {@link IWingsNotification} representing the results of the processed {@link ShareRequest}. May be null.
-     */
+    @Override
     public IWingsNotification processShareRequests(Context context, Handler workerHandler) {
         int shared = 0;
         String intentUri = null;
@@ -790,8 +766,8 @@ public class FacebookHelper {
         String albumGraphPath = getLinkedAlbumGraphPath(context);
         if (albumName != null && albumGraphPath != null) {
             // Get share requests for Facebook.
-            WingsDbHelper wingsDbHelper = WingsDbHelper.getInstance(context);
-            List<ShareRequest> shareRequests = wingsDbHelper.checkoutShareRequests(ShareRequest.DESTINATION_FACEBOOK);
+            WingsDbHelper wingsDbHelper = PersistenceFactory.getInstance().getPersistence();
+            List<ShareRequest> shareRequests = wingsDbHelper.checkoutShareRequests(Wings.DESTINATION_FACEBOOK);
 
             if (!shareRequests.isEmpty()) {
                 // Try open session with cached access token.

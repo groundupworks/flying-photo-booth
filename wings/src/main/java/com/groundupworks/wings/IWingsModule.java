@@ -15,6 +15,7 @@
  */
 package com.groundupworks.wings;
 
+import android.content.Context;
 import android.os.Handler;
 
 /**
@@ -25,12 +26,23 @@ import android.os.Handler;
 public interface IWingsModule {
 
     /**
-     * Provides logger for debug messages.
+     * Provides the {@link android.content.Context} to run Wings.
+     *
+     * @return the {@link android.content.Context}.
      */
-    public IWingsLogger providesLogger();
+    public Context provideContext();
+
+    /**
+     * Provides logger for debug messages.
+     *
+     * @return the {@link com.groundupworks.wings.IWingsLogger}.
+     */
+    public IWingsLogger provideLogger();
 
     /**
      * Provides {@link android.os.Handler} to post background tasks.
+     *
+     * @return the worker {@link android.os.Handler}.
      */
-    public Handler providesWorkerHandler();
+    public Handler provideWorkerHandler();
 }
