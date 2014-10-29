@@ -54,45 +54,83 @@ public final class Wings {
     public static final int DESTINATION_DROPBOX = 1;
 
     /**
-     * The set of endpoints that Wings can share to.
+     * Flag to track whether Wings is initialized.
      */
-    private static Set<AbstractWingsEndpoint> sEndpoints;
+    private static volatile boolean sIsInitialized = false;
 
     /**
-     * Initializer used to pass Wings dependencies via a concrete implementation of the
-     * {@link com.groundupworks.wings.IWingsModule} interface.
-     *
-     * @param module the Dagger module implementing {@link com.groundupworks.wings.IWingsModule}.
-     * @param Ts     the endpoints that Wings can share to.
-     * @param <Ts>   the concrete types of an {@link com.groundupworks.wings.AbstractWingsEndpoint}.
-     * @return {@code true} if Wings is successfully initialized; {@code false} otherwise.
+     * The protected set of endpoint instances that Wings can share to. Though the instances are
+     * returned through the APIs, the set itself is never exposed, only copies of it, so the set is
+     * essentially immutable after a successful initialization.
      */
-    public synchronized static final <Ts extends AbstractWingsEndpoint> boolean init(IWingsModule module, Class... Ts) {
-        boolean isSuccessful = false;
-        WingsInjector.init(module);
-        try {
-            final Set<AbstractWingsEndpoint> endpoints = new HashSet<AbstractWingsEndpoint>();
-            for (Class T : Ts) {
-                endpoints.add((AbstractWingsEndpoint) T.newInstance());
+    private static volatile Set<AbstractWingsEndpoint> sEndpoints = new HashSet<AbstractWingsEndpoint>();
+
+    /**
+     * Initializer used to pass dependencies for Wings. This method must be called in the
+     * {@link android.app.Application#onCreate()}.
+     *
+     * @param module          the Dagger module implementing {@link com.groundupworks.wings.IWingsModule}.
+     *                        Pass {@link com.groundupworks.wings.Wings.DefaultModule} to use the default
+     *                        components.
+     * @param endpointClazzes the endpoints that Wings can share to, passed as {@link java.lang.Class} types.
+     * @return {@code true} if Wings is successfully initialized; {@code false} otherwise. Once {@link true}
+     * has been returned, calling this method will have no effect, and the return value will always be
+     * {@link true}.
+     */
+    public static synchronized final boolean init(IWingsModule module, Class<? extends AbstractWingsEndpoint>... endpointClazzes) {
+        // No-op if already initialized.
+        if (!sIsInitialized) {
+            WingsInjector.init(module);
+            try {
+                final Set<AbstractWingsEndpoint> endpoints = new HashSet<AbstractWingsEndpoint>();
+                for (Class clazz : endpointClazzes) {
+                    endpoints.add((AbstractWingsEndpoint) clazz.newInstance());
+                }
+                sEndpoints = endpoints;
+                sIsInitialized = true;
+            } catch (InstantiationException e) {
+                WingsInjector.getLogger().log(Wings.class, "init", e.toString());
+            } catch (IllegalAccessException e) {
+                WingsInjector.getLogger().log(Wings.class, "init", e.toString());
             }
-            sEndpoints = endpoints;
-            isSuccessful = true;
-        } catch (InstantiationException e) {
-            WingsInjector.getLogger().log(Wings.class, "init", e.toString());
-        } catch (IllegalAccessException e) {
-            WingsInjector.getLogger().log(Wings.class, "init", e.toString());
         }
 
-        return isSuccessful;
+        return sIsInitialized;
     }
 
     /**
-     * Gets the set of endpoints that Wings can share to.
+     * Gets the set of endpoint instances that Wings can share to.
      *
-     * @return the set of endpoints that subclass {@link com.groundupworks.wings.AbstractWingsEndpoint}.
+     * @return the set of endpoint instances.
+     * @throws IllegalStateException Wings must be initialized. See {@link Wings#init(IWingsModule, Class[])}.
      */
-    public synchronized static final Set<AbstractWingsEndpoint> getEndpoints() {
+    public static final Set<AbstractWingsEndpoint> getEndpoints() throws IllegalStateException {
+        if (!sIsInitialized) {
+            throw new IllegalStateException("Wings must be initialized. See Wings#init().");
+        }
         return new HashSet<AbstractWingsEndpoint>(sEndpoints);
+    }
+
+    /**
+     * Gets the instance of a specific endpoint that Wings can share to.
+     *
+     * @param endpointClazz the endpoint {@link java.lang.Class}.
+     * @return the endpoint instance; or {@code null} if unavailable.
+     * @throws IllegalStateException Wings must be initialized. See {@link Wings#init(IWingsModule, Class[])}.
+     */
+    public static final AbstractWingsEndpoint getEndpoint(Class<? extends AbstractWingsEndpoint> endpointClazz) {
+        if (!sIsInitialized) {
+            throw new IllegalStateException("Wings must be initialized. See Wings#init().");
+        }
+        AbstractWingsEndpoint selectedEndpoint = null;
+        for (AbstractWingsEndpoint endpoint : sEndpoints) {
+            if (endpointClazz.isInstance(endpoint)) {
+                selectedEndpoint = endpoint;
+                break;
+            }
+        }
+
+        return selectedEndpoint;
     }
 
     /**
@@ -101,8 +139,12 @@ public final class Wings {
      * @param filePath    the local path to the file to share.
      * @param destination the destination of the share.
      * @return true if successful; false otherwise.
+     * @throws IllegalStateException Wings must be initialized. See {@link Wings#init(IWingsModule, Class[])}.
      */
-    public synchronized static boolean share(String filePath, int destination) {
+    public static boolean share(String filePath, int destination) {
+        if (!sIsInitialized) {
+            throw new IllegalStateException("Wings must be initialized. See Wings#init().");
+        }
         return WingsInjector.getDatabase().createShareRequest(filePath, destination);
     }
 

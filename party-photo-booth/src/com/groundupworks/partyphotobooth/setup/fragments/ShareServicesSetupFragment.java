@@ -27,10 +27,13 @@ import android.widget.TextView;
 
 import com.groundupworks.partyphotobooth.R;
 import com.groundupworks.partyphotobooth.helpers.PreferencesHelper;
+import com.groundupworks.wings.AbstractWingsEndpoint;
+import com.groundupworks.wings.Wings;
 import com.groundupworks.wings.dropbox.DropboxEndpoint;
 import com.groundupworks.wings.facebook.FacebookEndpoint;
 
 import java.lang.ref.WeakReference;
+import java.util.Set;
 
 /**
  * Ui for setting up the sharing services.
@@ -43,16 +46,6 @@ public class ShareServicesSetupFragment extends Fragment {
      * Callbacks for this fragment.
      */
     private WeakReference<ShareServicesSetupFragment.ICallbacks> mCallbacks = null;
-
-    /**
-     * A {@link com.groundupworks.wings.facebook.FacebookEndpoint}.
-     */
-    private FacebookEndpoint mFacebookEndpoint = new FacebookEndpoint();
-
-    /**
-     * A {@link com.groundupworks.wings.dropbox.DropboxEndpoint}.
-     */
-    private DropboxEndpoint mDropboxEndpoint = new DropboxEndpoint();
 
     /**
      * Listener for changes in preferences.
@@ -113,37 +106,8 @@ public class ShareServicesSetupFragment extends Fragment {
         /*
          * Configure views with saved preferences and functionalize.
          */
-        mFacebook.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Activity activity = getActivity();
-                if (activity != null && !activity.isFinishing()) {
-                    if (mFacebookEndpoint.isLinked()) {
-                        // Unlink from Facebook.
-                        mFacebookEndpoint.unlink();
-                    } else {
-                        // Start Facebook link request.
-                        mFacebookEndpoint.startLinkRequest(activity, ShareServicesSetupFragment.this);
-                    }
-                }
-            }
-        });
-
-        mDropbox.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Activity activity = getActivity();
-                if (activity != null && !activity.isFinishing()) {
-                    if (mDropboxEndpoint.isLinked()) {
-                        // Unlink from Dropbox.
-                        mDropboxEndpoint.unlink();
-                    } else {
-                        // Start Dropbox link request.
-                        mDropboxEndpoint.startLinkRequest(activity, ShareServicesSetupFragment.this);
-                    }
-                }
-            }
-        });
+        mFacebook.setOnClickListener(new MyLinkOnClickListener(FacebookEndpoint.class));
+        mDropbox.setOnClickListener(new MyLinkOnClickListener(DropboxEndpoint.class));
 
         final PreferencesHelper preferencesHelper = new PreferencesHelper();
         boolean isChecked = preferencesHelper.getNoticeEnabled(appContext);
@@ -174,8 +138,11 @@ public class ShareServicesSetupFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        // Finish Facebook link request.
-        mFacebookEndpoint.onActivityResultImpl(getActivity(), this, requestCode, resultCode, data);
+        // Call Wings APIs.
+        Set<AbstractWingsEndpoint> endpoints = Wings.getEndpoints();
+        for (AbstractWingsEndpoint endpoint : endpoints) {
+            endpoint.onActivityResultImpl(getActivity(), this, requestCode, resultCode, data);
+        }
     }
 
     @Override
@@ -189,12 +156,15 @@ public class ShareServicesSetupFragment extends Fragment {
         preferences.registerOnSharedPreferenceChangeListener(mPrefChangeListener);
 
         // Refresh ui.
-        updateFacebook(appContext);
-        updateDropbox(appContext);
-        updateNoticeEnabled(appContext);
+        updateFacebook();
+        updateDropbox();
+        updateNoticeEnabled();
 
-        // Finish Dropbox link request.
-        mDropboxEndpoint.onResumeImpl();
+        // Call Wings APIs.
+        Set<AbstractWingsEndpoint> endpoints = Wings.getEndpoints();
+        for (AbstractWingsEndpoint endpoint : endpoints) {
+            endpoint.onResumeImpl();
+        }
     }
 
     @Override
@@ -225,12 +195,11 @@ public class ShareServicesSetupFragment extends Fragment {
 
     /**
      * Updates the Facebook link ui.
-     *
-     * @param context the {@link Context}.
      */
-    private void updateFacebook(Context context) {
-        if (mFacebookEndpoint.isLinked()) {
-            String destinationDescription = mFacebookEndpoint.getDestinationDescription();
+    private void updateFacebook() {
+        AbstractWingsEndpoint endpoint = Wings.getEndpoint(FacebookEndpoint.class);
+        if (endpoint.isLinked()) {
+            String destinationDescription = endpoint.getDestinationDescription();
             mFacebookStatus.setText(destinationDescription);
             mFacebookStatus.setTextColor(getResources().getColor(R.color.text_dark));
             mFacebookIcon.setEnabled(true);
@@ -243,12 +212,11 @@ public class ShareServicesSetupFragment extends Fragment {
 
     /**
      * Updates the Dropbox link ui.
-     *
-     * @param context the {@link Context}.
      */
-    private void updateDropbox(Context context) {
-        if (mDropboxEndpoint.isLinked()) {
-            String destinationDescription = mDropboxEndpoint.getDestinationDescription();
+    private void updateDropbox() {
+        AbstractWingsEndpoint endpoint = Wings.getEndpoint(DropboxEndpoint.class);
+        if (endpoint.isLinked()) {
+            String destinationDescription = endpoint.getDestinationDescription();
             mDropboxStatus.setText(destinationDescription);
             mDropboxStatus.setTextColor(getResources().getColor(R.color.text_dark));
             mDropboxIcon.setEnabled(true);
@@ -261,12 +229,18 @@ public class ShareServicesSetupFragment extends Fragment {
 
     /**
      * Updates the notice enabled {@link CheckBox} ui.
-     *
-     * @param context the {@link Context}.
      */
-    private void updateNoticeEnabled(Context context) {
+    private void updateNoticeEnabled() {
         // The notice screen is only relevant if there is at least one share service enabled.
-        boolean isEnabled = mFacebookEndpoint.isLinked() || mDropboxEndpoint.isLinked();
+        boolean isEnabled = false;
+        Set<AbstractWingsEndpoint> endpoints = Wings.getEndpoints();
+        for (AbstractWingsEndpoint endpoint : endpoints) {
+            if (endpoint.isLinked()) {
+                isEnabled = true;
+                break;
+            }
+        }
+
         mNoticeEnabled.setEnabled(isEnabled);
     }
 
@@ -297,11 +271,45 @@ public class ShareServicesSetupFragment extends Fragment {
             Activity activity = getActivity();
             if (activity != null && !activity.isFinishing()) {
                 if (key.equals(getString(R.string.pref__facebook_link_key))) {
-                    updateFacebook(activity);
-                    updateNoticeEnabled(activity);
+                    updateFacebook();
+                    updateNoticeEnabled();
                 } else if (key.equals(getString(R.string.pref__dropbox_link_key))) {
-                    updateDropbox(activity);
-                    updateNoticeEnabled(activity);
+                    updateDropbox();
+                    updateNoticeEnabled();
+                }
+            }
+        }
+    }
+
+    /**
+     * Listener that handles linking and unlinking with a Wings endpoint.
+     */
+    private class MyLinkOnClickListener implements OnClickListener {
+
+        /**
+         * The Wings endpoint.
+         */
+        private AbstractWingsEndpoint mEndpoint;
+
+        /**
+         * Constructor.
+         *
+         * @param endpointClazz the {@link java.lang.Class} of the Wings endpoint to toggle linking.
+         */
+        private MyLinkOnClickListener(Class<? extends AbstractWingsEndpoint> endpointClazz) {
+            mEndpoint = Wings.getEndpoint(endpointClazz);
+        }
+
+        @Override
+        public void onClick(View v) {
+            Activity activity = getActivity();
+            if (activity != null && !activity.isFinishing()) {
+                if (mEndpoint.isLinked()) {
+                    // Unlink from endpoint.
+                    mEndpoint.unlink();
+                } else {
+                    // Start link request.
+                    mEndpoint.startLinkRequest(activity, ShareServicesSetupFragment.this);
                 }
             }
         }

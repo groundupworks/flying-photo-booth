@@ -41,8 +41,12 @@ import com.groundupworks.flyingphotobooth.controllers.ShareController;
 import com.groundupworks.lib.photobooth.framework.ControllerBackedFragment;
 import com.groundupworks.lib.photobooth.helpers.BeamHelper;
 import com.groundupworks.lib.photobooth.helpers.ImageHelper;
+import com.groundupworks.wings.AbstractWingsEndpoint;
+import com.groundupworks.wings.Wings;
 import com.groundupworks.wings.dropbox.DropboxEndpoint;
 import com.groundupworks.wings.facebook.FacebookEndpoint;
+
+import java.util.Set;
 
 /**
  * Ui for the image confirmation screen.
@@ -101,9 +105,9 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
     //
 
     /**
-     * A {@link com.groundupworks.wings.facebook.FacebookEndpoint}.
+     * The Facebook Wings endpoint.
      */
-    private FacebookEndpoint mFacebookEndpoint = new FacebookEndpoint();
+    private AbstractWingsEndpoint mFacebookEndpoint = Wings.getEndpoint(FacebookEndpoint.class);
 
     /**
      * Listener for Facebook linking events. May be null.
@@ -115,9 +119,9 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
     //
 
     /**
-     * A {@link com.groundupworks.wings.dropbox.DropboxEndpoint}.
+     * The Dropbox Wings endpoint.
      */
-    private DropboxEndpoint mDropboxEndpoint = new DropboxEndpoint();
+    private AbstractWingsEndpoint mDropboxEndpoint = Wings.getEndpoint(DropboxEndpoint.class);
 
     /**
      * Listener for Dropbox linking events. May be null.
@@ -292,16 +296,22 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        // Finish Facebook link request.
-        mFacebookEndpoint.onActivityResultImpl(getActivity(), ShareFragment.this, requestCode, resultCode, data);
+        // Call Wings APIs.
+        Set<AbstractWingsEndpoint> endpoints = Wings.getEndpoints();
+        for (AbstractWingsEndpoint endpoint : endpoints) {
+            endpoint.onActivityResultImpl(getActivity(), ShareFragment.this, requestCode, resultCode, data);
+        }
     }
 
     @Override
     public void onResume() {
         super.onResume();
 
-        // Finish Dropbox link request.
-        mDropboxEndpoint.onResumeImpl();
+        // Call Wings APIs.
+        Set<AbstractWingsEndpoint> endpoints = Wings.getEndpoints();
+        for (AbstractWingsEndpoint endpoint : endpoints) {
+            endpoint.onResumeImpl();
+        }
     }
 
     @Override
@@ -478,8 +488,7 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
             Activity activity = getActivity();
-            if (activity != null && !activity.isFinishing() && key.equals(getString(R.string.pref__facebook_link_key))
-                    && mFacebookEndpoint.isLinked()) {
+            if (activity != null && !activity.isFinishing() && mFacebookEndpoint.isLinked()) {
                 requestFacebookShare();
             }
         }
@@ -493,8 +502,7 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
             Activity activity = getActivity();
-            if (activity != null && !activity.isFinishing() && key.equals(getString(R.string.pref__dropbox_link_key))
-                    && mDropboxEndpoint.isLinked()) {
+            if (activity != null && !activity.isFinishing() && mDropboxEndpoint.isLinked()) {
                 requestDropboxShare();
             }
         }
