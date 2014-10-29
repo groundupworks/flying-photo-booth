@@ -361,14 +361,6 @@ public class DropboxEndpoint implements IWingsEndpoint {
     }
 
     @Override
-    public boolean isAutoShare(Context context) {
-        Context appContext = context.getApplicationContext();
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(appContext);
-        return preferences.getBoolean(appContext.getString(R.string.pref__dropbox_link_key), false)
-                && preferences.getBoolean(appContext.getString(R.string.pref__dropbox_auto_share_key), false);
-    }
-
-    @Override
     public void onResumeImpl(Context context, Handler workerHandler) {
         if (mIsLinkRequested) {
             // Check if link request was successful.

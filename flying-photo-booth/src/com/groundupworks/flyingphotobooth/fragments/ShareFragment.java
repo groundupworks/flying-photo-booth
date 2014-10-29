@@ -385,13 +385,14 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
                 // Enable sharing options.
                 mShareButton.setEnabled(true);
 
-                if (mDropboxEndpoint.isAutoShare(appContext)) {
+                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(appContext);
+                if (mDropboxEndpoint.isLinked(appContext) && preferences.getBoolean(getString(R.string.pref__dropbox_auto_share_key), false)) {
                     requestDropboxShare();
                 } else {
                     mDropboxButton.setVisibility(View.VISIBLE);
                 }
 
-                if (mFacebookEndpoint.isAutoShare(appContext)) {
+                if (mFacebookEndpoint.isLinked(appContext) && preferences.getBoolean(getString(R.string.pref__facebook_auto_share_key), false)) {
                     requestFacebookShare();
                 } else {
                     mFacebookButton.setVisibility(View.VISIBLE);

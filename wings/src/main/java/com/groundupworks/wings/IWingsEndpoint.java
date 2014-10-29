@@ -56,14 +56,6 @@ public interface IWingsEndpoint {
     boolean isLinked(Context context);
 
     /**
-     * Checks if the user has auto share enabled.
-     *
-     * @param context the {@link Context}.
-     * @return true if auto share is enabled; false otherwise.
-     */
-    boolean isAutoShare(Context context);
-
-    /**
      * A convenience method that must be called in the onResume() of any {@link android.app.Activity}
      * or {@link android.support.v4.app.Fragment} that uses
      * {@link #startLinkRequest(android.app.Activity, android.support.v4.app.Fragment, android.os.Handler)}.
