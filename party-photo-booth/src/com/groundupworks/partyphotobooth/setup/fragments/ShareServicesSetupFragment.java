@@ -11,7 +11,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
-import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -26,7 +25,6 @@ import android.widget.ImageView;
 import android.widget.TableRow;
 import android.widget.TextView;
 
-import com.groundupworks.lib.photobooth.framework.BaseApplication;
 import com.groundupworks.partyphotobooth.R;
 import com.groundupworks.partyphotobooth.helpers.PreferencesHelper;
 import com.groundupworks.wings.dropbox.DropboxEndpoint;
@@ -120,12 +118,12 @@ public class ShareServicesSetupFragment extends Fragment {
             public void onClick(View v) {
                 Activity activity = getActivity();
                 if (activity != null && !activity.isFinishing()) {
-                    if (mFacebookEndpoint.isLinked(appContext)) {
+                    if (mFacebookEndpoint.isLinked()) {
                         // Unlink from Facebook.
-                        mFacebookEndpoint.unlink(appContext, new Handler(BaseApplication.getWorkerLooper()));
+                        mFacebookEndpoint.unlink();
                     } else {
                         // Start Facebook link request.
-                        mFacebookEndpoint.startLinkRequest(activity, ShareServicesSetupFragment.this, new Handler(BaseApplication.getWorkerLooper()));
+                        mFacebookEndpoint.startLinkRequest(activity, ShareServicesSetupFragment.this);
                     }
                 }
             }
@@ -136,12 +134,12 @@ public class ShareServicesSetupFragment extends Fragment {
             public void onClick(View v) {
                 Activity activity = getActivity();
                 if (activity != null && !activity.isFinishing()) {
-                    if (mDropboxEndpoint.isLinked(appContext)) {
+                    if (mDropboxEndpoint.isLinked()) {
                         // Unlink from Dropbox.
-                        mDropboxEndpoint.unlink(appContext, new Handler(BaseApplication.getWorkerLooper()));
+                        mDropboxEndpoint.unlink();
                     } else {
                         // Start Dropbox link request.
-                        mDropboxEndpoint.startLinkRequest(activity, ShareServicesSetupFragment.this, new Handler(BaseApplication.getWorkerLooper()));
+                        mDropboxEndpoint.startLinkRequest(activity, ShareServicesSetupFragment.this);
                     }
                 }
             }
@@ -177,7 +175,7 @@ public class ShareServicesSetupFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
 
         // Finish Facebook link request.
-        mFacebookEndpoint.onActivityResultImpl(getActivity(), this, new Handler(BaseApplication.getWorkerLooper()), requestCode, resultCode, data);
+        mFacebookEndpoint.onActivityResultImpl(getActivity(), this, requestCode, resultCode, data);
     }
 
     @Override
@@ -196,7 +194,7 @@ public class ShareServicesSetupFragment extends Fragment {
         updateNoticeEnabled(appContext);
 
         // Finish Dropbox link request.
-        mDropboxEndpoint.onResumeImpl(getActivity().getApplicationContext(), new Handler(BaseApplication.getWorkerLooper()));
+        mDropboxEndpoint.onResumeImpl();
     }
 
     @Override
@@ -231,8 +229,8 @@ public class ShareServicesSetupFragment extends Fragment {
      * @param context the {@link Context}.
      */
     private void updateFacebook(Context context) {
-        if (mFacebookEndpoint.isLinked(context)) {
-            String destinationDescription = mFacebookEndpoint.getDestinationDescription(context);
+        if (mFacebookEndpoint.isLinked()) {
+            String destinationDescription = mFacebookEndpoint.getDestinationDescription();
             mFacebookStatus.setText(destinationDescription);
             mFacebookStatus.setTextColor(getResources().getColor(R.color.text_dark));
             mFacebookIcon.setEnabled(true);
@@ -249,8 +247,8 @@ public class ShareServicesSetupFragment extends Fragment {
      * @param context the {@link Context}.
      */
     private void updateDropbox(Context context) {
-        if (mDropboxEndpoint.isLinked(context)) {
-            String destinationDescription = mDropboxEndpoint.getDestinationDescription(context);
+        if (mDropboxEndpoint.isLinked()) {
+            String destinationDescription = mDropboxEndpoint.getDestinationDescription();
             mDropboxStatus.setText(destinationDescription);
             mDropboxStatus.setTextColor(getResources().getColor(R.color.text_dark));
             mDropboxIcon.setEnabled(true);
@@ -268,7 +266,7 @@ public class ShareServicesSetupFragment extends Fragment {
      */
     private void updateNoticeEnabled(Context context) {
         // The notice screen is only relevant if there is at least one share service enabled.
-        boolean isEnabled = mFacebookEndpoint.isLinked(context) || mDropboxEndpoint.isLinked(context);
+        boolean isEnabled = mFacebookEndpoint.isLinked() || mDropboxEndpoint.isLinked();
         mNoticeEnabled.setEnabled(isEnabled);
     }
 

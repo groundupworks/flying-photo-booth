@@ -16,13 +16,11 @@
 package com.groundupworks.wings.facebook;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.ParcelFileDescriptor;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
@@ -44,13 +42,11 @@ import com.facebook.SessionDefaultAudience;
 import com.facebook.SessionLoginBehavior;
 import com.facebook.SessionState;
 import com.facebook.model.GraphObject;
-import com.groundupworks.wings.IWingsEndpoint;
+import com.groundupworks.wings.AbstractWingsEndpoint;
 import com.groundupworks.wings.IWingsNotification;
 import com.groundupworks.wings.R;
 import com.groundupworks.wings.Wings;
-import com.groundupworks.wings.core.PersistenceFactory;
 import com.groundupworks.wings.core.ShareRequest;
-import com.groundupworks.wings.core.WingsDbHelper;
 
 import org.json.JSONObject;
 
@@ -65,7 +61,7 @@ import java.util.List;
  *
  * @author Benedict Lau
  */
-public class FacebookEndpoint implements IWingsEndpoint {
+public class FacebookEndpoint extends AbstractWingsEndpoint {
 
     /**
      * Timeout value for http requests.
@@ -402,14 +398,13 @@ public class FacebookEndpoint implements IWingsEndpoint {
     /**
      * Checks if the Facebook native app is installed on the device.
      *
-     * @param context the {@link Context}.
      * @return true if installed; false otherwise.
      */
-    private boolean isFacebookAppInstalled(Context context) {
+    private boolean isFacebookAppInstalled() {
         boolean isInstalled = false;
         try {
             // An exception will be thrown if the package is not found.
-            context.getPackageManager().getApplicationInfo(KATANA_PACKAGE, 0);
+            mContext.getPackageManager().getApplicationInfo(KATANA_PACKAGE, 0);
             isInstalled = true;
         } catch (PackageManager.NameNotFoundException e) {
             // Do nothing.
@@ -420,21 +415,20 @@ public class FacebookEndpoint implements IWingsEndpoint {
     /**
      * Links an account.
      *
-     * @param context        the {@link Context}.
      * @param accountName    the user name associated with the account.
      * @param photoPrivacy   the privacy level of shared photos. Only used for albums with 'custom' privacy level. May be null.
      * @param albumName      the name of the album to share to.
      * @param albumGraphPath the graph path of the album to share to.
      * @return true if successful; false otherwise.
      */
-    private boolean link(Context context, String accountName, String photoPrivacy, String albumName,
+    private boolean link(String accountName, String photoPrivacy, String albumName,
                          String albumGraphPath) {
         boolean isSuccessful = false;
 
         // Validate account params and store.
         if (accountName != null && accountName.length() > 0 && albumName != null && albumName.length() > 0
                 && albumGraphPath != null && albumGraphPath.length() > 0) {
-            storeAccountParams(context.getApplicationContext(), accountName, photoPrivacy, albumName, albumGraphPath);
+            storeAccountParams(accountName, photoPrivacy, albumName, albumGraphPath);
             isSuccessful = true;
         }
         return isSuccessful;
@@ -442,110 +436,92 @@ public class FacebookEndpoint implements IWingsEndpoint {
 
     /**
      * Handles an error case during the linking process.
-     *
-     * @param context       the {@link Context}.
-     * @param workerHandler a {@link android.os.Handler} to post background tasks.
      */
-    private void handleLinkError(Context context, Handler workerHandler) {
-        Context appContext = context.getApplicationContext();
-
+    private void handleLinkError() {
         // Reset link request state.
         mLinkRequestState = STATE_NONE;
 
         // Show toast to indicate error during linking.
-        if (isFacebookAppInstalled(context)) {
-            showLinkError(appContext);
+        if (isFacebookAppInstalled()) {
+            showLinkError();
         } else {
-            showFacebookAppError(appContext);
+            showFacebookAppError();
         }
 
         // Unlink account to ensure proper reset.
-        unlink(appContext, workerHandler);
+        unlink();
     }
 
     /**
      * Displays the link error message.
-     *
-     * @param context the {@link Context}.
      */
-    private void showLinkError(Context context) {
-        Toast.makeText(context, context.getString(R.string.facebook__error_link), Toast.LENGTH_SHORT).show();
+    private void showLinkError() {
+        Toast.makeText(mContext, mContext.getString(R.string.facebook__error_link), Toast.LENGTH_SHORT).show();
     }
 
     /**
      * Displays the Facebook app error message.
-     *
-     * @param context the {@link Context}.
      */
-    private void showFacebookAppError(Context context) {
-        Toast.makeText(context, context.getString(R.string.facebook__error_facebook_app), Toast.LENGTH_SHORT).show();
+    private void showFacebookAppError() {
+        Toast.makeText(mContext, mContext.getString(R.string.facebook__error_facebook_app), Toast.LENGTH_SHORT).show();
     }
 
     /**
      * Stores the account params in persisted storage.
      *
-     * @param context        the {@link Context}.
      * @param accountName    the user name associated with the account.
      * @param photoPrivacy   the privacy level of shared photos. Only used for albums with 'custom' privacy level. May be null.
      * @param albumName      the name of the album to share to.
      * @param albumGraphPath the graph path of the album to share to.
      */
-    private void storeAccountParams(Context context, String accountName, String photoPrivacy, String albumName,
+    private void storeAccountParams(String accountName, String photoPrivacy, String albumName,
                                     String albumGraphPath) {
-        Context appContext = context.getApplicationContext();
-        Editor editor = PreferenceManager.getDefaultSharedPreferences(appContext).edit();
-        editor.putString(appContext.getString(R.string.facebook__account_name_key), accountName);
+        Editor editor = PreferenceManager.getDefaultSharedPreferences(mContext).edit();
+        editor.putString(mContext.getString(R.string.facebook__account_name_key), accountName);
         if (photoPrivacy != null && photoPrivacy.length() > 0) {
-            editor.putString(appContext.getString(R.string.facebook__photo_privacy_key), photoPrivacy);
+            editor.putString(mContext.getString(R.string.facebook__photo_privacy_key), photoPrivacy);
         }
-        editor.putString(appContext.getString(R.string.facebook__album_name_key), albumName);
-        editor.putString(appContext.getString(R.string.facebook__album_graph_path_key), albumGraphPath);
+        editor.putString(mContext.getString(R.string.facebook__album_name_key), albumName);
+        editor.putString(mContext.getString(R.string.facebook__album_graph_path_key), albumGraphPath);
 
         // Set preference to linked.
-        editor.putBoolean(appContext.getString(R.string.pref__facebook_link_key), true);
+        editor.putBoolean(mContext.getString(R.string.pref__facebook_link_key), true);
         editor.apply();
     }
 
     /**
      * Removes the account params from persisted storage.
-     *
-     * @param context the {@link Context}.
      */
-    private void removeAccountParams(Context context) {
-        Context appContext = context.getApplicationContext();
-        Editor editor = PreferenceManager.getDefaultSharedPreferences(appContext).edit();
-        editor.remove(appContext.getString(R.string.facebook__account_name_key));
-        editor.remove(appContext.getString(R.string.facebook__photo_privacy_key));
-        editor.remove(appContext.getString(R.string.facebook__album_name_key));
-        editor.remove(appContext.getString(R.string.facebook__album_graph_path_key));
+    private void removeAccountParams() {
+        Editor editor = PreferenceManager.getDefaultSharedPreferences(mContext).edit();
+        editor.remove(mContext.getString(R.string.facebook__account_name_key));
+        editor.remove(mContext.getString(R.string.facebook__photo_privacy_key));
+        editor.remove(mContext.getString(R.string.facebook__album_name_key));
+        editor.remove(mContext.getString(R.string.facebook__album_graph_path_key));
 
         // Set preference to unlinked.
-        editor.putBoolean(appContext.getString(R.string.pref__facebook_link_key), false);
+        editor.putBoolean(mContext.getString(R.string.pref__facebook_link_key), false);
         editor.apply();
     }
 
     /**
      * Gets the privacy level of shared photos.
      *
-     * @param context the {@link Context}.
      * @return the privacy level; or null if unlinked.
      */
-    private String optLinkedPhotoPrivacy(Context context) {
-        Context appContext = context.getApplicationContext();
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(appContext);
-        return preferences.getString(appContext.getString(R.string.facebook__photo_privacy_key), null);
+    private String optLinkedPhotoPrivacy() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mContext);
+        return preferences.getString(mContext.getString(R.string.facebook__photo_privacy_key), null);
     }
 
     /**
      * Gets the graph path of the album to share to.
      *
-     * @param context the {@link Context}.
      * @return the graph path; or null if unlinked.
      */
-    private String getLinkedAlbumGraphPath(Context context) {
-        Context appContext = context.getApplicationContext();
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(appContext);
-        return preferences.getString(appContext.getString(R.string.facebook__album_graph_path_key), null);
+    private String getLinkedAlbumGraphPath() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mContext);
+        return preferences.getString(mContext.getString(R.string.facebook__album_graph_path_key), null);
     }
 
     /**
@@ -569,13 +545,11 @@ public class FacebookEndpoint implements IWingsEndpoint {
     /**
      * Gets the name of the album to share to.
      *
-     * @param context the {@link Context}.
      * @return the album name; or null if unlinked.
      */
-    private String getLinkedAlbumName(Context context) {
-        Context appContext = context.getApplicationContext();
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(appContext);
-        return preferences.getString(appContext.getString(R.string.facebook__album_name_key), null);
+    private String getLinkedAlbumName() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mContext);
+        return preferences.getString(mContext.getString(R.string.facebook__album_name_key), null);
     }
 
     //
@@ -630,7 +604,7 @@ public class FacebookEndpoint implements IWingsEndpoint {
     //
 
     @Override
-    public void startLinkRequest(final Activity activity, final Fragment fragment, final Handler workerHandler) {
+    public void startLinkRequest(final Activity activity, final Fragment fragment) {
         // Construct status callback.
         Session.StatusCallback statusCallback = new Session.StatusCallback() {
             @Override
@@ -638,7 +612,7 @@ public class FacebookEndpoint implements IWingsEndpoint {
                 if (mLinkRequestState == STATE_OPEN_SESSION_REQUEST && state.isOpened()) {
                     // Request publish permissions.
                     if (!startPublishPermissionsRequest(activity, fragment)) {
-                        handleLinkError(activity, workerHandler);
+                        handleLinkError();
                     }
                 }
             }
@@ -649,9 +623,9 @@ public class FacebookEndpoint implements IWingsEndpoint {
     }
 
     @Override
-    public void unlink(Context context, Handler workerHandler) {
+    public void unlink() {
         // Unlink in persisted storage.
-        removeAccountParams(context);
+        removeAccountParams();
 
         // Unlink any current session.
         Session session = Session.getActiveSession();
@@ -660,36 +634,35 @@ public class FacebookEndpoint implements IWingsEndpoint {
         }
 
         // Remove existing share requests in a background thread.
-        workerHandler.post(new Runnable() {
+        mHandler.post(new Runnable() {
 
             @Override
             public void run() {
-                PersistenceFactory.getInstance().getPersistence().deleteShareRequests(Wings.DESTINATION_FACEBOOK);
+                mDatabase.deleteShareRequests(Wings.DESTINATION_FACEBOOK);
             }
         });
     }
 
     @Override
-    public boolean isLinked(Context context) {
-        Context appContext = context.getApplicationContext();
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(appContext);
-        return preferences.getBoolean(appContext.getString(R.string.pref__facebook_link_key), false);
+    public boolean isLinked() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mContext);
+        return preferences.getBoolean(mContext.getString(R.string.pref__facebook_link_key), false);
     }
 
     @Override
-    public void onResumeImpl(Context context, Handler workerHandler) {
+    public void onResumeImpl() {
         // Do nothing.
     }
 
     @Override
-    public void onActivityResultImpl(Activity activity, Fragment fragment, Handler workerHandler, int requestCode, int resultCode, Intent data) {
+    public void onActivityResultImpl(Activity activity, Fragment fragment, int requestCode, int resultCode, Intent data) {
         // State machine to handle the linking process.
         switch (mLinkRequestState) {
             case STATE_OPEN_SESSION_REQUEST: {
                 // Only handle the error case. If successful, the publish permissions request will be started by a
                 // session callback.
                 if (!finishOpenSessionRequest(activity, requestCode, resultCode, data)) {
-                    handleLinkError(activity, workerHandler);
+                    handleLinkError();
                 }
                 break;
             }
@@ -697,10 +670,10 @@ public class FacebookEndpoint implements IWingsEndpoint {
                 if (finishPublishPermissionsRequest(activity, requestCode, resultCode, data)) {
                     // Start request for settings.
                     if (!startSettingsRequest(activity, fragment)) {
-                        handleLinkError(activity, workerHandler);
+                        handleLinkError();
                     }
                 } else {
-                    handleLinkError(activity, workerHandler);
+                    handleLinkError();
                 }
                 break;
             }
@@ -708,8 +681,7 @@ public class FacebookEndpoint implements IWingsEndpoint {
                 FacebookSettings settings = finishSettingsRequest(requestCode, resultCode, data);
                 if (settings != null) {
                     // Link account.
-                    if (link(activity, settings.getAccountName(), settings.optPhotoPrivacy(), settings.getAlbumName(),
-                            settings.getAlbumGraphPath())) {
+                    if (link(settings.getAccountName(), settings.optPhotoPrivacy(), settings.getAlbumName(), settings.getAlbumGraphPath())) {
                         // End link request, but persist link tokens.
                         Session session = Session.getActiveSession();
                         if (session != null && !session.isClosed()) {
@@ -717,10 +689,10 @@ public class FacebookEndpoint implements IWingsEndpoint {
                         }
                         mLinkRequestState = STATE_NONE;
                     } else {
-                        handleLinkError(activity, workerHandler);
+                        handleLinkError();
                     }
                 } else {
-                    handleLinkError(activity, workerHandler);
+                    handleLinkError();
                 }
                 break;
             }
@@ -730,40 +702,38 @@ public class FacebookEndpoint implements IWingsEndpoint {
     }
 
     @Override
-    public String getLinkedAccountName(Context context) {
-        Context appContext = context.getApplicationContext();
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(appContext);
-        return preferences.getString(appContext.getString(R.string.facebook__account_name_key), null);
+    public String getLinkedAccountName() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mContext);
+        return preferences.getString(mContext.getString(R.string.facebook__account_name_key), null);
     }
 
     @Override
-    public String getDestinationDescription(Context context) {
+    public String getDestinationDescription() {
         String destinationDescription = null;
-        String accountName = getLinkedAccountName(context);
-        String albumName = getLinkedAlbumName(context);
+        String accountName = getLinkedAccountName();
+        String albumName = getLinkedAlbumName();
         if (accountName != null && accountName.length() > 0 && albumName != null && albumName.length() > 0) {
-            destinationDescription = context.getString(R.string.facebook__destination_description, accountName, albumName);
+            destinationDescription = mContext.getString(R.string.facebook__destination_description, accountName, albumName);
         }
         return destinationDescription;
     }
 
     @Override
-    public IWingsNotification processShareRequests(Context context, Handler workerHandler) {
+    public IWingsNotification processShareRequests() {
         int shared = 0;
         String intentUri = null;
 
         // Get params associated with the linked account.
-        String photoPrivacy = optLinkedPhotoPrivacy(context);
-        String albumName = getLinkedAlbumName(context);
-        String albumGraphPath = getLinkedAlbumGraphPath(context);
+        String photoPrivacy = optLinkedPhotoPrivacy();
+        String albumName = getLinkedAlbumName();
+        String albumGraphPath = getLinkedAlbumGraphPath();
         if (albumName != null && albumGraphPath != null) {
             // Get share requests for Facebook.
-            WingsDbHelper wingsDbHelper = PersistenceFactory.getInstance().getPersistence();
-            List<ShareRequest> shareRequests = wingsDbHelper.checkoutShareRequests(Wings.DESTINATION_FACEBOOK);
+            List<ShareRequest> shareRequests = mDatabase.checkoutShareRequests(Wings.DESTINATION_FACEBOOK);
 
             if (!shareRequests.isEmpty()) {
                 // Try open session with cached access token.
-                Session session = Session.openActiveSessionFromCache(context);
+                Session session = Session.openActiveSessionFromCache(mContext);
                 if (session != null && session.isOpened()) {
                     // Process share requests.
                     for (ShareRequest shareRequest : shareRequests) {
@@ -790,7 +760,7 @@ public class FacebookEndpoint implements IWingsEndpoint {
                                     FacebookRequestError error = response.getError();
                                     if (error == null) {
                                         // Mark as successfully processed.
-                                        wingsDbHelper.markSuccessful(shareRequest.getId());
+                                        mDatabase.markSuccessful(shareRequest.getId());
 
                                         // Parse photo id to construct notification intent uri.
                                         if (intentUri == null) {
@@ -802,30 +772,30 @@ public class FacebookEndpoint implements IWingsEndpoint {
 
                                         shared++;
                                     } else {
-                                        wingsDbHelper.markFailed(shareRequest.getId());
+                                        mDatabase.markFailed(shareRequest.getId());
 
                                         Category category = error.getCategory();
                                         if (Category.AUTHENTICATION_RETRY.equals(category)
                                                 || Category.PERMISSION.equals(category)) {
                                             // Update account linking state to unlinked.
-                                            unlink(context, workerHandler);
+                                            unlink();
                                         }
                                     }
                                 } else {
-                                    wingsDbHelper.markFailed(shareRequest.getId());
+                                    mDatabase.markFailed(shareRequest.getId());
                                 }
                             } else {
-                                wingsDbHelper.markFailed(shareRequest.getId());
+                                mDatabase.markFailed(shareRequest.getId());
                             }
                         } catch (FacebookException e) {
-                            wingsDbHelper.markFailed(shareRequest.getId());
+                            mDatabase.markFailed(shareRequest.getId());
                         } catch (IllegalArgumentException e) {
-                            wingsDbHelper.markFailed(shareRequest.getId());
+                            mDatabase.markFailed(shareRequest.getId());
                         } catch (FileNotFoundException e) {
-                            wingsDbHelper.markFailed(shareRequest.getId());
+                            mDatabase.markFailed(shareRequest.getId());
                         } catch (Exception e) {
                             // Safety.
-                            wingsDbHelper.markFailed(shareRequest.getId());
+                            mDatabase.markFailed(shareRequest.getId());
                         } finally {
                             if (fileDescriptor != null) {
                                 try {
@@ -839,7 +809,7 @@ public class FacebookEndpoint implements IWingsEndpoint {
                 } else {
                     // Mark all share requests as failed to process since we failed to open an active session.
                     for (ShareRequest shareRequest : shareRequests) {
-                        wingsDbHelper.markFailed(shareRequest.getId());
+                        mDatabase.markFailed(shareRequest.getId());
                     }
                 }
             }
@@ -848,7 +818,7 @@ public class FacebookEndpoint implements IWingsEndpoint {
         // Construct notification representing share results.
         FacebookNotification notification = null;
         if (shared > 0) {
-            notification = new FacebookNotification(context, albumName, shared, intentUri);
+            notification = new FacebookNotification(mContext, albumName, shared, intentUri);
         }
 
         return notification;

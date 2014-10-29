@@ -22,7 +22,6 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Handler;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.support.v4.app.NotificationCompat;
@@ -58,10 +57,16 @@ public class WingsService extends IntentService {
     static IWingsLogger sLogger;
 
     /**
-     * The {@link android.os.Handler} to post background tasks.
+     * The {@link android.content.Context} that Wings is running on.
      */
     @Inject
-    Handler mWorkerHandler;
+    Context mContext;
+
+    /**
+     * The Wings database.
+     */
+    @Inject
+    WingsDbHelper mDatabase;
 
     /**
      * Static initializer.
@@ -96,32 +101,29 @@ public class WingsService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         try {
-            Context appContext = getApplicationContext();
-            WingsDbHelper wingsDbHelper = PersistenceFactory.getInstance().getPersistence();
-
             // Reset all records that somehow got stuck in a processing state.
-            wingsDbHelper.resetProcessingShareRequests();
+            mDatabase.resetProcessingShareRequests();
 
             // Process share requests to Facebook.
             FacebookEndpoint facebookEndpoint = new FacebookEndpoint();
-            if (facebookEndpoint.isLinked(appContext)) {
-                IWingsNotification notification = facebookEndpoint.processShareRequests(appContext, mWorkerHandler);
+            if (facebookEndpoint.isLinked()) {
+                IWingsNotification notification = facebookEndpoint.processShareRequests();
                 if (notification != null) {
-                    sendNotification(appContext, notification);
+                    sendNotification(notification);
                 }
             }
 
             // Process share requests to Dropbox.
             DropboxEndpoint dropboxEndpoint = new DropboxEndpoint();
-            if (dropboxEndpoint.isLinked(appContext)) {
-                IWingsNotification notification = dropboxEndpoint.processShareRequests(appContext, mWorkerHandler);
+            if (dropboxEndpoint.isLinked()) {
+                IWingsNotification notification = dropboxEndpoint.processShareRequests();
                 if (notification != null) {
-                    sendNotification(appContext, notification);
+                    sendNotification(notification);
                 }
             }
 
             // Purge share requests.
-            if (wingsDbHelper.purge() > 0) {
+            if (mDatabase.purge() > 0) {
                 // Some share requests failed. Schedule next attempt to share.
                 scheduleRetry();
             } else {
@@ -193,14 +195,14 @@ public class WingsService extends IntentService {
     /**
      * Sends a {@link IWingsNotification} to the notification bar.
      */
-    private void sendNotification(Context context, IWingsNotification wingsNotification) {
+    private void sendNotification(IWingsNotification wingsNotification) {
         // Construct pending intent. The wrapped Intent must not be null as some versions of Android require it.
         Intent intent = wingsNotification.getIntent();
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_ONE_SHOT);
+        PendingIntent pendingIntent = PendingIntent.getActivity(mContext, 0, intent, PendingIntent.FLAG_ONE_SHOT);
 
         // Construct notification.
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext);
         Notification notification = builder.setSmallIcon(R.drawable.notification)
                 .setContentTitle(wingsNotification.getTitle()).setContentText(wingsNotification.getMessage())
                 .setTicker(wingsNotification.getTicker()).setAutoCancel(true).setWhen(System.currentTimeMillis())

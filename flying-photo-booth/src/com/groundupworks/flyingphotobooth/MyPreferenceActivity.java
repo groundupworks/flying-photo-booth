@@ -17,21 +17,18 @@ package com.groundupworks.flyingphotobooth;
 
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 
-import com.groundupworks.lib.photobooth.framework.BaseApplication;
 import com.groundupworks.wings.dropbox.DropboxEndpoint;
 import com.groundupworks.wings.facebook.FacebookEndpoint;
 
@@ -131,13 +128,12 @@ public class MyPreferenceActivity extends PreferenceActivity {
         mFacebookLinkPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference arg0) {
-                Context appContext = MyPreferenceActivity.this.getApplicationContext();
-                if (mFacebookEndpoint.isLinked(appContext)) {
+                if (mFacebookEndpoint.isLinked()) {
                     // Unlink from Facebook.
-                    mFacebookEndpoint.unlink(appContext, new Handler(BaseApplication.getWorkerLooper()));
+                    mFacebookEndpoint.unlink();
                 } else {
                     // Start Facebook link request.
-                    mFacebookEndpoint.startLinkRequest(MyPreferenceActivity.this, null, new Handler(BaseApplication.getWorkerLooper()));
+                    mFacebookEndpoint.startLinkRequest(MyPreferenceActivity.this, null);
                 }
                 return false;
             }
@@ -147,13 +143,12 @@ public class MyPreferenceActivity extends PreferenceActivity {
         mDropboxLinkPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference arg0) {
-                Context appContext = MyPreferenceActivity.this.getApplicationContext();
-                if (mDropboxEndpoint.isLinked(appContext)) {
+                if (mDropboxEndpoint.isLinked()) {
                     // Unlink from Dropbox.
-                    mDropboxEndpoint.unlink(appContext, new Handler(BaseApplication.getWorkerLooper()));
+                    mDropboxEndpoint.unlink();
                 } else {
                     // Start Dropbox link request.
-                    mDropboxEndpoint.startLinkRequest(MyPreferenceActivity.this, null, new Handler(BaseApplication.getWorkerLooper()));
+                    mDropboxEndpoint.startLinkRequest(MyPreferenceActivity.this, null);
                 }
                 return false;
             }
@@ -182,7 +177,7 @@ public class MyPreferenceActivity extends PreferenceActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         // Finish Facebook link request.
-        mFacebookEndpoint.onActivityResultImpl(this, null, new Handler(BaseApplication.getWorkerLooper()), requestCode, resultCode, data);
+        mFacebookEndpoint.onActivityResultImpl(this, null, requestCode, resultCode, data);
     }
 
     @Override
@@ -202,7 +197,7 @@ public class MyPreferenceActivity extends PreferenceActivity {
         updateDropboxPref(preferences);
 
         // Finish Dropbox link request.
-        mDropboxEndpoint.onResumeImpl(getApplicationContext(), new Handler(BaseApplication.getWorkerLooper()));
+        mDropboxEndpoint.onResumeImpl();
     }
 
     @Override
@@ -348,10 +343,10 @@ public class MyPreferenceActivity extends PreferenceActivity {
         int widgetRes = R.layout.pref_facebook_checkbox_unselected;
 
         // Check if linked to Facebook account.
-        boolean isLinked = mFacebookEndpoint.isLinked(this);
+        boolean isLinked = mFacebookEndpoint.isLinked();
         if (isLinked) {
             // Get account information.
-            String destinationDescription = mFacebookEndpoint.getDestinationDescription(this);
+            String destinationDescription = mFacebookEndpoint.getDestinationDescription();
             if (destinationDescription != null && destinationDescription.length() > 0) {
                 // Select linked title and widget resource.
                 titleRes = R.string.pref__facebook_link_title_linked;
@@ -389,10 +384,10 @@ public class MyPreferenceActivity extends PreferenceActivity {
         int widgetRes = R.layout.pref_dropbox_checkbox_unselected;
 
         // Check if linked to Dropbox account.
-        boolean isLinked = mDropboxEndpoint.isLinked(this);
+        boolean isLinked = mDropboxEndpoint.isLinked();
         if (isLinked) {
             // Get account information.
-            String destinationDescription = mDropboxEndpoint.getDestinationDescription(this);
+            String destinationDescription = mDropboxEndpoint.getDestinationDescription();
             if (destinationDescription != null && destinationDescription.length() > 0) {
                 // Select linked title and widget resource.
                 titleRes = R.string.pref__dropbox_link_title_linked;

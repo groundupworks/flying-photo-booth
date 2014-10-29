@@ -16,7 +16,7 @@
 package com.groundupworks.wings;
 
 import android.content.Context;
-import android.os.Handler;
+import android.os.Looper;
 
 /**
  * Dagger module for injecting classes into Wings.
@@ -33,16 +33,16 @@ public interface IWingsModule {
     public Context provideContext();
 
     /**
+     * Provides the {@link android.os.Looper} to run background tasks.
+     *
+     * @return the {@link android.os.Looper}.
+     */
+    public Looper provideLooper();
+
+    /**
      * Provides logger for debug messages.
      *
      * @return the {@link com.groundupworks.wings.IWingsLogger}.
      */
     public IWingsLogger provideLogger();
-
-    /**
-     * Provides {@link android.os.Handler} to post background tasks.
-     *
-     * @return the worker {@link android.os.Handler}.
-     */
-    public Handler provideWorkerHandler();
 }

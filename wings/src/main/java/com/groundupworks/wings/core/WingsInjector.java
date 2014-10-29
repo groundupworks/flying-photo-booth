@@ -15,6 +15,10 @@
  */
 package com.groundupworks.wings.core;
 
+import android.content.Context;
+import android.os.Looper;
+
+import com.groundupworks.wings.IWingsLogger;
 import com.groundupworks.wings.IWingsModule;
 
 import dagger.ObjectGraph;
@@ -55,5 +59,41 @@ public final class WingsInjector {
      */
     public static final <T> void inject(T instance) {
         sObjectGraph.inject(instance);
+    }
+
+    /**
+     * Gets the {@link android.content.Context} that Wings is running on.
+     *
+     * @return the {@link android.content.Context}.
+     */
+    public static final Context getApplicationContext() {
+        return sObjectGraph.get(Context.class);
+    }
+
+    /**
+     * Gets the {@link android.os.Looper} to run background tasks.
+     *
+     * @return the {@link android.os.Looper}.
+     */
+    public static final Looper getWorkerLooper() {
+        return sObjectGraph.get(Looper.class);
+    }
+
+    /**
+     * Gets the logger for debug messages.
+     *
+     * @return the {@link com.groundupworks.wings.IWingsLogger}.
+     */
+    public static final IWingsLogger getLogger() {
+        return sObjectGraph.get(IWingsLogger.class);
+    }
+
+    /**
+     * Gets the Wings database.
+     *
+     * @return the {@link com.groundupworks.wings.core.WingsDbHelper}.
+     */
+    public static final WingsDbHelper getDatabase() {
+        return sObjectGraph.get(WingsDbHelper.class);
     }
 }

@@ -323,14 +323,14 @@ public class PhotoStripController extends BaseController {
                     // Share to Facebook.
                     boolean facebookShared = false;
                     FacebookEndpoint facebookEndpoint = new FacebookEndpoint();
-                    if (facebookEndpoint.isLinked(context)) {
+                    if (facebookEndpoint.isLinked()) {
                         facebookShared = share(context, jpegPath, Wings.DESTINATION_FACEBOOK);
                     }
 
                     // Share to Dropbox.
                     boolean dropboxShared = false;
                     DropboxEndpoint dropboxEndpoint = new DropboxEndpoint();
-                    if (dropboxEndpoint.isLinked(context)) {
+                    if (dropboxEndpoint.isLinked()) {
                         dropboxShared = share(context, jpegPath, Wings.DESTINATION_DROPBOX);
                     }
 

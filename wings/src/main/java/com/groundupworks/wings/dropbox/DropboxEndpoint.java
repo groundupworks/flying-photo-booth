@@ -16,7 +16,6 @@
 package com.groundupworks.wings.dropbox;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -32,13 +31,13 @@ import com.dropbox.client2.exception.DropboxException;
 import com.dropbox.client2.exception.DropboxServerException;
 import com.dropbox.client2.exception.DropboxUnlinkedException;
 import com.dropbox.client2.session.AppKeyPair;
-import com.groundupworks.wings.IWingsEndpoint;
+import com.groundupworks.wings.AbstractWingsEndpoint;
 import com.groundupworks.wings.IWingsNotification;
 import com.groundupworks.wings.R;
 import com.groundupworks.wings.Wings;
-import com.groundupworks.wings.core.PersistenceFactory;
 import com.groundupworks.wings.core.ShareRequest;
 import com.groundupworks.wings.core.WingsDbHelper;
+import com.groundupworks.wings.core.WingsInjector;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -51,7 +50,7 @@ import java.util.List;
  *
  * @author Benedict Lau
  */
-public class DropboxEndpoint implements IWingsEndpoint {
+public class DropboxEndpoint extends AbstractWingsEndpoint {
 
     /**
      * Name of the folder for storing photo strips.
@@ -115,17 +114,13 @@ public class DropboxEndpoint implements IWingsEndpoint {
     /**
      * Links an account in a background thread. If unsuccessful, the link error is handled on a ui thread and a
      * {@link Toast} will be displayed.
-     *
-     * @param context       the {@link Context}.
-     * @param workerHandler a {@link android.os.Handler} to post background tasks.
      */
-    private void link(Context context, final Handler workerHandler) {
+    private void link() {
         synchronized (mDropboxApiLock) {
             if (mDropboxApi != null) {
-                final Context appContext = context.getApplicationContext();
                 final DropboxAPI<AndroidAuthSession> dropboxApi = mDropboxApi;
 
-                workerHandler.post(new Runnable() {
+                mHandler.post(new Runnable() {
 
                     @Override
                     public void run() {
@@ -147,14 +142,14 @@ public class DropboxEndpoint implements IWingsEndpoint {
                         // Validate account settings and store.
                         if (accountName != null && accountName.length() > 0 && shareUrl != null
                                 && shareUrl.length() > 0 && accessToken != null) {
-                            storeAccountParams(appContext, accountName, shareUrl, accessToken);
+                            storeAccountParams(accountName, shareUrl, accessToken);
                         } else {
                             // Handle error on ui thread.
                             Handler uiHandler = new Handler(Looper.getMainLooper());
                             uiHandler.post(new Runnable() {
                                 @Override
                                 public void run() {
-                                    handleLinkError(appContext, workerHandler);
+                                    handleLinkError();
                                 }
                             });
                         }
@@ -166,27 +161,20 @@ public class DropboxEndpoint implements IWingsEndpoint {
 
     /**
      * Handles an error case during the linking process.
-     *
-     * @param context       the {@link Context}.
-     * @param workerHandler a {@link android.os.Handler} to post background tasks.
      */
-    private void handleLinkError(Context context, Handler workerHandler) {
-        Context appContext = context.getApplicationContext();
-
+    private void handleLinkError() {
         // Show toast to indicate error during linking.
-        showLinkError(appContext);
+        showLinkError();
 
         // Unlink account to ensure proper reset.
-        unlink(appContext, workerHandler);
+        unlink();
     }
 
     /**
      * Displays the link error message.
-     *
-     * @param context the {@link Context}.
      */
-    private void showLinkError(Context context) {
-        Toast.makeText(context, context.getString(R.string.dropbox__error_link), Toast.LENGTH_SHORT).show();
+    private void showLinkError() {
+        Toast.makeText(mContext, mContext.getString(R.string.dropbox__error_link), Toast.LENGTH_SHORT).show();
     }
 
     /**
@@ -251,62 +239,53 @@ public class DropboxEndpoint implements IWingsEndpoint {
     /**
      * Stores the account params in persisted storage.
      *
-     * @param context     the {@link Context}.
      * @param accountName the user name associated with the account.
      * @param shareUrl    the share url associated with the account.
      * @param accessToken the access token.
      */
-    private void storeAccountParams(Context context, String accountName, String shareUrl, String accessToken) {
-        Context appContext = context.getApplicationContext();
-        Editor editor = PreferenceManager.getDefaultSharedPreferences(appContext).edit();
-        editor.putString(appContext.getString(R.string.dropbox__account_name_key), accountName);
-        editor.putString(appContext.getString(R.string.dropbox__share_url_key), shareUrl);
-        editor.putString(appContext.getString(R.string.dropbox__access_token_key), accessToken);
+    private void storeAccountParams(String accountName, String shareUrl, String accessToken) {
+        Editor editor = PreferenceManager.getDefaultSharedPreferences(mContext).edit();
+        editor.putString(mContext.getString(R.string.dropbox__account_name_key), accountName);
+        editor.putString(mContext.getString(R.string.dropbox__share_url_key), shareUrl);
+        editor.putString(mContext.getString(R.string.dropbox__access_token_key), accessToken);
 
         // Set preference to linked.
-        editor.putBoolean(appContext.getString(R.string.pref__dropbox_link_key), true);
+        editor.putBoolean(mContext.getString(R.string.pref__dropbox_link_key), true);
         editor.apply();
     }
 
     /**
      * Removes the account params from persisted storage.
-     *
-     * @param context the {@link Context}.
      */
-    private void removeAccountParams(Context context) {
-        Context appContext = context.getApplicationContext();
-        Editor editor = PreferenceManager.getDefaultSharedPreferences(appContext).edit();
-        editor.remove(appContext.getString(R.string.dropbox__account_name_key));
-        editor.remove(appContext.getString(R.string.dropbox__share_url_key));
-        editor.remove(appContext.getString(R.string.dropbox__access_token_key));
+    private void removeAccountParams() {
+        Editor editor = PreferenceManager.getDefaultSharedPreferences(mContext).edit();
+        editor.remove(mContext.getString(R.string.dropbox__account_name_key));
+        editor.remove(mContext.getString(R.string.dropbox__share_url_key));
+        editor.remove(mContext.getString(R.string.dropbox__access_token_key));
 
         // Set preference to unlinked.
-        editor.putBoolean(appContext.getString(R.string.pref__dropbox_link_key), false);
+        editor.putBoolean(mContext.getString(R.string.pref__dropbox_link_key), false);
         editor.apply();
     }
 
     /**
      * Gets the stored access token associated with the linked account.
      *
-     * @param context the {@link Context}.
      * @return the access token; or null if unlinked.
      */
-    private String getLinkedAccessToken(Context context) {
-        Context appContext = context.getApplicationContext();
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(appContext);
-        return preferences.getString(appContext.getString(R.string.dropbox__access_token_key), null);
+    private String getLinkedAccessToken() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mContext);
+        return preferences.getString(mContext.getString(R.string.dropbox__access_token_key), null);
     }
 
     /**
      * Gets the share url associated with the linked account.
      *
-     * @param context the {@link Context}.
      * @return the url; or null if unlinked.
      */
-    private String getLinkedShareUrl(Context context) {
-        Context appContext = context.getApplicationContext();
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(appContext);
-        return preferences.getString(appContext.getString(R.string.dropbox__share_url_key), null);
+    private String getLinkedShareUrl() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mContext);
+        return preferences.getString(mContext.getString(R.string.dropbox__share_url_key), null);
     }
 
     //
@@ -314,23 +293,22 @@ public class DropboxEndpoint implements IWingsEndpoint {
     //
 
     @Override
-    public void startLinkRequest(Activity activity, Fragment fragment, Handler workerHandler) {
-        Context appContext = activity.getApplicationContext();
+    public void startLinkRequest(Activity activity, Fragment fragment) {
         mIsLinkRequested = true;
 
-        AppKeyPair appKeyPair = new AppKeyPair(appContext.getString(R.string.dropbox__app_key),
-                appContext.getString(R.string.dropbox__app_secret));
+        AppKeyPair appKeyPair = new AppKeyPair(mContext.getString(R.string.dropbox__app_key),
+                mContext.getString(R.string.dropbox__app_secret));
         AndroidAuthSession session = new AndroidAuthSession(appKeyPair);
         synchronized (mDropboxApiLock) {
             mDropboxApi = new DropboxAPI<AndroidAuthSession>(session);
-            mDropboxApi.getSession().startOAuth2Authentication(appContext);
+            mDropboxApi.getSession().startOAuth2Authentication(mContext);
         }
     }
 
     @Override
-    public void unlink(Context context, Handler workerHandler) {
+    public void unlink() {
         // Unlink in persisted storage.
-        removeAccountParams(context);
+        removeAccountParams();
 
         // Unlink any current session.
         synchronized (mDropboxApiLock) {
@@ -344,73 +322,71 @@ public class DropboxEndpoint implements IWingsEndpoint {
         }
 
         // Remove existing share requests in a background thread.
-        workerHandler.post(new Runnable() {
+        mHandler.post(new Runnable() {
 
             @Override
             public void run() {
-                PersistenceFactory.getInstance().getPersistence().deleteShareRequests(Wings.DESTINATION_DROPBOX);
+                mDatabase.deleteShareRequests(Wings.DESTINATION_DROPBOX);
             }
         });
     }
 
     @Override
-    public boolean isLinked(Context context) {
-        Context appContext = context.getApplicationContext();
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(appContext);
-        return preferences.getBoolean(appContext.getString(R.string.pref__dropbox_link_key), false);
+    public boolean isLinked() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mContext);
+        return preferences.getBoolean(mContext.getString(R.string.pref__dropbox_link_key), false);
     }
 
     @Override
-    public void onResumeImpl(Context context, Handler workerHandler) {
+    public void onResumeImpl() {
         if (mIsLinkRequested) {
             // Check if link request was successful.
             if (finishLinkRequest()) {
-                link(context, workerHandler);
+                link();
             } else {
-                handleLinkError(context, workerHandler);
+                handleLinkError();
             }
         }
     }
 
     @Override
-    public void onActivityResultImpl(Activity activity, Fragment fragment, Handler workerHandler, int requestCode, int resultCode, Intent data) {
+    public void onActivityResultImpl(Activity activity, Fragment fragment, int requestCode, int resultCode, Intent data) {
         // Do nothing.
     }
 
     @Override
-    public String getLinkedAccountName(Context context) {
-        Context appContext = context.getApplicationContext();
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(appContext);
-        return preferences.getString(appContext.getString(R.string.dropbox__account_name_key), null);
+    public String getLinkedAccountName() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mContext);
+        return preferences.getString(mContext.getString(R.string.dropbox__account_name_key), null);
     }
 
     @Override
-    public String getDestinationDescription(Context context) {
+    public String getDestinationDescription() {
         String destinationDescription = null;
-        String accountName = getLinkedAccountName(context);
-        String shareUrl = getLinkedShareUrl(context);
+        String accountName = getLinkedAccountName();
+        String shareUrl = getLinkedShareUrl();
         if (accountName != null && accountName.length() > 0 && shareUrl != null && shareUrl.length() > 0) {
-            destinationDescription = context.getString(R.string.dropbox__destination_description, accountName, shareUrl);
+            destinationDescription = mContext.getString(R.string.dropbox__destination_description, accountName, shareUrl);
         }
         return destinationDescription;
     }
 
     @Override
-    public IWingsNotification processShareRequests(Context context, Handler workerHandler) {
+    public IWingsNotification processShareRequests() {
         int shared = 0;
 
         // Get access token associated with the linked account.
-        String accessToken = getLinkedAccessToken(context);
-        String shareUrl = getLinkedShareUrl(context);
+        String accessToken = getLinkedAccessToken();
+        String shareUrl = getLinkedShareUrl();
         if (accessToken != null && shareUrl != null) {
             // Get share requests for Dropbox.
-            WingsDbHelper wingsDbHelper = PersistenceFactory.getInstance().getPersistence();
+            WingsDbHelper wingsDbHelper = WingsInjector.getDatabase();
             List<ShareRequest> shareRequests = wingsDbHelper.checkoutShareRequests(Wings.DESTINATION_DROPBOX);
 
             if (!shareRequests.isEmpty()) {
                 // Start new session with the persisted access token.
-                AppKeyPair appKeys = new AppKeyPair(context.getString(R.string.dropbox__app_key),
-                        context.getString(R.string.dropbox__app_secret));
+                AppKeyPair appKeys = new AppKeyPair(mContext.getString(R.string.dropbox__app_key),
+                        mContext.getString(R.string.dropbox__app_secret));
                 AndroidAuthSession session = new AndroidAuthSession(appKeys);
                 session.setOAuth2AccessToken(accessToken);
                 DropboxAPI<AndroidAuthSession> dropboxApi = new DropboxAPI<AndroidAuthSession>(session);
@@ -434,7 +410,7 @@ public class DropboxEndpoint implements IWingsEndpoint {
                         wingsDbHelper.markFailed(shareRequest.getId());
 
                         // Update account linking state to unlinked.
-                        unlink(context, workerHandler);
+                        unlink();
                     } catch (DropboxException e) {
                         wingsDbHelper.markFailed(shareRequest.getId());
                     } catch (IllegalArgumentException e) {
@@ -460,7 +436,7 @@ public class DropboxEndpoint implements IWingsEndpoint {
         // Construct notification representing share results.
         DropboxNotification notification = null;
         if (shared > 0) {
-            notification = new DropboxNotification(context, shareUrl, shared, shareUrl);
+            notification = new DropboxNotification(mContext, shareUrl, shared, shareUrl);
         }
 
         return notification;

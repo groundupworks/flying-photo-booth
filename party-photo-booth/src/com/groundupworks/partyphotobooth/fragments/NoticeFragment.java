@@ -106,7 +106,7 @@ public class NoticeFragment extends Fragment {
         boolean dropboxShared = args.getBoolean(FRAGMENT_BUNDLE_KEY_DROPBOX_SHARED);
 
         FacebookEndpoint facebookEndpoint = new FacebookEndpoint();
-        String facebookDescription = facebookEndpoint.getDestinationDescription(activity);
+        String facebookDescription = facebookEndpoint.getDestinationDescription();
         if (facebookShared && facebookDescription != null && facebookDescription.length() > 0) {
             mFacebookNotice.setText(facebookDescription);
             mFacebookNotice.setVisibility(View.VISIBLE);
@@ -114,7 +114,7 @@ public class NoticeFragment extends Fragment {
         }
 
         DropboxEndpoint dropboxEndpoint = new DropboxEndpoint();
-        String dropboxDescription = dropboxEndpoint.getDestinationDescription(activity);
+        String dropboxDescription = dropboxEndpoint.getDestinationDescription();
         if (dropboxShared && dropboxDescription != null && dropboxDescription.length() > 0) {
             mDropboxNotice.setText(dropboxDescription);
             mDropboxNotice.setVisibility(View.VISIBLE);

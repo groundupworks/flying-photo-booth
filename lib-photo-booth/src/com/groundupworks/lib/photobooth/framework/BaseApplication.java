@@ -17,13 +17,13 @@ package com.groundupworks.lib.photobooth.framework;
 
 import android.app.Application;
 import android.content.Context;
-import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
 
 import com.groundupworks.lib.photobooth.helpers.LogsHelper;
-import com.groundupworks.lib.photobooth.wings.MyWingsModule;
 import com.groundupworks.wings.Wings;
+import com.groundupworks.wings.dropbox.DropboxEndpoint;
+import com.groundupworks.wings.facebook.FacebookEndpoint;
 
 /**
  * Main {@link Application} class.
@@ -50,7 +50,7 @@ public abstract class BaseApplication extends Application {
         sWorkerThread.start();
 
         // Initialize Wings.
-        Wings.init(new MyWingsModule(getApplicationContext(), new LogsHelper(), new Handler(getWorkerLooper())));
+        Wings.init(new Wings.DefaultModule(this, getWorkerLooper(), new LogsHelper()), FacebookEndpoint.class, DropboxEndpoint.class);
     }
 
     //
