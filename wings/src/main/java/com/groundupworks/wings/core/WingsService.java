@@ -26,7 +26,7 @@ import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.support.v4.app.NotificationCompat;
 
-import com.groundupworks.wings.AbstractWingsEndpoint;
+import com.groundupworks.wings.WingsEndpoint;
 import com.groundupworks.wings.IWingsLogger;
 import com.groundupworks.wings.IWingsNotification;
 import com.groundupworks.wings.R;
@@ -107,8 +107,8 @@ public class WingsService extends IntentService {
             mDatabase.resetProcessingShareRequests();
 
             // Process share requests.
-            Set<AbstractWingsEndpoint> endpoints = Wings.getEndpoints();
-            for (AbstractWingsEndpoint endpoint : endpoints) {
+            Set<WingsEndpoint> endpoints = Wings.getEndpoints();
+            for (WingsEndpoint endpoint : endpoints) {
                 if (endpoint.isLinked()) {
                     Set<IWingsNotification> notifications = endpoint.processShareRequests();
                     if (notifications != null) {

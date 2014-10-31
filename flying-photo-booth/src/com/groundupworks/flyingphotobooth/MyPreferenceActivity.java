@@ -29,7 +29,7 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 
-import com.groundupworks.wings.AbstractWingsEndpoint;
+import com.groundupworks.wings.WingsEndpoint;
 import com.groundupworks.wings.Wings;
 import com.groundupworks.wings.dropbox.DropboxEndpoint;
 import com.groundupworks.wings.facebook.FacebookEndpoint;
@@ -147,8 +147,8 @@ public class MyPreferenceActivity extends PreferenceActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         // Call Wings APIs.
-        Set<AbstractWingsEndpoint> endpoints = Wings.getEndpoints();
-        for (AbstractWingsEndpoint endpoint : endpoints) {
+        Set<WingsEndpoint> endpoints = Wings.getEndpoints();
+        for (WingsEndpoint endpoint : endpoints) {
             endpoint.onActivityResultImpl(this, null, requestCode, resultCode, data);
         }
     }
@@ -170,8 +170,8 @@ public class MyPreferenceActivity extends PreferenceActivity {
         updateDropboxPref(preferences);
 
         // Call Wings APIs.
-        Set<AbstractWingsEndpoint> endpoints = Wings.getEndpoints();
-        for (AbstractWingsEndpoint endpoint : endpoints) {
+        Set<WingsEndpoint> endpoints = Wings.getEndpoints();
+        for (WingsEndpoint endpoint : endpoints) {
             endpoint.onResumeImpl();
         }
     }
@@ -224,14 +224,14 @@ public class MyPreferenceActivity extends PreferenceActivity {
         /**
          * The Wings endpoint.
          */
-        private AbstractWingsEndpoint mEndpoint;
+        private WingsEndpoint mEndpoint;
 
         /**
          * Constructor.
          *
          * @param endpointClazz the {@link java.lang.Class} of the Wings endpoint to toggle linking.
          */
-        private MyLinkPreferenceClickListener(Class<? extends AbstractWingsEndpoint> endpointClazz) {
+        private MyLinkPreferenceClickListener(Class<? extends WingsEndpoint> endpointClazz) {
             mEndpoint = Wings.getEndpoint(endpointClazz);
         }
 
@@ -351,7 +351,7 @@ public class MyPreferenceActivity extends PreferenceActivity {
         int widgetRes = R.layout.pref_facebook_checkbox_unselected;
 
         // Check if linked to Facebook account.
-        AbstractWingsEndpoint endpoint = Wings.getEndpoint(FacebookEndpoint.class);
+        WingsEndpoint endpoint = Wings.getEndpoint(FacebookEndpoint.class);
         boolean isLinked = endpoint.isLinked();
         if (isLinked) {
             // Get account information.
@@ -393,7 +393,7 @@ public class MyPreferenceActivity extends PreferenceActivity {
         int widgetRes = R.layout.pref_dropbox_checkbox_unselected;
 
         // Check if linked to Dropbox account.
-        AbstractWingsEndpoint endpoint = Wings.getEndpoint(DropboxEndpoint.class);
+        WingsEndpoint endpoint = Wings.getEndpoint(DropboxEndpoint.class);
         boolean isLinked = endpoint.isLinked();
         if (isLinked) {
             // Get account information.

@@ -32,7 +32,7 @@ import java.util.Set;
  *
  * @author Benedict Lau
  */
-public abstract class AbstractWingsEndpoint {
+public abstract class WingsEndpoint {
 
     /**
      * The logger for debug messages.

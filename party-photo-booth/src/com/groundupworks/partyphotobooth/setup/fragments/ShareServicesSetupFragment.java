@@ -27,7 +27,7 @@ import android.widget.TextView;
 
 import com.groundupworks.partyphotobooth.R;
 import com.groundupworks.partyphotobooth.helpers.PreferencesHelper;
-import com.groundupworks.wings.AbstractWingsEndpoint;
+import com.groundupworks.wings.WingsEndpoint;
 import com.groundupworks.wings.Wings;
 import com.groundupworks.wings.dropbox.DropboxEndpoint;
 import com.groundupworks.wings.facebook.FacebookEndpoint;
@@ -139,8 +139,8 @@ public class ShareServicesSetupFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
 
         // Call Wings APIs.
-        Set<AbstractWingsEndpoint> endpoints = Wings.getEndpoints();
-        for (AbstractWingsEndpoint endpoint : endpoints) {
+        Set<WingsEndpoint> endpoints = Wings.getEndpoints();
+        for (WingsEndpoint endpoint : endpoints) {
             endpoint.onActivityResultImpl(getActivity(), this, requestCode, resultCode, data);
         }
     }
@@ -161,8 +161,8 @@ public class ShareServicesSetupFragment extends Fragment {
         updateNoticeEnabled();
 
         // Call Wings APIs.
-        Set<AbstractWingsEndpoint> endpoints = Wings.getEndpoints();
-        for (AbstractWingsEndpoint endpoint : endpoints) {
+        Set<WingsEndpoint> endpoints = Wings.getEndpoints();
+        for (WingsEndpoint endpoint : endpoints) {
             endpoint.onResumeImpl();
         }
     }
@@ -197,7 +197,7 @@ public class ShareServicesSetupFragment extends Fragment {
      * Updates the Facebook link ui.
      */
     private void updateFacebook() {
-        AbstractWingsEndpoint endpoint = Wings.getEndpoint(FacebookEndpoint.class);
+        WingsEndpoint endpoint = Wings.getEndpoint(FacebookEndpoint.class);
         if (endpoint.isLinked()) {
             String destinationDescription = endpoint.getDestinationDescription(FacebookEndpoint.DestinationId.PROFILE);
             mFacebookStatus.setText(destinationDescription);
@@ -214,7 +214,7 @@ public class ShareServicesSetupFragment extends Fragment {
      * Updates the Dropbox link ui.
      */
     private void updateDropbox() {
-        AbstractWingsEndpoint endpoint = Wings.getEndpoint(DropboxEndpoint.class);
+        WingsEndpoint endpoint = Wings.getEndpoint(DropboxEndpoint.class);
         if (endpoint.isLinked()) {
             String destinationDescription = endpoint.getDestinationDescription(DropboxEndpoint.DestinationId.APP_FOLDER);
             mDropboxStatus.setText(destinationDescription);
@@ -233,8 +233,8 @@ public class ShareServicesSetupFragment extends Fragment {
     private void updateNoticeEnabled() {
         // The notice screen is only relevant if there is at least one share service enabled.
         boolean isEnabled = false;
-        Set<AbstractWingsEndpoint> endpoints = Wings.getEndpoints();
-        for (AbstractWingsEndpoint endpoint : endpoints) {
+        Set<WingsEndpoint> endpoints = Wings.getEndpoints();
+        for (WingsEndpoint endpoint : endpoints) {
             if (endpoint.isLinked()) {
                 isEnabled = true;
                 break;
@@ -289,14 +289,14 @@ public class ShareServicesSetupFragment extends Fragment {
         /**
          * The Wings endpoint.
          */
-        private AbstractWingsEndpoint mEndpoint;
+        private WingsEndpoint mEndpoint;
 
         /**
          * Constructor.
          *
          * @param endpointClazz the {@link java.lang.Class} of the Wings endpoint to toggle linking.
          */
-        private MyLinkOnClickListener(Class<? extends AbstractWingsEndpoint> endpointClazz) {
+        private MyLinkOnClickListener(Class<? extends WingsEndpoint> endpointClazz) {
             mEndpoint = Wings.getEndpoint(endpointClazz);
         }
 

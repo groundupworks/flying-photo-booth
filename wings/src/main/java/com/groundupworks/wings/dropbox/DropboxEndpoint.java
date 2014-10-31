@@ -31,7 +31,7 @@ import com.dropbox.client2.exception.DropboxException;
 import com.dropbox.client2.exception.DropboxServerException;
 import com.dropbox.client2.exception.DropboxUnlinkedException;
 import com.dropbox.client2.session.AppKeyPair;
-import com.groundupworks.wings.AbstractWingsEndpoint;
+import com.groundupworks.wings.WingsEndpoint;
 import com.groundupworks.wings.IWingsNotification;
 import com.groundupworks.wings.R;
 import com.groundupworks.wings.WingsDestination;
@@ -50,7 +50,7 @@ import java.util.Set;
  *
  * @author Benedict Lau
  */
-public class DropboxEndpoint extends AbstractWingsEndpoint {
+public class DropboxEndpoint extends WingsEndpoint {
 
     /**
      * Dropbox endpoint id.

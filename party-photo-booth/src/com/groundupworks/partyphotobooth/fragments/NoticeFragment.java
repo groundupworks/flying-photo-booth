@@ -16,7 +16,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.groundupworks.partyphotobooth.R;
-import com.groundupworks.wings.AbstractWingsEndpoint;
+import com.groundupworks.wings.WingsEndpoint;
 import com.groundupworks.wings.Wings;
 import com.groundupworks.wings.dropbox.DropboxEndpoint;
 import com.groundupworks.wings.facebook.FacebookEndpoint;
@@ -106,7 +106,7 @@ public class NoticeFragment extends Fragment {
         boolean facebookShared = args.getBoolean(FRAGMENT_BUNDLE_KEY_FACEBOOK_SHARED);
         boolean dropboxShared = args.getBoolean(FRAGMENT_BUNDLE_KEY_DROPBOX_SHARED);
 
-        AbstractWingsEndpoint facebookEndpoint = Wings.getEndpoint(FacebookEndpoint.class);
+        WingsEndpoint facebookEndpoint = Wings.getEndpoint(FacebookEndpoint.class);
         String facebookDescription = facebookEndpoint.getDestinationDescription(FacebookEndpoint.DestinationId.PROFILE);
         if (facebookShared && facebookDescription != null && facebookDescription.length() > 0) {
             mFacebookNotice.setText(facebookDescription);
@@ -114,7 +114,7 @@ public class NoticeFragment extends Fragment {
             mIsScreenValid = true;
         }
 
-        AbstractWingsEndpoint dropboxEndpoint = Wings.getEndpoint(DropboxEndpoint.class);
+        WingsEndpoint dropboxEndpoint = Wings.getEndpoint(DropboxEndpoint.class);
         String dropboxDescription = dropboxEndpoint.getDestinationDescription(DropboxEndpoint.DestinationId.APP_FOLDER);
         if (dropboxShared && dropboxDescription != null && dropboxDescription.length() > 0) {
             mDropboxNotice.setText(dropboxDescription);

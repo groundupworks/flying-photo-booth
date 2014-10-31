@@ -42,7 +42,7 @@ import com.facebook.SessionDefaultAudience;
 import com.facebook.SessionLoginBehavior;
 import com.facebook.SessionState;
 import com.facebook.model.GraphObject;
-import com.groundupworks.wings.AbstractWingsEndpoint;
+import com.groundupworks.wings.WingsEndpoint;
 import com.groundupworks.wings.IWingsNotification;
 import com.groundupworks.wings.R;
 import com.groundupworks.wings.WingsDestination;
@@ -63,7 +63,7 @@ import java.util.Set;
  *
  * @author Benedict Lau
  */
-public class FacebookEndpoint extends AbstractWingsEndpoint {
+public class FacebookEndpoint extends WingsEndpoint {
 
     /**
      * Facebook endpoint id.

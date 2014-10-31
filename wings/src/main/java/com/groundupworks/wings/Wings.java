@@ -49,7 +49,7 @@ public final class Wings {
      * returned through the APIs, the set itself is never exposed, only copies of it, so the set is
      * essentially immutable after a successful initialization.
      */
-    private static volatile Set<AbstractWingsEndpoint> sEndpoints = new HashSet<AbstractWingsEndpoint>();
+    private static volatile Set<WingsEndpoint> sEndpoints = new HashSet<WingsEndpoint>();
 
     /**
      * Initializer used to pass dependencies for Wings. This method must be called in the
@@ -63,15 +63,15 @@ public final class Wings {
      * has been returned, calling this method will have no effect, and the return value will always be
      * {@link true}.
      */
-    public static synchronized final boolean init(IWingsModule module, Class<? extends AbstractWingsEndpoint>... endpointClazzes) {
+    public static synchronized final boolean init(IWingsModule module, Class<? extends WingsEndpoint>... endpointClazzes) {
         // No-op if already initialized.
         if (!sIsInitialized) {
             WingsInjector.init(module);
             try {
-                final Set<AbstractWingsEndpoint> endpoints = new HashSet<AbstractWingsEndpoint>();
+                final Set<WingsEndpoint> endpoints = new HashSet<WingsEndpoint>();
                 final Set<Integer> endpointIds = new HashSet<Integer>();
                 for (Class clazz : endpointClazzes) {
-                    AbstractWingsEndpoint endpoint = (AbstractWingsEndpoint) clazz.newInstance();
+                    WingsEndpoint endpoint = (WingsEndpoint) clazz.newInstance();
                     endpoints.add(endpoint);
 
                     // Ensure that endpoint ids are unique.
@@ -97,11 +97,11 @@ public final class Wings {
      * @return the set of endpoint instances.
      * @throws IllegalStateException Wings must be initialized. See {@link Wings#init(IWingsModule, Class[])}.
      */
-    public static final Set<AbstractWingsEndpoint> getEndpoints() throws IllegalStateException {
+    public static final Set<WingsEndpoint> getEndpoints() throws IllegalStateException {
         if (!sIsInitialized) {
             throw new IllegalStateException("Wings must be initialized. See Wings#init().");
         }
-        return new HashSet<AbstractWingsEndpoint>(sEndpoints);
+        return new HashSet<WingsEndpoint>(sEndpoints);
     }
 
     /**
@@ -111,12 +111,12 @@ public final class Wings {
      * @return the endpoint instance; or {@code null} if unavailable.
      * @throws IllegalStateException Wings must be initialized. See {@link Wings#init(IWingsModule, Class[])}.
      */
-    public static final AbstractWingsEndpoint getEndpoint(Class<? extends AbstractWingsEndpoint> endpointClazz) {
+    public static final WingsEndpoint getEndpoint(Class<? extends WingsEndpoint> endpointClazz) {
         if (!sIsInitialized) {
             throw new IllegalStateException("Wings must be initialized. See Wings#init().");
         }
-        AbstractWingsEndpoint selectedEndpoint = null;
-        for (AbstractWingsEndpoint endpoint : sEndpoints) {
+        WingsEndpoint selectedEndpoint = null;
+        for (WingsEndpoint endpoint : sEndpoints) {
             if (endpointClazz.isInstance(endpoint)) {
                 selectedEndpoint = endpoint;
                 break;

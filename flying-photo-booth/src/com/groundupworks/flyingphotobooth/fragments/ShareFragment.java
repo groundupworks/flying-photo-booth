@@ -41,7 +41,7 @@ import com.groundupworks.flyingphotobooth.controllers.ShareController;
 import com.groundupworks.lib.photobooth.framework.ControllerBackedFragment;
 import com.groundupworks.lib.photobooth.helpers.BeamHelper;
 import com.groundupworks.lib.photobooth.helpers.ImageHelper;
-import com.groundupworks.wings.AbstractWingsEndpoint;
+import com.groundupworks.wings.WingsEndpoint;
 import com.groundupworks.wings.Wings;
 import com.groundupworks.wings.dropbox.DropboxEndpoint;
 import com.groundupworks.wings.facebook.FacebookEndpoint;
@@ -107,7 +107,7 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
     /**
      * The Facebook Wings endpoint.
      */
-    private AbstractWingsEndpoint mFacebookEndpoint = Wings.getEndpoint(FacebookEndpoint.class);
+    private WingsEndpoint mFacebookEndpoint = Wings.getEndpoint(FacebookEndpoint.class);
 
     /**
      * Listener for Facebook linking events. May be null.
@@ -121,7 +121,7 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
     /**
      * The Dropbox Wings endpoint.
      */
-    private AbstractWingsEndpoint mDropboxEndpoint = Wings.getEndpoint(DropboxEndpoint.class);
+    private WingsEndpoint mDropboxEndpoint = Wings.getEndpoint(DropboxEndpoint.class);
 
     /**
      * Listener for Dropbox linking events. May be null.
@@ -297,8 +297,8 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
         super.onActivityResult(requestCode, resultCode, data);
 
         // Call Wings APIs.
-        Set<AbstractWingsEndpoint> endpoints = Wings.getEndpoints();
-        for (AbstractWingsEndpoint endpoint : endpoints) {
+        Set<WingsEndpoint> endpoints = Wings.getEndpoints();
+        for (WingsEndpoint endpoint : endpoints) {
             endpoint.onActivityResultImpl(getActivity(), ShareFragment.this, requestCode, resultCode, data);
         }
     }
@@ -308,8 +308,8 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
         super.onResume();
 
         // Call Wings APIs.
-        Set<AbstractWingsEndpoint> endpoints = Wings.getEndpoints();
-        for (AbstractWingsEndpoint endpoint : endpoints) {
+        Set<WingsEndpoint> endpoints = Wings.getEndpoints();
+        for (WingsEndpoint endpoint : endpoints) {
             endpoint.onResumeImpl();
         }
     }
