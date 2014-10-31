@@ -111,7 +111,7 @@ public final class Wings {
      * @return the endpoint instance; or {@code null} if unavailable.
      * @throws IllegalStateException Wings must be initialized. See {@link Wings#init(IWingsModule, Class[])}.
      */
-    public static final WingsEndpoint getEndpoint(Class<? extends WingsEndpoint> endpointClazz) {
+    public static final WingsEndpoint getEndpoint(Class<? extends WingsEndpoint> endpointClazz) throws IllegalStateException {
         if (!sIsInitialized) {
             throw new IllegalStateException("Wings must be initialized. See Wings#init().");
         }
@@ -134,7 +134,7 @@ public final class Wings {
      * @return true if successful; false otherwise.
      * @throws IllegalStateException Wings must be initialized. See {@link Wings#init(IWingsModule, Class[])}.
      */
-    public static boolean share(String filePath, WingsDestination destination) {
+    public static boolean share(String filePath, WingsDestination destination) throws IllegalStateException {
         if (!sIsInitialized) {
             throw new IllegalStateException("Wings must be initialized. See Wings#init().");
         }
