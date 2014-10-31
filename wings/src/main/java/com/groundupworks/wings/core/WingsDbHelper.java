@@ -173,7 +173,7 @@ public class WingsDbHelper extends SQLiteOpenHelper {
             isSuccessful = db.insert(ShareRequestTable.NAME, null, values) != ID_ERROR;
 
             sLogger.log(WingsDbHelper.class, "createShareRequest", "isSuccessful=" + isSuccessful + " filePath="
-                    + filePath + " destination=" + destination);
+                    + filePath + " destination=" + destination.getHash());
         } catch (SQLException e) {
             // Do nothing.
         } finally {
@@ -205,9 +205,9 @@ public class WingsDbHelper extends SQLiteOpenHelper {
 
             // Get all records for the requested destination in the pending state.
             cursor = db.query(ShareRequestTable.NAME, new String[]{ShareRequestTable.COLUMN_ID,
-                            ShareRequestTable.COLUMN_FILE_PATH}, WHERE_CLAUSE_BY_DESTINATION_AND_STATE,
-                    new String[]{String.valueOf(destination.getHash()), String.valueOf(ShareRequest.STATE_PENDING)}, null,
-                    null, SORT_ORDER_TIME_CREATED
+                            ShareRequestTable.COLUMN_FILE_PATH, ShareRequestTable.COLUMN_DESTINATION},
+                    WHERE_CLAUSE_BY_DESTINATION_AND_STATE, new String[]{String.valueOf(destination.getHash()),
+                            String.valueOf(ShareRequest.STATE_PENDING)}, null, null, SORT_ORDER_TIME_CREATED
             );
 
             if (cursor != null && cursor.moveToFirst()) {
@@ -227,7 +227,7 @@ public class WingsDbHelper extends SQLiteOpenHelper {
                         shareRequests.add(new ShareRequest(id, filePath, resultDestination));
 
                         sLogger.log(WingsDbHelper.class, "checkoutShareRequests", "id=" + id + " filePath="
-                                + filePath + " destination=" + resultDestination);
+                                + filePath + " destination=" + resultDestination.getHash());
                     }
                 } while (cursor.moveToNext());
             }
@@ -256,8 +256,8 @@ public class WingsDbHelper extends SQLiteOpenHelper {
             int recordsDeleted = db.delete(ShareRequestTable.NAME, WHERE_CLAUSE_BY_DESTINATION,
                     new String[]{String.valueOf(destination.getHash())});
 
-            sLogger.log(WingsDbHelper.class, "deleteShareRequests", "destination=" + destination + " rowsDeleted="
-                    + recordsDeleted);
+            sLogger.log(WingsDbHelper.class, "deleteShareRequests", "destination=" + destination.getHash()
+                    + " rowsDeleted=" + recordsDeleted);
         } catch (SQLException e) {
             // Do nothing.
         } finally {
