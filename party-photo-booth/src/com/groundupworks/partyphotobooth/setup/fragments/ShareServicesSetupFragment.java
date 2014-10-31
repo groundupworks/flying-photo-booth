@@ -270,10 +270,10 @@ public class ShareServicesSetupFragment extends Fragment {
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
             Activity activity = getActivity();
             if (activity != null && !activity.isFinishing()) {
-                if (key.equals(getString(R.string.pref__facebook_link_key))) {
+                if (key.equals(getString(R.string.facebook__link_key))) {
                     updateFacebook();
                     updateNoticeEnabled();
-                } else if (key.equals(getString(R.string.pref__dropbox_link_key))) {
+                } else if (key.equals(getString(R.string.facebook__link_key))) {
                     updateDropbox();
                     updateNoticeEnabled();
                 }

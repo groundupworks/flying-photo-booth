@@ -58,16 +58,6 @@ public class DropboxEndpoint extends AbstractWingsEndpoint {
     private static final int ENDPOINT_ID = 1;
 
     /**
-     * Name of the folder for storing photo strips.
-     */
-    private static final String FOLDER_NAME_PHOTO_STRIPS = "Photo Strips";
-
-    /**
-     * Path to the directory for storing photo strips.
-     */
-    private static final String PATH_PHOTO_STRIPS = "/" + FOLDER_NAME_PHOTO_STRIPS;
-
-    /**
      * A lock object used to synchronize access on {@link #mDropboxApi}.
      */
     private Object mDropboxApiLock = new Object();
@@ -135,8 +125,8 @@ public class DropboxEndpoint extends AbstractWingsEndpoint {
 
                         // Request params.
                         synchronized (mDropboxApiLock) {
-                            // Create directory for storing photo strips.
-                            if (createPhotoStripFolder(dropboxApi)) {
+                            // Create directory for storing photos.
+                            if (createPhotoFolder(dropboxApi)) {
                                 // Get account params.
                                 accountName = requestAccountName(dropboxApi);
                                 shareUrl = requestShareUrl(dropboxApi);
@@ -183,17 +173,17 @@ public class DropboxEndpoint extends AbstractWingsEndpoint {
     }
 
     /**
-     * Creates a directory for photo strips if one does not already exist. If the folder already exists, this call will
+     * Creates a directory for photos if one does not already exist. If the folder already exists, this call will
      * do nothing.
      *
      * @param dropboxApi the {@link DropboxAPI}.
      * @return true if the directory is created or it already exists; false otherwise.
      */
-    private boolean createPhotoStripFolder(DropboxAPI<AndroidAuthSession> dropboxApi) {
+    private boolean createPhotoFolder(DropboxAPI<AndroidAuthSession> dropboxApi) {
         boolean folderCreated = false;
         if (dropboxApi != null) {
             try {
-                dropboxApi.createFolder(FOLDER_NAME_PHOTO_STRIPS);
+                dropboxApi.createFolder(mContext.getString(R.string.dropbox__photo_folder));
                 folderCreated = true;
             } catch (DropboxException e) {
                 // Consider the folder created if the folder already exists.
@@ -233,7 +223,7 @@ public class DropboxEndpoint extends AbstractWingsEndpoint {
         String shareUrl = null;
         if (dropboxApi != null) {
             try {
-                shareUrl = dropboxApi.share(PATH_PHOTO_STRIPS).url;
+                shareUrl = dropboxApi.share("/" + mContext.getString(R.string.dropbox__photo_folder)).url;
             } catch (DropboxException e) {
                 // Do nothing.
             }
@@ -255,7 +245,7 @@ public class DropboxEndpoint extends AbstractWingsEndpoint {
         editor.putString(mContext.getString(R.string.dropbox__access_token_key), accessToken);
 
         // Set preference to linked.
-        editor.putBoolean(mContext.getString(R.string.pref__dropbox_link_key), true);
+        editor.putBoolean(mContext.getString(R.string.dropbox__link_key), true);
         editor.apply();
     }
 
@@ -269,7 +259,7 @@ public class DropboxEndpoint extends AbstractWingsEndpoint {
         editor.remove(mContext.getString(R.string.dropbox__access_token_key));
 
         // Set preference to unlinked.
-        editor.putBoolean(mContext.getString(R.string.pref__dropbox_link_key), false);
+        editor.putBoolean(mContext.getString(R.string.dropbox__link_key), false);
         editor.apply();
     }
 
@@ -344,7 +334,7 @@ public class DropboxEndpoint extends AbstractWingsEndpoint {
     @Override
     public boolean isLinked() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mContext);
-        return preferences.getBoolean(mContext.getString(R.string.pref__dropbox_link_key), false);
+        return preferences.getBoolean(mContext.getString(R.string.dropbox__link_key), false);
     }
 
     @Override
@@ -410,7 +400,7 @@ public class DropboxEndpoint extends AbstractWingsEndpoint {
                         inputStream = new FileInputStream(file);
 
                         // Upload file.
-                        dropboxApi.putFile(PATH_PHOTO_STRIPS + "/" + file.getName(), inputStream, file.length(), null,
+                        dropboxApi.putFile("/" + mContext.getString(R.string.dropbox__photo_folder) + "/" + file.getName(), inputStream, file.length(), null,
                                 null);
 
                         // Mark as successfully processed.

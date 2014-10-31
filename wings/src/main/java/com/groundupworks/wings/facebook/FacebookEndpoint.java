@@ -492,7 +492,7 @@ public class FacebookEndpoint extends AbstractWingsEndpoint {
         editor.putString(mContext.getString(R.string.facebook__album_graph_path_key), albumGraphPath);
 
         // Set preference to linked.
-        editor.putBoolean(mContext.getString(R.string.pref__facebook_link_key), true);
+        editor.putBoolean(mContext.getString(R.string.facebook__link_key), true);
         editor.apply();
     }
 
@@ -507,7 +507,7 @@ public class FacebookEndpoint extends AbstractWingsEndpoint {
         editor.remove(mContext.getString(R.string.facebook__album_graph_path_key));
 
         // Set preference to unlinked.
-        editor.putBoolean(mContext.getString(R.string.pref__facebook_link_key), false);
+        editor.putBoolean(mContext.getString(R.string.facebook__link_key), false);
         editor.apply();
     }
 
@@ -658,7 +658,7 @@ public class FacebookEndpoint extends AbstractWingsEndpoint {
     @Override
     public boolean isLinked() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mContext);
-        return preferences.getBoolean(mContext.getString(R.string.pref__facebook_link_key), false);
+        return preferences.getBoolean(mContext.getString(R.string.facebook__link_key), false);
     }
 
     @Override
