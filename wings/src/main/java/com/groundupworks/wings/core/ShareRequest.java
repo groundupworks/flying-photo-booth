@@ -15,6 +15,8 @@
  */
 package com.groundupworks.wings.core;
 
+import com.groundupworks.wings.WingsDestination;
+
 /**
  * A model object representing a share request.
  *
@@ -45,7 +47,7 @@ public class ShareRequest {
     /**
      * The destination of the share.
      */
-    private int mDestination;
+    private WingsDestination mDestination;
 
     /**
      * Package private constructor.
@@ -54,7 +56,7 @@ public class ShareRequest {
      * @param filePath    the local path to the file to share.
      * @param destination the destination of the share.
      */
-    ShareRequest(int id, String filePath, int destination) {
+    ShareRequest(int id, String filePath, WingsDestination destination) {
         mId = id;
         mFilePath = filePath;
         mDestination = destination;
@@ -81,7 +83,7 @@ public class ShareRequest {
     /**
      * @return the destination of the share.
      */
-    public int getDestination() {
+    public WingsDestination getDestination() {
         return mDestination;
     }
 }

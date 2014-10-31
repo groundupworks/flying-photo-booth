@@ -25,6 +25,8 @@ import com.groundupworks.wings.core.ShareRequest;
 import com.groundupworks.wings.core.WingsDbHelper;
 import com.groundupworks.wings.core.WingsInjector;
 
+import java.util.Set;
+
 /**
  * An interface to define an endpoint that Wings can share to.
  *
@@ -51,6 +53,13 @@ public abstract class AbstractWingsEndpoint {
      * The Wings database.
      */
     protected final WingsDbHelper mDatabase = WingsInjector.getDatabase();
+
+    /**
+     * The id that is unique to each endpoint.
+     *
+     * @return the endpoint id.
+     */
+    public abstract int getEndpointId();
 
     /**
      * Starts a link request.
@@ -102,17 +111,19 @@ public abstract class AbstractWingsEndpoint {
     public abstract String getLinkedAccountName();
 
     /**
-     * Gets the endpoint description associated with the linked account.
+     * Gets the description associated with the destination.
      *
-     * @return the endpoint description; or null if unlinked.
+     * @param destinationId the destination id.
+     * @return the destination description; or null if unlinked.
      */
-    public abstract String getDestinationDescription();
+    public abstract String getDestinationDescription(int destinationId);
 
     /**
      * Process share requests by sharing to the linked account. This should be called in a background
      * thread.
      *
-     * @return a {@link IWingsNotification} representing the results of the processed {@link ShareRequest}. May be null.
+     * @return a set of {@link IWingsNotification}s representing the results of the processed {@link ShareRequest}.
+     * May be null or an empty set.
      */
-    public abstract IWingsNotification processShareRequests();
+    public abstract Set<IWingsNotification> processShareRequests();
 }

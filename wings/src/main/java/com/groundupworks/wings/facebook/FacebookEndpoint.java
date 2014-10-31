@@ -45,7 +45,7 @@ import com.facebook.model.GraphObject;
 import com.groundupworks.wings.AbstractWingsEndpoint;
 import com.groundupworks.wings.IWingsNotification;
 import com.groundupworks.wings.R;
-import com.groundupworks.wings.Wings;
+import com.groundupworks.wings.WingsDestination;
 import com.groundupworks.wings.core.ShareRequest;
 
 import org.json.JSONObject;
@@ -53,8 +53,10 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * A helper class for linking and sharing to Facebook.
@@ -62,6 +64,11 @@ import java.util.List;
  * @author Benedict Lau
  */
 public class FacebookEndpoint extends AbstractWingsEndpoint {
+
+    /**
+     * Facebook endpoint id.
+     */
+    private static final int ENDPOINT_ID = 0;
 
     /**
      * Timeout value for http requests.
@@ -95,7 +102,7 @@ public class FacebookEndpoint extends AbstractWingsEndpoint {
     /**
      * Request code to use for {@link Activity#startActivityForResult(android.content.Intent, int)}.
      */
-    private static final int SETTINGS_REQUEST_CODE = 369;
+    private static final int SETTINGS_REQUEST_CODE = ENDPOINT_ID;
 
     //
     // Link request state machine.
@@ -604,6 +611,11 @@ public class FacebookEndpoint extends AbstractWingsEndpoint {
     //
 
     @Override
+    public int getEndpointId() {
+        return ENDPOINT_ID;
+    }
+
+    @Override
     public void startLinkRequest(final Activity activity, final Fragment fragment) {
         // Construct status callback.
         Session.StatusCallback statusCallback = new Session.StatusCallback() {
@@ -638,7 +650,7 @@ public class FacebookEndpoint extends AbstractWingsEndpoint {
 
             @Override
             public void run() {
-                mDatabase.deleteShareRequests(Wings.DESTINATION_FACEBOOK);
+                mDatabase.deleteShareRequests(new WingsDestination(DestinationId.PROFILE, ENDPOINT_ID));
             }
         });
     }
@@ -708,7 +720,7 @@ public class FacebookEndpoint extends AbstractWingsEndpoint {
     }
 
     @Override
-    public String getDestinationDescription() {
+    public String getDestinationDescription(int destinationId) {
         String destinationDescription = null;
         String accountName = getLinkedAccountName();
         String albumName = getLinkedAlbumName();
@@ -719,9 +731,8 @@ public class FacebookEndpoint extends AbstractWingsEndpoint {
     }
 
     @Override
-    public IWingsNotification processShareRequests() {
-        int shared = 0;
-        String intentUri = null;
+    public Set<IWingsNotification> processShareRequests() {
+        Set<IWingsNotification> notifications = new HashSet<IWingsNotification>();
 
         // Get params associated with the linked account.
         String photoPrivacy = optLinkedPhotoPrivacy();
@@ -729,7 +740,10 @@ public class FacebookEndpoint extends AbstractWingsEndpoint {
         String albumGraphPath = getLinkedAlbumGraphPath();
         if (albumName != null && albumGraphPath != null) {
             // Get share requests for Facebook.
-            List<ShareRequest> shareRequests = mDatabase.checkoutShareRequests(Wings.DESTINATION_FACEBOOK);
+            WingsDestination destination = new WingsDestination(DestinationId.PROFILE, ENDPOINT_ID);
+            List<ShareRequest> shareRequests = mDatabase.checkoutShareRequests(destination);
+            int shared = 0;
+            String intentUri = null;
 
             if (!shareRequests.isEmpty()) {
                 // Try open session with cached access token.
@@ -813,14 +827,29 @@ public class FacebookEndpoint extends AbstractWingsEndpoint {
                     }
                 }
             }
+
+            // Construct and add notification representing share results.
+            if (shared > 0) {
+                notifications.add(new FacebookNotification(mContext, destination.getHash(), albumName, shared, intentUri));
+            }
         }
 
-        // Construct notification representing share results.
-        FacebookNotification notification = null;
-        if (shared > 0) {
-            notification = new FacebookNotification(mContext, albumName, shared, intentUri);
-        }
+        return notifications;
+    }
 
-        return notification;
+
+    //
+    // Public interfaces.
+    //
+
+    /**
+     * The list of destination ids.
+     */
+    public interface DestinationId {
+
+        /**
+         * The personal Facebook profile.
+         */
+        public static final int PROFILE = 0;
     }
 }

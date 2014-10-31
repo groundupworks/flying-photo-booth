@@ -16,6 +16,8 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.groundupworks.partyphotobooth.R;
+import com.groundupworks.wings.AbstractWingsEndpoint;
+import com.groundupworks.wings.Wings;
 import com.groundupworks.wings.dropbox.DropboxEndpoint;
 import com.groundupworks.wings.facebook.FacebookEndpoint;
 
@@ -100,21 +102,20 @@ public class NoticeFragment extends Fragment {
          * Display notices for the linked sharing services.
          */
         Bundle args = getArguments();
-        Activity activity = getActivity();
 
         boolean facebookShared = args.getBoolean(FRAGMENT_BUNDLE_KEY_FACEBOOK_SHARED);
         boolean dropboxShared = args.getBoolean(FRAGMENT_BUNDLE_KEY_DROPBOX_SHARED);
 
-        FacebookEndpoint facebookEndpoint = new FacebookEndpoint();
-        String facebookDescription = facebookEndpoint.getDestinationDescription();
+        AbstractWingsEndpoint facebookEndpoint = Wings.getEndpoint(FacebookEndpoint.class);
+        String facebookDescription = facebookEndpoint.getDestinationDescription(FacebookEndpoint.DestinationId.PROFILE);
         if (facebookShared && facebookDescription != null && facebookDescription.length() > 0) {
             mFacebookNotice.setText(facebookDescription);
             mFacebookNotice.setVisibility(View.VISIBLE);
             mIsScreenValid = true;
         }
 
-        DropboxEndpoint dropboxEndpoint = new DropboxEndpoint();
-        String dropboxDescription = dropboxEndpoint.getDestinationDescription();
+        AbstractWingsEndpoint dropboxEndpoint = Wings.getEndpoint(DropboxEndpoint.class);
+        String dropboxDescription = dropboxEndpoint.getDestinationDescription(DropboxEndpoint.DestinationId.APP_FOLDER);
         if (dropboxShared && dropboxDescription != null && dropboxDescription.length() > 0) {
             mDropboxNotice.setText(dropboxDescription);
             mDropboxNotice.setVisibility(View.VISIBLE);

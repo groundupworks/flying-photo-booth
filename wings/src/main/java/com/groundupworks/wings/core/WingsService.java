@@ -26,11 +26,13 @@ import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.support.v4.app.NotificationCompat;
 
+import com.groundupworks.wings.AbstractWingsEndpoint;
 import com.groundupworks.wings.IWingsLogger;
 import com.groundupworks.wings.IWingsNotification;
 import com.groundupworks.wings.R;
-import com.groundupworks.wings.dropbox.DropboxEndpoint;
-import com.groundupworks.wings.facebook.FacebookEndpoint;
+import com.groundupworks.wings.Wings;
+
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -43,7 +45,7 @@ import javax.inject.Inject;
  */
 public class WingsService extends IntentService {
 
-    private static final String NAME = "com.groundupworks.wings.internal.WingsService";
+    private static final String NAME = "com.groundupworks.wings.core.WingsService";
 
     /**
      * Static {@link WakeLock} to ensure device does not sleep before service starts and completes its work.
@@ -104,21 +106,16 @@ public class WingsService extends IntentService {
             // Reset all records that somehow got stuck in a processing state.
             mDatabase.resetProcessingShareRequests();
 
-            // Process share requests to Facebook.
-            FacebookEndpoint facebookEndpoint = new FacebookEndpoint();
-            if (facebookEndpoint.isLinked()) {
-                IWingsNotification notification = facebookEndpoint.processShareRequests();
-                if (notification != null) {
-                    sendNotification(notification);
-                }
-            }
-
-            // Process share requests to Dropbox.
-            DropboxEndpoint dropboxEndpoint = new DropboxEndpoint();
-            if (dropboxEndpoint.isLinked()) {
-                IWingsNotification notification = dropboxEndpoint.processShareRequests();
-                if (notification != null) {
-                    sendNotification(notification);
+            // Process share requests.
+            Set<AbstractWingsEndpoint> endpoints = Wings.getEndpoints();
+            for (AbstractWingsEndpoint endpoint : endpoints) {
+                if (endpoint.isLinked()) {
+                    Set<IWingsNotification> notifications = endpoint.processShareRequests();
+                    if (notifications != null) {
+                        for (IWingsNotification notification : notifications) {
+                            sendNotification(notification);
+                        }
+                    }
                 }
             }
 

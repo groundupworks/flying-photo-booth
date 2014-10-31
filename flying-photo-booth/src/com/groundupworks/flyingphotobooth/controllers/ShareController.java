@@ -35,7 +35,10 @@ import com.groundupworks.lib.photobooth.helpers.ImageHelper;
 import com.groundupworks.lib.photobooth.helpers.ImageHelper.Arrangement;
 import com.groundupworks.lib.photobooth.helpers.ImageHelper.ImageFilter;
 import com.groundupworks.wings.Wings;
+import com.groundupworks.wings.WingsDestination;
 import com.groundupworks.wings.core.WingsService;
+import com.groundupworks.wings.dropbox.DropboxEndpoint;
+import com.groundupworks.wings.facebook.FacebookEndpoint;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -257,7 +260,8 @@ public class ShareController extends BaseController {
             case ShareFragment.FACEBOOK_SHARE_REQUESTED:
                 // Create record in Wings.
                 if (mIsFacebookShareActive) {
-                    if (mJpegPath != null && Wings.share(mJpegPath, Wings.DESTINATION_FACEBOOK)) {
+                    int endpointId = Wings.getEndpoint(FacebookEndpoint.class).getEndpointId();
+                    if (mJpegPath != null && Wings.share(mJpegPath, new WingsDestination(FacebookEndpoint.DestinationId.PROFILE, endpointId))) {
                         // Disable to ensure we only make one share request.
                         mIsFacebookShareActive = false;
 
@@ -276,7 +280,8 @@ public class ShareController extends BaseController {
             case ShareFragment.DROPBOX_SHARE_REQUESTED:
                 // Create record in Wings.
                 if (mIsDropboxShareActive) {
-                    if (mJpegPath != null && Wings.share(mJpegPath, Wings.DESTINATION_DROPBOX)) {
+                    int endpointId = Wings.getEndpoint(DropboxEndpoint.class).getEndpointId();
+                    if (mJpegPath != null && Wings.share(mJpegPath, new WingsDestination(DropboxEndpoint.DestinationId.APP_FOLDER, endpointId))) {
                         // Disable to ensure we only make one share request.
                         mIsDropboxShareActive = false;
 

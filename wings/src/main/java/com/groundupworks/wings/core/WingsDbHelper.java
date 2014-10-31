@@ -23,6 +23,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.groundupworks.wings.IWingsLogger;
+import com.groundupworks.wings.WingsDestination;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -154,7 +155,7 @@ public class WingsDbHelper extends SQLiteOpenHelper {
      * @param destination the destination of the share.
      * @return true if successful; false otherwise.
      */
-    public synchronized boolean createShareRequest(String filePath, int destination) {
+    public synchronized boolean createShareRequest(String filePath, WingsDestination destination) {
         boolean isSuccessful = false;
 
         SQLiteDatabase db = null;
@@ -164,7 +165,7 @@ public class WingsDbHelper extends SQLiteOpenHelper {
             // Create new record.
             ContentValues values = new ContentValues();
             values.put(ShareRequestTable.COLUMN_FILE_PATH, filePath);
-            values.put(ShareRequestTable.COLUMN_DESTINATION, destination);
+            values.put(ShareRequestTable.COLUMN_DESTINATION, destination.getHash());
             values.put(ShareRequestTable.COLUMN_TIME_CREATED, System.currentTimeMillis());
             values.put(ShareRequestTable.COLUMN_STATE, ShareRequest.STATE_PENDING);
             values.put(ShareRequestTable.COLUMN_FAILS, 0);
@@ -194,7 +195,7 @@ public class WingsDbHelper extends SQLiteOpenHelper {
      * @param destination the destination of the {@link ShareRequest} to checkout.
      * @return the list of {@link ShareRequest}; may be empty.
      */
-    public synchronized List<ShareRequest> checkoutShareRequests(int destination) {
+    public synchronized List<ShareRequest> checkoutShareRequests(WingsDestination destination) {
         List<ShareRequest> shareRequests = new ArrayList<ShareRequest>();
 
         SQLiteDatabase db = null;
@@ -205,7 +206,7 @@ public class WingsDbHelper extends SQLiteOpenHelper {
             // Get all records for the requested destination in the pending state.
             cursor = db.query(ShareRequestTable.NAME, new String[]{ShareRequestTable.COLUMN_ID,
                             ShareRequestTable.COLUMN_FILE_PATH}, WHERE_CLAUSE_BY_DESTINATION_AND_STATE,
-                    new String[]{String.valueOf(destination), String.valueOf(ShareRequest.STATE_PENDING)}, null,
+                    new String[]{String.valueOf(destination.getHash()), String.valueOf(ShareRequest.STATE_PENDING)}, null,
                     null, SORT_ORDER_TIME_CREATED
             );
 
@@ -213,6 +214,7 @@ public class WingsDbHelper extends SQLiteOpenHelper {
                 do {
                     int id = cursor.getInt(cursor.getColumnIndex(ShareRequestTable.COLUMN_ID));
                     String filePath = cursor.getString(cursor.getColumnIndex(ShareRequestTable.COLUMN_FILE_PATH));
+                    int destinationHash = cursor.getInt(cursor.getColumnIndex(ShareRequestTable.COLUMN_DESTINATION));
 
                     // Update state back to processing.
                     ContentValues values = new ContentValues();
@@ -221,10 +223,11 @@ public class WingsDbHelper extends SQLiteOpenHelper {
                     if (db.update(ShareRequestTable.NAME, values, WHERE_CLAUSE_BY_ID,
                             new String[]{String.valueOf(id)}) > 0) {
                         // Add record to list.
-                        shareRequests.add(new ShareRequest(id, filePath, destination));
+                        WingsDestination resultDestination = WingsDestination.from(destinationHash);
+                        shareRequests.add(new ShareRequest(id, filePath, resultDestination));
 
                         sLogger.log(WingsDbHelper.class, "checkoutShareRequests", "id=" + id + " filePath="
-                                + filePath + " destination=" + destination);
+                                + filePath + " destination=" + resultDestination);
                     }
                 } while (cursor.moveToNext());
             }
@@ -245,13 +248,13 @@ public class WingsDbHelper extends SQLiteOpenHelper {
      *
      * @param destination the destination of the list of {@link ShareRequest} to delete.
      */
-    public synchronized void deleteShareRequests(int destination) {
+    public synchronized void deleteShareRequests(WingsDestination destination) {
         SQLiteDatabase db = null;
         try {
             db = getWritableDatabase();
 
             int recordsDeleted = db.delete(ShareRequestTable.NAME, WHERE_CLAUSE_BY_DESTINATION,
-                    new String[]{String.valueOf(destination)});
+                    new String[]{String.valueOf(destination.getHash())});
 
             sLogger.log(WingsDbHelper.class, "deleteShareRequests", "destination=" + destination + " rowsDeleted="
                     + recordsDeleted);

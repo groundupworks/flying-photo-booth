@@ -34,16 +34,16 @@ import com.dropbox.client2.session.AppKeyPair;
 import com.groundupworks.wings.AbstractWingsEndpoint;
 import com.groundupworks.wings.IWingsNotification;
 import com.groundupworks.wings.R;
-import com.groundupworks.wings.Wings;
+import com.groundupworks.wings.WingsDestination;
 import com.groundupworks.wings.core.ShareRequest;
-import com.groundupworks.wings.core.WingsDbHelper;
-import com.groundupworks.wings.core.WingsInjector;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * A helper class for linking and sharing to Dropbox.
@@ -51,6 +51,11 @@ import java.util.List;
  * @author Benedict Lau
  */
 public class DropboxEndpoint extends AbstractWingsEndpoint {
+
+    /**
+     * Dropbox endpoint id.
+     */
+    private static final int ENDPOINT_ID = 1;
 
     /**
      * Name of the folder for storing photo strips.
@@ -293,6 +298,11 @@ public class DropboxEndpoint extends AbstractWingsEndpoint {
     //
 
     @Override
+    public int getEndpointId() {
+        return ENDPOINT_ID;
+    }
+
+    @Override
     public void startLinkRequest(Activity activity, Fragment fragment) {
         mIsLinkRequested = true;
 
@@ -326,7 +336,7 @@ public class DropboxEndpoint extends AbstractWingsEndpoint {
 
             @Override
             public void run() {
-                mDatabase.deleteShareRequests(Wings.DESTINATION_DROPBOX);
+                mDatabase.deleteShareRequests(new WingsDestination(DestinationId.APP_FOLDER, ENDPOINT_ID));
             }
         });
     }
@@ -361,7 +371,7 @@ public class DropboxEndpoint extends AbstractWingsEndpoint {
     }
 
     @Override
-    public String getDestinationDescription() {
+    public String getDestinationDescription(int destinationId) {
         String destinationDescription = null;
         String accountName = getLinkedAccountName();
         String shareUrl = getLinkedShareUrl();
@@ -372,16 +382,17 @@ public class DropboxEndpoint extends AbstractWingsEndpoint {
     }
 
     @Override
-    public IWingsNotification processShareRequests() {
-        int shared = 0;
+    public Set<IWingsNotification> processShareRequests() {
+        Set<IWingsNotification> notifications = new HashSet<IWingsNotification>();
 
         // Get access token associated with the linked account.
         String accessToken = getLinkedAccessToken();
         String shareUrl = getLinkedShareUrl();
         if (accessToken != null && shareUrl != null) {
             // Get share requests for Dropbox.
-            WingsDbHelper wingsDbHelper = WingsInjector.getDatabase();
-            List<ShareRequest> shareRequests = wingsDbHelper.checkoutShareRequests(Wings.DESTINATION_DROPBOX);
+            WingsDestination destination = new WingsDestination(DestinationId.APP_FOLDER, ENDPOINT_ID);
+            List<ShareRequest> shareRequests = mDatabase.checkoutShareRequests(destination);
+            int shared = 0;
 
             if (!shareRequests.isEmpty()) {
                 // Start new session with the persisted access token.
@@ -403,23 +414,23 @@ public class DropboxEndpoint extends AbstractWingsEndpoint {
                                 null);
 
                         // Mark as successfully processed.
-                        wingsDbHelper.markSuccessful(shareRequest.getId());
+                        mDatabase.markSuccessful(shareRequest.getId());
 
                         shared++;
                     } catch (DropboxUnlinkedException e) {
-                        wingsDbHelper.markFailed(shareRequest.getId());
+                        mDatabase.markFailed(shareRequest.getId());
 
                         // Update account linking state to unlinked.
                         unlink();
                     } catch (DropboxException e) {
-                        wingsDbHelper.markFailed(shareRequest.getId());
+                        mDatabase.markFailed(shareRequest.getId());
                     } catch (IllegalArgumentException e) {
-                        wingsDbHelper.markFailed(shareRequest.getId());
+                        mDatabase.markFailed(shareRequest.getId());
                     } catch (FileNotFoundException e) {
-                        wingsDbHelper.markFailed(shareRequest.getId());
+                        mDatabase.markFailed(shareRequest.getId());
                     } catch (Exception e) {
                         // Safety.
-                        wingsDbHelper.markFailed(shareRequest.getId());
+                        mDatabase.markFailed(shareRequest.getId());
                     } finally {
                         if (inputStream != null) {
                             try {
@@ -431,14 +442,28 @@ public class DropboxEndpoint extends AbstractWingsEndpoint {
                     }
                 }
             }
+
+            // Construct and add notification representing share results.
+            if (shared > 0) {
+                notifications.add(new DropboxNotification(mContext, destination.getHash(), shareUrl, shared, shareUrl));
+            }
         }
 
-        // Construct notification representing share results.
-        DropboxNotification notification = null;
-        if (shared > 0) {
-            notification = new DropboxNotification(mContext, shareUrl, shared, shareUrl);
-        }
+        return notifications;
+    }
 
-        return notification;
+    //
+    // Public interfaces.
+    //
+
+    /**
+     * The list of destination ids.
+     */
+    public interface DestinationId {
+
+        /**
+         * The Dropbox app folder.
+         */
+        public static final int APP_FOLDER = 0;
     }
 }

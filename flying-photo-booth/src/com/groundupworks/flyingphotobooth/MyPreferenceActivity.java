@@ -355,7 +355,7 @@ public class MyPreferenceActivity extends PreferenceActivity {
         boolean isLinked = endpoint.isLinked();
         if (isLinked) {
             // Get account information.
-            String destinationDescription = endpoint.getDestinationDescription();
+            String destinationDescription = endpoint.getDestinationDescription(FacebookEndpoint.DestinationId.PROFILE);
             if (destinationDescription != null && destinationDescription.length() > 0) {
                 // Select linked title and widget resource.
                 titleRes = R.string.pref__facebook_link_title_linked;
@@ -397,7 +397,7 @@ public class MyPreferenceActivity extends PreferenceActivity {
         boolean isLinked = endpoint.isLinked();
         if (isLinked) {
             // Get account information.
-            String destinationDescription = endpoint.getDestinationDescription();
+            String destinationDescription = endpoint.getDestinationDescription(DropboxEndpoint.DestinationId.APP_FOLDER);
             if (destinationDescription != null && destinationDescription.length() > 0) {
                 // Select linked title and widget resource.
                 titleRes = R.string.pref__dropbox_link_title_linked;

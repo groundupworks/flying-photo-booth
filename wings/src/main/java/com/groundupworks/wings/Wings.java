@@ -39,20 +39,6 @@ import dagger.Provides;
  */
 public final class Wings {
 
-    //
-    // Valid values for destination.
-    //
-
-    /**
-     * Destination for the Facebook endpoint.
-     */
-    public static final int DESTINATION_FACEBOOK = 0;
-
-    /**
-     * Destination for the Dropbox endpoint.
-     */
-    public static final int DESTINATION_DROPBOX = 1;
-
     /**
      * Flag to track whether Wings is initialized.
      */
@@ -83,8 +69,15 @@ public final class Wings {
             WingsInjector.init(module);
             try {
                 final Set<AbstractWingsEndpoint> endpoints = new HashSet<AbstractWingsEndpoint>();
+                final Set<Integer> endpointIds = new HashSet<Integer>();
                 for (Class clazz : endpointClazzes) {
-                    endpoints.add((AbstractWingsEndpoint) clazz.newInstance());
+                    AbstractWingsEndpoint endpoint = (AbstractWingsEndpoint) clazz.newInstance();
+                    endpoints.add(endpoint);
+
+                    // Ensure that endpoint ids are unique.
+                    if (!endpointIds.add(endpoint.getEndpointId())) {
+                        return false;
+                    }
                 }
                 sEndpoints = endpoints;
                 sIsInitialized = true;
@@ -141,7 +134,7 @@ public final class Wings {
      * @return true if successful; false otherwise.
      * @throws IllegalStateException Wings must be initialized. See {@link Wings#init(IWingsModule, Class[])}.
      */
-    public static boolean share(String filePath, int destination) {
+    public static boolean share(String filePath, WingsDestination destination) {
         if (!sIsInitialized) {
             throw new IllegalStateException("Wings must be initialized. See Wings#init().");
         }

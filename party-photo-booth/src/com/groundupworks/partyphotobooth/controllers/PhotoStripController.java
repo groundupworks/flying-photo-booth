@@ -29,6 +29,7 @@ import com.groundupworks.partyphotobooth.helpers.PreferencesHelper.PhotoStripArr
 import com.groundupworks.partyphotobooth.helpers.PreferencesHelper.PhotoStripTemplate;
 import com.groundupworks.partyphotobooth.helpers.TextHelper;
 import com.groundupworks.wings.Wings;
+import com.groundupworks.wings.WingsDestination;
 import com.groundupworks.wings.core.WingsService;
 import com.groundupworks.wings.dropbox.DropboxEndpoint;
 import com.groundupworks.wings.facebook.FacebookEndpoint;
@@ -324,14 +325,14 @@ public class PhotoStripController extends BaseController {
                     boolean facebookShared = false;
                     FacebookEndpoint facebookEndpoint = new FacebookEndpoint();
                     if (facebookEndpoint.isLinked()) {
-                        facebookShared = share(context, jpegPath, Wings.DESTINATION_FACEBOOK);
+                        facebookShared = share(context, jpegPath, new WingsDestination(FacebookEndpoint.DestinationId.PROFILE, facebookEndpoint.getEndpointId()));
                     }
 
                     // Share to Dropbox.
                     boolean dropboxShared = false;
                     DropboxEndpoint dropboxEndpoint = new DropboxEndpoint();
                     if (dropboxEndpoint.isLinked()) {
-                        dropboxShared = share(context, jpegPath, Wings.DESTINATION_DROPBOX);
+                        dropboxShared = share(context, jpegPath, new WingsDestination(DropboxEndpoint.DestinationId.APP_FOLDER, dropboxEndpoint.getEndpointId()));
                     }
 
                     // Notify ui the Jpeg is saved and shared to linked services.
@@ -400,7 +401,7 @@ public class PhotoStripController extends BaseController {
      * @param destination The sharing service to share to.
      * @return true if successful; false otherwise.
      */
-    private boolean share(Context context, String jpegPath, int destination) {
+    private boolean share(Context context, String jpegPath, WingsDestination destination) {
         boolean isSuccessful = false;
         if (jpegPath != null && Wings.share(jpegPath, destination)) {
             // Start Wings service.

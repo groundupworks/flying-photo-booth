@@ -21,7 +21,6 @@ import android.net.Uri;
 
 import com.groundupworks.wings.IWingsNotification;
 import com.groundupworks.wings.R;
-import com.groundupworks.wings.Wings;
 
 /**
  * {@link IWingsNotification} for Facebook shares.
@@ -29,6 +28,8 @@ import com.groundupworks.wings.Wings;
  * @author Benedict Lau
  */
 public class FacebookNotification implements IWingsNotification {
+
+    private int mId;
 
     private String mTitle;
 
@@ -42,11 +43,13 @@ public class FacebookNotification implements IWingsNotification {
      * Package private constructor.
      *
      * @param context   the {@link Context}.
+     * @param id        the id of the notification.
      * @param albumName the name of the album to share to.
      * @param shared    the number of successful shares. Must be larger than 0.
      * @param intentUri the uri to deep link into the Facebook native app. May be null.
      */
-    FacebookNotification(Context context, String albumName, int shared, String intentUri) {
+    FacebookNotification(Context context, int id, String albumName, int shared, String intentUri) {
+        mId = id;
         mTitle = context.getString(R.string.facebook__notification_shared_title);
         if (shared > 1) {
             mMessage = context.getString(R.string.facebook__notification_shared_msg_multi, shared, albumName);
@@ -59,7 +62,7 @@ public class FacebookNotification implements IWingsNotification {
 
     @Override
     public int getId() {
-        return Wings.DESTINATION_FACEBOOK;
+        return mId;
     }
 
     @Override

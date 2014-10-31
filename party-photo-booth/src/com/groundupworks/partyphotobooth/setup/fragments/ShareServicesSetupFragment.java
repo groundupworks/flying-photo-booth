@@ -199,7 +199,7 @@ public class ShareServicesSetupFragment extends Fragment {
     private void updateFacebook() {
         AbstractWingsEndpoint endpoint = Wings.getEndpoint(FacebookEndpoint.class);
         if (endpoint.isLinked()) {
-            String destinationDescription = endpoint.getDestinationDescription();
+            String destinationDescription = endpoint.getDestinationDescription(FacebookEndpoint.DestinationId.PROFILE);
             mFacebookStatus.setText(destinationDescription);
             mFacebookStatus.setTextColor(getResources().getColor(R.color.text_dark));
             mFacebookIcon.setEnabled(true);
@@ -216,7 +216,7 @@ public class ShareServicesSetupFragment extends Fragment {
     private void updateDropbox() {
         AbstractWingsEndpoint endpoint = Wings.getEndpoint(DropboxEndpoint.class);
         if (endpoint.isLinked()) {
-            String destinationDescription = endpoint.getDestinationDescription();
+            String destinationDescription = endpoint.getDestinationDescription(DropboxEndpoint.DestinationId.APP_FOLDER);
             mDropboxStatus.setText(destinationDescription);
             mDropboxStatus.setTextColor(getResources().getColor(R.color.text_dark));
             mDropboxIcon.setEnabled(true);

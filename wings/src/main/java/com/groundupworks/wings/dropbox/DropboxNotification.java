@@ -21,7 +21,6 @@ import android.net.Uri;
 
 import com.groundupworks.wings.IWingsNotification;
 import com.groundupworks.wings.R;
-import com.groundupworks.wings.Wings;
 
 /**
  * {@link IWingsNotification} for Dropbox shares.
@@ -29,6 +28,8 @@ import com.groundupworks.wings.Wings;
  * @author Benedict Lau
  */
 public class DropboxNotification implements IWingsNotification {
+
+    private int mId;
 
     private String mTitle;
 
@@ -42,12 +43,13 @@ public class DropboxNotification implements IWingsNotification {
      * Package private constructor.
      *
      * @param context   the {@link Context}.
+     * @param id        the id of the notification.
      * @param shareUrl  the share url associated with the account.
      * @param shared    the number of successful shares. Must be larger than 0.
      * @param intentUri the uri to display the Dropbox app folder. May be null.
      */
-    DropboxNotification(Context context, String shareUrl, int shared, String intentUri) {
-        // Construct notification title and message text.
+    DropboxNotification(Context context, int id, String shareUrl, int shared, String intentUri) {
+        mId = id;
         mTitle = context.getString(R.string.dropbox__notification_shared_title);
         if (shared > 1) {
             mMessage = context.getString(R.string.dropbox__notification_shared_msg_multi, shared, shareUrl);
@@ -60,7 +62,7 @@ public class DropboxNotification implements IWingsNotification {
 
     @Override
     public int getId() {
-        return Wings.DESTINATION_DROPBOX;
+        return mId;
     }
 
     @Override
