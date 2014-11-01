@@ -29,8 +29,6 @@ import com.groundupworks.partyphotobooth.helpers.PreferencesHelper.PhotoStripArr
 import com.groundupworks.partyphotobooth.helpers.PreferencesHelper.PhotoStripTemplate;
 import com.groundupworks.partyphotobooth.helpers.TextHelper;
 import com.groundupworks.wings.Wings;
-import com.groundupworks.wings.WingsDestination;
-import com.groundupworks.wings.core.WingsService;
 import com.groundupworks.wings.dropbox.DropboxEndpoint;
 import com.groundupworks.wings.facebook.FacebookEndpoint;
 
@@ -316,23 +314,20 @@ public class PhotoStripController extends BaseController {
 
                 if (isSuccessful) {
                     String jpegPath = file.getPath();
-
                     // Request adding Jpeg to Android Gallery.
                     MediaScannerConnection.scanFile(context, new String[]{jpegPath},
                             new String[]{ImageHelper.JPEG_MIME_TYPE}, null);
 
                     // Share to Facebook.
                     boolean facebookShared = false;
-                    FacebookEndpoint facebookEndpoint = new FacebookEndpoint();
-                    if (facebookEndpoint.isLinked()) {
-                        facebookShared = share(context, jpegPath, new WingsDestination(FacebookEndpoint.DestinationId.PROFILE, facebookEndpoint.getEndpointId()));
+                    if (Wings.getEndpoint(FacebookEndpoint.class).isLinked()) {
+                        facebookShared = Wings.share(jpegPath, FacebookEndpoint.DestinationId.PROFILE, FacebookEndpoint.class);
                     }
 
                     // Share to Dropbox.
                     boolean dropboxShared = false;
-                    DropboxEndpoint dropboxEndpoint = new DropboxEndpoint();
-                    if (dropboxEndpoint.isLinked()) {
-                        dropboxShared = share(context, jpegPath, new WingsDestination(DropboxEndpoint.DestinationId.APP_FOLDER, dropboxEndpoint.getEndpointId()));
+                    if (Wings.getEndpoint(DropboxEndpoint.class).isLinked()) {
+                        dropboxShared = Wings.share(jpegPath, DropboxEndpoint.DestinationId.APP_FOLDER, DropboxEndpoint.class);
                     }
 
                     // Notify ui the Jpeg is saved and shared to linked services.
@@ -391,24 +386,5 @@ public class PhotoStripController extends BaseController {
      */
     private boolean isPhotoStripComplete() {
         return mFramesList.size() == mFramesTotalPref;
-    }
-
-    /**
-     * Shares a photo strip to a sharing service.
-     *
-     * @param context     the {@link Context}.
-     * @param jpegPath    The path to the Jpeg to share.
-     * @param destination The sharing service to share to.
-     * @return true if successful; false otherwise.
-     */
-    private boolean share(Context context, String jpegPath, WingsDestination destination) {
-        boolean isSuccessful = false;
-        if (jpegPath != null && Wings.share(jpegPath, destination)) {
-            // Start Wings service.
-            WingsService.startWakefulService(context);
-
-            isSuccessful = true;
-        }
-        return isSuccessful;
     }
 }

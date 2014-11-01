@@ -127,18 +127,26 @@ public final class Wings {
     }
 
     /**
-     * Shares an image to the specified destination.
+     * Shares an image to the specified destination at an endpoint. The client is responsible for ensuring
+     * that the file exists, and the destination id valid for that endpoint.
      *
-     * @param filePath    the local path to the file to share.
-     * @param destination the destination of the share.
-     * @return true if successful; false otherwise.
+     * @param filePath      the local path to the file to share.
+     * @param destinationId the destination id to share to.
+     * @param endpointClazz the {@link java.lang.Class} of the endpoint to share to.
+     * @return {@code true} if successful; {@code false} otherwise.
      * @throws IllegalStateException Wings must be initialized. See {@link Wings#init(IWingsModule, Class[])}.
      */
-    public static boolean share(String filePath, WingsDestination destination) throws IllegalStateException {
+    public static boolean share(String filePath, int destinationId, Class<? extends WingsEndpoint> endpointClazz) throws IllegalStateException {
         if (!sIsInitialized) {
             throw new IllegalStateException("Wings must be initialized. See Wings#init().");
         }
-        return WingsInjector.getDatabase().createShareRequest(filePath, destination);
+        WingsEndpoint endpoint = Wings.getEndpoint(endpointClazz);
+        if (endpoint != null && WingsInjector.getDatabase().createShareRequest(filePath, new WingsDestination(destinationId, endpoint.getEndpointId()))) {
+            WingsService.startWakefulService(WingsInjector.getApplicationContext());
+            return true;
+        }
+
+        return false;
     }
 
     /**
