@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Google Cloud Print</string>
+    <string name="select_printer">Select Printer</string>
+    <string name="printer_details">Printer Details</string>
+    <string name="printer_job_details">Printer Jobs</string>
+    <string name="gcp_destination_description">Google Cloud Print</string>
+    <string name="gcp_notification_title">Google Cloud Print</string>
+    <string name="gcp_notification_message">Queued %d print jobs</string>
+    <string name="gcp_notification_ticket">printing...</string>
+</resources>

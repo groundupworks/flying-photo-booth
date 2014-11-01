@@ -26,4 +26,6 @@
     <string name="dropbox__app_secret">null</string>
     <string name="dropbox__photo_folder">null</string>
 
+    <string name="pref__gcp_link_key">pref__gcp_link</string>
+
 </resources>

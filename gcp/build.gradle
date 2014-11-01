@@ -1,0 +1,35 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 20
+    buildToolsVersion "20.0.0"
+
+    defaultConfig {
+        applicationId "com.groundupworks.wings.gcp"
+        minSdkVersion 10
+        targetSdkVersion 19
+        versionCode 1
+        versionName "1.0"
+    }
+    buildTypes {
+        release {
+            runProguard false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile ('com.github.dpsm:android-auth:1.0.0') {
+        exclude module: 'support-v4'
+        exclude module: 'rxjava-android'
+    }
+    compile ('com.github.dpsm:android-print:1.0.0') {
+        exclude module: 'support-v4'
+        exclude module: 'rxjava-android'
+    }
+    compile 'com.jakewharton:butterknife:5.1.2'
+    compile 'com.netflix.rxjava:rxjava-android:0.20.6'
+    compile project(':wings')
+}

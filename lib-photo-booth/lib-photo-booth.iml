@@ -13,7 +13,6 @@
         <option name="COMPILE_JAVA_TASK_NAME" value="compileDebugJava" />
         <option name="ASSEMBLE_TEST_TASK_NAME" value="assembleDebugTest" />
         <option name="SOURCE_GEN_TASK_NAME" value="generateDebugSources" />
-        <option name="TEST_SOURCE_GEN_TASK_NAME" value="generateDebugTestSources" />
         <option name="ALLOW_USER_CONFIGURATION" value="false" />
         <option name="RES_FOLDERS_RELATIVE_PATH" value="file://$MODULE_DIR$/res" />
         <option name="LIBRARY_PROJECT" value="true" />
@@ -36,20 +35,20 @@
       <sourceFolder url="file://$MODULE_DIR$/build/generated/res/rs/test/debug" type="java-test-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src/debug/res" type="java-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src/debug/resources" type="java-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/src/debug/assets" type="java-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src/debug/aidl" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/debug/assets" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/debug/java" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/debug/jni" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/debug/rs" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/res" type="java-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src" type="java-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/assets" type="java-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/assets" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/main/jni" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/tests/res" type="java-test-resource" />
       <sourceFolder url="file://$MODULE_DIR$/tests/resources" type="java-test-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/tests/assets" type="java-test-resource" />
       <sourceFolder url="file://$MODULE_DIR$/tests/aidl" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/tests/assets" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/tests/java" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/tests/jni" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/tests/rs" isTestSource="true" />
@@ -78,13 +77,23 @@
     <orderEntry type="jdk" jdkName="Android API 19 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="android-support-v4" level="project" />
+    <orderEntry type="library" exported="" name="jackson-core-2.3.3" level="project" />
     <orderEntry type="library" exported="" name="guava-15.0" level="project" />
+    <orderEntry type="library" exported="" name="gson-2.2.4" level="project" />
     <orderEntry type="library" exported="" name="dagger-1.2.2" level="project" />
-    <orderEntry type="library" exported="" name="javax.inject-1" level="project" />
+    <orderEntry type="library" exported="" name="jackson-annotations-2.3.0" level="project" />
     <orderEntry type="library" exported="" name="androidjhlabs" level="project" />
     <orderEntry type="library" exported="" name="dagger-compiler-1.2.2" level="project" />
+    <orderEntry type="library" exported="" name="android-print-1.0.0" level="project" />
+    <orderEntry type="library" exported="" name="retrofit-1.6.1" level="project" />
+    <orderEntry type="library" exported="" name="javax.inject-1" level="project" />
+    <orderEntry type="library" exported="" name="jackson-databind-2.3.3" level="project" />
+    <orderEntry type="library" exported="" name="rxjava-android-0.20.6" level="project" />
+    <orderEntry type="library" exported="" name="rxjava-core-0.20.6" level="project" />
+    <orderEntry type="library" exported="" name="butterknife-5.1.2" level="project" />
     <orderEntry type="library" exported="" name="javawriter-2.5.0" level="project" />
     <orderEntry type="module" module-name="wings" exported="" />
+    <orderEntry type="module" module-name="gcp" exported="" />
   </component>
 </module>
 

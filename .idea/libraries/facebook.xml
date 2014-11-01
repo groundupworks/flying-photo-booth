@@ -1,9 +1,9 @@
 <component name="libraryTable">
   <library name="facebook">
     <CLASSES>
-      <root url="file://$PROJECT_DIR$/build/intermediates/exploded-aar/flying-photo-booth/third-party/facebook-android-sdk-3.0/facebook/unspecified/res" />
-      <root url="jar://$PROJECT_DIR$/build/intermediates/exploded-aar/flying-photo-booth/third-party/facebook-android-sdk-3.0/facebook/unspecified/libs/android-support-v4.jar!/" />
-      <root url="jar://$PROJECT_DIR$/build/intermediates/exploded-aar/flying-photo-booth/third-party/facebook-android-sdk-3.0/facebook/unspecified/classes.jar!/" />
+      <root url="jar://$PROJECT_DIR$/wings/build/intermediates/exploded-aar/flying-photo-booth/third-party/facebook-android-sdk-3.0/facebook/unspecified/libs/android-support-v4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/wings/build/intermediates/exploded-aar/flying-photo-booth/third-party/facebook-android-sdk-3.0/facebook/unspecified/classes.jar!/" />
+      <root url="file://$PROJECT_DIR$/wings/build/intermediates/exploded-aar/flying-photo-booth/third-party/facebook-android-sdk-3.0/facebook/unspecified/res" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

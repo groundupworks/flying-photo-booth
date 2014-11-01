@@ -1,18 +1,4 @@
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-
-    dependencies {
-        classpath 'com.android.tools.build:gradle:0.12.1'
-    }
-}
-
-apply plugin: 'android-library'
-
-repositories {
-    mavenCentral()
-}
+apply plugin: 'com.android.library'
 
 dependencies {
     compile files('libs/android-support-v4.jar')
@@ -22,6 +8,7 @@ dependencies {
     provided 'com.squareup.dagger:dagger-compiler:1.2.2'
 
     compile project(':wings')
+    compile project(':gcp')
 }
 
 android {

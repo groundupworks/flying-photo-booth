@@ -1,18 +1,4 @@
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-
-    dependencies {
-        classpath 'com.android.tools.build:gradle:0.12.1'
-    }
-}
-
 apply plugin: 'com.android.library'
-
-repositories {
-    mavenCentral()
-}
 
 dependencies {
     compile files('libs/android-support-v4.jar')
@@ -24,7 +10,6 @@ dependencies {
     compile files('libs/json_simple-1.1.jar')
     compile files('libs/junit-4.10.jar')
 
-//    compile 'com.android.support:appcompat-v7:20.0.0'
     compile 'com.squareup.dagger:dagger:1.2.2'
     provided 'com.squareup.dagger:dagger-compiler:1.2.2'
 
