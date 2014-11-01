@@ -17,7 +17,6 @@ package com.groundupworks.flyingphotobooth;
 
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
@@ -30,8 +29,12 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 
-import com.groundupworks.lib.photobooth.dropbox.DropboxHelper;
-import com.groundupworks.lib.photobooth.facebook.FacebookHelper;
+import com.groundupworks.wings.WingsEndpoint;
+import com.groundupworks.wings.Wings;
+import com.groundupworks.wings.dropbox.DropboxEndpoint;
+import com.groundupworks.wings.facebook.FacebookEndpoint;
+
+import java.util.Set;
 
 /**
  * The {@link Activity} to configure user preferences.
@@ -49,16 +52,6 @@ public class MyPreferenceActivity extends PreferenceActivity {
      * Listener for changes in preferences.
      */
     private OnSharedPreferenceChangeListener mPrefChangeListener = new MyOnSharedPreferenceChangeListener();
-
-    /**
-     * A {@link FacebookHelper}.
-     */
-    private FacebookHelper mFacebookHelper = new FacebookHelper();
-
-    /**
-     * A {@link DropboxHelper}.
-     */
-    private DropboxHelper mDropboxHelper = new DropboxHelper();
 
     //
     // Preference keys.
@@ -126,36 +119,10 @@ public class MyPreferenceActivity extends PreferenceActivity {
         mDropboxAutoSharePref = (CheckBoxPreference) findPreference(mDropboxAutoShareKey);
 
         // Launch Facebook link request when clicked.
-        mFacebookLinkPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference arg0) {
-                Context appContext = MyPreferenceActivity.this.getApplicationContext();
-                if (mFacebookHelper.isLinked(appContext)) {
-                    // Unlink from Facebook.
-                    mFacebookHelper.unlink(appContext);
-                } else {
-                    // Start Facebook link request.
-                    mFacebookHelper.startLinkRequest(MyPreferenceActivity.this, null);
-                }
-                return false;
-            }
-        });
+        mFacebookLinkPref.setOnPreferenceClickListener(new MyLinkPreferenceClickListener(FacebookEndpoint.class));
 
         // Launch Dropbox link request when clicked.
-        mDropboxLinkPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference arg0) {
-                Context appContext = MyPreferenceActivity.this.getApplicationContext();
-                if (mDropboxHelper.isLinked(appContext)) {
-                    // Unlink from Dropbox.
-                    mDropboxHelper.unlink(appContext);
-                } else {
-                    // Start Dropbox link request.
-                    mDropboxHelper.startLinkRequest(appContext);
-                }
-                return false;
-            }
-        });
+        mDropboxLinkPref.setOnPreferenceClickListener(new MyLinkPreferenceClickListener(DropboxEndpoint.class));
 
         // Launch rating page on Google Play when clicked.
         Preference button = (Preference) findPreference(getString(R.string.pref__rate_key));
@@ -179,8 +146,11 @@ public class MyPreferenceActivity extends PreferenceActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        // Finish Facebook link request.
-        mFacebookHelper.onActivityResultImpl(this, null, requestCode, resultCode, data);
+        // Call Wings APIs.
+        Set<WingsEndpoint> endpoints = Wings.getEndpoints();
+        for (WingsEndpoint endpoint : endpoints) {
+            endpoint.onActivityResultImpl(this, null, requestCode, resultCode, data);
+        }
     }
 
     @Override
@@ -199,8 +169,11 @@ public class MyPreferenceActivity extends PreferenceActivity {
         updateFacebookPref(preferences);
         updateDropboxPref(preferences);
 
-        // Finish Dropbox link request.
-        mDropboxHelper.onResumeImpl(getApplicationContext());
+        // Call Wings APIs.
+        Set<WingsEndpoint> endpoints = Wings.getEndpoints();
+        for (WingsEndpoint endpoint : endpoints) {
+            endpoint.onResumeImpl();
+        }
     }
 
     @Override
@@ -240,6 +213,38 @@ public class MyPreferenceActivity extends PreferenceActivity {
                     || key.equals(getString(R.string.dropbox__share_url_key))) {
                 updateDropboxPref(sharedPreferences);
             }
+        }
+    }
+
+    /**
+     * Listener that handles linking and unlinking with a Wings endpoint.
+     */
+    private class MyLinkPreferenceClickListener implements Preference.OnPreferenceClickListener {
+
+        /**
+         * The Wings endpoint.
+         */
+        private WingsEndpoint mEndpoint;
+
+        /**
+         * Constructor.
+         *
+         * @param endpointClazz the {@link java.lang.Class} of the Wings endpoint to toggle linking.
+         */
+        private MyLinkPreferenceClickListener(Class<? extends WingsEndpoint> endpointClazz) {
+            mEndpoint = Wings.getEndpoint(endpointClazz);
+        }
+
+        @Override
+        public boolean onPreferenceClick(android.preference.Preference arg0) {
+            if (mEndpoint.isLinked()) {
+                // Unlink from endpoint.
+                mEndpoint.unlink();
+            } else {
+                // Start link request.
+                mEndpoint.startLinkRequest(MyPreferenceActivity.this, null);
+            }
+            return false;
         }
     }
 
@@ -346,12 +351,12 @@ public class MyPreferenceActivity extends PreferenceActivity {
         int widgetRes = R.layout.pref_facebook_checkbox_unselected;
 
         // Check if linked to Facebook account.
-        boolean isLinked = mFacebookHelper.isLinked(this);
+        WingsEndpoint endpoint = Wings.getEndpoint(FacebookEndpoint.class);
+        boolean isLinked = endpoint.isLinked();
         if (isLinked) {
             // Get account information.
-            String accountName = mFacebookHelper.getLinkedAccountName(this);
-            String albumName = mFacebookHelper.getLinkedAlbumName(this);
-            if (accountName != null && accountName.length() > 0 && albumName != null && albumName.length() > 0) {
+            String destinationDescription = endpoint.getDestinationDescription(FacebookEndpoint.DestinationId.PROFILE);
+            if (destinationDescription != null && destinationDescription.length() > 0) {
                 // Select linked title and widget resource.
                 titleRes = R.string.pref__facebook_link_title_linked;
                 widgetRes = R.layout.pref_facebook_checkbox_selected;
@@ -360,11 +365,10 @@ public class MyPreferenceActivity extends PreferenceActivity {
                 boolean isAutoShared = preferences.getBoolean(mFacebookAutoShareKey, false);
                 if (isAutoShared) {
                     // Build auto share string.
-                    summary = getString(R.string.pref__facebook_link_summary_linked_auto_share, accountName, albumName);
+                    summary = getString(R.string.pref__facebook_link_summary_linked_auto_share, destinationDescription);
                 } else {
-                    // Build on
-                    summary = getString(R.string.pref__facebook_link_summary_linked_one_click_share, accountName,
-                            albumName);
+                    // Build one-click share string.
+                    summary = getString(R.string.pref__facebook_link_summary_linked_one_click_share, destinationDescription);
                 }
             }
 
@@ -389,12 +393,12 @@ public class MyPreferenceActivity extends PreferenceActivity {
         int widgetRes = R.layout.pref_dropbox_checkbox_unselected;
 
         // Check if linked to Dropbox account.
-        boolean isLinked = mDropboxHelper.isLinked(this);
+        WingsEndpoint endpoint = Wings.getEndpoint(DropboxEndpoint.class);
+        boolean isLinked = endpoint.isLinked();
         if (isLinked) {
             // Get account information.
-            String accountName = mDropboxHelper.getLinkedAccountName(this);
-            String shareUrl = mDropboxHelper.getLinkedShareUrl(this);
-            if (accountName != null && accountName.length() > 0 && shareUrl != null && shareUrl.length() > 0) {
+            String destinationDescription = endpoint.getDestinationDescription(DropboxEndpoint.DestinationId.APP_FOLDER);
+            if (destinationDescription != null && destinationDescription.length() > 0) {
                 // Select linked title and widget resource.
                 titleRes = R.string.pref__dropbox_link_title_linked;
                 widgetRes = R.layout.pref_dropbox_checkbox_selected;
@@ -403,11 +407,10 @@ public class MyPreferenceActivity extends PreferenceActivity {
                 boolean isAutoShared = preferences.getBoolean(mDropboxAutoShareKey, false);
                 if (isAutoShared) {
                     // Build auto share string.
-                    summary = getString(R.string.pref__dropbox_link_summary_linked_auto_share, accountName, shareUrl);
+                    summary = getString(R.string.pref__dropbox_link_summary_linked_auto_share, destinationDescription);
                 } else {
                     // Build one-click share string.
-                    summary = getString(R.string.pref__dropbox_link_summary_linked_one_click_share, accountName,
-                            shareUrl);
+                    summary = getString(R.string.pref__dropbox_link_summary_linked_one_click_share, destinationDescription);
                 }
             }
 

@@ -34,9 +34,9 @@ import com.groundupworks.lib.photobooth.framework.BaseController;
 import com.groundupworks.lib.photobooth.helpers.ImageHelper;
 import com.groundupworks.lib.photobooth.helpers.ImageHelper.Arrangement;
 import com.groundupworks.lib.photobooth.helpers.ImageHelper.ImageFilter;
-import com.groundupworks.lib.photobooth.wings.ShareRequest;
-import com.groundupworks.lib.photobooth.wings.WingsDbHelper;
-import com.groundupworks.lib.photobooth.wings.WingsService;
+import com.groundupworks.wings.Wings;
+import com.groundupworks.wings.dropbox.DropboxEndpoint;
+import com.groundupworks.wings.facebook.FacebookEndpoint;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -258,14 +258,9 @@ public class ShareController extends BaseController {
             case ShareFragment.FACEBOOK_SHARE_REQUESTED:
                 // Create record in Wings.
                 if (mIsFacebookShareActive) {
-                    if (mJpegPath != null
-                            && WingsDbHelper.getInstance(context).createShareRequest(mJpegPath,
-                            ShareRequest.DESTINATION_FACEBOOK)) {
+                    if (mJpegPath != null && Wings.share(mJpegPath, FacebookEndpoint.DestinationId.PROFILE, FacebookEndpoint.class)) {
                         // Disable to ensure we only make one share request.
                         mIsFacebookShareActive = false;
-
-                        // Start Wings service.
-                        WingsService.startWakefulService(context);
 
                         // Notify ui.
                         Message uiMsg = Message.obtain();
@@ -279,14 +274,9 @@ public class ShareController extends BaseController {
             case ShareFragment.DROPBOX_SHARE_REQUESTED:
                 // Create record in Wings.
                 if (mIsDropboxShareActive) {
-                    if (mJpegPath != null
-                            && WingsDbHelper.getInstance(context).createShareRequest(mJpegPath,
-                            ShareRequest.DESTINATION_DROPBOX)) {
+                    if (mJpegPath != null && Wings.share(mJpegPath, DropboxEndpoint.DestinationId.APP_FOLDER, DropboxEndpoint.class)) {
                         // Disable to ensure we only make one share request.
                         mIsDropboxShareActive = false;
-
-                        // Start Wings service.
-                        WingsService.startWakefulService(context);
 
                         // Notify ui.
                         Message uiMsg = Message.obtain();

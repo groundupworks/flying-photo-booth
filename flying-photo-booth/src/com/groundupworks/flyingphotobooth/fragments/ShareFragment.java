@@ -38,11 +38,15 @@ import android.widget.Toast;
 import com.groundupworks.flyingphotobooth.LaunchActivity;
 import com.groundupworks.flyingphotobooth.R;
 import com.groundupworks.flyingphotobooth.controllers.ShareController;
-import com.groundupworks.lib.photobooth.dropbox.DropboxHelper;
-import com.groundupworks.lib.photobooth.facebook.FacebookHelper;
 import com.groundupworks.lib.photobooth.framework.ControllerBackedFragment;
 import com.groundupworks.lib.photobooth.helpers.BeamHelper;
 import com.groundupworks.lib.photobooth.helpers.ImageHelper;
+import com.groundupworks.wings.WingsEndpoint;
+import com.groundupworks.wings.Wings;
+import com.groundupworks.wings.dropbox.DropboxEndpoint;
+import com.groundupworks.wings.facebook.FacebookEndpoint;
+
+import java.util.Set;
 
 /**
  * Ui for the image confirmation screen.
@@ -101,9 +105,9 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
     //
 
     /**
-     * A {@link FacebookHelper}.
+     * The Facebook Wings endpoint.
      */
-    private FacebookHelper mFacebookHelper = new FacebookHelper();
+    private WingsEndpoint mFacebookEndpoint = Wings.getEndpoint(FacebookEndpoint.class);
 
     /**
      * Listener for Facebook linking events. May be null.
@@ -115,9 +119,9 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
     //
 
     /**
-     * A {@link DropboxHelper}.
+     * The Dropbox Wings endpoint.
      */
-    private DropboxHelper mDropboxHelper = new DropboxHelper();
+    private WingsEndpoint mDropboxEndpoint = Wings.getEndpoint(DropboxEndpoint.class);
 
     /**
      * Listener for Dropbox linking events. May be null.
@@ -215,7 +219,7 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
             public void onClick(View v) {
                 Activity activity = getActivity();
                 if (activity != null && !activity.isFinishing()) {
-                    if (mDropboxHelper.isLinked(activity)) {
+                    if (mDropboxEndpoint.isLinked()) {
                         requestDropboxShare();
                     } else {
                         // Listen to Dropbox linking event.
@@ -225,7 +229,7 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
                         preferences.registerOnSharedPreferenceChangeListener(mDropboxLinkListener);
 
                         // Start Dropbox link request.
-                        mDropboxHelper.startLinkRequest(activity);
+                        mDropboxEndpoint.startLinkRequest(activity, ShareFragment.this);
                     }
                 }
             }
@@ -237,7 +241,7 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
             public void onClick(View v) {
                 Activity activity = getActivity();
                 if (activity != null && !activity.isFinishing()) {
-                    if (mFacebookHelper.isLinked(activity)) {
+                    if (mFacebookEndpoint.isLinked()) {
                         requestFacebookShare();
                     } else {
                         // Listen to Facebook linking event.
@@ -247,7 +251,7 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
                         preferences.registerOnSharedPreferenceChangeListener(mFacebookLinkListener);
 
                         // Start Facebook link request.
-                        mFacebookHelper.startLinkRequest(activity, ShareFragment.this);
+                        mFacebookEndpoint.startLinkRequest(activity, ShareFragment.this);
                     }
                 }
             }
@@ -292,16 +296,22 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        // Finish Facebook link request.
-        mFacebookHelper.onActivityResultImpl(getActivity(), ShareFragment.this, requestCode, resultCode, data);
+        // Call Wings APIs.
+        Set<WingsEndpoint> endpoints = Wings.getEndpoints();
+        for (WingsEndpoint endpoint : endpoints) {
+            endpoint.onActivityResultImpl(getActivity(), ShareFragment.this, requestCode, resultCode, data);
+        }
     }
 
     @Override
     public void onResume() {
         super.onResume();
 
-        // Finish Dropbox link request.
-        mDropboxHelper.onResumeImpl(getActivity().getApplicationContext());
+        // Call Wings APIs.
+        Set<WingsEndpoint> endpoints = Wings.getEndpoints();
+        for (WingsEndpoint endpoint : endpoints) {
+            endpoint.onResumeImpl();
+        }
     }
 
     @Override
@@ -383,13 +393,14 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
                 // Enable sharing options.
                 mShareButton.setEnabled(true);
 
-                if (mDropboxHelper.isAutoShare(appContext)) {
+                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(appContext);
+                if (mDropboxEndpoint.isLinked() && preferences.getBoolean(getString(R.string.pref__dropbox_auto_share_key), false)) {
                     requestDropboxShare();
                 } else {
                     mDropboxButton.setVisibility(View.VISIBLE);
                 }
 
-                if (mFacebookHelper.isAutoShare(appContext)) {
+                if (mFacebookEndpoint.isLinked() && preferences.getBoolean(getString(R.string.pref__facebook_auto_share_key), false)) {
                     requestFacebookShare();
                 } else {
                     mFacebookButton.setVisibility(View.VISIBLE);
@@ -477,8 +488,7 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
             Activity activity = getActivity();
-            if (activity != null && !activity.isFinishing() && key.equals(getString(R.string.pref__facebook_link_key))
-                    && mFacebookHelper.isLinked(activity)) {
+            if (activity != null && !activity.isFinishing() && mFacebookEndpoint.isLinked()) {
                 requestFacebookShare();
             }
         }
@@ -492,8 +502,7 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
             Activity activity = getActivity();
-            if (activity != null && !activity.isFinishing() && key.equals(getString(R.string.pref__dropbox_link_key))
-                    && mDropboxHelper.isLinked(activity)) {
+            if (activity != null && !activity.isFinishing() && mDropboxEndpoint.isLinked()) {
                 requestDropboxShare();
             }
         }

@@ -20,6 +20,11 @@ import android.content.Context;
 import android.os.HandlerThread;
 import android.os.Looper;
 
+import com.groundupworks.lib.photobooth.helpers.LogsHelper;
+import com.groundupworks.wings.Wings;
+import com.groundupworks.wings.dropbox.DropboxEndpoint;
+import com.groundupworks.wings.facebook.FacebookEndpoint;
+
 /**
  * Main {@link Application} class.
  *
@@ -43,6 +48,9 @@ public abstract class BaseApplication extends Application {
         // Start a worker thread that has a {@link Looper} to execute background tasks.
         sWorkerThread = new HandlerThread(WORKER_THREAD_NAME);
         sWorkerThread.start();
+
+        // Initialize Wings.
+        Wings.init(new Wings.DefaultModule(this, getWorkerLooper(), new LogsHelper()), FacebookEndpoint.class, DropboxEndpoint.class);
     }
 
     //

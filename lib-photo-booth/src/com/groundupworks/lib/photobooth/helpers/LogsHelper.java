@@ -17,19 +17,29 @@ package com.groundupworks.lib.photobooth.helpers;
 
 import android.util.Log;
 
-import com.groundupworks.lib.photobooth.BuildConfig;
+import com.groundupworks.wings.IWingsLogger;
 
 /**
  * Wrapper for {@link Log} to log only in debug builds.
  *
  * @author Benedict Lau
  */
-public class LogsHelper {
+public class LogsHelper implements IWingsLogger {
+
+    /**
+     * Flag that controls whether debug logs are printed. Set to true to enable logging.
+     */
+    private static final boolean DEBUG = false;
 
     /**
      * Tag that appears in debug logs.
      */
     private static final String LOGS_TAG = "PB";
+
+    @Override
+    public void log(Class<?> clazz, String methodName, String msg) {
+        slog(clazz, methodName, msg);
+    }
 
     //
     // Public methods.
@@ -39,11 +49,11 @@ public class LogsHelper {
      * Logs to logcat only in debug builds.
      *
      * @param clazz      the {@link Class}.
-     * @param methodName the name of the methods.
+     * @param methodName the name of the method.
      * @param msg        the debug message.
      */
-    public static void log(Class<?> clazz, String methodName, String msg) {
-        if (BuildConfig.DEBUG) {
+    public static void slog(Class<?> clazz, String methodName, String msg) {
+        if (DEBUG) {
             Log.d(LOGS_TAG, clazz.getSimpleName() + "#" + methodName + "() " + msg);
         }
     }

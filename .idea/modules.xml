@@ -6,6 +6,7 @@
       <module fileurl="file://$PROJECT_DIR$/flying-photo-booth/flying-photo-booth-flying-photo-booth.iml" filepath="$PROJECT_DIR$/flying-photo-booth/flying-photo-booth-flying-photo-booth.iml" />
       <module fileurl="file://$PROJECT_DIR$/lib-photo-booth/lib-photo-booth.iml" filepath="$PROJECT_DIR$/lib-photo-booth/lib-photo-booth.iml" />
       <module fileurl="file://$PROJECT_DIR$/party-photo-booth/party-photo-booth.iml" filepath="$PROJECT_DIR$/party-photo-booth/party-photo-booth.iml" />
+      <module fileurl="file://$PROJECT_DIR$/wings/wings.iml" filepath="$PROJECT_DIR$/wings/wings.iml" />
     </modules>
   </component>
 </project>

@@ -1,7 +1,7 @@
 <component name="libraryTable">
   <library name="httpclient-4.0.3">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/lib-photo-booth/libs/httpclient-4.0.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/wings/libs/httpclient-4.0.3.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

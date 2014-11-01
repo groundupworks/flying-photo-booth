@@ -15,9 +15,11 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.groundupworks.lib.photobooth.dropbox.DropboxHelper;
-import com.groundupworks.lib.photobooth.facebook.FacebookHelper;
 import com.groundupworks.partyphotobooth.R;
+import com.groundupworks.wings.WingsEndpoint;
+import com.groundupworks.wings.Wings;
+import com.groundupworks.wings.dropbox.DropboxEndpoint;
+import com.groundupworks.wings.facebook.FacebookEndpoint;
 
 import java.lang.ref.WeakReference;
 import java.util.Timer;
@@ -100,25 +102,22 @@ public class NoticeFragment extends Fragment {
          * Display notices for the linked sharing services.
          */
         Bundle args = getArguments();
-        Activity activity = getActivity();
 
         boolean facebookShared = args.getBoolean(FRAGMENT_BUNDLE_KEY_FACEBOOK_SHARED);
         boolean dropboxShared = args.getBoolean(FRAGMENT_BUNDLE_KEY_DROPBOX_SHARED);
 
-        FacebookHelper facebookHelper = new FacebookHelper();
-        String facebookName = facebookHelper.getLinkedAccountName(activity);
-        String facebookAlbum = facebookHelper.getLinkedAlbumName(activity);
-        if (facebookShared && facebookName != null && facebookAlbum != null) {
-            mFacebookNotice.setText(getString(R.string.notice__facebook_text, facebookName, facebookAlbum));
+        WingsEndpoint facebookEndpoint = Wings.getEndpoint(FacebookEndpoint.class);
+        String facebookDescription = facebookEndpoint.getDestinationDescription(FacebookEndpoint.DestinationId.PROFILE);
+        if (facebookShared && facebookDescription != null && facebookDescription.length() > 0) {
+            mFacebookNotice.setText(facebookDescription);
             mFacebookNotice.setVisibility(View.VISIBLE);
             mIsScreenValid = true;
         }
 
-        DropboxHelper dropboxHelper = new DropboxHelper();
-        String dropboxName = dropboxHelper.getLinkedAccountName(activity);
-        String dropboxUrl = dropboxHelper.getLinkedShareUrl(activity);
-        if (dropboxShared && dropboxName != null && dropboxUrl != null) {
-            mDropboxNotice.setText(getString(R.string.notice__dropbox_text, dropboxName, dropboxUrl));
+        WingsEndpoint dropboxEndpoint = Wings.getEndpoint(DropboxEndpoint.class);
+        String dropboxDescription = dropboxEndpoint.getDestinationDescription(DropboxEndpoint.DestinationId.APP_FOLDER);
+        if (dropboxShared && dropboxDescription != null && dropboxDescription.length() > 0) {
+            mDropboxNotice.setText(dropboxDescription);
             mDropboxNotice.setVisibility(View.VISIBLE);
             mIsScreenValid = true;
         }

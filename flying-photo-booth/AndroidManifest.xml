@@ -65,7 +65,7 @@
 
         <!-- Facebook linking -->
         <activity
-            android:name="com.groundupworks.lib.photobooth.facebook.FacebookSettingsActivity"
+            android:name="com.groundupworks.wings.facebook.FacebookSettingsActivity"
             android:label="@string/facebook_settings__label"
             android:screenOrientation="portrait"
             android:theme="@style/ThemeSelector" />
@@ -93,10 +93,10 @@
         </activity>
 
         <!-- Wings service -->
-        <service android:name="com.groundupworks.lib.photobooth.wings.WingsService" />
+        <service android:name="com.groundupworks.wings.core.WingsService" />
 
-        <receiver android:name="com.groundupworks.lib.photobooth.wings.AlarmReceiver" />
-        <receiver android:name="com.groundupworks.lib.photobooth.wings.BootReceiver">
+        <receiver android:name="com.groundupworks.wings.core.AlarmReceiver" />
+        <receiver android:name="com.groundupworks.wings.core.BootReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>

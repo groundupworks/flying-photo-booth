@@ -14,14 +14,9 @@ import android.os.Bundle;
 import android.os.Message;
 import android.util.SparseArray;
 
-import com.groundupworks.lib.photobooth.dropbox.DropboxHelper;
-import com.groundupworks.lib.photobooth.facebook.FacebookHelper;
 import com.groundupworks.lib.photobooth.framework.BaseController;
 import com.groundupworks.lib.photobooth.helpers.ImageHelper;
 import com.groundupworks.lib.photobooth.helpers.ImageHelper.Arrangement;
-import com.groundupworks.lib.photobooth.wings.ShareRequest;
-import com.groundupworks.lib.photobooth.wings.WingsDbHelper;
-import com.groundupworks.lib.photobooth.wings.WingsService;
 import com.groundupworks.partyphotobooth.MyApplication;
 import com.groundupworks.partyphotobooth.R;
 import com.groundupworks.partyphotobooth.arrangements.BaseTitleHeader;
@@ -33,6 +28,9 @@ import com.groundupworks.partyphotobooth.helpers.PreferencesHelper;
 import com.groundupworks.partyphotobooth.helpers.PreferencesHelper.PhotoStripArrangement;
 import com.groundupworks.partyphotobooth.helpers.PreferencesHelper.PhotoStripTemplate;
 import com.groundupworks.partyphotobooth.helpers.TextHelper;
+import com.groundupworks.wings.Wings;
+import com.groundupworks.wings.dropbox.DropboxEndpoint;
+import com.groundupworks.wings.facebook.FacebookEndpoint;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -316,23 +314,20 @@ public class PhotoStripController extends BaseController {
 
                 if (isSuccessful) {
                     String jpegPath = file.getPath();
-
                     // Request adding Jpeg to Android Gallery.
                     MediaScannerConnection.scanFile(context, new String[]{jpegPath},
                             new String[]{ImageHelper.JPEG_MIME_TYPE}, null);
 
                     // Share to Facebook.
                     boolean facebookShared = false;
-                    FacebookHelper facebookHelper = new FacebookHelper();
-                    if (facebookHelper.isLinked(context)) {
-                        facebookShared = share(context, jpegPath, ShareRequest.DESTINATION_FACEBOOK);
+                    if (Wings.getEndpoint(FacebookEndpoint.class).isLinked()) {
+                        facebookShared = Wings.share(jpegPath, FacebookEndpoint.DestinationId.PROFILE, FacebookEndpoint.class);
                     }
 
                     // Share to Dropbox.
                     boolean dropboxShared = false;
-                    DropboxHelper dropboxHelper = new DropboxHelper();
-                    if (dropboxHelper.isLinked(context)) {
-                        dropboxShared = share(context, jpegPath, ShareRequest.DESTINATION_DROPBOX);
+                    if (Wings.getEndpoint(DropboxEndpoint.class).isLinked()) {
+                        dropboxShared = Wings.share(jpegPath, DropboxEndpoint.DestinationId.APP_FOLDER, DropboxEndpoint.class);
                     }
 
                     // Notify ui the Jpeg is saved and shared to linked services.
@@ -391,24 +386,5 @@ public class PhotoStripController extends BaseController {
      */
     private boolean isPhotoStripComplete() {
         return mFramesList.size() == mFramesTotalPref;
-    }
-
-    /**
-     * Shares a photo strip to a sharing service.
-     *
-     * @param context     the {@link Context}.
-     * @param jpegPath    The path to the Jpeg to share.
-     * @param destination The sharing service to share to.
-     * @return true if successful; false otherwise.
-     */
-    private boolean share(Context context, String jpegPath, int destination) {
-        boolean isSuccessful = false;
-        if (jpegPath != null && WingsDbHelper.getInstance(context).createShareRequest(jpegPath, destination)) {
-            // Start Wings service.
-            WingsService.startWakefulService(context);
-
-            isSuccessful = true;
-        }
-        return isSuccessful;
     }
 }
