@@ -37,8 +37,6 @@ public class GoogleCouldPrintEndpoint extends WingsEndpoint {
 
     private static final String MIME_TYPE = "image/jpeg";
 
-    private static final int REQUEST_CODE_BASE = 1000;
-
     private final GoogleCloudPrint mGoogleCloudPrint;
 
     private String mPrinterIdentifier;
@@ -56,7 +54,7 @@ public class GoogleCouldPrintEndpoint extends WingsEndpoint {
     @Override
     public void startLinkRequest(final Activity activity, final Fragment fragment) {
         activity.startActivityForResult(
-            new Intent(activity, GoogleCloudPrintPrinterSelectionActivity.class), REQUEST_CODE_BASE);
+            new Intent(activity, GoogleCloudPrintPrinterSelectionActivity.class), DESTINATION_GCP.getEndpointId());
     }
 
     @Override
@@ -80,7 +78,7 @@ public class GoogleCouldPrintEndpoint extends WingsEndpoint {
     @Override
     public void onActivityResultImpl(final Activity activity, final Fragment fragment,
         final int requestCode, final int resultCode, final Intent data) {
-        if (requestCode == REQUEST_CODE_BASE) {
+        if (requestCode == DESTINATION_GCP.getEndpointId()) {
             if (resultCode == Activity.RESULT_OK) {
                 mPrinterIdentifier = data.getStringExtra(EXTRA_PRINTER);
                 mAccountName = data.getStringExtra(EXTRA_ACCOUNT);
