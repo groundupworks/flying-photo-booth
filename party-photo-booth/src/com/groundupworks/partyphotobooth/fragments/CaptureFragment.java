@@ -19,6 +19,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,6 +35,7 @@ import com.groundupworks.lib.photobooth.views.CenteredPreview;
 import com.groundupworks.partyphotobooth.R;
 import com.groundupworks.partyphotobooth.helpers.PreferencesHelper;
 import com.groundupworks.partyphotobooth.helpers.PreferencesHelper.PhotoBoothMode;
+import com.groundupworks.partyphotobooth.kiosk.KioskActivity;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
@@ -67,6 +69,11 @@ public class CaptureFragment extends Fragment {
      * Callbacks for this fragment.
      */
     private WeakReference<CaptureFragment.ICallbacks> mCallbacks = null;
+
+    /**
+     * Handler for a key event.
+     */
+    private KioskActivity.KeyEventHandler mKeyEventHandler;
 
     /**
      * Id of the selected camera.
@@ -125,7 +132,8 @@ public class CaptureFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        final Context appContext = getActivity().getApplicationContext();
+        final KioskActivity activity = (KioskActivity) getActivity();
+        final Context appContext = activity.getApplicationContext();
         final Bundle args = getArguments();
         final int totalFrames = args.getInt(FRAGMENT_BUNDLE_KEY_TOTAL_FRAMES);
         final int currentFrame = args.getInt(FRAGMENT_BUNDLE_KEY_CURRENT_FRAME);
@@ -160,6 +168,22 @@ public class CaptureFragment extends Fragment {
             }
         }
 
+         /*
+         * Initialize and set key event handlers.
+         */
+        mKeyEventHandler = new KioskActivity.KeyEventHandler() {
+            @Override
+            public boolean onKeyEvent(KeyEvent event) {
+                final int keyCode = event.getKeyCode();
+                if (keyCode == KeyEvent.KEYCODE_ENTER || keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
+                    mStartButton.dispatchKeyEvent(event);
+                    return true;
+                }
+                return false;
+            }
+        };
+        activity.setKeyEventHandler(mKeyEventHandler);
+
         /*
          * Functionalize views.
          */
@@ -170,6 +194,13 @@ public class CaptureFragment extends Fragment {
                     @Override
                     public void onClick(View v) {
                         initiateCapture();
+                    }
+                });
+                mStartButton.setOnKeyListener(new View.OnKeyListener() {
+                    @Override
+                    public boolean onKey(View v, int keyCode, KeyEvent event) {
+                        initiateCapture();
+                        return true;
                     }
                 });
                 linkStartButton();
@@ -207,6 +238,13 @@ public class CaptureFragment extends Fragment {
                     @Override
                     public void onClick(View v) {
                         initiateCountdownCapture();
+                    }
+                });
+                mStartButton.setOnKeyListener(new View.OnKeyListener() {
+                    @Override
+                    public boolean onKey(View v, int keyCode, KeyEvent event) {
+                        initiateCountdownCapture();
+                        return true;
                     }
                 });
                 linkStartButton();

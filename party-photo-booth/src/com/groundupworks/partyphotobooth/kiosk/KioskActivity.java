@@ -31,6 +31,8 @@ import com.groundupworks.partyphotobooth.fragments.PhotoStripFragment;
 import com.groundupworks.partyphotobooth.helpers.PreferencesHelper;
 import com.groundupworks.partyphotobooth.kiosk.KioskModeHelper.State;
 
+import java.lang.ref.WeakReference;
+
 /**
  * {@link Activity} that puts the device in Kiosk mode. This should only be launched from the {@link KioskService}.
  *
@@ -44,6 +46,11 @@ public class KioskActivity extends FragmentActivity implements KioskSetupFragmen
      * Package private flag to track whether the single instance {@link KioskActivity} is in foreground.
      */
     static boolean sIsInForeground = false;
+
+    /**
+     * Handler for key event.
+     */
+    private WeakReference<KeyEventHandler> mKeyEventHandler = new WeakReference<KeyEventHandler>(null);
 
     /**
      * The {@link KioskModeHelper}.
@@ -146,7 +153,12 @@ public class KioskActivity extends FragmentActivity implements KioskSetupFragmen
     }
 
     @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        final KeyEventHandler handler = mKeyEventHandler.get();
+        if (handler != null) {
+            handler.onKeyEvent(event);
+        }
+
         // Block event.
         return true;
     }
@@ -318,6 +330,21 @@ public class KioskActivity extends FragmentActivity implements KioskSetupFragmen
     }
 
     //
+    // Public methods.
+    //
+
+    /**
+     * Sets a handler for the key event.
+     *
+     * @param handler the handler for the key event. Pass null to clear. The reference is weakly
+     *                held, so the client is responsible for holding onto a strong reference to prevent
+     *                the handler from being garbage collected.
+     */
+    public void setKeyEventHandler(KeyEventHandler handler) {
+        mKeyEventHandler = new WeakReference<KeyEventHandler>(handler);
+    }
+
+    //
     // Private methods.
     //
 
@@ -460,5 +487,21 @@ public class KioskActivity extends FragmentActivity implements KioskSetupFragmen
 
         // Finish KioskActivity.
         finish();
+    }
+
+    //
+    // Public interfaces.
+    //
+
+    /**
+     * Handler interface for a key event.
+     */
+    public interface KeyEventHandler {
+
+        /**
+         * @param event the key event.
+         * @return true if key event is handled; false otherwise.
+         */
+        boolean onKeyEvent(KeyEvent event);
     }
 }
