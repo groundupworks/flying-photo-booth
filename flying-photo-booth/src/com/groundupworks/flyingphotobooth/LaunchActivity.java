@@ -20,11 +20,14 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.view.KeyEvent;
 
 import com.groundupworks.flyingphotobooth.fragments.CaptureFragment;
 import com.groundupworks.flyingphotobooth.fragments.ErrorDialogFragment;
 import com.groundupworks.lib.photobooth.framework.BaseFragmentActivity;
 import com.groundupworks.lib.photobooth.helpers.StorageHelper;
+
+import java.lang.ref.WeakReference;
 
 /**
  * The launch {@link Activity}.
@@ -41,7 +44,12 @@ public class LaunchActivity extends BaseFragmentActivity {
     /**
      * Handler for the back pressed event.
      */
-    private BackPressedHandler mBackPressedHandler = null;
+    private WeakReference<BackPressedHandler> mBackPressedHandler = new WeakReference<BackPressedHandler>(null);
+
+    /**
+     * Handler for key event.
+     */
+    private WeakReference<KeyEventHandler> mKeyEventHandler = new WeakReference<KeyEventHandler>(null);
 
     /**
      * Reference to the storage error dialog if shown.
@@ -101,9 +109,20 @@ public class LaunchActivity extends BaseFragmentActivity {
 
     @Override
     public void onBackPressed() {
-        if (mBackPressedHandler == null || !mBackPressedHandler.isHandled()) {
+        final BackPressedHandler handler = mBackPressedHandler.get();
+        if (handler == null || !handler.onBackPressed()) {
             super.onBackPressed();
         }
+    }
+
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        final KeyEventHandler handler = mKeyEventHandler.get();
+        if (handler != null && handler.onKeyEvent(event)) {
+            return true;
+        }
+
+        return super.dispatchKeyEvent(event);
     }
 
     //
@@ -113,10 +132,23 @@ public class LaunchActivity extends BaseFragmentActivity {
     /**
      * Sets a handler for the back pressed event.
      *
-     * @param handler the handler for the back pressed event. Pass null to clear.
+     * @param handler the handler for the back pressed event. Pass null to clear. The reference is weakly
+     *                held, so the client is responsible for holding onto a strong reference to prevent
+     *                the handler from being garbage collected.
      */
     public void setBackPressedHandler(BackPressedHandler handler) {
-        mBackPressedHandler = handler;
+        mBackPressedHandler = new WeakReference<BackPressedHandler>(handler);
+    }
+
+    /**
+     * Sets a handler for the key event.
+     *
+     * @param handler the handler for the key event. Pass null to clear. The reference is weakly
+     *                held, so the client is responsible for holding onto a strong reference to prevent
+     *                the handler from being garbage collected.
+     */
+    public void setKeyEventHandler(KeyEventHandler handler) {
+        mKeyEventHandler = new WeakReference<KeyEventHandler>(handler);
     }
 
     //
@@ -124,13 +156,25 @@ public class LaunchActivity extends BaseFragmentActivity {
     //
 
     /**
-     * Handler interface for the back pressed event.
+     * Handler interface for a back pressed event.
      */
     public interface BackPressedHandler {
 
         /**
-         * @return true if back press event is handled; false otherwise.
+         * @return true if back pressed event is handled; false otherwise.
          */
-        boolean isHandled();
+        boolean onBackPressed();
+    }
+
+    /**
+     * Handler interface for a key event.
+     */
+    public interface KeyEventHandler {
+
+        /**
+         * @param event the key event.
+         * @return true if key event is handled; false otherwise.
+         */
+        boolean onKeyEvent(KeyEvent event);
     }
 }

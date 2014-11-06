@@ -29,6 +29,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -45,7 +46,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.groundupworks.flyingphotobooth.LaunchActivity;
-import com.groundupworks.flyingphotobooth.LaunchActivity.BackPressedHandler;
 import com.groundupworks.flyingphotobooth.MyPreferenceActivity;
 import com.groundupworks.flyingphotobooth.R;
 import com.groundupworks.lib.photobooth.framework.BaseApplication;
@@ -194,6 +194,14 @@ public class CaptureFragment extends Fragment {
     private byte[][] mFramesData = null;
 
     //
+    // Key event handlers.
+    //
+
+    private LaunchActivity.BackPressedHandler mBackPressedHandler;
+
+    private LaunchActivity.KeyEventHandler mKeyEventHandler;
+
+    //
     // Views.
     //
 
@@ -310,12 +318,12 @@ public class CaptureFragment extends Fragment {
         mFramesData = new byte[mFramesTotal][];
 
         /*
-         * Set handler for back pressed event.
+         * Initialize and set key event handlers.
          */
-        activity.setBackPressedHandler(new BackPressedHandler() {
+        mBackPressedHandler = new LaunchActivity.BackPressedHandler() {
 
             @Override
-            public boolean isHandled() {
+            public boolean onBackPressed() {
                 // If capture sequence is running, exit capture sequence on back pressed event.
                 if (mIsCaptureSequenceRunning) {
                     activity.replaceFragment(CaptureFragment.newInstance(mUseFrontFacing), false, true);
@@ -323,7 +331,21 @@ public class CaptureFragment extends Fragment {
 
                 return mIsCaptureSequenceRunning;
             }
-        });
+        };
+        activity.setBackPressedHandler(mBackPressedHandler);
+
+        mKeyEventHandler = new LaunchActivity.KeyEventHandler() {
+            @Override
+            public boolean onKeyEvent(KeyEvent event) {
+                final int keyCode = event.getKeyCode();
+                if (keyCode == KeyEvent.KEYCODE_ENTER || keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
+                    mStartButton.dispatchKeyEvent(event);
+                    return true;
+                }
+                return false;
+            }
+        };
+        activity.setKeyEventHandler(mKeyEventHandler);
 
         /*
          * Functionalize views.
@@ -382,22 +404,15 @@ public class CaptureFragment extends Fragment {
         mStartButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mCamera != null) {
-                    mStartButton.setEnabled(false);
-                    mStartButton.setVisibility(View.INVISIBLE);
-                    mSwitchButton.setVisibility(View.GONE);
-                    mPreferencesButton.setVisibility(View.GONE);
+                onStartButtonPressedImpl();
+            }
+        });
 
-                    // Set flag to indicate capture sequence is running.
-                    mIsCaptureSequenceRunning = true;
-
-                    // Kick off capture sequence.
-                    if (mTriggerMode == TRIGGER_MODE_MANUAL) {
-                        kickoffManualCapture();
-                    } else {
-                        kickoffCountdownCapture();
-                    }
-                }
+        mStartButton.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                onStartButtonPressedImpl();
+                return true;
             }
         });
     }
@@ -673,6 +688,28 @@ public class CaptureFragment extends Fragment {
     private boolean isActivityAlive() {
         Activity activity = getActivity();
         return activity != null && !activity.isFinishing();
+    }
+
+    /**
+     * Handles the press of the start button.
+     */
+    private void onStartButtonPressedImpl() {
+        if (mCamera != null) {
+            mStartButton.setEnabled(false);
+            mStartButton.setVisibility(View.INVISIBLE);
+            mSwitchButton.setVisibility(View.GONE);
+            mPreferencesButton.setVisibility(View.GONE);
+
+            // Set flag to indicate capture sequence is running.
+            mIsCaptureSequenceRunning = true;
+
+            // Kick off capture sequence.
+            if (mTriggerMode == TRIGGER_MODE_MANUAL) {
+                kickoffManualCapture();
+            } else {
+                kickoffCountdownCapture();
+            }
+        }
     }
 
     /**
