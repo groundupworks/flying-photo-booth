@@ -273,7 +273,7 @@ public class ShareServicesSetupFragment extends Fragment {
                 if (key.equals(getString(R.string.facebook__link_key))) {
                     updateFacebook();
                     updateNoticeEnabled();
-                } else if (key.equals(getString(R.string.facebook__link_key))) {
+                } else if (key.equals(getString(R.string.dropbox__link_key))) {
                     updateDropbox();
                     updateNoticeEnabled();
                 }
