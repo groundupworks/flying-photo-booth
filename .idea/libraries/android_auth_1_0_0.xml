@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="android-auth-1.0.0">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/gcp/build/intermediates/exploded-aar/com.github.dpsm/android-auth/1.0.0/classes.jar!/" />
+      <root url="file://$PROJECT_DIR$/gcp/build/intermediates/exploded-aar/com.github.dpsm/android-auth/1.0.0/res" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

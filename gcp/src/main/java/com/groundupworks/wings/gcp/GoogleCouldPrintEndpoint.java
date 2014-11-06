@@ -33,7 +33,10 @@ import static com.groundupworks.wings.gcp.GoogleCloudPrintPrinterSelectionActivi
  */
 public class GoogleCouldPrintEndpoint extends WingsEndpoint {
 
-    private static final WingsDestination DESTINATION_GCP = new WingsDestination(0x01, 0x04);
+    /**
+     * Google Cloud Print endpoint id.
+     */
+    private static final int ENDPOINT_ID = 2;
 
     private static final String MIME_TYPE = "image/jpeg";
 
@@ -54,7 +57,7 @@ public class GoogleCouldPrintEndpoint extends WingsEndpoint {
     @Override
     public void startLinkRequest(final Activity activity, final Fragment fragment) {
         activity.startActivityForResult(
-            new Intent(activity, GoogleCloudPrintPrinterSelectionActivity.class), DESTINATION_GCP.getEndpointId());
+                new Intent(activity, GoogleCloudPrintPrinterSelectionActivity.class), ENDPOINT_ID);
     }
 
     @Override
@@ -65,9 +68,9 @@ public class GoogleCouldPrintEndpoint extends WingsEndpoint {
     @Override
     public boolean isLinked() {
         return !TextUtils.isEmpty(mAccountName)
-            && !TextUtils.isEmpty(mPrinterIdentifier)
-            && !TextUtils.isEmpty(mTicket)
-            && !TextUtils.isEmpty(mToken);
+                && !TextUtils.isEmpty(mPrinterIdentifier)
+                && !TextUtils.isEmpty(mTicket)
+                && !TextUtils.isEmpty(mToken);
     }
 
     @Override
@@ -77,8 +80,8 @@ public class GoogleCouldPrintEndpoint extends WingsEndpoint {
 
     @Override
     public void onActivityResultImpl(final Activity activity, final Fragment fragment,
-        final int requestCode, final int resultCode, final Intent data) {
-        if (requestCode == DESTINATION_GCP.getEndpointId()) {
+                                     final int requestCode, final int resultCode, final Intent data) {
+        if (requestCode == ENDPOINT_ID) {
             if (resultCode == Activity.RESULT_OK) {
                 mPrinterIdentifier = data.getStringExtra(EXTRA_PRINTER);
                 mAccountName = data.getStringExtra(EXTRA_ACCOUNT);
@@ -96,7 +99,7 @@ public class GoogleCouldPrintEndpoint extends WingsEndpoint {
 
     @Override
     public int getEndpointId() {
-        return DESTINATION_GCP.getEndpointId();
+        return ENDPOINT_ID;
     }
 
     @Override
@@ -107,76 +110,76 @@ public class GoogleCouldPrintEndpoint extends WingsEndpoint {
     @Override
     public Set<IWingsNotification> processShareRequests() {
         final Observable<ShareRequest> requestObservable = Observable
-            .from(mDatabase.checkoutShareRequests(DESTINATION_GCP))
-            .cache();
+                .from(mDatabase.checkoutShareRequests(new WingsDestination(DestinationId.PRINT_QUEUE, ENDPOINT_ID)))
+                .cache();
 
 
         final Observable<Response> responseObservable = requestObservable
-            .map(new Func1<ShareRequest, File>() {
-                @Override
-                public File call(final ShareRequest shareRequest) {
-                    return new File(shareRequest.getFilePath());
-                }
-            })
-            .filter(new Func1<File, Boolean>() {
-                @Override
-                public Boolean call(final File file) {
-                    return file.exists();
-                }
-            })
-            .flatMap(new Func1<File, Observable<Response>>() {
-                @Override
-                public Observable<Response> call(final File file) {
-                    return mGoogleCloudPrint.submitPrintJob(mToken, mPrinterIdentifier,
-                        file.getName(), mTicket, new TypedFile(MIME_TYPE, file));
-                }
-            });
+                .map(new Func1<ShareRequest, File>() {
+                    @Override
+                    public File call(final ShareRequest shareRequest) {
+                        return new File(shareRequest.getFilePath());
+                    }
+                })
+                .filter(new Func1<File, Boolean>() {
+                    @Override
+                    public Boolean call(final File file) {
+                        return file.exists();
+                    }
+                })
+                .flatMap(new Func1<File, Observable<Response>>() {
+                    @Override
+                    public Observable<Response> call(final File file) {
+                        return mGoogleCloudPrint.submitPrintJob(mToken, mPrinterIdentifier,
+                                file.getName(), mTicket, new TypedFile(MIME_TYPE, file));
+                    }
+                });
 
         Observable<IWingsNotification> notificationObservable = Observable
-            .zip(requestObservable, responseObservable, new Func2<ShareRequest, Response, Object>() {
-            @Override
-            public ShareRequest call(final ShareRequest shareRequest, final Response response) {
-                if (response.getStatus() == HttpURLConnection.HTTP_OK) {
-                    mDatabase.markSuccessful(shareRequest.getId());
-                } else {
-                    mDatabase.markFailed(shareRequest.getId());
-                }
-                return shareRequest;
-            }
-        })
-        .count()
-        .map(new Func1<Integer, IWingsNotification>() {
-            @Override
-            public IWingsNotification call(final Integer count) {
-                return new IWingsNotification() {
-
+                .zip(requestObservable, responseObservable, new Func2<ShareRequest, Response, Object>() {
                     @Override
-                    public int getId() {
-                        return 0;
+                    public ShareRequest call(final ShareRequest shareRequest, final Response response) {
+                        if (response.getStatus() == HttpURLConnection.HTTP_OK) {
+                            mDatabase.markSuccessful(shareRequest.getId());
+                        } else {
+                            mDatabase.markFailed(shareRequest.getId());
+                        }
+                        return shareRequest;
                     }
-
+                })
+                .count()
+                .map(new Func1<Integer, IWingsNotification>() {
                     @Override
-                    public String getTitle() {
-                        return mContext.getString(R.string.gcp_notification_title);
-                    }
+                    public IWingsNotification call(final Integer count) {
+                        return new IWingsNotification() {
 
-                    @Override
-                    public String getMessage() {
-                        return mContext.getString(R.string.gcp_notification_message, count);
-                    }
+                            @Override
+                            public int getId() {
+                                return 0;
+                            }
 
-                    @Override
-                    public String getTicker() {
-                        return mContext.getString(R.string.gcp_notification_ticket);
-                    }
+                            @Override
+                            public String getTitle() {
+                                return mContext.getString(R.string.gcp_notification_title);
+                            }
 
-                    @Override
-                    public Intent getIntent() {
-                        return new Intent();
+                            @Override
+                            public String getMessage() {
+                                return mContext.getString(R.string.gcp_notification_message, count);
+                            }
+
+                            @Override
+                            public String getTicker() {
+                                return mContext.getString(R.string.gcp_notification_ticket);
+                            }
+
+                            @Override
+                            public Intent getIntent() {
+                                return new Intent();
+                            }
+                        };
                     }
-                };
-            }
-        });
+                });
 
         final Set<IWingsNotification> result = new HashSet<IWingsNotification>();
         try {
@@ -185,5 +188,16 @@ public class GoogleCouldPrintEndpoint extends WingsEndpoint {
             Log.e(getClass().getSimpleName(), "Failed to enqueue print jobs!", t);
         }
         return result;
+    }
+
+    /**
+     * The list of destination ids.
+     */
+    public interface DestinationId {
+
+        /**
+         * The GCP print queue.
+         */
+        public static final int PRINT_QUEUE = 0;
     }
 }
