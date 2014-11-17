@@ -5,8 +5,8 @@
     android:versionName="3.4">
 
     <uses-sdk
-        android:minSdkVersion="9"
-        android:targetSdkVersion="19" />
+        android:minSdkVersion="10"
+        android:targetSdkVersion="20" />
 
     <uses-feature
         android:name="android.hardware.screen.portrait"
@@ -66,7 +66,7 @@
         <!-- Facebook linking -->
         <activity
             android:name="com.groundupworks.wings.facebook.FacebookSettingsActivity"
-            android:label="@string/facebook_settings__label"
+            android:label="@string/facebook__settings__label"
             android:screenOrientation="portrait"
             android:theme="@style/ThemeSelector" />
 

@@ -59,7 +59,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * A helper class for linking and sharing to Facebook.
+ * The Wings endpoint for Facebook.
  *
  * @author Benedict Lau
  */

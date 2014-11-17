@@ -26,11 +26,11 @@ import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.support.v4.app.NotificationCompat;
 
-import com.groundupworks.wings.WingsEndpoint;
 import com.groundupworks.wings.IWingsLogger;
 import com.groundupworks.wings.IWingsNotification;
 import com.groundupworks.wings.R;
 import com.groundupworks.wings.Wings;
+import com.groundupworks.wings.WingsEndpoint;
 
 import java.util.Set;
 

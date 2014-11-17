@@ -5,8 +5,8 @@
     android:versionName="1.8">
 
     <uses-sdk
-        android:minSdkVersion="9"
-        android:targetSdkVersion="19" />
+        android:minSdkVersion="10"
+        android:targetSdkVersion="20" />
 
     <uses-feature
         android:name="android.hardware.screen.landscape"
@@ -69,7 +69,7 @@
         <activity
             android:name="com.groundupworks.wings.facebook.FacebookSettingsActivity"
             android:excludeFromRecents="true"
-            android:label="@string/facebook_settings__label"
+            android:label="@string/facebook__settings__label"
             android:screenOrientation="landscape"
             android:theme="@style/ThemeSelectorFullscreen" />
 
