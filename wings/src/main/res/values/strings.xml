@@ -11,14 +11,14 @@
     <string name="facebook__notification_shared_ticker">Facebook share completed</string>
 
     <!-- Facebook Settings Activity -->
-    <string name="facebook_settings__label">Select photo album</string>
+    <string name="facebook__settings__label">Select photo album</string>
 
     <!-- Facebook Privacy Dialog Fragment -->
-    <string name="facebook_privacy__dialog_title">Select privacy level</string>
-    <string name="facebook_privacy__photo_privacy_self">Only Me</string>
-    <string name="facebook_privacy__photo_privacy_friends">Friends</string>
-    <string name="facebook_privacy__photo_privacy_friends_of_friends">Friends of Friends</string>
-    <string name="facebook_privacy__photo_privacy_everyone">Public</string>
+    <string name="facebook__privacy__dialog_title">Select privacy level</string>
+    <string name="facebook__privacy__photo_privacy_self">Only Me</string>
+    <string name="facebook__privacy__photo_privacy_friends">Friends</string>
+    <string name="facebook__privacy__photo_privacy_friends_of_friends">Friends of Friends</string>
+    <string name="facebook__privacy__photo_privacy_everyone">Public</string>
 
     <!-- Dropbox Endpoint -->
     <string name="dropbox__error_link">Unable to link Dropbox</string>

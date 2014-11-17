@@ -24,7 +24,7 @@ import com.groundupworks.lib.photobooth.helpers.LogsHelper;
 import com.groundupworks.wings.Wings;
 import com.groundupworks.wings.dropbox.DropboxEndpoint;
 import com.groundupworks.wings.facebook.FacebookEndpoint;
-import com.groundupworks.wings.gcp.GoogleCouldPrintEndpoint;
+import com.groundupworks.wings.gcp.GoogleCloudPrintEndpoint;
 
 /**
  * Main {@link Application} class.
@@ -52,7 +52,7 @@ public abstract class BaseApplication extends Application {
 
         // Initialize Wings.
         Wings.init(new Wings.DefaultModule(this, getWorkerLooper(), new LogsHelper()),
-            FacebookEndpoint.class, DropboxEndpoint.class, GoogleCouldPrintEndpoint.class);
+            FacebookEndpoint.class, DropboxEndpoint.class, GoogleCloudPrintEndpoint.class);
     }
 
     //

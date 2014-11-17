@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Google Cloud Print Internal -->
+    <string name="gcp__link_key">gcp__link_key</string>
+    <string name="gcp__account_name_key">gcp__account_name_key</string>
+    <string name="gcp__printer_identifier_key">gcp__printer_identifier_key</string>
+    <string name="gcp__ticket">gcp__ticket</string>
+    <string name="gcp__token">gcp__token</string>
+</resources>

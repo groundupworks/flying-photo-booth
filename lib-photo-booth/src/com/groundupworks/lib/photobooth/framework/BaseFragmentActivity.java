@@ -19,7 +19,7 @@ public abstract class BaseFragmentActivity extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_facebook_settings);
+        setContentView(R.layout.facebook_activity_settings);
     }
 
     //

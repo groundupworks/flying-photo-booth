@@ -3,10 +3,10 @@
 
     <!-- Facebook photo privacies -->
     <array name="facebook_privacy__privacies">
-        <item>@string/facebook_privacy__photo_privacy_self</item>
-        <item>@string/facebook_privacy__photo_privacy_friends</item>
-        <item>@string/facebook_privacy__photo_privacy_friends_of_friends</item>
-        <item>@string/facebook_privacy__photo_privacy_everyone</item>
+        <item>@string/facebook__privacy__photo_privacy_self</item>
+        <item>@string/facebook__privacy__photo_privacy_friends</item>
+        <item>@string/facebook__privacy__photo_privacy_friends_of_friends</item>
+        <item>@string/facebook__privacy__photo_privacy_everyone</item>
     </array>
 
 </resources>

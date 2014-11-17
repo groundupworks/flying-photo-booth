@@ -58,7 +58,7 @@ public class FacebookPrivacyDialogFragment extends DialogFragment {
 
         }
 
-        return dialogBuilder.setTitle(getString(R.string.facebook_privacy__dialog_title))
+        return dialogBuilder.setTitle(getString(R.string.facebook__privacy__dialog_title))
                 .setItems(R.array.facebook_privacy__privacies, new OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -86,13 +86,13 @@ public class FacebookPrivacyDialogFragment extends DialogFragment {
             String privacyString = privacyArray[photoPrivacyIndex];
 
             String photoPrivacy = null;
-            if (getString(R.string.facebook_privacy__photo_privacy_self).equals(privacyString)) {
+            if (getString(R.string.facebook__privacy__photo_privacy_self).equals(privacyString)) {
                 photoPrivacy = FacebookEndpoint.PHOTO_PRIVACY_SELF;
-            } else if (getString(R.string.facebook_privacy__photo_privacy_friends).equals(privacyString)) {
+            } else if (getString(R.string.facebook__privacy__photo_privacy_friends).equals(privacyString)) {
                 photoPrivacy = FacebookEndpoint.PHOTO_PRIVACY_FRIENDS;
-            } else if (getString(R.string.facebook_privacy__photo_privacy_friends_of_friends).equals(privacyString)) {
+            } else if (getString(R.string.facebook__privacy__photo_privacy_friends_of_friends).equals(privacyString)) {
                 photoPrivacy = FacebookEndpoint.PHOTO_PRIVACY_FRIENDS_OF_FRIENDS;
-            } else if (getString(R.string.facebook_privacy__photo_privacy_everyone).equals(privacyString)) {
+            } else if (getString(R.string.facebook__privacy__photo_privacy_everyone).equals(privacyString)) {
                 photoPrivacy = FacebookEndpoint.PHOTO_PRIVACY_EVERYONE;
             }
 

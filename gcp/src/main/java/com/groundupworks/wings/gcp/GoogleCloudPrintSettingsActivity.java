@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 David Marques.
+ * Copyright (C) 2014 David Marques
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,8 +18,6 @@ package com.groundupworks.wings.gcp;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -41,7 +39,13 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
-public class GoogleCloudPrintPrinterSelectionActivity extends Activity implements AccountSelectionActivityHelper.AccountSelectionListener,
+/**
+ * {@link android.app.Activity} to select a Google Cloud printer.
+ *
+ * @author David Marques
+ */
+public class GoogleCloudPrintSettingsActivity extends Activity implements
+        AccountSelectionActivityHelper.AccountSelectionListener,
         OperatorGoogleAuthenticationActivityController.GoogleAuthenticationListener {
 
     private static final String GOOGLE_PRINT_SCOPE = "oauth2:https://www.googleapis.com/auth/cloudprint";
@@ -49,27 +53,25 @@ public class GoogleCloudPrintPrinterSelectionActivity extends Activity implement
     private static final String[] ACCOUNT_TYPE = new String[]{"com.google"};
 
     private static final String TICKET = "{\n" +
-        "  \"version\": \"1.0\",\n" +
-        "  \"print\": {\n" +
-        "    \"vendor_ticket_item\": [],\n" +
-        "    \"color\": {\n" +
-        "      \"type\": \"STANDARD_COLOR\"\n" +
-        "    },\n" +
-        "    \"media_size\": {\n" +
-        "      \"width_microns\": 1,\n" +
-        "      \"height_microns\": 1,\n" +
-        "      \"is_continuous_feed\": false,\n" +
-        "      \"vendor_id\" : \"EnvMonarch\"\n" +
-        "    }\n" +
-        "  }\n" +
-        "}";
+            "  \"version\": \"1.0\",\n" +
+            "  \"print\": {\n" +
+            "    \"vendor_ticket_item\": [],\n" +
+            "    \"color\": {\n" +
+            "      \"type\": \"STANDARD_COLOR\"\n" +
+            "    },\n" +
+            "    \"media_size\": {\n" +
+            "      \"width_microns\": 1,\n" +
+            "      \"height_microns\": 1,\n" +
+            "      \"is_continuous_feed\": false,\n" +
+            "      \"vendor_id\" : \"EnvMonarch\"\n" +
+            "    }\n" +
+            "  }\n" +
+            "}";
 
-    public static final String EXTRA_ACCOUNT = "account";
-    public static final String EXTRA_PRINTER = "printer";
-    public static final String EXTRA_TICKET = "ticket";
-    public static final String EXTRA_TOKEN = "token";
-
-    private GoogleCloudPrint mGoogleCloudPrint;
+    static final String EXTRA_ACCOUNT = "account";
+    static final String EXTRA_PRINTER = "printer";
+    static final String EXTRA_TICKET = "ticket";
+    static final String EXTRA_TOKEN = "token";
 
     private static final int REQUEST_CODE_BASE = 1000;
 
@@ -79,13 +81,11 @@ public class GoogleCloudPrintPrinterSelectionActivity extends Activity implement
             final List<Printer> printers = response.getPrinters();
             if (printers != null && printers.size() > 0) {
                 mPrinterSpinner.setAdapter(new ArrayAdapter<Printer>(
-                        GoogleCloudPrintPrinterSelectionActivity.this,
-                        R.layout.gcp_activity_setup_spinner_item,
-                        R.id.activity_main_spinner_item_text,
-                        printers
+                        GoogleCloudPrintSettingsActivity.this, R.layout.gcp_settings_spinner_item,
+                        R.id.activity_main_spinner_item_text, printers
                 ));
             } else {
-                Toast.makeText(getApplicationContext(), "No printers found.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), R.string.gcp__settings__error_no_printer, Toast.LENGTH_SHORT).show();
             }
         }
     };
@@ -93,32 +93,30 @@ public class GoogleCloudPrintPrinterSelectionActivity extends Activity implement
     private final Action1<Throwable> mShowPrinterNotFoundAction = new Action1<Throwable>() {
         @Override
         public void call(final Throwable throwable) {
-            Toast.makeText(GoogleCloudPrintPrinterSelectionActivity.this,
-                "Searching printers failed :(", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), R.string.gcp__settings__error_no_printer, Toast.LENGTH_SHORT).show();
         }
     };
 
-    private Spinner mPrinterSpinner;
-
-    private Button mSelectPrinterButton;
-
+    private GoogleCloudPrint mGoogleCloudPrint;
     private AccountSelectionActivityHelper mAccountSelectionHelper;
+    private OperatorGoogleAuthenticationActivityController mAuthenticationHelper;
 
     private Observable<String> mOauthObservable;
-
-    private OperatorGoogleAuthenticationActivityController mAuthenticationHelper;
     private String mAccountSelected;
     private String mAuthenticationToken;
+
+    private Button mSelectPrinterButton;
+    private Spinner mPrinterSpinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.gcp_activity_setup);
+        setContentView(R.layout.gcp_activity_settings);
 
+        mGoogleCloudPrint = new GoogleCloudPrint();
         mAccountSelectionHelper = new AccountSelectionActivityHelper(this, REQUEST_CODE_BASE);
         mAuthenticationHelper = new OperatorGoogleAuthenticationActivityController(this, REQUEST_CODE_BASE + 100);
 
-        mGoogleCloudPrint = new GoogleCloudPrint();
         mSelectPrinterButton = (Button) findViewById(R.id.activity_gcp_setup_printer_select);
         mPrinterSpinner = (Spinner) findViewById(R.id.activity_gcp_setup_printer_spinner);
 
@@ -137,6 +135,7 @@ public class GoogleCloudPrintPrinterSelectionActivity extends Activity implement
         });
     }
 
+    @Override
     protected void onStart() {
         super.onStart();
         if (mOauthObservable == null) {
@@ -147,11 +146,10 @@ public class GoogleCloudPrintPrinterSelectionActivity extends Activity implement
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (mAccountSelectionHelper.handleActivityResult(requestCode, resultCode, data)) {
-            return; // Handled by helper...
+            return; // Handled by helper.
         }
-
         if (mAuthenticationHelper.handleActivityResult(requestCode, resultCode, data)) {
-            return; // Handled by helper...
+            return; // Handled by helper.
         }
     }
 
@@ -159,10 +157,10 @@ public class GoogleCloudPrintPrinterSelectionActivity extends Activity implement
     public void onAccountSelected(final String accountName) {
         mAccountSelected = accountName;
         mOauthObservable = GoogleOauthTokenObservable
-            .create(this, accountName, GOOGLE_PRINT_SCOPE)
-            .authenticateUsing(this, REQUEST_CODE_BASE)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread());
+                .create(this, accountName, GOOGLE_PRINT_SCOPE)
+                .authenticateUsing(this, REQUEST_CODE_BASE)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
         findPrinters();
     }
 
@@ -175,19 +173,18 @@ public class GoogleCloudPrintPrinterSelectionActivity extends Activity implement
 
     @Override
     public void onAuthenticationError(final Throwable throwable) {
-        Toast.makeText(this, "Unknown authentication error!", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), R.string.gcp__settings__error_authenticate, Toast.LENGTH_SHORT).show();
         mOauthObservable = null;
     }
 
     @Override
     public void onAuthenticationSucceeded(final String token) {
-        Toast.makeText(this, "Authenticated!", Toast.LENGTH_SHORT).show();
         mAuthenticationToken = token;
     }
 
     @Override
     public void onRetryAuthentication() {
-        Toast.makeText(this, "Authentication temporarily failed!", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), R.string.gcp__settings__error_authenticate, Toast.LENGTH_SHORT).show();
     }
 
     private void findPrinters() {
@@ -195,10 +192,10 @@ public class GoogleCloudPrintPrinterSelectionActivity extends Activity implement
             @Override
             public void call(final String token) {
                 mGoogleCloudPrint.getPrinters(token)
-                    .lift(new JacksonPrinterSearchResultOperator())
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(mUpdatePrinterListAction, mShowPrinterNotFoundAction);
+                        .lift(new JacksonPrinterSearchResultOperator())
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(mUpdatePrinterListAction, mShowPrinterNotFoundAction);
             }
         });
     }

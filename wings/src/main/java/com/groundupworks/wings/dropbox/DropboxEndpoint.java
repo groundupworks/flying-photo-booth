@@ -46,7 +46,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * A helper class for linking and sharing to Dropbox.
+ * The Wings endpoint for Dropbox.
  *
  * @author Benedict Lau
  */
