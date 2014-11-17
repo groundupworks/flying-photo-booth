@@ -37,11 +37,22 @@
         android:visibility="gone" />
 
     <ImageButton
-        android:id="@+id/beam_button"
+        android:id="@+id/gcp_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_toLeftOf="@id/facebook_button"
+        android:background="@drawable/selector_titlebar_button"
+        android:padding="12dip"
+        android:src="@drawable/selector_button_gcp"
+        android:visibility="gone" />
+
+    <ImageButton
+        android:id="@+id/beam_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_toLeftOf="@id/gcp_button"
         android:background="@drawable/selector_titlebar_button"
         android:padding="12dip"
         android:src="@drawable/ic_menu_cc"

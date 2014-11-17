@@ -92,6 +92,13 @@
             </intent-filter>
         </activity>
 
+        <!-- Google Cloud Print linking -->
+
+        <activity
+            android:name="com.groundupworks.wings.gcp.GoogleCloudPrintSettingsActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/ThemeSelector" />
+
         <!-- Wings service -->
         <service android:name="com.groundupworks.wings.core.WingsService" />
 

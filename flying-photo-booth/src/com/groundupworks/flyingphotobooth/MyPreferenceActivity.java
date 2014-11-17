@@ -29,10 +29,11 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 
-import com.groundupworks.wings.WingsEndpoint;
 import com.groundupworks.wings.Wings;
+import com.groundupworks.wings.WingsEndpoint;
 import com.groundupworks.wings.dropbox.DropboxEndpoint;
 import com.groundupworks.wings.facebook.FacebookEndpoint;
+import com.groundupworks.wings.gcp.GoogleCloudPrintEndpoint;
 
 import java.util.Set;
 
@@ -73,6 +74,10 @@ public class MyPreferenceActivity extends PreferenceActivity {
 
     private String mDropboxAutoShareKey;
 
+    private String mGcpLinkKey;
+
+    private String mGcpAutoShareKey;
+
     //
     // Preferences.
     //
@@ -93,6 +98,10 @@ public class MyPreferenceActivity extends PreferenceActivity {
 
     private CheckBoxPreference mDropboxAutoSharePref;
 
+    private Preference mGcpLinkPref;
+
+    private CheckBoxPreference mGcpAutoSharePref;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -107,6 +116,8 @@ public class MyPreferenceActivity extends PreferenceActivity {
         mFacebookAutoShareKey = getString(R.string.pref__facebook_auto_share_key);
         mDropboxLinkKey = getString(R.string.pref__dropbox_link_key);
         mDropboxAutoShareKey = getString(R.string.pref__dropbox_auto_share_key);
+        mGcpLinkKey = getString(R.string.pref__gcp_link_key);
+        mGcpAutoShareKey = getString(R.string.pref__gcp_auto_share_key);
 
         // Get preferences.
         mArrangementPref = (ListPreference) findPreference(mArrangementKey);
@@ -117,12 +128,17 @@ public class MyPreferenceActivity extends PreferenceActivity {
         mFacebookAutoSharePref = (CheckBoxPreference) findPreference(mFacebookAutoShareKey);
         mDropboxLinkPref = findPreference(mDropboxLinkKey);
         mDropboxAutoSharePref = (CheckBoxPreference) findPreference(mDropboxAutoShareKey);
+        mGcpLinkPref = findPreference(mGcpLinkKey);
+        mGcpAutoSharePref = (CheckBoxPreference) findPreference(mGcpAutoShareKey);
 
         // Launch Facebook link request when clicked.
         mFacebookLinkPref.setOnPreferenceClickListener(new MyLinkPreferenceClickListener(FacebookEndpoint.class));
 
         // Launch Dropbox link request when clicked.
         mDropboxLinkPref.setOnPreferenceClickListener(new MyLinkPreferenceClickListener(DropboxEndpoint.class));
+
+        // Launch GCP link request when clicked.
+        mGcpLinkPref.setOnPreferenceClickListener(new MyLinkPreferenceClickListener(GoogleCloudPrintEndpoint.class));
 
         // Launch rating page on Google Play when clicked.
         Preference button = (Preference) findPreference(getString(R.string.pref__rate_key));
@@ -151,11 +167,23 @@ public class MyPreferenceActivity extends PreferenceActivity {
         for (WingsEndpoint endpoint : endpoints) {
             endpoint.onActivityResultImpl(this, null, requestCode, resultCode, data);
         }
+
+        // Refresh preferences related to Wings.
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        updateFacebookPref(preferences);
+        updateDropboxPref(preferences);
+        updateGcpPref(preferences);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+
+        // Call Wings APIs.
+        Set<WingsEndpoint> endpoints = Wings.getEndpoints();
+        for (WingsEndpoint endpoint : endpoints) {
+            endpoint.onResumeImpl();
+        }
 
         // Register listener to shared preferences.
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
@@ -168,12 +196,7 @@ public class MyPreferenceActivity extends PreferenceActivity {
         updateTriggerPref(preferences);
         updateFacebookPref(preferences);
         updateDropboxPref(preferences);
-
-        // Call Wings APIs.
-        Set<WingsEndpoint> endpoints = Wings.getEndpoints();
-        for (WingsEndpoint endpoint : endpoints) {
-            endpoint.onResumeImpl();
-        }
+        updateGcpPref(preferences);
     }
 
     @Override
@@ -204,14 +227,12 @@ public class MyPreferenceActivity extends PreferenceActivity {
                 updateFilterPref(sharedPreferences);
             } else if (key.equals(mTriggerKey)) {
                 updateTriggerPref(sharedPreferences);
-            } else if (key.equals(mFacebookLinkKey) || key.equals(mFacebookAutoShareKey)
-                    || key.equals(getString(R.string.facebook__account_name_key))
-                    || key.equals(getString(R.string.facebook__album_name_key))) {
+            } else if (key.equals(mFacebookLinkKey) || key.equals(mFacebookAutoShareKey)) {
                 updateFacebookPref(sharedPreferences);
-            } else if (key.equals(mDropboxLinkKey) || key.equals(mDropboxAutoShareKey)
-                    || key.equals(getString(R.string.dropbox__account_name_key))
-                    || key.equals(getString(R.string.dropbox__share_url_key))) {
+            } else if (key.equals(mDropboxLinkKey) || key.equals(mDropboxAutoShareKey)) {
                 updateDropboxPref(sharedPreferences);
+            } else if (key.equals(mGcpLinkKey) || key.equals(mGcpAutoShareKey)) {
+                updateGcpPref(sharedPreferences);
             }
         }
     }
@@ -240,6 +261,12 @@ public class MyPreferenceActivity extends PreferenceActivity {
             if (mEndpoint.isLinked()) {
                 // Unlink from endpoint.
                 mEndpoint.unlink();
+                
+                // Refresh preferences related to Wings.
+                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                updateFacebookPref(preferences);
+                updateDropboxPref(preferences);
+                updateGcpPref(preferences);
             } else {
                 // Start link request.
                 mEndpoint.startLinkRequest(MyPreferenceActivity.this, null);
@@ -346,8 +373,8 @@ public class MyPreferenceActivity extends PreferenceActivity {
      * @param preferences the {@link SharedPreferences} storing the preference.
      */
     private void updateFacebookPref(SharedPreferences preferences) {
-        int titleRes = R.string.pref__facebook_link_title_default;
-        String summary = getString(R.string.pref__facebook_link_summary_default);
+        int titleRes = R.string.pref__wings_endpoint_link_title_default;
+        String summary = getString(R.string.pref__wings_endpoint_link_summary_default);
         int widgetRes = R.layout.pref_facebook_checkbox_unselected;
 
         // Check if linked to Facebook account.
@@ -358,17 +385,17 @@ public class MyPreferenceActivity extends PreferenceActivity {
             String destinationDescription = endpoint.getDestinationDescription(FacebookEndpoint.DestinationId.PROFILE);
             if (destinationDescription != null && destinationDescription.length() > 0) {
                 // Select linked title and widget resource.
-                titleRes = R.string.pref__facebook_link_title_linked;
+                titleRes = R.string.pref__wings_endpoint_link_title_linked;
                 widgetRes = R.layout.pref_facebook_checkbox_selected;
 
                 // Check if auto share is enabled.
                 boolean isAutoShared = preferences.getBoolean(mFacebookAutoShareKey, false);
                 if (isAutoShared) {
                     // Build auto share string.
-                    summary = getString(R.string.pref__facebook_link_summary_linked_auto_share, destinationDescription);
+                    summary = getString(R.string.pref__wings_endpoint_link_summary_linked_auto_share, destinationDescription);
                 } else {
                     // Build one-click share string.
-                    summary = getString(R.string.pref__facebook_link_summary_linked_one_click_share, destinationDescription);
+                    summary = getString(R.string.pref__wings_endpoint_link_summary_linked_one_click_share, destinationDescription);
                 }
             }
 
@@ -388,8 +415,8 @@ public class MyPreferenceActivity extends PreferenceActivity {
      * @param preferences the {@link SharedPreferences} storing the preference.
      */
     private void updateDropboxPref(SharedPreferences preferences) {
-        int titleRes = R.string.pref__dropbox_link_title_default;
-        String summary = getString(R.string.pref__dropbox_link_summary_default);
+        int titleRes = R.string.pref__wings_endpoint_link_title_default;
+        String summary = getString(R.string.pref__wings_endpoint_link_summary_default);
         int widgetRes = R.layout.pref_dropbox_checkbox_unselected;
 
         // Check if linked to Dropbox account.
@@ -400,17 +427,17 @@ public class MyPreferenceActivity extends PreferenceActivity {
             String destinationDescription = endpoint.getDestinationDescription(DropboxEndpoint.DestinationId.APP_FOLDER);
             if (destinationDescription != null && destinationDescription.length() > 0) {
                 // Select linked title and widget resource.
-                titleRes = R.string.pref__dropbox_link_title_linked;
+                titleRes = R.string.pref__wings_endpoint_link_title_linked;
                 widgetRes = R.layout.pref_dropbox_checkbox_selected;
 
                 // Check if auto share is enabled.
                 boolean isAutoShared = preferences.getBoolean(mDropboxAutoShareKey, false);
                 if (isAutoShared) {
                     // Build auto share string.
-                    summary = getString(R.string.pref__dropbox_link_summary_linked_auto_share, destinationDescription);
+                    summary = getString(R.string.pref__wings_endpoint_link_summary_linked_auto_share, destinationDescription);
                 } else {
                     // Build one-click share string.
-                    summary = getString(R.string.pref__dropbox_link_summary_linked_one_click_share, destinationDescription);
+                    summary = getString(R.string.pref__wings_endpoint_link_summary_linked_one_click_share, destinationDescription);
                 }
             }
 
@@ -422,6 +449,48 @@ public class MyPreferenceActivity extends PreferenceActivity {
 
         // Enable auto share pref only if linked.
         mDropboxAutoSharePref.setEnabled(isLinked);
+    }
+
+    /**
+     * Updates the title, summary, and check box for the Google Cloud Print preference.
+     *
+     * @param preferences the {@link SharedPreferences} storing the preference.
+     */
+    private void updateGcpPref(SharedPreferences preferences) {
+        int titleRes = R.string.pref__wings_endpoint_link_title_default;
+        String summary = getString(R.string.pref__wings_endpoint_link_summary_default);
+        int widgetRes = R.layout.pref_gcp_checkbox_unselected;
+
+        // Check if linked to GCP account.
+        WingsEndpoint endpoint = Wings.getEndpoint(GoogleCloudPrintEndpoint.class);
+        boolean isLinked = endpoint.isLinked();
+        if (isLinked) {
+            // Get account information.
+            String destinationDescription = endpoint.getDestinationDescription(GoogleCloudPrintEndpoint.DestinationId.PRINT_QUEUE);
+            if (destinationDescription != null && destinationDescription.length() > 0) {
+                // Select linked title and widget resource.
+                titleRes = R.string.pref__wings_endpoint_link_title_linked;
+                widgetRes = R.layout.pref_gcp_checkbox_selected;
+
+                // Check if auto share is enabled.
+                boolean isAutoShared = preferences.getBoolean(mGcpAutoShareKey, false);
+                if (isAutoShared) {
+                    // Build auto share string.
+                    summary = getString(R.string.pref__wings_endpoint_link_summary_linked_auto_share, destinationDescription);
+                } else {
+                    // Build one-click share string.
+                    summary = getString(R.string.pref__wings_endpoint_link_summary_linked_one_click_share, destinationDescription);
+                }
+            }
+
+        }
+
+        mGcpLinkPref.setTitle(titleRes);
+        mGcpLinkPref.setSummary(summary);
+        mGcpLinkPref.setWidgetLayoutResource(widgetRes);
+
+        // Enable auto share pref only if linked.
+        mGcpAutoSharePref.setEnabled(isLinked);
     }
 
     /**

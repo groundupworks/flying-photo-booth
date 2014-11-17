@@ -41,10 +41,11 @@ import com.groundupworks.flyingphotobooth.controllers.ShareController;
 import com.groundupworks.lib.photobooth.framework.ControllerBackedFragment;
 import com.groundupworks.lib.photobooth.helpers.BeamHelper;
 import com.groundupworks.lib.photobooth.helpers.ImageHelper;
-import com.groundupworks.wings.WingsEndpoint;
 import com.groundupworks.wings.Wings;
+import com.groundupworks.wings.WingsEndpoint;
 import com.groundupworks.wings.dropbox.DropboxEndpoint;
 import com.groundupworks.wings.facebook.FacebookEndpoint;
+import com.groundupworks.wings.gcp.GoogleCloudPrintEndpoint;
 
 import java.util.Set;
 
@@ -71,11 +72,13 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
 
     public static final int IMAGE_VIEW_READY = 0;
 
-    public static final int FACEBOOK_SHARE_REQUESTED = 1;
+    public static final int FRAGMENT_DESTROYED = 1;
 
-    public static final int DROPBOX_SHARE_REQUESTED = 2;
+    public static final int GCP_SHARE_REQUESTED = 2;
 
-    public static final int FRAGMENT_DESTROYED = 3;
+    public static final int FACEBOOK_SHARE_REQUESTED = 3;
+
+    public static final int DROPBOX_SHARE_REQUESTED = 4;
 
     //
     // Message bundle keys.
@@ -101,6 +104,20 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
     private Uri mJpegUri = null;
 
     //
+    // Google Cloud Print share with Wings.
+    //
+
+    /**
+     * The Google Cloud Print Wings endpoint.
+     */
+    private WingsEndpoint mGcpEndpoint = Wings.getEndpoint(GoogleCloudPrintEndpoint.class);
+
+    /**
+     * Listener for Google Cloud Print linking events. May be null.
+     */
+    private OnSharedPreferenceChangeListener mGcpLinkListener = null;
+
+    //
     // Facebook share with Wings.
     //
 
@@ -112,7 +129,7 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
     /**
      * Listener for Facebook linking events. May be null.
      */
-    private FacebookLinkListener mFacebookLinkListener = null;
+    private OnSharedPreferenceChangeListener mFacebookLinkListener = null;
 
     //
     // Dropbox share with Wings.
@@ -126,7 +143,7 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
     /**
      * Listener for Dropbox linking events. May be null.
      */
-    private DropboxLinkListener mDropboxLinkListener = null;
+    private OnSharedPreferenceChangeListener mDropboxLinkListener = null;
 
     //
     // Views.
@@ -137,6 +154,8 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
     private ImageButton mDropboxButton;
 
     private ImageButton mFacebookButton;
+
+    private ImageButton mGcpButton;
 
     private ImageButton mBeamButton;
 
@@ -152,6 +171,7 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
         mShareButton = (ImageButton) view.findViewById(R.id.share_button);
         mDropboxButton = (ImageButton) view.findViewById(R.id.dropbox_button);
         mFacebookButton = (ImageButton) view.findViewById(R.id.facebook_button);
+        mGcpButton = (ImageButton) view.findViewById(R.id.gcp_button);
         mBeamButton = (ImageButton) view.findViewById(R.id.beam_button);
         mPhotoStripContainer = (FrameLayout) view.findViewById(R.id.photostrip_container);
 
@@ -220,7 +240,7 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
                 Activity activity = getActivity();
                 if (activity != null && !activity.isFinishing()) {
                     if (mDropboxEndpoint.isLinked()) {
-                        requestDropboxShare();
+                        requestShare(DROPBOX_SHARE_REQUESTED);
                     } else {
                         // Listen to Dropbox linking event.
                         mDropboxLinkListener = new DropboxLinkListener();
@@ -242,7 +262,7 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
                 Activity activity = getActivity();
                 if (activity != null && !activity.isFinishing()) {
                     if (mFacebookEndpoint.isLinked()) {
-                        requestFacebookShare();
+                        requestShare(FACEBOOK_SHARE_REQUESTED);
                     } else {
                         // Listen to Facebook linking event.
                         mFacebookLinkListener = new FacebookLinkListener();
@@ -252,6 +272,28 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
 
                         // Start Facebook link request.
                         mFacebookEndpoint.startLinkRequest(activity, ShareFragment.this);
+                    }
+                }
+            }
+        });
+
+        mGcpButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                Activity activity = getActivity();
+                if (activity != null && !activity.isFinishing()) {
+                    if (mGcpEndpoint.isLinked()) {
+                        requestShare(GCP_SHARE_REQUESTED);
+                    } else {
+                        // Listen to GCP linking event.
+                        mGcpLinkListener = new GcpLinkListener();
+                        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(activity
+                                .getApplicationContext());
+                        preferences.registerOnSharedPreferenceChangeListener(mGcpLinkListener);
+
+                        // Start GCP link request.
+                        mGcpEndpoint.startLinkRequest(activity, ShareFragment.this);
                     }
                 }
             }
@@ -301,6 +343,8 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
         for (WingsEndpoint endpoint : endpoints) {
             endpoint.onActivityResultImpl(getActivity(), ShareFragment.this, requestCode, resultCode, data);
         }
+
+        updateWingsLinks();
     }
 
     @Override
@@ -312,6 +356,8 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
         for (WingsEndpoint endpoint : endpoints) {
             endpoint.onResumeImpl();
         }
+
+        updateWingsLinks();
     }
 
     @Override
@@ -395,15 +441,21 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
 
                 SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(appContext);
                 if (mDropboxEndpoint.isLinked() && preferences.getBoolean(getString(R.string.pref__dropbox_auto_share_key), false)) {
-                    requestDropboxShare();
+                    requestShare(DROPBOX_SHARE_REQUESTED);
                 } else {
                     mDropboxButton.setVisibility(View.VISIBLE);
                 }
 
                 if (mFacebookEndpoint.isLinked() && preferences.getBoolean(getString(R.string.pref__facebook_auto_share_key), false)) {
-                    requestFacebookShare();
+                    requestShare(FACEBOOK_SHARE_REQUESTED);
                 } else {
                     mFacebookButton.setVisibility(View.VISIBLE);
+                }
+
+                if (mGcpEndpoint.isLinked() && preferences.getBoolean(getString(R.string.pref__gcp_auto_share_key), false)) {
+                    requestShare(GCP_SHARE_REQUESTED);
+                } else {
+                    mGcpButton.setVisibility(View.VISIBLE);
                 }
 
                 if (BeamHelper.supportsBeam(appContext)) {
@@ -416,6 +468,9 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
                 // Request adding Jpeg to Android Gallery.
                 MediaScannerConnection.scanFile(appContext, new String[]{mJpegUri.getPath()},
                         new String[]{ImageHelper.JPEG_MIME_TYPE}, null);
+                break;
+            case ShareController.GCP_SHARE_MARKED:
+                mGcpButton.setEnabled(false);
                 break;
             case ShareController.FACEBOOK_SHARE_MARKED:
                 mFacebookButton.setEnabled(false);
@@ -433,20 +488,24 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
     //
 
     /**
-     * Notify controller of a Facebook share request.
+     * Updates the linked state of all Wings endpoints.
      */
-    private void requestFacebookShare() {
-        Message msg = Message.obtain();
-        msg.what = FACEBOOK_SHARE_REQUESTED;
-        sendEvent(msg);
+    private void updateWingsLinks() {
+        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext()).edit();
+        editor.putBoolean(getString(R.string.pref__gcp_link_key), mGcpEndpoint.isLinked());
+        editor.putBoolean(getString(R.string.pref__facebook_link_key), mFacebookEndpoint.isLinked());
+        editor.putBoolean(getString(R.string.pref__dropbox_link_key), mDropboxEndpoint.isLinked());
+        editor.apply();
     }
 
     /**
-     * Notify controller of a Dropbox share request.
+     * Notifies controller of a share request.
+     *
+     * @param event the share request event.
      */
-    private void requestDropboxShare() {
+    private void requestShare(int event) {
         Message msg = Message.obtain();
-        msg.what = DROPBOX_SHARE_REQUESTED;
+        msg.what = event;
         sendEvent(msg);
     }
 
@@ -481,6 +540,21 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
     //
 
     /**
+     * Listener for the Google Cloud Print link event. Deliver deferred share click if linked.
+     */
+    private class GcpLinkListener implements OnSharedPreferenceChangeListener {
+
+        @Override
+        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+            Activity activity = getActivity();
+            if (activity != null && !activity.isFinishing()
+                    && key.equals(getString(R.string.pref__gcp_link_key)) && mGcpEndpoint.isLinked()) {
+                requestShare(GCP_SHARE_REQUESTED);
+            }
+        }
+    }
+
+    /**
      * Listener for the Facebook link event. Deliver deferred share click if linked.
      */
     private class FacebookLinkListener implements OnSharedPreferenceChangeListener {
@@ -488,8 +562,9 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
             Activity activity = getActivity();
-            if (activity != null && !activity.isFinishing() && mFacebookEndpoint.isLinked()) {
-                requestFacebookShare();
+            if (activity != null && !activity.isFinishing()
+                    && key.equals(getString(R.string.pref__facebook_link_key)) && mFacebookEndpoint.isLinked()) {
+                requestShare(FACEBOOK_SHARE_REQUESTED);
             }
         }
     }
@@ -502,8 +577,9 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
             Activity activity = getActivity();
-            if (activity != null && !activity.isFinishing() && mDropboxEndpoint.isLinked()) {
-                requestDropboxShare();
+            if (activity != null && !activity.isFinishing()
+                    && key.equals(getString(R.string.pref__dropbox_link_key)) && mDropboxEndpoint.isLinked()) {
+                requestShare(DROPBOX_SHARE_REQUESTED);
             }
         }
     }

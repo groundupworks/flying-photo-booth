@@ -37,6 +37,7 @@ import com.groundupworks.lib.photobooth.helpers.ImageHelper.ImageFilter;
 import com.groundupworks.wings.Wings;
 import com.groundupworks.wings.dropbox.DropboxEndpoint;
 import com.groundupworks.wings.facebook.FacebookEndpoint;
+import com.groundupworks.wings.gcp.GoogleCloudPrintEndpoint;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -62,13 +63,17 @@ public class ShareController extends BaseController {
 
     public static final int JPEG_SAVED = 1;
 
-    public static final int FACEBOOK_SHARE_MARKED = 2;
+    public static final int GCP_SHARE_MARKED = 2;
 
-    public static final int DROPBOX_SHARE_MARKED = 3;
+    public static final int FACEBOOK_SHARE_MARKED = 3;
+
+    public static final int DROPBOX_SHARE_MARKED = 4;
 
     private String mJpegPath = null;
 
     private Bitmap mThumb = null;
+
+    private boolean mIsGcpShareActive = true;
 
     private boolean mIsFacebookShareActive = true;
 
@@ -254,6 +259,22 @@ public class ShareController extends BaseController {
                 }
                 photoStrip = null;
 
+                break;
+            case ShareFragment.GCP_SHARE_REQUESTED:
+                // Create record in Wings.
+                if (mIsGcpShareActive) {
+                    if (mJpegPath != null && Wings.share(mJpegPath, GoogleCloudPrintEndpoint.DestinationId.PRINT_QUEUE, GoogleCloudPrintEndpoint.class)) {
+                        // Disable to ensure we only make one share request.
+                        mIsGcpShareActive = false;
+
+                        // Notify ui.
+                        Message uiMsg = Message.obtain();
+                        uiMsg.what = GCP_SHARE_MARKED;
+                        sendUiUpdate(uiMsg);
+                    } else {
+                        reportError();
+                    }
+                }
                 break;
             case ShareFragment.FACEBOOK_SHARE_REQUESTED:
                 // Create record in Wings.

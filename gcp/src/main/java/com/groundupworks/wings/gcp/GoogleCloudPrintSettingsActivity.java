@@ -18,6 +18,7 @@ package com.groundupworks.wings.gcp;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -117,20 +118,28 @@ public class GoogleCloudPrintSettingsActivity extends Activity implements
         mAccountSelectionHelper = new AccountSelectionActivityHelper(this, REQUEST_CODE_BASE);
         mAuthenticationHelper = new OperatorGoogleAuthenticationActivityController(this, REQUEST_CODE_BASE + 100);
 
-        mSelectPrinterButton = (Button) findViewById(R.id.activity_gcp_setup_printer_select);
-        mPrinterSpinner = (Spinner) findViewById(R.id.activity_gcp_setup_printer_spinner);
+        mSelectPrinterButton = (Button) findViewById(R.id.gcp_activity_settings_button_link);
+        mPrinterSpinner = (Spinner) findViewById(R.id.gcp_activity_settings_spinner_printers);
 
         mSelectPrinterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
                 final Printer selectedPrinter = (Printer) mPrinterSpinner.getSelectedItem();
-                final Intent intent = new Intent();
-                intent.putExtra(EXTRA_PRINTER, selectedPrinter.getId());
-                intent.putExtra(EXTRA_ACCOUNT, mAccountSelected);
-                intent.putExtra(EXTRA_TOKEN, mAuthenticationToken);
-                intent.putExtra(EXTRA_TICKET, TICKET);
-                setResult(Activity.RESULT_OK, intent);
-                finish();
+                if (selectedPrinter != null) {
+                    final String id = selectedPrinter.getId();
+                    final String account = mAccountSelected;
+                    final String token = mAuthenticationToken;
+                    if (!TextUtils.isEmpty(id) && !TextUtils.isEmpty(account) && !TextUtils.isEmpty(token)) {
+                        final Intent intent = new Intent();
+                        intent.putExtra(EXTRA_PRINTER, id);
+                        intent.putExtra(EXTRA_ACCOUNT, account);
+                        intent.putExtra(EXTRA_TICKET, TICKET);
+                        intent.putExtra(EXTRA_TOKEN, token);
+
+                        setResult(Activity.RESULT_OK, intent);
+                        finish();
+                    }
+                }
             }
         });
     }

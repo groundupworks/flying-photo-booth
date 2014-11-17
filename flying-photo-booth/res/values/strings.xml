@@ -39,8 +39,9 @@
     <!-- Preferences -->
     <string name="pref__preference_screen_title">Preferences</string>
     <string name="pref__photo_booth_category_title">Photo Booth</string>
-    <string name="pref__facebook_category_title">Facebook Sharing</string>
-    <string name="pref__dropbox_category_title">Dropbox Sharing</string>
+    <string name="pref__facebook_category_title">Facebook Share</string>
+    <string name="pref__dropbox_category_title">Dropbox Share</string>
+    <string name="pref__gcp_category_title">Google Cloud Print</string>
     <string name="pref__about_category_title">About</string>
 
     <!-- Arrangement Preferences -->
@@ -75,20 +76,12 @@
     <string name="pref__rate_title">What do you think?</string>
     <string name="pref__rate_summary">Your feedback is appreciated</string>
 
-    <!-- Facebook Preferences -->
-    <string name="pref__facebook_link_title_default">Link&#8230;</string>
-    <string name="pref__facebook_link_title_linked">Unlink</string>
-    <string name="pref__facebook_link_summary_default">Enable one-click or auto share</string>
-    <string name="pref__facebook_link_summary_linked_one_click_share">One-click share to %1$s</string>
-    <string name="pref__facebook_link_summary_linked_auto_share">Auto share to %1$s</string>
-    <string name="pref__facebook_auto_share_title">Auto share</string>
-
-    <!-- Dropbox Preferences -->
-    <string name="pref__dropbox_link_title_default">Link&#8230;</string>
-    <string name="pref__dropbox_link_title_linked">Unlink</string>
-    <string name="pref__dropbox_link_summary_default">Enable one-click or auto share</string>
-    <string name="pref__dropbox_link_summary_linked_one_click_share">One-click share to %1$s</string>
-    <string name="pref__dropbox_link_summary_linked_auto_share">Auto share to %1$s</string>
-    <string name="pref__dropbox_auto_share_title">Auto share</string>
+    <!-- Wings Endpoint Preferences -->
+    <string name="pref__wings_endpoint_link_title_default">Link&#8230;</string>
+    <string name="pref__wings_endpoint_link_title_linked">Unlink</string>
+    <string name="pref__wings_endpoint_link_summary_default">Enable one-click or auto share</string>
+    <string name="pref__wings_endpoint_link_summary_linked_one_click_share">One-click share to %1$s</string>
+    <string name="pref__wings_endpoint_link_summary_linked_auto_share">Auto share to %1$s</string>
+    <string name="pref__wings_endpoint_auto_share_title">Auto share</string>
 
 </resources>

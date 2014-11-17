@@ -21,6 +21,7 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
+import android.widget.Toast;
 
 import com.github.dpsm.android.print.GoogleCloudPrint;
 import com.groundupworks.wings.IWingsNotification;
@@ -69,8 +70,11 @@ public class GoogleCloudPrintEndpoint extends WingsEndpoint {
 
     @Override
     public void startLinkRequest(final Activity activity, final Fragment fragment) {
-        activity.startActivityForResult(
-                new Intent(activity, GoogleCloudPrintSettingsActivity.class), REQUEST_CODE);
+        if (fragment != null) {
+            fragment.startActivityForResult(new Intent(activity, GoogleCloudPrintSettingsActivity.class), REQUEST_CODE);
+        } else {
+            activity.startActivityForResult(new Intent(activity, GoogleCloudPrintSettingsActivity.class), REQUEST_CODE);
+        }
     }
 
     @Override
@@ -123,9 +127,11 @@ public class GoogleCloudPrintEndpoint extends WingsEndpoint {
                     editor.putString(mContext.getString(R.string.gcp__token), token);
                     editor.apply();
                 } else {
+                    Toast.makeText(mContext, mContext.getString(R.string.gcp__error_link), Toast.LENGTH_SHORT).show();
                     unlink();
                 }
             } else {
+                Toast.makeText(mContext, mContext.getString(R.string.gcp__error_link), Toast.LENGTH_SHORT).show();
                 unlink();
             }
         }

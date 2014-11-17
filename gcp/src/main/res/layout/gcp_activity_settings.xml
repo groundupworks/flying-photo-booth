@@ -2,24 +2,21 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:padding="@dimen/activity_horizontal_margin"
     tools:context="com.groundupworks.wings.gcp.GoogleCloudPrintSettingsActivity">
 
     <Spinner
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/activity_gcp_setup_printer_spinner"
+        android:id="@+id/gcp_activity_settings_spinner_printers"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true" />
 
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/activity_gcp_setup_printer_spinner"
-        android:text="@string/gcp__settings__select_printer"
-        android:id="@+id/activity_gcp_setup_printer_select" />
+        android:layout_below="@id/gcp_activity_settings_spinner_printers"
+        android:text="@string/gcp__settings__button_link_text"
+        android:id="@+id/gcp_activity_settings_button_link" />
 
 </RelativeLayout>
