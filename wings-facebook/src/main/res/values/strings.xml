@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Facebook Endpoint -->
+    <string name="facebook__error_link">Unable to link Facebook</string>
+    <string name="facebook__error_facebook_app">Facebook app must be installed</string>
+    <string name="facebook__destination_description">%1$s\'s Facebook album %2$s</string>
+    <string name="facebook__notification_shared_title">Facebook share</string>
+    <string name="facebook__notification_shared_msg_single">+1 photo to %1$s</string>
+    <string name="facebook__notification_shared_msg_multi">+%1$d photos to %2$s</string>
+    <string name="facebook__notification_shared_ticker">Facebook share completed</string>
+
+    <!-- Facebook Settings Activity -->
+    <string name="facebook__settings__label">Select photo album</string>
+
+    <!-- Facebook Privacy Dialog Fragment -->
+    <string name="facebook__privacy__dialog_title">Select privacy level</string>
+    <string name="facebook__privacy__photo_privacy_self">Only Me</string>
+    <string name="facebook__privacy__photo_privacy_friends">Friends</string>
+    <string name="facebook__privacy__photo_privacy_friends_of_friends">Friends of Friends</string>
+    <string name="facebook__privacy__photo_privacy_everyone">Public</string>
+
+</resources>

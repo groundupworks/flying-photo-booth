@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Facebook Internal -->
+    <string name="facebook__link_key">facebook__link_key</string>
+    <string name="facebook__account_name_key">facebook__account_name_key</string>
+    <string name="facebook__photo_privacy_key">facebook__photo_privacy_key</string>
+    <string name="facebook__album_name_key">facebook__album_name_key</string>
+    <string name="facebook__album_graph_path_key">facebook__album_graph_path_key</string>
+
+    <!-- Facebook Client Overrides -->
+    <string name="facebook__app_id">null</string>
+    <string name="facebook__app_album_default_name">null</string>
+
+</resources>

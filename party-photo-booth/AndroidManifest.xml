@@ -24,9 +24,6 @@
 
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
         android:name=".MyApplication"
@@ -34,11 +31,6 @@
         android:hardwareAccelerated="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name">
-
-        <!-- Required by Facebook -->
-        <meta-data
-            android:name="com.facebook.sdk.ApplicationId"
-            android:value="@string/facebook__app_id" />
 
         <!-- Photo booth setup -->
         <activity
@@ -65,47 +57,27 @@
 
         <service android:name=".kiosk.KioskService" />
 
-        <!-- Facebook linking -->
+        <!-- Extras parameters for Facebook -->
+        <activity
+            android:name="com.facebook.LoginActivity"
+            android:excludeFromRecents="true" />
         <activity
             android:name="com.groundupworks.wings.facebook.FacebookSettingsActivity"
             android:excludeFromRecents="true"
-            android:label="@string/facebook__settings__label"
             android:screenOrientation="landscape"
             android:theme="@style/ThemeSelectorFullscreen" />
 
-        <!-- Required by Facebook -->
-        <activity
-            android:name="com.facebook.LoginActivity"
-            android:excludeFromRecents="true"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen" />
-
-        <!-- Required by Dropbox -->
+        <!-- Extras parameters for Dropbox endpoint -->
         <activity
             android:name="com.dropbox.client2.android.AuthActivity"
-            android:configChanges="orientation|keyboard"
+            android:excludeFromRecents="true" />
+
+        <!-- Extras parameters for Google Cloud Print endpoint -->
+        <activity
+            android:name="com.groundupworks.wings.gcp.GoogleCloudPrintSettingsActivity"
             android:excludeFromRecents="true"
-            android:launchMode="singleTask">
-            <intent-filter>
-
-                <!-- Change this to be db- followed by your app key -->
-                <data android:scheme="db-o8qu7uepb92xtzz" />
-
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.BROWSABLE" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-
-        <!-- Wings service -->
-        <service android:name="com.groundupworks.wings.core.WingsService" />
-
-        <receiver android:name="com.groundupworks.wings.core.AlarmReceiver" />
-        <receiver android:name="com.groundupworks.wings.core.BootReceiver">
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-            </intent-filter>
-        </receiver>
+            android:screenOrientation="landscape"
+            android:theme="@style/ThemeSelectorFullscreen" />
     </application>
 
 </manifest>

@@ -1,0 +1,13 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.groundupworks.wings.gcp">
+
+    <application android:allowBackup="true">
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+
+        <activity
+            android:name=".GoogleCloudPrintSettingsActivity"
+            android:label="@string/gcp__settings__label" />
+    </application>
+</manifest>

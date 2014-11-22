@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Dropbox Endpoint -->
+    <string name="dropbox__error_link">Unable to link Dropbox</string>
+    <string name="dropbox__destination_description">%1$s\'s Dropbox folder at %2$s</string>
+    <string name="dropbox__notification_shared_title">Dropbox share</string>
+    <string name="dropbox__notification_shared_msg_single">+1 photo to %1$s</string>
+    <string name="dropbox__notification_shared_msg_multi">+%1$d photos to %2$s</string>
+    <string name="dropbox__notification_shared_ticker">Dropbox share completed</string>
+
+</resources>
