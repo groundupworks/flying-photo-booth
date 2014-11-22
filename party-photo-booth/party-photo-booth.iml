@@ -15,7 +15,6 @@
         <option name="SOURCE_GEN_TASK_NAME" value="generateDebugSources" />
         <option name="TEST_SOURCE_GEN_TASK_NAME" value="generateDebugTestSources" />
         <option name="ALLOW_USER_CONFIGURATION" value="false" />
-        <option name="RES_FOLDERS_RELATIVE_PATH" value="file://$MODULE_DIR$/res" />
       </configuration>
     </facet>
   </component>
@@ -86,6 +85,7 @@
     <orderEntry type="library" exported="" name="jackson-databind-2.3.3" level="project" />
     <orderEntry type="library" exported="" name="support-annotations-20.0.0" level="project" />
     <orderEntry type="library" exported="" name="rxjava-android-0.20.6" level="project" />
+    <orderEntry type="library" exported="" name="bolts-android-1.1.2" level="project" />
     <orderEntry type="library" exported="" name="rxjava-core-0.20.6" level="project" />
     <orderEntry type="library" exported="" name="butterknife-5.1.2" level="project" />
     <orderEntry type="module" module-name="lib-photo-booth" exported="" />

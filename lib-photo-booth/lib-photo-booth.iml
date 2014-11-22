@@ -91,9 +91,10 @@
     <orderEntry type="library" exported="" name="jackson-databind-2.3.3" level="project" />
     <orderEntry type="library" exported="" name="support-annotations-20.0.0" level="project" />
     <orderEntry type="library" exported="" name="rxjava-android-0.20.6" level="project" />
+    <orderEntry type="library" exported="" name="bolts-android-1.1.2" level="project" />
     <orderEntry type="library" exported="" name="rxjava-core-0.20.6" level="project" />
-    <orderEntry type="library" exported="" name="butterknife-5.1.2" level="project" />
     <orderEntry type="library" exported="" name="javawriter-2.5.0" level="project" />
+    <orderEntry type="library" exported="" name="butterknife-5.1.2" level="project" />
     <orderEntry type="module" module-name="wings" exported="" />
     <orderEntry type="module" module-name="wings-facebook" exported="" />
     <orderEntry type="module" module-name="wings-gcp" exported="" />

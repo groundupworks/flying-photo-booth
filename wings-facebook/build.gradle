@@ -20,6 +20,6 @@ android {
 }
 
 dependencies {
-    compile project(':third-party/facebook-android-sdk-3.0/facebook')
+    compile project(':facebook')
     compile project(':wings')
 }

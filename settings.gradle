@@ -1,8 +1,8 @@
-include ':flying-photo-booth'
+include ':flying-photo-booth', ':facebook'
 include ':party-photo-booth'
 include ':lib-photo-booth'
 include ':wings'
 include ':wings-dropbox'
 include ':wings-facebook'
 include ':wings-gcp'
-include ':third-party/facebook-android-sdk-3.0/facebook'
+project(':facebook').projectDir = new File('wings-facebook/facebook')

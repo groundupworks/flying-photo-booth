@@ -13,10 +13,10 @@
             <option value="$PROJECT_DIR$/flying-photo-booth" />
             <option value="$PROJECT_DIR$/lib-photo-booth" />
             <option value="$PROJECT_DIR$/party-photo-booth" />
-            <option value="$PROJECT_DIR$/third-party/facebook-android-sdk-3.0/facebook" />
             <option value="$PROJECT_DIR$/wings" />
             <option value="$PROJECT_DIR$/wings-dropbox" />
             <option value="$PROJECT_DIR$/wings-facebook" />
+            <option value="$PROJECT_DIR$/wings-facebook/facebook" />
             <option value="$PROJECT_DIR$/wings-gcp" />
           </set>
         </option>
