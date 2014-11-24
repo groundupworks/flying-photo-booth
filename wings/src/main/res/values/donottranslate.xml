@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-
-    <!-- Retry Policy -->
-    <string name="retry_policy__consecutive_fails">retry_policy__consecutive_fails</string>
-
-</resources>

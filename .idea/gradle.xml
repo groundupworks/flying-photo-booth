@@ -13,11 +13,11 @@
             <option value="$PROJECT_DIR$/flying-photo-booth" />
             <option value="$PROJECT_DIR$/lib-photo-booth" />
             <option value="$PROJECT_DIR$/party-photo-booth" />
-            <option value="$PROJECT_DIR$/wings" />
-            <option value="$PROJECT_DIR$/wings-dropbox" />
-            <option value="$PROJECT_DIR$/wings-facebook" />
-            <option value="$PROJECT_DIR$/wings-facebook/facebook" />
-            <option value="$PROJECT_DIR$/wings-gcp" />
+            <option value="$PROJECT_DIR$/wings/wings" />
+            <option value="$PROJECT_DIR$/wings/wings-dropbox" />
+            <option value="$PROJECT_DIR$/wings/wings-facebook" />
+            <option value="$PROJECT_DIR$/wings/wings-facebook/facebook" />
+            <option value="$PROJECT_DIR$/wings/wings-gcp" />
           </set>
         </option>
       </GradleProjectSettings>

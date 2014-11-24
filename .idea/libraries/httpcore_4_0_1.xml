@@ -1,7 +1,7 @@
 <component name="libraryTable">
   <library name="httpcore-4.0.1">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/wings-dropbox/libs/httpcore-4.0.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/wings/wings-dropbox/libs/httpcore-4.0.1.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
