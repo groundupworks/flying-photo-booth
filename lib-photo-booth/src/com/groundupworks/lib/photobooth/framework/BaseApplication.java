@@ -21,6 +21,7 @@ import android.os.HandlerThread;
 import android.os.Looper;
 
 import com.groundupworks.lib.photobooth.helpers.LogsHelper;
+import com.groundupworks.wings.IWingsModule;
 import com.groundupworks.wings.Wings;
 import com.groundupworks.wings.dropbox.DropboxEndpoint;
 import com.groundupworks.wings.facebook.FacebookEndpoint;
@@ -51,8 +52,8 @@ public abstract class BaseApplication extends Application {
         sWorkerThread.start();
 
         // Initialize Wings.
-        Wings.init(new Wings.DefaultModule(this, getWorkerLooper(), new LogsHelper()),
-            FacebookEndpoint.class, DropboxEndpoint.class, GoogleCloudPrintEndpoint.class);
+        IWingsModule module = new Wings.DefaultModule(this, getWorkerLooper(), new LogsHelper());
+        Wings.init(module, FacebookEndpoint.class, DropboxEndpoint.class, GoogleCloudPrintEndpoint.class);
     }
 
     //
