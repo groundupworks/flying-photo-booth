@@ -5,7 +5,7 @@ repositories {
 }
 
 dependencies {
-    compile files('libs/android-support-v4.jar')
+    compile 'com.android.support:support-v4:20.0.+'
     compile project(':lib-photo-booth')
 }
 

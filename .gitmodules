@@ -1,0 +1,3 @@
+[submodule "wings"]
+	path = wings
+	url = git@github.com:groundupworks/wings.git

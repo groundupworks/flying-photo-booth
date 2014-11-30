@@ -12,6 +12,7 @@
     <!-- Dropbox Client Overrides -->
     <string name="dropbox__app_key">io2pka2ev0f6xwh</string>
     <string name="dropbox__app_secret">r76x7h1eva7p3f2</string>
+    <string name="dropbox__app_scheme">db-io2pka2ev0f6xwh</string>
     <string name="dropbox__photo_folder">Photo Strips</string>
 
     <!-- Preferences -->

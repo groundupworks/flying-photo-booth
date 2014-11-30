@@ -1,7 +1,7 @@
 <component name="libraryTable">
   <library name="json_simple-1.1">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/wings/libs/json_simple-1.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/wings/wings-dropbox/libs/json_simple-1.1.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
