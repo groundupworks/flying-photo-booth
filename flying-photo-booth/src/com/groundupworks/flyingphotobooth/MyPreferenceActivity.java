@@ -34,6 +34,7 @@ import com.groundupworks.wings.WingsEndpoint;
 import com.groundupworks.wings.dropbox.DropboxEndpoint;
 import com.groundupworks.wings.facebook.FacebookEndpoint;
 import com.groundupworks.wings.gcp.GoogleCloudPrintEndpoint;
+import com.squareup.otto.Subscribe;
 
 import java.util.Set;
 
@@ -167,12 +168,6 @@ public class MyPreferenceActivity extends PreferenceActivity {
         for (WingsEndpoint endpoint : endpoints) {
             endpoint.onActivityResultImpl(this, null, requestCode, resultCode, data);
         }
-
-        // Refresh preferences related to Wings.
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        updateFacebookPref(preferences);
-        updateDropboxPref(preferences);
-        updateGcpPref(preferences);
     }
 
     @Override
@@ -194,18 +189,43 @@ public class MyPreferenceActivity extends PreferenceActivity {
         updateNumPhotosPref(preferences);
         updateFilterPref(preferences);
         updateTriggerPref(preferences);
-        updateFacebookPref(preferences);
-        updateDropboxPref(preferences);
-        updateGcpPref(preferences);
+
+        // Subscribe to Wings link events.
+        Wings.subscribe(this);
     }
 
     @Override
     protected void onPause() {
+        // Unsubscribe to Wings link events.
+        Wings.unsubscribe(this);
+
         // Unregister listener to shared preferences.
         PreferenceManager.getDefaultSharedPreferences(getApplicationContext())
                 .unregisterOnSharedPreferenceChangeListener(mPrefChangeListener);
 
         super.onPause();
+    }
+
+    //
+    // Subscriptions.
+    //
+
+    @Subscribe
+    public void handleLinkEvent(FacebookEndpoint.LinkEvent event) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        updateFacebookPref(preferences);
+    }
+
+    @Subscribe
+    public void handleLinkEvent(DropboxEndpoint.LinkEvent event) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        updateDropboxPref(preferences);
+    }
+
+    @Subscribe
+    public void handleLinkEvent(GoogleCloudPrintEndpoint.LinkEvent event) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        updateGcpPref(preferences);
     }
 
     //
@@ -261,12 +281,6 @@ public class MyPreferenceActivity extends PreferenceActivity {
             if (mEndpoint.isLinked()) {
                 // Unlink from endpoint.
                 mEndpoint.unlink();
-                
-                // Refresh preferences related to Wings.
-                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-                updateFacebookPref(preferences);
-                updateDropboxPref(preferences);
-                updateGcpPref(preferences);
             } else {
                 // Start link request.
                 mEndpoint.startLinkRequest(MyPreferenceActivity.this, null);
