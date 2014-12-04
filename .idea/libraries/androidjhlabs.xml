@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="androidjhlabs">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib-photo-booth/libs/androidjhlabs.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
