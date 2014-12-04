@@ -267,10 +267,11 @@ public class PhotoStripFragment extends ControllerBackedFragment<PhotoStripContr
                 Bundle bundle = msg.getData();
                 boolean facebookShared = bundle.getBoolean(PhotoStripController.MESSAGE_BUNDLE_KEY_FACEBOOK_SHARED);
                 boolean dropboxShared = bundle.getBoolean(PhotoStripController.MESSAGE_BUNDLE_KEY_DROPBOX_SHARED);
+                boolean gcpShared = bundle.getBoolean(PhotoStripController.MESSAGE_BUNDLE_KEY_GCP_SHARED);
 
                 // Call to client.
                 if (callbacks != null) {
-                    callbacks.onPhotoStripSubmitted(facebookShared, dropboxShared);
+                    callbacks.onPhotoStripSubmitted(facebookShared, dropboxShared, gcpShared);
                 }
                 break;
             case PhotoStripController.ERROR_JPEG_DATA:
@@ -526,8 +527,9 @@ public class PhotoStripFragment extends ControllerBackedFragment<PhotoStripContr
          *
          * @param facebookShared true if the photo strip is marked for Facebook sharing; false otherwise.
          * @param dropboxShared  true if the photo strip is marked for Dropbox sharing; false otherwise.
+         * @param gcpShared      true if the photo strip is marked for Google Cloud Print sharing; false otherwise.
          */
-        public void onPhotoStripSubmitted(boolean facebookShared, boolean dropboxShared);
+        public void onPhotoStripSubmitted(boolean facebookShared, boolean dropboxShared, boolean gcpShared);
 
         /**
          * An error occurred while attempting to add a new photo.

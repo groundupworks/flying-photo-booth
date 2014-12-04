@@ -36,6 +36,16 @@
             android:drawableLeft="@drawable/selector_icon_dropbox"
             android:drawablePadding="@dimen/kiosk_spacing"
             android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/notice_gcp"
+            style="@style/Text.Light"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/kiosk_spacing"
+            android:drawableLeft="@drawable/selector_icon_gcp"
+            android:drawablePadding="@dimen/kiosk_spacing"
+            android:visibility="gone" />
     </LinearLayout>
 
     <Button

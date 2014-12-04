@@ -28,6 +28,7 @@
     <string name="share_services_setup__title">Share Services</string>
     <string name="share_services_setup__facebook_title">Upload photo strips to Facebook</string>
     <string name="share_services_setup__dropbox_title">Upload photo strips to Dropbox</string>
+    <string name="share_services_setup__gcp_title">Print with Google Cloud Print</string>
     <string name="share_services_setup__disabled">Disabled</string>
     <string name="share_services_setup__notice_enabled">Tell guests where to find their photos</string>
 

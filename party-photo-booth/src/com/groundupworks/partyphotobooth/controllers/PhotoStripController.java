@@ -31,6 +31,7 @@ import com.groundupworks.partyphotobooth.helpers.TextHelper;
 import com.groundupworks.wings.Wings;
 import com.groundupworks.wings.dropbox.DropboxEndpoint;
 import com.groundupworks.wings.facebook.FacebookEndpoint;
+import com.groundupworks.wings.gcp.GoogleCloudPrintEndpoint;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -68,6 +69,8 @@ public class PhotoStripController extends BaseController {
     public static final String MESSAGE_BUNDLE_KEY_FACEBOOK_SHARED = "facebookShared";
 
     public static final String MESSAGE_BUNDLE_KEY_DROPBOX_SHARED = "dropboxShared";
+
+    public static final String MESSAGE_BUNDLE_KEY_GCP_SHARED = "gcpShared";
 
     /**
      * The {@link Application} {@link Context}.
@@ -330,12 +333,19 @@ public class PhotoStripController extends BaseController {
                         dropboxShared = Wings.share(jpegPath, DropboxEndpoint.DestinationId.APP_FOLDER, DropboxEndpoint.class);
                     }
 
+                    // Share to Google Cloud Print.
+                    boolean gcpShared = false;
+                    if (Wings.getEndpoint(GoogleCloudPrintEndpoint.class).isLinked()) {
+                        gcpShared = Wings.share(jpegPath, GoogleCloudPrintEndpoint.DestinationId.PRINT_QUEUE, GoogleCloudPrintEndpoint.class);
+                    }
+
                     // Notify ui the Jpeg is saved and shared to linked services.
                     Message uiMsg = Message.obtain();
                     uiMsg.what = PHOTO_STRIP_SUBMITTED;
                     Bundle bundle = new Bundle();
                     bundle.putBoolean(MESSAGE_BUNDLE_KEY_FACEBOOK_SHARED, facebookShared);
                     bundle.putBoolean(MESSAGE_BUNDLE_KEY_DROPBOX_SHARED, dropboxShared);
+                    bundle.putBoolean(MESSAGE_BUNDLE_KEY_GCP_SHARED, gcpShared);
                     uiMsg.setData(bundle);
                     sendUiUpdate(uiMsg);
                 } else {
