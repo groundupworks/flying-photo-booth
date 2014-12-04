@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="dropbox-android-sdk-1.6.1">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/wings/wings-dropbox/libs/dropbox-android-sdk-1.6.1.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>
