@@ -16,10 +16,11 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.groundupworks.partyphotobooth.R;
-import com.groundupworks.wings.WingsEndpoint;
 import com.groundupworks.wings.Wings;
+import com.groundupworks.wings.WingsEndpoint;
 import com.groundupworks.wings.dropbox.DropboxEndpoint;
 import com.groundupworks.wings.facebook.FacebookEndpoint;
+import com.groundupworks.wings.gcp.GoogleCloudPrintEndpoint;
 
 import java.lang.ref.WeakReference;
 import java.util.Timer;
@@ -39,6 +40,8 @@ public class NoticeFragment extends Fragment {
     private static final String FRAGMENT_BUNDLE_KEY_FACEBOOK_SHARED = "facebookShared";
 
     private static final String FRAGMENT_BUNDLE_KEY_DROPBOX_SHARED = "dropboxShared";
+
+    private static final String FRAGMENT_BUNDLE_KEY_GCP_SHARED = "gcpShared";
 
     /**
      * The name of the auto-dismissal timer.
@@ -75,6 +78,8 @@ public class NoticeFragment extends Fragment {
 
     private TextView mDropboxNotice;
 
+    private TextView mGcpNotice;
+
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -90,6 +95,7 @@ public class NoticeFragment extends Fragment {
         mOkButton = (Button) view.findViewById(R.id.notice_button_ok);
         mFacebookNotice = (TextView) view.findViewById(R.id.notice_facebook);
         mDropboxNotice = (TextView) view.findViewById(R.id.notice_dropbox);
+        mGcpNotice = (TextView) view.findViewById(R.id.notice_gcp);
 
         return view;
     }
@@ -105,6 +111,7 @@ public class NoticeFragment extends Fragment {
 
         boolean facebookShared = args.getBoolean(FRAGMENT_BUNDLE_KEY_FACEBOOK_SHARED);
         boolean dropboxShared = args.getBoolean(FRAGMENT_BUNDLE_KEY_DROPBOX_SHARED);
+        boolean gcpShared = args.getBoolean(FRAGMENT_BUNDLE_KEY_GCP_SHARED);
 
         WingsEndpoint facebookEndpoint = Wings.getEndpoint(FacebookEndpoint.class);
         String facebookDescription = facebookEndpoint.getDestinationDescription(FacebookEndpoint.DestinationId.PROFILE);
@@ -119,6 +126,14 @@ public class NoticeFragment extends Fragment {
         if (dropboxShared && dropboxDescription != null && dropboxDescription.length() > 0) {
             mDropboxNotice.setText(dropboxDescription);
             mDropboxNotice.setVisibility(View.VISIBLE);
+            mIsScreenValid = true;
+        }
+
+        WingsEndpoint gcpEndpoint = Wings.getEndpoint(GoogleCloudPrintEndpoint.class);
+        String gcpDescription = gcpEndpoint.getDestinationDescription(GoogleCloudPrintEndpoint.DestinationId.PRINT_QUEUE);
+        if (gcpShared && gcpDescription != null && gcpDescription.length() > 0) {
+            mGcpNotice.setText(gcpDescription);
+            mGcpNotice.setVisibility(View.VISIBLE);
             mIsScreenValid = true;
         }
 
@@ -209,14 +224,16 @@ public class NoticeFragment extends Fragment {
      *
      * @param facebookShared true if the photo strip is marked for Facebook sharing; false otherwise.
      * @param dropboxShared  true if the photo strip is marked for Dropbox sharing; false otherwise.
+     * @param gcpShared      true if the photo strip is marked for Google Cloud Print sharing; false otherwise.
      * @return the new {@link NoticeFragment} instance.
      */
-    public static NoticeFragment newInstance(boolean facebookShared, boolean dropboxShared) {
+    public static NoticeFragment newInstance(boolean facebookShared, boolean dropboxShared, boolean gcpShared) {
         NoticeFragment fragment = new NoticeFragment();
 
         Bundle args = new Bundle();
         args.putBoolean(FRAGMENT_BUNDLE_KEY_FACEBOOK_SHARED, facebookShared);
         args.putBoolean(FRAGMENT_BUNDLE_KEY_DROPBOX_SHARED, dropboxShared);
+        args.putBoolean(FRAGMENT_BUNDLE_KEY_GCP_SHARED, gcpShared);
         fragment.setArguments(args);
 
         return fragment;

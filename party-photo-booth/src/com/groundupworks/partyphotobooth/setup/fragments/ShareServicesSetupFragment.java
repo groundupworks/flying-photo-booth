@@ -8,10 +8,7 @@ package com.groundupworks.partyphotobooth.setup.fragments;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,15 +19,17 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ImageView;
-import android.widget.TableRow;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.groundupworks.partyphotobooth.R;
 import com.groundupworks.partyphotobooth.helpers.PreferencesHelper;
-import com.groundupworks.wings.WingsEndpoint;
 import com.groundupworks.wings.Wings;
+import com.groundupworks.wings.WingsEndpoint;
 import com.groundupworks.wings.dropbox.DropboxEndpoint;
 import com.groundupworks.wings.facebook.FacebookEndpoint;
+import com.groundupworks.wings.gcp.GoogleCloudPrintEndpoint;
+import com.squareup.otto.Subscribe;
 
 import java.lang.ref.WeakReference;
 import java.util.Set;
@@ -47,26 +46,27 @@ public class ShareServicesSetupFragment extends Fragment {
      */
     private WeakReference<ShareServicesSetupFragment.ICallbacks> mCallbacks = null;
 
-    /**
-     * Listener for changes in preferences.
-     */
-    private OnSharedPreferenceChangeListener mPrefChangeListener = new MyOnSharedPreferenceChangeListener();
-
     //
     // Views.
     //
 
-    private TableRow mFacebook;
+    private LinearLayout mFacebook;
 
     private ImageView mFacebookIcon;
 
     private TextView mFacebookStatus;
 
-    private TableRow mDropbox;
+    private LinearLayout mDropbox;
 
     private ImageView mDropboxIcon;
 
     private TextView mDropboxStatus;
+
+    private LinearLayout mGcp;
+
+    private ImageView mGcpIcon;
+
+    private TextView mGcpStatus;
 
     private CheckBox mNoticeEnabled;
 
@@ -85,12 +85,15 @@ public class ShareServicesSetupFragment extends Fragment {
          * Inflate views from XML.
          */
         View view = inflater.inflate(R.layout.fragment_share_services_setup, container, false);
-        mFacebook = (TableRow) view.findViewById(R.id.setup_share_services_facebook);
+        mFacebook = (LinearLayout) view.findViewById(R.id.setup_share_services_facebook);
         mFacebookIcon = (ImageView) view.findViewById(R.id.setup_share_services_facebook_icon);
         mFacebookStatus = (TextView) view.findViewById(R.id.setup_share_services_facebook_status);
-        mDropbox = (TableRow) view.findViewById(R.id.setup_share_services_dropbox);
+        mDropbox = (LinearLayout) view.findViewById(R.id.setup_share_services_dropbox);
         mDropboxIcon = (ImageView) view.findViewById(R.id.setup_share_services_dropbox_icon);
         mDropboxStatus = (TextView) view.findViewById(R.id.setup_share_services_dropbox_status);
+        mGcp = (LinearLayout) view.findViewById(R.id.setup_share_services_gcp);
+        mGcpIcon = (ImageView) view.findViewById(R.id.setup_share_services_gcp_icon);
+        mGcpStatus = (TextView) view.findViewById(R.id.setup_share_services_gcp_status);
         mNoticeEnabled = (CheckBox) view.findViewById(R.id.setup_share_services_notice_enabled);
         mNext = (Button) view.findViewById(R.id.setup_share_services_button_next);
 
@@ -108,6 +111,7 @@ public class ShareServicesSetupFragment extends Fragment {
          */
         mFacebook.setOnClickListener(new MyLinkOnClickListener(FacebookEndpoint.class));
         mDropbox.setOnClickListener(new MyLinkOnClickListener(DropboxEndpoint.class));
+        mGcp.setOnClickListener(new MyLinkOnClickListener(GoogleCloudPrintEndpoint.class));
 
         final PreferencesHelper preferencesHelper = new PreferencesHelper();
         boolean isChecked = preferencesHelper.getNoticeEnabled(appContext);
@@ -151,29 +155,77 @@ public class ShareServicesSetupFragment extends Fragment {
 
         Context appContext = getActivity().getApplicationContext();
 
-        // Register listener to shared preferences.
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(appContext);
-        preferences.registerOnSharedPreferenceChangeListener(mPrefChangeListener);
-
-        // Refresh ui.
-        updateFacebook();
-        updateDropbox();
-        updateNoticeEnabled();
-
         // Call Wings APIs.
         Set<WingsEndpoint> endpoints = Wings.getEndpoints();
         for (WingsEndpoint endpoint : endpoints) {
             endpoint.onResumeImpl();
         }
+
+        // Subscribe to Wings link events.
+        Wings.subscribe(this);
     }
 
     @Override
     public void onPause() {
-        // Unregister listener to shared preferences.
-        PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext())
-                .unregisterOnSharedPreferenceChangeListener(mPrefChangeListener);
+        // Unsubscribe to Wings link events.
+        Wings.unsubscribe(this);
 
         super.onPause();
+    }
+
+    //
+    // Subscriptions.
+    //
+
+    @Subscribe
+    public void handleLinkEvent(FacebookEndpoint.LinkEvent event) {
+        WingsEndpoint endpoint = Wings.getEndpoint(event.getEndpoint());
+        if (event.isLinked()) {
+            String destinationDescription = endpoint.getDestinationDescription(FacebookEndpoint.DestinationId.PROFILE);
+            mFacebookStatus.setText(destinationDescription);
+            mFacebookStatus.setTextColor(getResources().getColor(R.color.text_dark));
+            mFacebookIcon.setEnabled(true);
+        } else {
+            mFacebookStatus.setText(R.string.share_services_setup__disabled);
+            mFacebookStatus.setTextColor(getResources().getColor(R.color.text_light));
+            mFacebookIcon.setEnabled(false);
+        }
+
+        updateNoticeEnabled();
+    }
+
+    @Subscribe
+    public void handleLinkEvent(DropboxEndpoint.LinkEvent event) {
+        WingsEndpoint endpoint = Wings.getEndpoint(event.getEndpoint());
+        if (event.isLinked()) {
+            String destinationDescription = endpoint.getDestinationDescription(DropboxEndpoint.DestinationId.APP_FOLDER);
+            mDropboxStatus.setText(destinationDescription);
+            mDropboxStatus.setTextColor(getResources().getColor(R.color.text_dark));
+            mDropboxIcon.setEnabled(true);
+        } else {
+            mDropboxStatus.setText(R.string.share_services_setup__disabled);
+            mDropboxStatus.setTextColor(getResources().getColor(R.color.text_light));
+            mDropboxIcon.setEnabled(false);
+        }
+
+        updateNoticeEnabled();
+    }
+
+    @Subscribe
+    public void handleLinkEvent(GoogleCloudPrintEndpoint.LinkEvent event) {
+        WingsEndpoint endpoint = Wings.getEndpoint(event.getEndpoint());
+        if (event.isLinked()) {
+            String destinationDescription = endpoint.getDestinationDescription(GoogleCloudPrintEndpoint.DestinationId.PRINT_QUEUE);
+            mGcpStatus.setText(destinationDescription);
+            mGcpStatus.setTextColor(getResources().getColor(R.color.text_dark));
+            mGcpIcon.setEnabled(true);
+        } else {
+            mGcpStatus.setText(R.string.share_services_setup__disabled);
+            mGcpStatus.setTextColor(getResources().getColor(R.color.text_light));
+            mGcpIcon.setEnabled(false);
+        }
+
+        updateNoticeEnabled();
     }
 
     //
@@ -191,40 +243,6 @@ public class ShareServicesSetupFragment extends Fragment {
             callbacks = mCallbacks.get();
         }
         return callbacks;
-    }
-
-    /**
-     * Updates the Facebook link ui.
-     */
-    private void updateFacebook() {
-        WingsEndpoint endpoint = Wings.getEndpoint(FacebookEndpoint.class);
-        if (endpoint.isLinked()) {
-            String destinationDescription = endpoint.getDestinationDescription(FacebookEndpoint.DestinationId.PROFILE);
-            mFacebookStatus.setText(destinationDescription);
-            mFacebookStatus.setTextColor(getResources().getColor(R.color.text_dark));
-            mFacebookIcon.setEnabled(true);
-        } else {
-            mFacebookStatus.setText(R.string.share_services_setup__disabled);
-            mFacebookStatus.setTextColor(getResources().getColor(R.color.text_light));
-            mFacebookIcon.setEnabled(false);
-        }
-    }
-
-    /**
-     * Updates the Dropbox link ui.
-     */
-    private void updateDropbox() {
-        WingsEndpoint endpoint = Wings.getEndpoint(DropboxEndpoint.class);
-        if (endpoint.isLinked()) {
-            String destinationDescription = endpoint.getDestinationDescription(DropboxEndpoint.DestinationId.APP_FOLDER);
-            mDropboxStatus.setText(destinationDescription);
-            mDropboxStatus.setTextColor(getResources().getColor(R.color.text_dark));
-            mDropboxIcon.setEnabled(true);
-        } else {
-            mDropboxStatus.setText(R.string.share_services_setup__disabled);
-            mDropboxStatus.setTextColor(getResources().getColor(R.color.text_light));
-            mDropboxIcon.setEnabled(false);
-        }
     }
 
     /**
@@ -260,26 +278,6 @@ public class ShareServicesSetupFragment extends Fragment {
     //
     // Private inner classes.
     //
-
-    /**
-     * Listener for share services link events.
-     */
-    private class MyOnSharedPreferenceChangeListener implements OnSharedPreferenceChangeListener {
-
-        @Override
-        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-            Activity activity = getActivity();
-            if (activity != null && !activity.isFinishing()) {
-                if (key.equals(getString(R.string.facebook__link_key))) {
-                    updateFacebook();
-                    updateNoticeEnabled();
-                } else if (key.equals(getString(R.string.dropbox__link_key))) {
-                    updateDropbox();
-                    updateNoticeEnabled();
-                }
-            }
-        }
-    }
 
     /**
      * Listener that handles linking and unlinking with a Wings endpoint.

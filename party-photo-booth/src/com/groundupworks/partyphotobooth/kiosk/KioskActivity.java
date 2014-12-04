@@ -234,14 +234,14 @@ public class KioskActivity extends FragmentActivity implements KioskSetupFragmen
     }
 
     @Override
-    public void onPhotoStripSubmitted(boolean facebookShared, boolean dropboxShared) {
+    public void onPhotoStripSubmitted(boolean facebookShared, boolean dropboxShared, boolean gcpShared) {
         // Reset photo booth ui.
         launchPhotoBoothUi();
 
-        if (facebookShared || dropboxShared) {
+        if (facebookShared || dropboxShared || gcpShared) {
             if (mPreferencesHelper.getNoticeEnabled(this)) {
                 // Show notice fragment.
-                launchNoticeFragment(facebookShared, dropboxShared);
+                launchNoticeFragment(facebookShared, dropboxShared, gcpShared);
             }
         }
     }
@@ -390,9 +390,10 @@ public class KioskActivity extends FragmentActivity implements KioskSetupFragmen
      *
      * @param facebookShared true if the photo strip is marked for Facebook sharing; false otherwise.
      * @param dropboxShared  true if the photo strip is marked for Dropbox sharing; false otherwise.
+     * @param gcpShared      true if the photo strip is marked for Google Cloud Print sharing; false otherwise.
      */
-    private void launchNoticeFragment(boolean facebookShared, boolean dropboxShared) {
-        mNoticeFragment = NoticeFragment.newInstance(facebookShared, dropboxShared);
+    private void launchNoticeFragment(boolean facebookShared, boolean dropboxShared, boolean gcpShared) {
+        mNoticeFragment = NoticeFragment.newInstance(facebookShared, dropboxShared, gcpShared);
         replaceTopFragment(mNoticeFragment);
     }
 
