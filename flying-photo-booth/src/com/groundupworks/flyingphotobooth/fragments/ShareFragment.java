@@ -46,6 +46,7 @@ import com.groundupworks.wings.WingsEndpoint;
 import com.groundupworks.wings.dropbox.DropboxEndpoint;
 import com.groundupworks.wings.facebook.FacebookEndpoint;
 import com.groundupworks.wings.gcp.GoogleCloudPrintEndpoint;
+import com.squareup.otto.Subscribe;
 
 import java.util.Set;
 
@@ -343,8 +344,6 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
         for (WingsEndpoint endpoint : endpoints) {
             endpoint.onActivityResultImpl(getActivity(), ShareFragment.this, requestCode, resultCode, data);
         }
-
-        updateWingsLinks();
     }
 
     @Override
@@ -357,7 +356,16 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
             endpoint.onResumeImpl();
         }
 
-        updateWingsLinks();
+        // Subscribe to Wings link events.
+        Wings.subscribe(this);
+    }
+
+    @Override
+    public void onPause() {
+        // Unsubscribe to Wings link events.
+        Wings.unsubscribe(this);
+
+        super.onPause();
     }
 
     @Override
@@ -387,6 +395,31 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
         BeamHelper.beamUris(activity, null);
 
         super.onDestroy();
+    }
+
+    //
+    // Subscriptions.
+    //
+
+    @Subscribe
+    public void handleLinkEvent(FacebookEndpoint.LinkEvent event) {
+        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext()).edit();
+        editor.putBoolean(getString(R.string.pref__facebook_link_key), event.isLinked());
+        editor.apply();
+    }
+
+    @Subscribe
+    public void handleLinkEvent(DropboxEndpoint.LinkEvent event) {
+        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext()).edit();
+        editor.putBoolean(getString(R.string.pref__dropbox_link_key), event.isLinked());
+        editor.apply();
+    }
+
+    @Subscribe
+    public void handleLinkEvent(GoogleCloudPrintEndpoint.LinkEvent event) {
+        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext()).edit();
+        editor.putBoolean(getString(R.string.pref__gcp_link_key), event.isLinked());
+        editor.apply();
     }
 
     //
@@ -486,17 +519,6 @@ public class ShareFragment extends ControllerBackedFragment<ShareController> {
     //
     // Private methods.
     //
-
-    /**
-     * Updates the linked state of all Wings endpoints.
-     */
-    private void updateWingsLinks() {
-        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext()).edit();
-        editor.putBoolean(getString(R.string.pref__gcp_link_key), mGcpEndpoint.isLinked());
-        editor.putBoolean(getString(R.string.pref__facebook_link_key), mFacebookEndpoint.isLinked());
-        editor.putBoolean(getString(R.string.pref__dropbox_link_key), mDropboxEndpoint.isLinked());
-        editor.apply();
-    }
 
     /**
      * Notifies controller of a share request.
