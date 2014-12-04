@@ -6,14 +6,14 @@
     <string name="image_helper__image_filename_prefix">ppb</string>
 
     <!-- Facebook Client Overrides -->
-    <string name="facebook__app_id">321386107984400</string>
-    <string name="facebook__app_album_default_name">Party PhotoBooth Photos</string>
+    <string name="wings_facebook__app_id">321386107984400</string>
+    <string name="wings_facebook__app_album_default_name">Party PhotoBooth Photos</string>
 
     <!-- Dropbox Client Overrides -->
-    <string name="dropbox__app_key">o8qu7uepb92xtzz</string>
-    <string name="dropbox__app_secret">cvqpxd623eii9ew</string>
-    <string name="dropbox__app_scheme">db-o8qu7uepb92xtzz</string>
-    <string name="dropbox__photo_folder">Photo Strips</string>
+    <string name="wings_dropbox__app_key">o8qu7uepb92xtzz</string>
+    <string name="wings_dropbox__app_secret">cvqpxd623eii9ew</string>
+    <string name="wings_dropbox__app_scheme">db-o8qu7uepb92xtzz</string>
+    <string name="wings_dropbox__photo_folder">Photo Strips</string>
 
     <!-- Kiosk Mode -->
     <string name="pref__kiosk_mode_enabled_key">pref__kiosk_mode_enabled_key</string>
