@@ -59,7 +59,7 @@ public class KioskService extends Service {
 
         // Construct notification for foreground service indication.
         NotificationCompat.Builder builder = new NotificationCompat.Builder(appContext);
-        Notification notification = builder.setSmallIcon(com.groundupworks.lib.photobooth.R.drawable.notification)
+        Notification notification = builder.setSmallIcon(com.groundupworks.lib.photobooth.R.drawable.wings__notification)
                 .setContentTitle(appContext.getString(R.string.kiosk_mode__notification_title))
                 .setContentText(appContext.getString(R.string.kiosk_mode__notification_msg))
                 .setTicker(appContext.getString(R.string.kiosk_mode__start_msg)).setWhen(System.currentTimeMillis())
