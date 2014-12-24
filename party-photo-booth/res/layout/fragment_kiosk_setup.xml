@@ -3,7 +3,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background_color">
-
     <TableLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -37,10 +36,10 @@
             <EditText
                 android:id="@+id/kiosk_setup_password"
                 style="@style/Text"
+                android:hint="@string/kiosk_mode__setup_password_hint"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:hint="@string/kiosk_mode__setup_password_hint"
-                android:inputType="number"
+                android:inputType="textCapCharacters"
                 android:maxLength="4"
                 android:padding="@dimen/kiosk_spacing" />
 
