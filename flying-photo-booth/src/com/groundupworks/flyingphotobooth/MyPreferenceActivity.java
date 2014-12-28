@@ -396,7 +396,7 @@ public class MyPreferenceActivity extends PreferenceActivity {
         boolean isLinked = endpoint.isLinked();
         if (isLinked) {
             // Get account information.
-            String destinationDescription = endpoint.getDestinationDescription(FacebookEndpoint.DestinationId.PROFILE);
+            String destinationDescription = endpoint.getLinkInfo().mDestinationDescription;
             if (destinationDescription != null && destinationDescription.length() > 0) {
                 // Select linked title and widget resource.
                 titleRes = R.string.pref__wings_endpoint_link_title_linked;
@@ -438,7 +438,7 @@ public class MyPreferenceActivity extends PreferenceActivity {
         boolean isLinked = endpoint.isLinked();
         if (isLinked) {
             // Get account information.
-            String destinationDescription = endpoint.getDestinationDescription(DropboxEndpoint.DestinationId.APP_FOLDER);
+            String destinationDescription = endpoint.getLinkInfo().mDestinationDescription;
             if (destinationDescription != null && destinationDescription.length() > 0) {
                 // Select linked title and widget resource.
                 titleRes = R.string.pref__wings_endpoint_link_title_linked;
@@ -480,7 +480,7 @@ public class MyPreferenceActivity extends PreferenceActivity {
         boolean isLinked = endpoint.isLinked();
         if (isLinked) {
             // Get account information.
-            String destinationDescription = endpoint.getDestinationDescription(GoogleCloudPrintEndpoint.DestinationId.PRINT_QUEUE);
+            String destinationDescription = endpoint.getLinkInfo().mDestinationDescription;
             if (destinationDescription != null && destinationDescription.length() > 0) {
                 // Select linked title and widget resource.
                 titleRes = R.string.pref__wings_endpoint_link_title_linked;
