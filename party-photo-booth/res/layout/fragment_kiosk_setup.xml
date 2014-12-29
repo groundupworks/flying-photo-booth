@@ -36,10 +36,10 @@
             <EditText
                 android:id="@+id/kiosk_setup_password"
                 style="@style/Text"
-                android:hint="@string/kiosk_mode__setup_password_hint"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:inputType="textCapCharacters"
+                android:hint="@string/kiosk_mode__setup_password_hint"
+                android:inputType="number"
                 android:maxLength="4"
                 android:padding="@dimen/kiosk_spacing" />
 

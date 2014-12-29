@@ -64,30 +64,6 @@ public class KioskSetupFragment extends Fragment {
          */
         View view = inflater.inflate(R.layout.fragment_kiosk_setup, container, false);
         mPassword = (EditText) view.findViewById(R.id.kiosk_setup_password);
-        mPassword.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                final StringBuffer buffer = new StringBuffer();
-                for (int i = 0; i < s.length(); i++) {
-                    final String partial = buffer.toString() + s.charAt(i);
-                    if (TextUtils.isDigitsOnly(partial)) {
-                        buffer.append(s.charAt(i));
-                    } else {
-                        Toast.makeText(getActivity(), R.string.toast_passcode_numeric,
-                                Toast.LENGTH_SHORT).show();
-                        s.delete(i, s.length());
-                    }
-                }
-            }
-        });
         mOkButton = (Button) view.findViewById(R.id.kiosk_setup_button_ok);
 
         return view;
