@@ -114,7 +114,7 @@ public class NoticeFragment extends Fragment {
         boolean gcpShared = args.getBoolean(FRAGMENT_BUNDLE_KEY_GCP_SHARED);
 
         WingsEndpoint facebookEndpoint = Wings.getEndpoint(FacebookEndpoint.class);
-        String facebookDescription = facebookEndpoint.getDestinationDescription(FacebookEndpoint.DestinationId.PROFILE);
+        String facebookDescription = facebookEndpoint.getLinkInfo().mDestinationDescription;
         if (facebookShared && facebookDescription != null && facebookDescription.length() > 0) {
             mFacebookNotice.setText(facebookDescription);
             mFacebookNotice.setVisibility(View.VISIBLE);
@@ -122,7 +122,7 @@ public class NoticeFragment extends Fragment {
         }
 
         WingsEndpoint dropboxEndpoint = Wings.getEndpoint(DropboxEndpoint.class);
-        String dropboxDescription = dropboxEndpoint.getDestinationDescription(DropboxEndpoint.DestinationId.APP_FOLDER);
+        String dropboxDescription = dropboxEndpoint.getLinkInfo().mDestinationDescription;
         if (dropboxShared && dropboxDescription != null && dropboxDescription.length() > 0) {
             mDropboxNotice.setText(dropboxDescription);
             mDropboxNotice.setVisibility(View.VISIBLE);
@@ -130,7 +130,7 @@ public class NoticeFragment extends Fragment {
         }
 
         WingsEndpoint gcpEndpoint = Wings.getEndpoint(GoogleCloudPrintEndpoint.class);
-        String gcpDescription = gcpEndpoint.getDestinationDescription(GoogleCloudPrintEndpoint.DestinationId.PRINT_QUEUE);
+        String gcpDescription = gcpEndpoint.getLinkInfo().mDestinationDescription;
         if (gcpShared && gcpDescription != null && gcpDescription.length() > 0) {
             mGcpNotice.setText(gcpDescription);
             mGcpNotice.setVisibility(View.VISIBLE);

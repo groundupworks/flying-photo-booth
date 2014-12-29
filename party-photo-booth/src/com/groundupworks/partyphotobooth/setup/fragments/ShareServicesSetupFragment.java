@@ -181,7 +181,7 @@ public class ShareServicesSetupFragment extends Fragment {
     public void handleLinkEvent(FacebookEndpoint.LinkEvent event) {
         WingsEndpoint endpoint = Wings.getEndpoint(event.getEndpoint());
         if (event.isLinked()) {
-            String destinationDescription = endpoint.getDestinationDescription(FacebookEndpoint.DestinationId.PROFILE);
+            String destinationDescription = endpoint.getLinkInfo().mDestinationDescription;
             mFacebookStatus.setText(destinationDescription);
             mFacebookStatus.setTextColor(getResources().getColor(R.color.text_dark));
             mFacebookIcon.setEnabled(true);
@@ -198,7 +198,7 @@ public class ShareServicesSetupFragment extends Fragment {
     public void handleLinkEvent(DropboxEndpoint.LinkEvent event) {
         WingsEndpoint endpoint = Wings.getEndpoint(event.getEndpoint());
         if (event.isLinked()) {
-            String destinationDescription = endpoint.getDestinationDescription(DropboxEndpoint.DestinationId.APP_FOLDER);
+            String destinationDescription = endpoint.getLinkInfo().mDestinationDescription;
             mDropboxStatus.setText(destinationDescription);
             mDropboxStatus.setTextColor(getResources().getColor(R.color.text_dark));
             mDropboxIcon.setEnabled(true);
@@ -215,7 +215,7 @@ public class ShareServicesSetupFragment extends Fragment {
     public void handleLinkEvent(GoogleCloudPrintEndpoint.LinkEvent event) {
         WingsEndpoint endpoint = Wings.getEndpoint(event.getEndpoint());
         if (event.isLinked()) {
-            String destinationDescription = endpoint.getDestinationDescription(GoogleCloudPrintEndpoint.DestinationId.PRINT_QUEUE);
+            String destinationDescription = endpoint.getLinkInfo().mDestinationDescription;
             mGcpStatus.setText(destinationDescription);
             mGcpStatus.setTextColor(getResources().getColor(R.color.text_dark));
             mGcpIcon.setEnabled(true);

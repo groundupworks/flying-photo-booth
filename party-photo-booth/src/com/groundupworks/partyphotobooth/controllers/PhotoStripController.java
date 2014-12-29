@@ -324,19 +324,19 @@ public class PhotoStripController extends BaseController {
                     // Share to Facebook.
                     boolean facebookShared = false;
                     if (Wings.getEndpoint(FacebookEndpoint.class).isLinked()) {
-                        facebookShared = Wings.share(jpegPath, FacebookEndpoint.DestinationId.PROFILE, FacebookEndpoint.class);
+                        facebookShared = Wings.share(jpegPath, FacebookEndpoint.class);
                     }
 
                     // Share to Dropbox.
                     boolean dropboxShared = false;
                     if (Wings.getEndpoint(DropboxEndpoint.class).isLinked()) {
-                        dropboxShared = Wings.share(jpegPath, DropboxEndpoint.DestinationId.APP_FOLDER, DropboxEndpoint.class);
+                        dropboxShared = Wings.share(jpegPath, DropboxEndpoint.class);
                     }
 
                     // Share to Google Cloud Print.
                     boolean gcpShared = false;
                     if (Wings.getEndpoint(GoogleCloudPrintEndpoint.class).isLinked()) {
-                        gcpShared = Wings.share(jpegPath, GoogleCloudPrintEndpoint.DestinationId.PRINT_QUEUE, GoogleCloudPrintEndpoint.class);
+                        gcpShared = Wings.share(jpegPath, GoogleCloudPrintEndpoint.class);
                     }
 
                     // Notify ui the Jpeg is saved and shared to linked services.

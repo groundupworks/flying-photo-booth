@@ -263,7 +263,7 @@ public class ShareController extends BaseController {
             case ShareFragment.GCP_SHARE_REQUESTED:
                 // Create record in Wings.
                 if (mIsGcpShareActive) {
-                    if (mJpegPath != null && Wings.share(mJpegPath, GoogleCloudPrintEndpoint.DestinationId.PRINT_QUEUE, GoogleCloudPrintEndpoint.class)) {
+                    if (mJpegPath != null && Wings.share(mJpegPath, GoogleCloudPrintEndpoint.class)) {
                         // Disable to ensure we only make one share request.
                         mIsGcpShareActive = false;
 
@@ -279,7 +279,7 @@ public class ShareController extends BaseController {
             case ShareFragment.FACEBOOK_SHARE_REQUESTED:
                 // Create record in Wings.
                 if (mIsFacebookShareActive) {
-                    if (mJpegPath != null && Wings.share(mJpegPath, FacebookEndpoint.DestinationId.PROFILE, FacebookEndpoint.class)) {
+                    if (mJpegPath != null && Wings.share(mJpegPath, FacebookEndpoint.class)) {
                         // Disable to ensure we only make one share request.
                         mIsFacebookShareActive = false;
 
@@ -295,7 +295,7 @@ public class ShareController extends BaseController {
             case ShareFragment.DROPBOX_SHARE_REQUESTED:
                 // Create record in Wings.
                 if (mIsDropboxShareActive) {
-                    if (mJpegPath != null && Wings.share(mJpegPath, DropboxEndpoint.DestinationId.APP_FOLDER, DropboxEndpoint.class)) {
+                    if (mJpegPath != null && Wings.share(mJpegPath, DropboxEndpoint.class)) {
                         // Disable to ensure we only make one share request.
                         mIsDropboxShareActive = false;
 

@@ -15,6 +15,7 @@
         <option name="SOURCE_GEN_TASK_NAME" value="generateDebugSources" />
         <option name="TEST_SOURCE_GEN_TASK_NAME" value="generateDebugTestSources" />
         <option name="ALLOW_USER_CONFIGURATION" value="false" />
+        <option name="RES_FOLDERS_RELATIVE_PATH" value="file://$MODULE_DIR$/res" />
       </configuration>
     </facet>
   </component>
