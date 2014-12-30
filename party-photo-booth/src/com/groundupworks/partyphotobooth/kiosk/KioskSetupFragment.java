@@ -9,6 +9,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -31,6 +32,11 @@ public class KioskSetupFragment extends Fragment {
      * Callbacks for this fragment.
      */
     private WeakReference<KioskSetupFragment.ICallbacks> mCallbacks = null;
+
+    /**
+     * Handler for a key event.
+     */
+    private KioskActivity.KeyEventHandler mKeyEventHandler;
 
     //
     // Views.
@@ -61,6 +67,21 @@ public class KioskSetupFragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
+        final KioskActivity activity = (KioskActivity) getActivity();
+
+        /*
+         * Initialize and set key event handlers.
+         */
+        mKeyEventHandler = new KioskActivity.KeyEventHandler() {
+            @Override
+            public boolean onKeyEvent(KeyEvent event) {
+                mPassword.dispatchKeyEvent(event);
+                return true;
+            }
+        };
+        activity.setKeyEventHandler(mKeyEventHandler);
+
         mOkButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <item name="kiosk_mode_button_exit_size" format="fraction" type="dimen">9%p</item>
+    <item name="kiosk_mode_button_exit_size_dn" format="fraction" type="dimen">36%p</item>
+
+</resources>
