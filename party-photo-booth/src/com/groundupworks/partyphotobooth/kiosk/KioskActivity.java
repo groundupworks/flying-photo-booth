@@ -155,17 +155,12 @@ public class KioskActivity extends FragmentActivity implements KioskSetupFragmen
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
         final KeyEventHandler handler = mKeyEventHandler.get();
-        boolean handled = false;
         if (handler != null) {
-            handled |= handler.onKeyEvent(event);
-        }
-
-        if (!handled) {
-            handled = super.dispatchKeyEvent(event);
+            handler.onKeyEvent(event);
         }
 
         // Block event.
-        return handled;
+        return true;
     }
 
     //
