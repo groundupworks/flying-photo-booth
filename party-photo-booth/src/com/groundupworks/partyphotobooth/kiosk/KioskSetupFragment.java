@@ -6,26 +6,15 @@
 package com.groundupworks.partyphotobooth.kiosk;
 
 import android.app.Activity;
-import android.content.Context;
-import android.hardware.input.InputManager;
-import android.inputmethodservice.InputMethodService;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
-import android.text.InputType;
-import android.text.TextUtils;
-import android.text.TextWatcher;
-import android.text.method.TransformationMethod;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.groundupworks.partyphotobooth.R;
 
