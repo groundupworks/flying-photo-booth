@@ -1,4 +1,4 @@
-VERSION 1.9
+VERSION 1.10
 
 Need a photo booth at your event? There is an app for that!
 
@@ -43,6 +43,13 @@ NEW FEATURES
  
 ¥ Added support for triggering with Muku Shuttr, other Bluetooth remotes and keyboards
 ¥ Added print support using Google Cloud Print
+¥ Added sharing to Facebook Pages
+¥ Fixed issues related to Android Lollipop
+
+
+VERSION 1.9
+
+(Abandoned)
 
 
 VERSION 1.8
