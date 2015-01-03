@@ -179,53 +179,17 @@ public class ShareServicesSetupFragment extends Fragment {
 
     @Subscribe
     public void handleLinkEvent(FacebookEndpoint.LinkEvent event) {
-        WingsEndpoint endpoint = Wings.getEndpoint(event.getEndpoint());
-        if (event.isLinked()) {
-            String destinationDescription = endpoint.getLinkInfo().mDestinationDescription;
-            mFacebookStatus.setText(destinationDescription);
-            mFacebookStatus.setTextColor(getResources().getColor(R.color.text_dark));
-            mFacebookIcon.setEnabled(true);
-        } else {
-            mFacebookStatus.setText(R.string.share_services_setup__disabled);
-            mFacebookStatus.setTextColor(getResources().getColor(R.color.text_light));
-            mFacebookIcon.setEnabled(false);
-        }
-
-        updateNoticeEnabled();
+        updateLinkStatus(event, mFacebookStatus, mFacebookIcon);
     }
 
     @Subscribe
     public void handleLinkEvent(DropboxEndpoint.LinkEvent event) {
-        WingsEndpoint endpoint = Wings.getEndpoint(event.getEndpoint());
-        if (event.isLinked()) {
-            String destinationDescription = endpoint.getLinkInfo().mDestinationDescription;
-            mDropboxStatus.setText(destinationDescription);
-            mDropboxStatus.setTextColor(getResources().getColor(R.color.text_dark));
-            mDropboxIcon.setEnabled(true);
-        } else {
-            mDropboxStatus.setText(R.string.share_services_setup__disabled);
-            mDropboxStatus.setTextColor(getResources().getColor(R.color.text_light));
-            mDropboxIcon.setEnabled(false);
-        }
-
-        updateNoticeEnabled();
+        updateLinkStatus(event, mDropboxStatus, mDropboxIcon);
     }
 
     @Subscribe
     public void handleLinkEvent(GoogleCloudPrintEndpoint.LinkEvent event) {
-        WingsEndpoint endpoint = Wings.getEndpoint(event.getEndpoint());
-        if (event.isLinked()) {
-            String destinationDescription = endpoint.getLinkInfo().mDestinationDescription;
-            mGcpStatus.setText(destinationDescription);
-            mGcpStatus.setTextColor(getResources().getColor(R.color.text_dark));
-            mGcpIcon.setEnabled(true);
-        } else {
-            mGcpStatus.setText(R.string.share_services_setup__disabled);
-            mGcpStatus.setTextColor(getResources().getColor(R.color.text_light));
-            mGcpIcon.setEnabled(false);
-        }
-
-        updateNoticeEnabled();
+        updateLinkStatus(event, mGcpStatus, mGcpIcon);
     }
 
     //
@@ -243,6 +207,34 @@ public class ShareServicesSetupFragment extends Fragment {
             callbacks = mCallbacks.get();
         }
         return callbacks;
+    }
+
+    /**
+     * Updates the link status ui.
+     *
+     * @param event      the {@link com.groundupworks.wings.WingsEndpoint.LinkEvent}.
+     * @param statusView the status {@link android.widget.TextView}.
+     * @param iconView   the icon {@link android.widget.ImageView}.
+     */
+    private void updateLinkStatus(WingsEndpoint.LinkEvent event, TextView statusView, ImageView iconView) {
+        String status = getString(R.string.share_services_setup__disabled);
+        int color = getResources().getColor(R.color.text_light);
+        boolean iconEnabled = false;
+
+        if (event.isLinked()) {
+            WingsEndpoint.LinkInfo linkInfo = Wings.getEndpoint(event.getEndpoint()).getLinkInfo();
+            if (linkInfo != null) {
+                status = linkInfo.mDestinationDescription;
+                color = getResources().getColor(R.color.text_dark);
+                iconEnabled = true;
+            }
+        }
+
+        statusView.setText(status);
+        statusView.setTextColor(color);
+        iconView.setEnabled(iconEnabled);
+
+        updateNoticeEnabled();
     }
 
     /**
