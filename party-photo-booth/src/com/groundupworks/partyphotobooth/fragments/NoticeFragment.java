@@ -114,27 +114,33 @@ public class NoticeFragment extends Fragment {
         boolean gcpShared = args.getBoolean(FRAGMENT_BUNDLE_KEY_GCP_SHARED);
 
         WingsEndpoint facebookEndpoint = Wings.getEndpoint(FacebookEndpoint.class);
-        String facebookDescription = facebookEndpoint.getLinkInfo().mDestinationDescription;
-        if (facebookShared && facebookDescription != null && facebookDescription.length() > 0) {
-            mFacebookNotice.setText(facebookDescription);
-            mFacebookNotice.setVisibility(View.VISIBLE);
-            mIsScreenValid = true;
+        if (facebookShared) {
+            WingsEndpoint.LinkInfo linkInfo = facebookEndpoint.getLinkInfo();
+            if (linkInfo != null) {
+                mFacebookNotice.setText(linkInfo.mDestinationDescription);
+                mFacebookNotice.setVisibility(View.VISIBLE);
+                mIsScreenValid = true;
+            }
         }
 
         WingsEndpoint dropboxEndpoint = Wings.getEndpoint(DropboxEndpoint.class);
-        String dropboxDescription = dropboxEndpoint.getLinkInfo().mDestinationDescription;
-        if (dropboxShared && dropboxDescription != null && dropboxDescription.length() > 0) {
-            mDropboxNotice.setText(dropboxDescription);
-            mDropboxNotice.setVisibility(View.VISIBLE);
-            mIsScreenValid = true;
+        if (dropboxShared) {
+            WingsEndpoint.LinkInfo linkInfo = dropboxEndpoint.getLinkInfo();
+            if (linkInfo != null) {
+                mDropboxNotice.setText(linkInfo.mDestinationDescription);
+                mDropboxNotice.setVisibility(View.VISIBLE);
+                mIsScreenValid = true;
+            }
         }
 
         WingsEndpoint gcpEndpoint = Wings.getEndpoint(GoogleCloudPrintEndpoint.class);
-        String gcpDescription = gcpEndpoint.getLinkInfo().mDestinationDescription;
-        if (gcpShared && gcpDescription != null && gcpDescription.length() > 0) {
-            mGcpNotice.setText(gcpDescription);
-            mGcpNotice.setVisibility(View.VISIBLE);
-            mIsScreenValid = true;
+        if (gcpShared) {
+            WingsEndpoint.LinkInfo linkInfo = gcpEndpoint.getLinkInfo();
+            if (linkInfo != null) {
+                mGcpNotice.setText(linkInfo.mDestinationDescription);
+                mGcpNotice.setVisibility(View.VISIBLE);
+                mIsScreenValid = true;
+            }
         }
 
         // Set click behaviour of Ok button or send dismissal request depending on whether the screen is valid.
