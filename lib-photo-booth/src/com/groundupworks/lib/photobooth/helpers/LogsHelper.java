@@ -17,7 +17,10 @@ package com.groundupworks.lib.photobooth.helpers;
 
 import android.util.Log;
 
+import com.flurry.android.FlurryAgent;
 import com.groundupworks.wings.IWingsLogger;
+
+import java.util.Map;
 
 /**
  * Wrapper for {@link Log} to log only in debug builds.
@@ -56,5 +59,15 @@ public class LogsHelper implements IWingsLogger {
         if (DEBUG) {
             Log.d(LOGS_TAG, clazz.getSimpleName() + "#" + methodName + "() " + msg);
         }
+    }
+
+    @Override
+    public void log(String eventName, Map<String, String> eventParameters) {
+        FlurryAgent.logEvent(eventName, eventParameters);
+    }
+
+    @Override
+    public void log(String eventName) {
+        FlurryAgent.logEvent(eventName);
     }
 }

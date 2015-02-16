@@ -60,7 +60,8 @@ public class LaunchActivity extends BaseFragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        FlurryAgent.onStartSession(this, "974JQS9SVT5CX9T3V2M3");
+        FlurryAgent.init(this, "974JQS9SVT5CX9T3V2M3");
+        FlurryAgent.onStartSession(this);
 
         // Create worker handler.
         mWorkerHandler = new Handler(MyApplication.getWorkerLooper());
