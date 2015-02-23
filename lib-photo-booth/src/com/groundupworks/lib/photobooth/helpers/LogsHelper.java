@@ -39,11 +39,6 @@ public class LogsHelper implements IWingsLogger {
      */
     private static final String LOGS_TAG = "PB";
 
-    @Override
-    public void log(Class<?> clazz, String methodName, String msg) {
-        slog(clazz, methodName, msg);
-    }
-
     //
     // Public methods.
     //
@@ -62,12 +57,21 @@ public class LogsHelper implements IWingsLogger {
     }
 
     @Override
+    public void log(Class<?> clazz, String methodName, String msg) {
+        slog(clazz, methodName, msg);
+    }
+
+    @Override
     public void log(String eventName, Map<String, String> eventParameters) {
-        FlurryAgent.logEvent(eventName, eventParameters);
+        if (FlurryAgent.isSessionActive()) {
+            FlurryAgent.logEvent(eventName, eventParameters);
+        }
     }
 
     @Override
     public void log(String eventName) {
-        FlurryAgent.logEvent(eventName);
+        if (FlurryAgent.isSessionActive()) {
+            FlurryAgent.logEvent(eventName);
+        }
     }
 }

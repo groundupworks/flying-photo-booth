@@ -29,6 +29,7 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 
+import com.flurry.android.FlurryAgent;
 import com.groundupworks.wings.Wings;
 import com.groundupworks.wings.WingsEndpoint;
 import com.groundupworks.wings.dropbox.DropboxEndpoint;
@@ -171,6 +172,12 @@ public class MyPreferenceActivity extends PreferenceActivity {
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        FlurryAgent.onStartSession(this);
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
 
@@ -204,6 +211,12 @@ public class MyPreferenceActivity extends PreferenceActivity {
                 .unregisterOnSharedPreferenceChangeListener(mPrefChangeListener);
 
         super.onPause();
+    }
+
+    @Override
+    protected void onStop() {
+        FlurryAgent.onEndSession(this);
+        super.onStop();
     }
 
     //

@@ -22,7 +22,6 @@ import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.view.KeyEvent;
 
-import com.flurry.android.FlurryAgent;
 import com.groundupworks.flyingphotobooth.fragments.CaptureFragment;
 import com.groundupworks.flyingphotobooth.fragments.ErrorDialogFragment;
 import com.groundupworks.lib.photobooth.framework.BaseFragmentActivity;
@@ -60,8 +59,6 @@ public class LaunchActivity extends BaseFragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        FlurryAgent.init(this, "974JQS9SVT5CX9T3V2M3");
-        FlurryAgent.onStartSession(this);
 
         // Create worker handler.
         mWorkerHandler = new Handler(MyApplication.getWorkerLooper());
@@ -72,12 +69,6 @@ public class LaunchActivity extends BaseFragmentActivity {
 
         // Start with capture fragment. Use replaceFragment() to ensure only one instance of CaptureFragment is added.
         replaceFragment(CaptureFragment.newInstance(cameraPref), false, true);
-    }
-
-    @Override
-    protected void onDestroy() {
-        FlurryAgent.onEndSession(this);
-        super.onDestroy();
     }
 
     @Override
