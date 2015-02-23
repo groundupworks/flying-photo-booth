@@ -23,7 +23,7 @@ class CaptureModeAutomaticTestCase(YkspTestCase):
         # Set up
         self.vc.findViewWithTextOrRaise('Next').touch()
         self.refreshScreen()
-        self.vc.findViewByIdOrRaise('id/no_id/11').touch()
+        self.vc.findViewByIdOrRaise('com.groundupworks.partyphotobooth:id/setup_photo_booth_mode').touch()
         self.refreshScreen()
         self.vc.findViewWithTextOrRaise('Automatic').touch()
         self.saveScreen('automatic-selection')
