@@ -9,7 +9,7 @@ except:
 
 from yksptestcase import YkspTestCase
 
-NUM_CAPTURE_LOOPED = 5
+NUM_CAPTURE_LOOPED = 3
 
 class CaptureModeAutomaticTestCase(YkspTestCase):
 
@@ -23,7 +23,7 @@ class CaptureModeAutomaticTestCase(YkspTestCase):
         # Set up
         self.vc.findViewWithTextOrRaise('Next').touch()
         self.refreshScreen()
-        self.vc.findViewByIdOrRaise('id/no_id/11').touch()
+        self.vc.findViewByIdOrRaise('com.groundupworks.partyphotobooth:id/setup_photo_booth_mode').touch()
         self.refreshScreen()
         self.vc.findViewWithTextOrRaise('Automatic').touch()
         self.saveScreen('automatic-selection')
@@ -37,7 +37,7 @@ class CaptureModeAutomaticTestCase(YkspTestCase):
         # Run capture sequence NUM_CAPTURE_LOOPED times
         for i in range(0, NUM_CAPTURE_LOOPED):
             text = self.vc.findViewWithTextOrRaise('1 of 3')
-            self.vc.findViewWithAttributeOrRaise('class', 'android.widget.Button', root=text.getParent()).touch()
+            self.vc.findViewByIdOrRaise('com.groundupworks.partyphotobooth:id/capture_button').touch()
             self.saveScreen('automatic-ps%s' % i, sleep=20)
             self.vc.findViewWithTextOrRaise('Thank you for using\nParty PhotoBooth')
             self.assertIsNone(self.vc.findViewWithText('Submit'))

@@ -17,7 +17,11 @@ package com.groundupworks.lib.photobooth.helpers;
 
 import android.util.Log;
 
+import com.flurry.android.FlurryAgent;
 import com.groundupworks.wings.IWingsLogger;
+import com.groundupworks.wings.core.WingsService;
+
+import java.util.Map;
 
 /**
  * Wrapper for {@link Log} to log only in debug builds.
@@ -36,11 +40,6 @@ public class LogsHelper implements IWingsLogger {
      */
     private static final String LOGS_TAG = "PB";
 
-    @Override
-    public void log(Class<?> clazz, String methodName, String msg) {
-        slog(clazz, methodName, msg);
-    }
-
     //
     // Public methods.
     //
@@ -56,5 +55,34 @@ public class LogsHelper implements IWingsLogger {
         if (DEBUG) {
             Log.d(LOGS_TAG, clazz.getSimpleName() + "#" + methodName + "() " + msg);
         }
+    }
+
+    @Override
+    public void log(Class<?> clazz, String methodName, String msg) {
+        slog(clazz, methodName, msg);
+    }
+
+    @Override
+    public void log(String eventName, Map<String, String> eventParameters) {
+        if (FlurryAgent.isSessionActive()) {
+            FlurryAgent.logEvent(eventName, eventParameters);
+        }
+    }
+
+    @Override
+    public void log(String eventName) {
+        if (FlurryAgent.isSessionActive()) {
+            FlurryAgent.logEvent(eventName);
+        }
+    }
+
+    @Override
+    public void onWingsServiceCreated(WingsService service) {
+        FlurryAgent.onStartSession(service);
+    }
+
+    @Override
+    public void onWingsServiceDestroyed(WingsService service) {
+        FlurryAgent.onEndSession(service);
     }
 }

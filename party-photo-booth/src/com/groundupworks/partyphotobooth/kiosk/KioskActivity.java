@@ -22,6 +22,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.flurry.android.FlurryAgent;
 import com.groundupworks.partyphotobooth.R;
 import com.groundupworks.partyphotobooth.fragments.CaptureFragment;
 import com.groundupworks.partyphotobooth.fragments.ConfirmationFragment;
@@ -119,6 +120,12 @@ public class KioskActivity extends FragmentActivity implements KioskSetupFragmen
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        FlurryAgent.onStartSession(this);
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
         sIsInForeground = true;
@@ -139,6 +146,12 @@ public class KioskActivity extends FragmentActivity implements KioskSetupFragmen
     public void onPause() {
         sIsInForeground = false;
         super.onPause();
+    }
+
+    @Override
+    protected void onStop() {
+        FlurryAgent.onEndSession(this);
+        super.onStop();
     }
 
     @Override
