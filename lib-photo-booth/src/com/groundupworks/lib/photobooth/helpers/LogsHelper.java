@@ -19,6 +19,7 @@ import android.util.Log;
 
 import com.flurry.android.FlurryAgent;
 import com.groundupworks.wings.IWingsLogger;
+import com.groundupworks.wings.core.WingsService;
 
 import java.util.Map;
 
@@ -73,5 +74,15 @@ public class LogsHelper implements IWingsLogger {
         if (FlurryAgent.isSessionActive()) {
             FlurryAgent.logEvent(eventName);
         }
+    }
+
+    @Override
+    public void onWingsServiceCreated(WingsService service) {
+        FlurryAgent.onStartSession(service);
+    }
+
+    @Override
+    public void onWingsServiceDestroyed(WingsService service) {
+        FlurryAgent.onEndSession(service);
     }
 }
