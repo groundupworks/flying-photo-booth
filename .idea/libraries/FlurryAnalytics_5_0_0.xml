@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="FlurryAnalytics-5.0.0">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/lib-photo-booth/libs/FlurryAnalytics-5.0.0.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>

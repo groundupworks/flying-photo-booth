@@ -1,13 +1,3 @@
 include ':flying-photo-booth'
 include ':party-photo-booth'
 include ':lib-photo-booth'
-include ':wings'
-include ':wings-dropbox'
-include ':wings-facebook'
-include ':facebook'
-include ':wings-gcp'
-project(':wings').projectDir = new File('wings/wings')
-project(':wings-dropbox').projectDir = new File('wings/wings-dropbox')
-project(':wings-facebook').projectDir = new File('wings/wings-facebook')
-project(':facebook').projectDir = new File('wings/wings-facebook/facebook')
-project(':wings-gcp').projectDir = new File('wings/wings-gcp')
