@@ -6,7 +6,7 @@
 
     <uses-sdk
         android:minSdkVersion="10"
-        android:targetSdkVersion="21" />
+        android:targetSdkVersion="22" />
 
     <uses-feature
         android:name="android.hardware.screen.landscape"
@@ -63,6 +63,11 @@
             android:excludeFromRecents="true"
             android:screenOrientation="landscape"
             android:configChanges="orientation" />
+        <activity
+            android:name="com.groundupworks.wings.facebook.FacebookLoginActivity"
+            android:excludeFromRecents="true"
+            android:screenOrientation="landscape"
+            android:theme="@style/ThemeSelectorFullscreen" />
         <activity
             android:name="com.groundupworks.wings.facebook.FacebookSettingsActivity"
             android:excludeFromRecents="true"

@@ -6,7 +6,7 @@
 
     <uses-sdk
         android:minSdkVersion="10"
-        android:targetSdkVersion="21" />
+        android:targetSdkVersion="22" />
 
     <uses-feature
         android:name="android.hardware.screen.portrait"
@@ -56,6 +56,10 @@
             android:theme="@style/ThemeSelector" />
 
         <!-- Extra parameters for Facebook endpoint -->
+        <activity
+            android:name="com.groundupworks.wings.facebook.FacebookLoginActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/ThemeSelector" />
         <activity
             android:name="com.groundupworks.wings.facebook.FacebookSettingsActivity"
             android:screenOrientation="portrait"
