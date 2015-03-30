@@ -12,5 +12,8 @@ allprojects {
     repositories {
         jcenter()
         mavenLocal()
+        maven() {
+            url "file://${System.getProperty("user.home")}/.m2/repository/snapshots"
+        }
     }
 }
