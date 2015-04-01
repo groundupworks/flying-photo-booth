@@ -69,7 +69,17 @@ public class PreferencesHelper {
         /**
          * Minimalist theme.
          */
-        MINIMALIST;
+        MINIMALIST,
+
+        /**
+         * Vintage theme.
+         */
+        VINTAGE,
+
+        /**
+         * Carbon theme.
+         */
+        CARBON
     }
 
     /**
@@ -157,8 +167,6 @@ public class PreferencesHelper {
         }
     }
 
-    ;
-
     /**
      * Photo strip arrangements.
      */
@@ -177,10 +185,8 @@ public class PreferencesHelper {
         /**
          * Box arrangement of photos.
          */
-        BOX;
+        BOX
     }
-
-    ;
 
     /**
      * Preference value to hide the event date.

@@ -46,6 +46,8 @@
     <string name="photo_booth_theme_adapter__orange_display_name">Orange stripes</string>
     <string name="photo_booth_theme_adapter__green_display_name">Green stripes</string>
     <string name="photo_booth_theme_adapter__minimalist_display_name">Minimalist</string>
+    <string name="photo_booth_theme_adapter__vintage_display_name">Vintage</string>
+    <string name="photo_booth_theme_adapter__carbon_display_name">Carbon</string>
 
     <!-- Photo Strip Template Adapter -->
     <string name="photo_strip_template_adapter__single_display_name">Single</string>

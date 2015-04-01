@@ -37,6 +37,7 @@ import com.groundupworks.partyphotobooth.R;
 import com.groundupworks.partyphotobooth.helpers.PreferencesHelper;
 import com.groundupworks.partyphotobooth.helpers.PreferencesHelper.PhotoBoothMode;
 import com.groundupworks.partyphotobooth.kiosk.KioskActivity;
+import com.groundupworks.partyphotobooth.themes.Theme;
 
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
@@ -256,6 +257,7 @@ public class CaptureFragment extends Fragment {
         // Show frame count only if more than one frame is to be captured.
         if (totalFrames > 1) {
             String frameCountText = getString(R.string.capture__frame_count, currentFrame, totalFrames);
+            mFrameCount.setTypeface(Theme.from(appContext, preferencesHelper.getPhotoBoothTheme(appContext)).getFont());
             mFrameCount.setText(frameCountText);
             mFrameCount.setVisibility(View.VISIBLE);
         }

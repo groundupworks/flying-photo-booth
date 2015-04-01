@@ -6,7 +6,11 @@
 package com.groundupworks.partyphotobooth.themes;
 
 import android.content.Context;
+import android.graphics.Typeface;
 
+import com.groundupworks.lib.photobooth.filters.BlackAndWhiteFilter;
+import com.groundupworks.lib.photobooth.filters.SepiaFilter;
+import com.groundupworks.lib.photobooth.helpers.ImageHelper;
 import com.groundupworks.partyphotobooth.R;
 import com.groundupworks.partyphotobooth.helpers.PreferencesHelper;
 
@@ -23,22 +27,32 @@ public abstract class Theme {
     /**
      * The {@link com.groundupworks.partyphotobooth.helpers.PreferencesHelper.PhotoBoothTheme}.
      */
-    protected PreferencesHelper.PhotoBoothTheme mTheme;
+    protected PreferencesHelper.PhotoBoothTheme mTheme = PreferencesHelper.PhotoBoothTheme.MINIMALIST;
 
     /**
      * The display name for the {@link com.groundupworks.partyphotobooth.helpers.PreferencesHelper.PhotoBoothTheme}.
      */
-    protected String mDisplayName;
+    protected String mDisplayName = null;
 
     /**
      * The icon resource of the {@link com.groundupworks.partyphotobooth.helpers.PreferencesHelper.PhotoBoothTheme}.
      */
-    protected int mIconResource;
+    protected int mIconResource = RESOURCE_NONE;
 
     /**
      * The background resource of the {@link com.groundupworks.partyphotobooth.helpers.PreferencesHelper.PhotoBoothTheme}.
      */
-    protected int mBackgroundResource;
+    protected int mBackgroundResource = RESOURCE_NONE;
+
+    /**
+     * The font of the {@link com.groundupworks.partyphotobooth.helpers.PreferencesHelper.PhotoBoothTheme}.
+     */
+    protected Typeface mFont = Typeface.SANS_SERIF;
+
+    /**
+     * The image filter of the {@link com.groundupworks.partyphotobooth.helpers.PreferencesHelper.PhotoBoothTheme}.
+     */
+    protected ImageHelper.ImageFilter mImageFilter = null;
 
     /**
      * Gets the {@link com.groundupworks.partyphotobooth.themes.Theme} from the theme name.
@@ -60,6 +74,10 @@ public abstract class Theme {
             theme = new Green(appContext);
         } else if (PreferencesHelper.PhotoBoothTheme.MINIMALIST.equals(themeName)) {
             theme = new Minimalist(appContext);
+        } else if (PreferencesHelper.PhotoBoothTheme.VINTAGE.equals(themeName)) {
+            theme = new Vintage(appContext);
+        } else if (PreferencesHelper.PhotoBoothTheme.CARBON.equals(themeName)) {
+            theme = new Carbon(appContext);
         }
         return theme;
     }
@@ -101,67 +119,125 @@ public abstract class Theme {
     }
 
     /**
+     * Gets the font of the {@link com.groundupworks.partyphotobooth.helpers.PreferencesHelper.PhotoBoothTheme}.
+     *
+     * @return the font.
+     */
+    public Typeface getFont() {
+        return mFont;
+    }
+
+    /**
+     * Gets the image filter of the {@link com.groundupworks.partyphotobooth.helpers.PreferencesHelper.PhotoBoothTheme}.
+     *
+     * @return the image filter; or {@code null}.
+     */
+    public ImageHelper.ImageFilter getFilter() {
+        return mImageFilter;
+    }
+
+    /**
      * Blue stripes theme.
      */
-    public static class Blue extends Theme {
+    private static class Blue extends Theme {
 
-        public Blue(Context context) {
+        private Blue(Context context) {
             mTheme = PreferencesHelper.PhotoBoothTheme.STRIPES_BLUE;
             mDisplayName = context.getString(R.string.photo_booth_theme_adapter__blue_display_name);
             mIconResource = R.drawable.tile_blue;
             mBackgroundResource = R.drawable.bitmap_tile_blue;
+            mFont = Typeface.SANS_SERIF;
+            mImageFilter = null;
         }
     }
 
     /**
      * Pink stripes theme.
      */
-    public static class Pink extends Theme {
+    private static class Pink extends Theme {
 
-        public Pink(Context context) {
+        private Pink(Context context) {
             mTheme = PreferencesHelper.PhotoBoothTheme.STRIPES_PINK;
             mDisplayName = context.getString(R.string.photo_booth_theme_adapter__pink_display_name);
             mIconResource = R.drawable.tile_pink;
             mBackgroundResource = R.drawable.bitmap_tile_pink;
+            mFont = Typeface.SANS_SERIF;
+            mImageFilter = null;
         }
     }
 
     /**
      * Orange stripes theme.
      */
-    public static class Orange extends Theme {
+    private static class Orange extends Theme {
 
-        public Orange(Context context) {
+        private Orange(Context context) {
             mTheme = PreferencesHelper.PhotoBoothTheme.STRIPES_ORANGE;
             mDisplayName = context.getString(R.string.photo_booth_theme_adapter__orange_display_name);
             mIconResource = R.drawable.tile_orange;
             mBackgroundResource = R.drawable.bitmap_tile_orange;
+            mFont = Typeface.SANS_SERIF;
+            mImageFilter = null;
         }
     }
 
     /**
      * Green stripes theme.
      */
-    public static class Green extends Theme {
+    private static class Green extends Theme {
 
-        public Green(Context context) {
+        private Green(Context context) {
             mTheme = PreferencesHelper.PhotoBoothTheme.STRIPES_GREEN;
             mDisplayName = context.getString(R.string.photo_booth_theme_adapter__green_display_name);
             mIconResource = R.drawable.tile_green;
             mBackgroundResource = R.drawable.bitmap_tile_green;
+            mFont = Typeface.SANS_SERIF;
+            mImageFilter = null;
         }
     }
 
     /**
      * Minimalist theme.
      */
-    public static class Minimalist extends Theme {
+    private static class Minimalist extends Theme {
 
-        public Minimalist(Context context) {
+        private Minimalist(Context context) {
             mTheme = PreferencesHelper.PhotoBoothTheme.MINIMALIST;
             mDisplayName = context.getString(R.string.photo_booth_theme_adapter__minimalist_display_name);
             mIconResource = RESOURCE_NONE;
             mBackgroundResource = RESOURCE_NONE;
+            mFont = Typeface.SANS_SERIF;
+            mImageFilter = null;
+        }
+    }
+
+    /**
+     * Vintage theme.
+     */
+    private static class Vintage extends Theme {
+
+        private Vintage(Context context) {
+            mTheme = PreferencesHelper.PhotoBoothTheme.VINTAGE;
+            mDisplayName = context.getString(R.string.photo_booth_theme_adapter__vintage_display_name);
+            mIconResource = RESOURCE_NONE;
+            mBackgroundResource = RESOURCE_NONE;
+            mFont = Typeface.SERIF;
+            mImageFilter = new SepiaFilter();
+        }
+    }
+
+    /**
+     * Carbon theme.
+     */
+    private static class Carbon extends Theme {
+
+        private Carbon(Context context) {
+            mTheme = PreferencesHelper.PhotoBoothTheme.CARBON;
+            mDisplayName = context.getString(R.string.photo_booth_theme_adapter__carbon_display_name);
+            mIconResource = RESOURCE_NONE;
+            mBackgroundResource = RESOURCE_NONE;
+            mFont = Typeface.MONOSPACE;
+            mImageFilter = new BlackAndWhiteFilter();
         }
     }
 }

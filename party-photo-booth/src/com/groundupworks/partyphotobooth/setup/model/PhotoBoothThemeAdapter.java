@@ -37,7 +37,9 @@ public class PhotoBoothThemeAdapter extends BaseSpinnerAdapter<Theme> {
         view.findViewById(R.id.spinner_item_description).setVisibility(View.GONE);
 
         // Bind data.
-        ((TextView) view.findViewById(R.id.spinner_item_display_name)).setText(item.getDisplayName());
+        TextView displayName = ((TextView) view.findViewById(R.id.spinner_item_display_name));
+        displayName.setTypeface(item.getFont());
+        displayName.setText(item.getDisplayName());
         int iconRes = item.getIconResource();
         if (iconRes != Theme.RESOURCE_NONE) {
             ((ImageView) view.findViewById(R.id.spinner_item_icon)).setImageResource(iconRes);
@@ -58,11 +60,10 @@ public class PhotoBoothThemeAdapter extends BaseSpinnerAdapter<Theme> {
      */
     private static SparseArray<Theme> createItems(Context context) {
         SparseArray<Theme> themes = new SparseArray<>();
-        themes.put(PhotoBoothTheme.STRIPES_BLUE.ordinal(), new Theme.Blue(context));
-        themes.put(PhotoBoothTheme.STRIPES_PINK.ordinal(), new Theme.Pink(context));
-        themes.put(PhotoBoothTheme.STRIPES_ORANGE.ordinal(), new Theme.Orange(context));
-        themes.put(PhotoBoothTheme.STRIPES_GREEN.ordinal(), new Theme.Green(context));
-        themes.put(PhotoBoothTheme.MINIMALIST.ordinal(), new Theme.Minimalist(context));
+        PhotoBoothTheme[] themeNames = PhotoBoothTheme.values();
+        for (PhotoBoothTheme themeName : themeNames) {
+            themes.put(themeName.ordinal(), Theme.from(context, themeName));
+        }
         return themes;
     }
 

@@ -35,7 +35,6 @@ import com.groundupworks.partyphotobooth.R;
 import com.groundupworks.partyphotobooth.arrangements.BaseTitleHeader;
 import com.groundupworks.partyphotobooth.controllers.PhotoStripController;
 import com.groundupworks.partyphotobooth.helpers.PreferencesHelper;
-import com.groundupworks.partyphotobooth.helpers.PreferencesHelper.PhotoBoothTheme;
 import com.groundupworks.partyphotobooth.helpers.TextHelper;
 import com.groundupworks.partyphotobooth.themes.Theme;
 
@@ -143,8 +142,8 @@ public class PhotoStripFragment extends ControllerBackedFragment<PhotoStripContr
         /*
          * Set the selected theme.
          */
-        PhotoBoothTheme themeName = preferencesHelper.getPhotoBoothTheme(appContext);
-        int backgroundRes = Theme.from(appContext, themeName).getBackgroundResource();
+        Theme theme = Theme.from(appContext, preferencesHelper.getPhotoBoothTheme(appContext));
+        int backgroundRes = theme.getBackgroundResource();
         if (backgroundRes != Theme.RESOURCE_NONE) {
             mTitle.setBackgroundResource(backgroundRes);
         }
@@ -162,6 +161,7 @@ public class PhotoStripFragment extends ControllerBackedFragment<PhotoStripContr
         // Calculate based on first line of event title.
         String eventLineOne = preferencesHelper.getEventLineOne(appContext);
         if (TextHelper.isValid(eventLineOne)) {
+            mEventLineOne.setTypeface(theme.getFont());
             Paint paint = mEventLineOne.getPaint();
             float fittedTextSize = TextHelper.getFittedTextSize(eventLineOne, lineWidth, lineHeight, paint);
             if (fittedTextSize < optimalTextSize) {
@@ -172,6 +172,7 @@ public class PhotoStripFragment extends ControllerBackedFragment<PhotoStripContr
         // Calculate based on second line of event title.
         String eventLineTwo = preferencesHelper.getEventLineTwo(appContext);
         if (TextHelper.isValid(eventLineTwo)) {
+            mEventLineTwo.setTypeface(theme.getFont());
             Paint paint = mEventLineTwo.getPaint();
             float fittedTextSize = TextHelper.getFittedTextSize(eventLineTwo, lineWidth, lineHeight, paint);
             if (fittedTextSize < optimalTextSize) {
@@ -183,6 +184,7 @@ public class PhotoStripFragment extends ControllerBackedFragment<PhotoStripContr
         String eventDateString = null;
         long eventDate = preferencesHelper.getEventDate(appContext);
         if (eventDate != PreferencesHelper.EVENT_DATE_HIDDEN) {
+            mEventDate.setTypeface(theme.getFont());
             Paint paint = mEventDate.getPaint();
             eventDateString = TextHelper.getDateString(appContext, eventDate);
             float fittedTextSize = TextHelper.getFittedTextSize(eventDateString, lineWidth, lineHeight, paint);
@@ -350,6 +352,7 @@ public class PhotoStripFragment extends ControllerBackedFragment<PhotoStripContr
         PreferencesHelper preferencesHelper = new PreferencesHelper();
         PreferencesHelper.PhotoBoothMode mode = preferencesHelper.getPhotoBoothMode(activity);
         if (!PreferencesHelper.PhotoBoothMode.AUTOMATIC.equals(mode)) {
+            discardButton.setTypeface(Theme.from(activity, preferencesHelper.getPhotoBoothTheme(activity)).getFont());
             discardButton.setVisibility(View.VISIBLE);
             discardButton.setOnClickListener(new OnClickListener() {
                 @Override

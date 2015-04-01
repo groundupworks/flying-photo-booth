@@ -84,18 +84,25 @@ public class BaseTitleHeader implements IPhotoStripHeader {
     private Bitmap mLogo = null;
 
     /**
+     * The font.
+     */
+    private Typeface mFont = null;
+
+    /**
      * Constructor.
      *
      * @param lineOne the first line of the event title; or null to hide.
      * @param lineTwo the second line of the event title; or null to hide.
      * @param date    the date of the event; or null to hide.
      * @param logo    the event logo; or null to hide.
+     * @param font    the font.
      */
-    public BaseTitleHeader(String lineOne, String lineTwo, String date, Bitmap logo) {
+    public BaseTitleHeader(String lineOne, String lineTwo, String date, Bitmap logo, Typeface font) {
         mLineOne = lineOne;
         mLineTwo = lineTwo;
         mDate = date;
         mLogo = logo;
+        mFont = font;
     }
 
     @Override
@@ -110,7 +117,7 @@ public class BaseTitleHeader implements IPhotoStripHeader {
         if (hasLineOne || hasLineTwo || hasDate || hasLogo) {
             // Configure paint for drawing text.
             Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-            paint.setTypeface(Typeface.SANS_SERIF);
+            paint.setTypeface(mFont);
             paint.setShadowLayer(TEXT_SHADOW_RADIUS, TEXT_SHADOW_DX, TEXT_SHADOW_DY, Color.GRAY);
             paint.setTextAlign(Align.CENTER);
 
