@@ -37,6 +37,7 @@ import com.groundupworks.partyphotobooth.controllers.PhotoStripController;
 import com.groundupworks.partyphotobooth.helpers.PreferencesHelper;
 import com.groundupworks.partyphotobooth.helpers.PreferencesHelper.PhotoBoothTheme;
 import com.groundupworks.partyphotobooth.helpers.TextHelper;
+import com.groundupworks.partyphotobooth.themes.Theme;
 
 import java.lang.ref.WeakReference;
 
@@ -142,17 +143,10 @@ public class PhotoStripFragment extends ControllerBackedFragment<PhotoStripContr
         /*
          * Set the selected theme.
          */
-        PhotoBoothTheme theme = preferencesHelper.getPhotoBoothTheme(appContext);
-        if (PhotoBoothTheme.STRIPES_BLUE.equals(theme)) {
-            mTitle.setBackgroundResource(R.drawable.bitmap_tile_blue);
-        } else if (PhotoBoothTheme.STRIPES_PINK.equals(theme)) {
-            mTitle.setBackgroundResource(R.drawable.bitmap_tile_pink);
-        } else if (PhotoBoothTheme.STRIPES_ORANGE.equals(theme)) {
-            mTitle.setBackgroundResource(R.drawable.bitmap_tile_orange);
-        } else if (PhotoBoothTheme.STRIPES_GREEN.equals(theme)) {
-            mTitle.setBackgroundResource(R.drawable.bitmap_tile_green);
-        } else if (PhotoBoothTheme.MINIMALIST.equals(theme)) {
-            // No background.
+        PhotoBoothTheme themeName = preferencesHelper.getPhotoBoothTheme(appContext);
+        int backgroundRes = Theme.from(appContext, themeName).getBackgroundResource();
+        if (backgroundRes != Theme.RESOURCE_NONE) {
+            mTitle.setBackgroundResource(backgroundRes);
         }
 
         /*
