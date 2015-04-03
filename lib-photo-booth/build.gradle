@@ -1,7 +1,7 @@
 apply plugin: 'com.android.library'
 
 ext {
-    wingsVersion = '1.0.2'
+    wingsVersion = '1.0.3'
     daggerVersion = '1.2.2'
 }
 
@@ -11,19 +11,14 @@ dependencies {
     compile "com.groundupworks.wings:wings:$wingsVersion"
     compile "com.groundupworks.wings:wings-dropbox:$wingsVersion"
     compile "com.groundupworks.wings:wings-facebook:$wingsVersion"
-
-    // Temporary fixes to make GCP half work.
-    compile 'com.squareup.okhttp:okhttp-urlconnection:2.3.0'
-    compile("com.groundupworks.wings:wings-gcp:$wingsVersion") {
-        exclude group: 'com.netflix.rxjava', module: 'rxjava-android'
-    }
+    compile "com.groundupworks.wings:wings-gcp:$wingsVersion"
 
     compile "com.squareup.dagger:dagger:$daggerVersion"
     provided "com.squareup.dagger:dagger-compiler:$daggerVersion"
 }
 
 android {
-    buildToolsVersion '22.0.0'
+    buildToolsVersion '22.0.1'
     compileSdkVersion 22
     sourceSets {
         main {
