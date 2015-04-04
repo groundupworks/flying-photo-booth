@@ -11,6 +11,9 @@ buildscript {
 allprojects {
     repositories {
         jcenter()
+        maven() {
+            url "https://oss.sonatype.org/service/local/repositories/releases/content/"
+        }
         mavenLocal()
         maven() {
             url "file://${System.getProperty("user.home")}/.m2/repository/snapshots"

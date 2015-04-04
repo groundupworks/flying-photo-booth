@@ -28,6 +28,7 @@ import com.groundupworks.partyphotobooth.helpers.PreferencesHelper;
 import com.groundupworks.partyphotobooth.helpers.PreferencesHelper.PhotoStripArrangement;
 import com.groundupworks.partyphotobooth.helpers.PreferencesHelper.PhotoStripTemplate;
 import com.groundupworks.partyphotobooth.helpers.TextHelper;
+import com.groundupworks.partyphotobooth.themes.Theme;
 import com.groundupworks.wings.Wings;
 import com.groundupworks.wings.dropbox.DropboxEndpoint;
 import com.groundupworks.wings.facebook.FacebookEndpoint;
@@ -108,6 +109,11 @@ public class PhotoStripController extends BaseController {
     private PhotoStripArrangement mArrangementPref;
 
     /**
+     * The theme.
+     */
+    private Theme mTheme;
+
+    /**
      * The total number of frames to capture.
      */
     private int mFramesTotalPref;
@@ -154,6 +160,8 @@ public class PhotoStripController extends BaseController {
 
         PhotoStripTemplate template = mPreferencesHelper.getPhotoStripTemplate(mContext);
         mArrangementPref = template.getArrangement();
+
+        mTheme = Theme.from(mContext, mPreferencesHelper.getPhotoBoothTheme(mContext));
 
         // Set params for frame management.
         mFramesTotalPref = template.getNumPhotos();
@@ -210,7 +218,7 @@ public class PhotoStripController extends BaseController {
      * @param reflection horizontal reflection applied to image.
      */
     private void processJpegData(byte[] jpegData, float rotation, boolean reflection) {
-        Bitmap frame = ImageHelper.createImage(jpegData, rotation, reflection, null);
+        Bitmap frame = ImageHelper.createImage(jpegData, rotation, reflection, mTheme.getFilter());
         if (frame != null) {
             // Create thumbnail bitmap.
             Bitmap thumb = Bitmap.createScaledBitmap(frame, mThumbSize, mThumbSize, true);
@@ -277,11 +285,11 @@ public class PhotoStripController extends BaseController {
         // Select arrangement.
         Arrangement arrangement = null;
         if (PhotoStripArrangement.HORIZONTAL.equals(mArrangementPref)) {
-            arrangement = new TitledHorizontalArrangement(mLineOne, mLineTwo, mDate, mLogo);
+            arrangement = new TitledHorizontalArrangement(mLineOne, mLineTwo, mDate, mLogo, mTheme.getFont());
         } else if (PhotoStripArrangement.BOX.equals(mArrangementPref)) {
-            arrangement = new TitledBoxArrangement(mLineOne, mLineTwo, mDate, mLogo);
+            arrangement = new TitledBoxArrangement(mLineOne, mLineTwo, mDate, mLogo, mTheme.getFont());
         } else {
-            arrangement = new TitledVerticalArrangement(mLineOne, mLineTwo, mDate, mLogo);
+            arrangement = new TitledVerticalArrangement(mLineOne, mLineTwo, mDate, mLogo, mTheme.getFont());
         }
 
         // Create photo strip as a single bitmap.
