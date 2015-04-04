@@ -67,12 +67,20 @@ public class LogsHelper implements IWingsLogger {
         if (FlurryAgent.isSessionActive()) {
             FlurryAgent.logEvent(eventName, eventParameters);
         }
+
+        if (DEBUG) {
+            Log.d(LOGS_TAG, eventName + ": " + eventParameters.toString());
+        }
     }
 
     @Override
     public void log(String eventName) {
         if (FlurryAgent.isSessionActive()) {
             FlurryAgent.logEvent(eventName);
+        }
+
+        if (DEBUG) {
+            Log.d(LOGS_TAG, eventName);
         }
     }
 
