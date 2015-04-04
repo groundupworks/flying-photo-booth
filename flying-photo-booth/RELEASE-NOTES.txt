@@ -1,3 +1,41 @@
+VERSION 3.8
+
+Create, review, save and share photo strips all in less than 30 seconds. Here are some user reviews that I made up, but nonetheless reflect what Flying PhotoBooth will do for you:
+
+“The swipe-to-retake feature is so ridiculously convenient I think I’m in love.”
+
+“I have never used Android Beam until this app… I feel enlightened and elevated to another plane of existence.”
+
+“A single click and I have created a photo strip, posted it to Facebook and Dropbox, and there is a printout waiting for me at the printer. Am I a wizard?”
+
+
+Sharing with Wings
+
+Wings is the engine that allows you to pre-configure where you want to publish your photo strips, then does its magic silently in the background. If you decide to take photos in a cave, Wings will make sure your photo strips get posted when connectivity resumes. It’s such an efficient and reliable way to share photos that we have published Wings as a standalone open-source library:
+http://www.groundupworks.com/wings/
+
+
+DIY Photo Booth
+
+If you are looking to set up a DIY photo booth at an event, check out Party PhotoBooth. It runs on the same engine as Flying PhotoBooth, but with added features and guest-friendly UX specially designed for setting up a self-serve kiosk at parties. There is also a step-by-step Instructable on how to do this:
+http://www.instructables.com/id/5-minute-Photo-Booth/
+
+
+Enjoy the app and come say hi:
+https://www.facebook.com/groundupworks
+
+
+TAGLINE
+
+Create and share photo strips!
+
+
+NEW FEATURES
+ 
+• Improved Google Cloud Print reliability
+• Selectable number of copies to print
+
+
 VERSION 3.7
 
 Create, review, save and share photo strips all in less than 30 seconds. Here are some user reviews that I made up, but nonetheless reflect what Flying PhotoBooth will do for you:

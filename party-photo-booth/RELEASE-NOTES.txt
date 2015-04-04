@@ -1,3 +1,52 @@
+VERSION 1.13
+
+Need a photo booth at your event? There is an app for that!
+
+Party PhotoBooth is designed for birthday parties, weddings and any events where your guests are encouraged to act goofy on camera. As the party host, you will be able to transform your phone or tablet into a photo booth by following this Instructable: http://www.instructables.com/id/5-minute-Photo-Booth/
+
+The unique Kiosk mode feature keeps the app running in foreground, so the device will remain as a photo booth for the duration of your event. You can fix your tablet on a tripod, or have guests pass around this mobile photo booth, without worrying about the app being closed.
+
+Link your Facebook, Dropbox, and Google Cloud Print accounts. Party PhotoBooth will post and print the photo strips for you! Even if you are hosting in a cave without network connectivity, the app will schedule retries to get your photo strips delivered once a connection becomes available. You can trust Party PhotoBooth :)
+
+FEATURES
+
+One-minute Set Up
+
+¥ Pick a photo strip template with optional event name, date and logo
+¥ Link Facebook and Dropbox accounts for auto sharing
+¥ Link Google Cloud Print for printing
+¥ Keep the app in foreground with passcode-protected Kiosk mode 
+
+Guest Experience
+
+¥ Take pictures as in a photo booth, with count down timer and animated review panel
+¥ Trigger with on-screen button or Bluetooth remote
+¥ Find your photo strip on Facebook, Dropbox, or printed via Google Cloud Print
+¥ Automatically return to the Capture screen for the next guest
+
+
+USEFUL TIPS
+
+¥ Read the step-by-step at the Instructables link above
+¥ If you happen to forget the Kiosk mode passcode, restart your device with the power button
+¥ Visit our Facebook Page: https://www.facebook.com/groundupworks
+
+Have fun!
+
+
+TAGLINE
+
+Need a photo booth at your event?
+
+
+NEW FEATURES
+
+¥ Added Vintage and Carbon themes
+¥ Improved Google Cloud Print reliability
+¥ Selectable number of copies to print
+¥ Fixed Facebook linking issue observed on some devices
+
+
 VERSION 1.12
 
 Need a photo booth at your event? There is an app for that!
