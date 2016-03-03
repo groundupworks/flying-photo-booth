@@ -1,7 +1,7 @@
 apply plugin: 'com.android.library'
 
 ext {
-    wingsVersion = '1.0.3'
+    wingsVersion = '1.0.4'
     daggerVersion = '1.2.2'
 }
 
