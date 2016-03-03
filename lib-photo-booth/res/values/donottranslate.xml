@@ -36,7 +36,4 @@
     <string name="pref__trigger_countdown">Countdown</string>
     <string name="pref__trigger_burst">Burst</string>
 
-    <!-- Flurry -->
-    <string name="flurry_api_key"></string>
-
 </resources>

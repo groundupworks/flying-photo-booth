@@ -29,7 +29,4 @@
     <string name="pref__about_category_key">pref__about</string>
     <string name="pref__rate_key">pref__rate</string>
 
-    <!-- Flurry -->
-    <string name="flurry_api_key">974JQS9SVT5CX9T3V2M3</string>
-
 </resources>

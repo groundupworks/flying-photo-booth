@@ -7,7 +7,6 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 
-import com.flurry.android.FlurryAgent;
 import com.groundupworks.lib.photobooth.R;
 
 /**
@@ -26,12 +25,10 @@ public abstract class BaseFragmentActivity extends FragmentActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        FlurryAgent.onStartSession(this);
     }
 
     @Override
     protected void onStop() {
-        FlurryAgent.onEndSession(this);
         super.onStop();
     }
 

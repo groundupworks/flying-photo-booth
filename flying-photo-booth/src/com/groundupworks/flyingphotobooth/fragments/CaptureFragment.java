@@ -45,7 +45,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.flurry.android.FlurryAgent;
 import com.groundupworks.flyingphotobooth.LaunchActivity;
 import com.groundupworks.flyingphotobooth.MyPreferenceActivity;
 import com.groundupworks.flyingphotobooth.R;
@@ -55,9 +54,7 @@ import com.groundupworks.lib.photobooth.helpers.CameraHelper;
 import com.groundupworks.lib.photobooth.helpers.ImageHelper;
 import com.groundupworks.lib.photobooth.views.CenteredPreview;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.CountDownLatch;
@@ -732,11 +729,6 @@ public class CaptureFragment extends Fragment {
                 final LaunchActivity activity = (LaunchActivity) getActivity();
                 Toast.makeText(activity, getString(R.string.capture__error_camera_crash), Toast.LENGTH_SHORT).show();
                 activity.replaceFragment(CaptureFragment.newInstance(mUseFrontFacing), false, true);
-
-                // Log crash event.
-                final Map<String, String> parameters = new HashMap<>();
-                parameters.put("error", e.getMessage());
-                FlurryAgent.logEvent("camera_crashed", parameters);
             }
         }
     }

@@ -20,7 +20,6 @@ import android.content.Context;
 import android.os.HandlerThread;
 import android.os.Looper;
 
-import com.flurry.android.FlurryAgent;
 import com.groundupworks.lib.photobooth.R;
 import com.groundupworks.lib.photobooth.helpers.LogsHelper;
 import com.groundupworks.wings.IWingsModule;
@@ -45,9 +44,6 @@ public abstract class BaseApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-
-        // Initialize Flurry.
-        FlurryAgent.init(this, getString(R.string.flurry_api_key));
 
         // Set a static reference to the Application Context.
         sInstance = this;
