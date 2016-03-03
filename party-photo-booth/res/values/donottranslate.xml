@@ -20,7 +20,4 @@
     <string name="pref__kiosk_mode_setup_completed_key">pref__kiosk_mode_setup_completed_key</string>
     <string name="pref__kiosk_mode_password_key">pref__kiosk_mode_password_key</string>
 
-    <!-- Flurry -->
-    <string name="flurry_api_key">TCJJF4MT2HPG27S87576</string>
-
 </resources>

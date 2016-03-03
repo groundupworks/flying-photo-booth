@@ -26,7 +26,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.flurry.android.FlurryAgent;
 import com.groundupworks.lib.photobooth.framework.BaseApplication;
 import com.groundupworks.lib.photobooth.helpers.CameraAudioHelper;
 import com.groundupworks.lib.photobooth.helpers.CameraHelper;
@@ -40,9 +39,7 @@ import com.groundupworks.partyphotobooth.kiosk.KioskActivity;
 import com.groundupworks.partyphotobooth.themes.Theme;
 
 import java.lang.ref.WeakReference;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Ui for the camera preview and capture screen.
@@ -546,11 +543,6 @@ public class CaptureFragment extends Fragment {
                 ICallbacks callbacks = getCallbacks();
                 if (callbacks != null) {
                     callbacks.onErrorCameraCrashed();
-
-                    // Log crash event.
-                    final Map<String, String> parameters = new HashMap<>();
-                    parameters.put("error", e.getMessage());
-                    FlurryAgent.logEvent("camera_crashed", parameters);
                 }
             }
         }

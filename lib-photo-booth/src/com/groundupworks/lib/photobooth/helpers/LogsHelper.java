@@ -17,7 +17,6 @@ package com.groundupworks.lib.photobooth.helpers;
 
 import android.util.Log;
 
-import com.flurry.android.FlurryAgent;
 import com.groundupworks.wings.IWingsLogger;
 import com.groundupworks.wings.core.WingsService;
 
@@ -64,10 +63,6 @@ public class LogsHelper implements IWingsLogger {
 
     @Override
     public void log(String eventName, Map<String, String> eventParameters) {
-        if (FlurryAgent.isSessionActive()) {
-            FlurryAgent.logEvent(eventName, eventParameters);
-        }
-
         if (DEBUG) {
             Log.d(LOGS_TAG, eventName + ": " + eventParameters.toString());
         }
@@ -75,10 +70,6 @@ public class LogsHelper implements IWingsLogger {
 
     @Override
     public void log(String eventName) {
-        if (FlurryAgent.isSessionActive()) {
-            FlurryAgent.logEvent(eventName);
-        }
-
         if (DEBUG) {
             Log.d(LOGS_TAG, eventName);
         }
@@ -86,11 +77,11 @@ public class LogsHelper implements IWingsLogger {
 
     @Override
     public void onWingsServiceCreated(WingsService service) {
-        FlurryAgent.onStartSession(service);
+        // Do nothing.
     }
 
     @Override
     public void onWingsServiceDestroyed(WingsService service) {
-        FlurryAgent.onEndSession(service);
+        // Do nothing.
     }
 }
