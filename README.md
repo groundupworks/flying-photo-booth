@@ -48,7 +48,7 @@ Need a photo booth at your event? There is an app for that! What's a better way 
 
 Please use the [issue tracker](https://github.com/benhylau/flying-photo-booth/issues) for feature requests and reporting of bugs. Pull requests are welcome, but for custom features please fork instead. One main reason for open-sourcing this project is to allow for use-case-specific customizations without feature-bloating the mainline products, so fork away!
 
-You can also contact me through the [Ground Up Works channels](http://www.groundupworks.com).
+You can also contact me through the [Ground Up Works](http://www.groundupworks.com) channels.
 
 ### License
 
