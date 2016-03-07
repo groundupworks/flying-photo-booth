@@ -44,9 +44,15 @@ Need a photo booth at your event? There is an app for that! What's a better way 
 * Find your photo strip on Facebook, Dropbox, or printed via Google Cloud Print
 * Automatically return to the Capture screen for the next guest
 
+### Contact
+
+Please use the [issue tracker](https://github.com/benhylau/flying-photo-booth/issues) for feature requests and reporting of bugs. Pull requests are welcome, but for custom features please fork instead. One main reason for open-sourcing this project is to allow for use-case-specific customizations without feature-bloating the mainline products, so fork away!
+
+You can also contact me through the [Ground Up Works channels](http://www.groundupworks.com).
+
 ### License
 
 Copyright (c) 2012-2016 Benedict Lau
 
-Licensed under the GPLv3: http://www.gnu.org/licenses/gpl-3.0.html
+Licensed under the [GPLv3](http://www.gnu.org/licenses/gpl-3.0.html)
 
