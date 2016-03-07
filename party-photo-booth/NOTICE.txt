@@ -1,7 +1,0 @@
-Party PhotoBooth
-Copyright (c) 2013 Benedict Lau
-
-
-This package contains software from android-jhlabs (http://code.google.com/p/android-jhlabs/)
-Copyright http://www.jhlabs.com
-Apache License, Version 2.0  (http://www.apache.org/licenses/LICENSE-2.0.html)
