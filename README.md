@@ -44,6 +44,29 @@ Need a photo booth at your event? There is an app for that! What's a better way 
 * Find your photo strip on Facebook, Dropbox, or printed via Google Cloud Print
 * Automatically return to the Capture screen for the next guest
 
+### Build
+
+To compile the applications you must have the [Android SDK](http://developer.android.com/sdk/index.html) set up. With your device connected, build and install **Flying PhotoBooth** with:
+
+```
+./gradlew :flying-photo-booth:installDebug
+```
+
+Or **Party PhotoBooth** with:
+
+```
+./gradlew :party-photo-booth:installDebug
+```
+
+Some Wings Sharing endpoints may not work on your custom build as API keys from the service providers may be pinned to the release signing keys. You should find **donottranslate.xml** in each application and replace all API keys.
+
+If you plan on distributing a fork of these applications, you must replace the following:
+
+* Package names **com.groundupworks.flyingphotobooth** and **com.groundupworks.partyphotobooth**
+* Application names **Flying PhotoBooth** and **Party PhotoBooth**
+* Application icons and all branded graphics
+* API keys
+
 ### Contact
 
 Please use the [issue tracker](https://github.com/benhylau/flying-photo-booth/issues) for feature requests and reporting of bugs. Pull requests are welcome, but for custom features please fork instead. One main reason for open-sourcing this project is to allow for use-case-specific customizations without feature-bloating the mainline products, so fork away!
@@ -54,5 +77,6 @@ You can also contact me through the [Ground Up Works](http://www.groundupworks.c
 
 Copyright (c) 2012-2016 Benedict Lau
 
-Licensed under the [GPLv3](http://www.gnu.org/licenses/gpl-3.0.html)
+Source code licensed under the [GPLv3](http://www.gnu.org/licenses/gpl-3.0.html)
 
+Application names, icons and branded graphics are properties of [Ground Up Works](http://www.groundupworks.com)
