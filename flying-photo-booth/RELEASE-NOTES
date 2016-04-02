@@ -1,3 +1,8 @@
+VERSION 3.9
+- Added feature to publish to albums owned by a Facebook Page
+- Updated to Wings 1.0.4 containing various GCP fixes
+- Released source code under GPLv3
+
 VERSION 3.8
 - Improved Google Cloud Print reliability
 - Selectable number of copies to print
