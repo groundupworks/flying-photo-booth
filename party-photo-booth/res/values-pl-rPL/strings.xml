@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Imprezowa FotoBudka</string>
+
+    <!-- Setup -->
+    <string name="setup__button_text_next">Dalej</string>
+
+    <!-- Event Info Setup Fragment -->
+    <string name="event_info_setup__title">Opis wydarzenia</string>
+    <string name="event_info_setup__event_title">Tytuł</string>
+    <string name="event_info_setup__event_line_one_hint">Pierwsza linia</string>
+    <string name="event_info_setup__event_line_two_hint">Druga linia</string>
+    <string name="event_info_setup__event_logo">Logo</string>
+    <string name="event_info_setup__event_logo_uri_none">Brak</string>
+    <string name="event_info_setup__event_logo_chooser_title">Wybierz logo</string>
+    <string name="event_info_setup__event_date">Data</string>
+    <string name="event_info_setup__event_date_hidden">Ukryj datę</string>
+    <string name="event_info_setup__error_logo">Nie udało się załadować loga</string>
+
+    <!-- Photo Booth Setup Fragment -->
+    <string name="photo_booth_setup__title">Ustawienia Fotobudki</string>
+    <string name="photo_booth_setup__mode">Tryb</string>
+    <string name="photo_booth_setup__theme">Motyw</string>
+    <string name="photo_booth_setup__template">Serie zdjęć</string>
+
+    <!-- Share Services Setup Fragment -->
+    <string name="share_services_setup__title">Sposób udostępniania</string>
+    <string name="share_services_setup__facebook_title">Umieść zdjęcia na Facebooku</string>
+    <string name="share_services_setup__dropbox_title">Umieść zdjęcia na Dropboxie</string>
+    <string name="share_services_setup__gcp_title">Drukuj za pomocą Google Cloud Print</string>
+    <string name="share_services_setup__disabled">Wyłącz</string>
+    <string name="share_services_setup__notice_enabled">Daj gościom dostęp do zdjęć</string>
+
+    <!-- Photo Booth Mode Adapter -->
+    <string name="photo_booth_mode_adapter__self_serve_display_name">Samo-obsługa</string>
+    <string name="photo_booth_mode_adapter__self_serve_description">Przednia kamera i zdjęcia pojedyńczo</string>
+    <string name="photo_booth_mode_adapter__automatic_display_name">Automatyczny</string>
+    <string name="photo_booth_mode_adapter__automatic_description">Przednia kamera i seria automatyczna </string>
+    <string name="photo_booth_mode_adapter__photographer_display_name">Fotograf</string>
+    <string name="photo_booth_mode_adapter__photographer_description">Tylna kamera i natychmiastowa migawka</string>
+
+    <!-- Photo Booth Theme Adapter -->
+    <string name="photo_booth_theme_adapter__blue_display_name">Niebieskie paski</string>
+    <string name="photo_booth_theme_adapter__pink_display_name">Różowe paski</string>
+    <string name="photo_booth_theme_adapter__orange_display_name">Pomarańczowe paski</string>
+    <string name="photo_booth_theme_adapter__green_display_name">Zielone paski</string>
+    <string name="photo_booth_theme_adapter__minimalist_display_name">Minimalistyczny</string>
+    <string name="photo_booth_theme_adapter__vintage_display_name">Starodawny</string>
+    <string name="photo_booth_theme_adapter__carbon_display_name">Czarno-biały</string>
+
+    <!-- Photo Strip Template Adapter -->
+    <string name="photo_strip_template_adapter__single_display_name">Pojedyńczy</string>
+    <string name="photo_strip_template_adapter__single_description">Jedno zdjęcie w serii </string>
+    <string name="photo_strip_template_adapter__2_vertical_display_name">Dwa pionowo</string>
+    <string name="photo_strip_template_adapter__2_vertical_description">Pionowy pasek od góry do dołu</string>
+    <string name="photo_strip_template_adapter__2_horizontal_display_name">Dwa poziomo</string>
+    <string name="photo_strip_template_adapter__2_horizontal_description">Poziomy pasek od lewej do prawej</string>
+    <string name="photo_strip_template_adapter__3_vertical_display_name">Trzy pionowo</string>
+    <string name="photo_strip_template_adapter__3_vertical_description">Pionowy pasek od góry do dołu</string>
+    <string name="photo_strip_template_adapter__3_horizontal_display_name">Trzy poziomo</string>
+    <string name="photo_strip_template_adapter__3_horizontal_description">Poziomy pasek od lewej do prawej</string>
+    <string name="photo_strip_template_adapter__4_vertical_display_name">Cztery pionowo</string>
+    <string name="photo_strip_template_adapter__4_vertical_description">Pionowy pasek od góry do dołu</string>
+    <string name="photo_strip_template_adapter__4_horizontal_display_name">Cztery poziomo</string>
+    <string name="photo_strip_template_adapter__4_horizontal_description">Poziomy pasek od lewej do prawej</string>
+    <string name="photo_strip_template_adapter__4_box_display_name">Cztery w kwadracie</string>
+    <string name="photo_strip_template_adapter__4_box_description">Cztery zdjęcia ułożone w ramce dwa na dwa</string>
+
+    <!-- Kiosk Mode -->
+    <string name="kiosk_mode__setup_message">Naciśnij i przytrzymaj prawy górny róg aby wyjść</string>
+    <string name="kiosk_mode__setup_password_label">Blokada hasłem:</string>
+    <string name="kiosk_mode__setup_password_hint">brak</string>
+    <string name="kiosk_mode__setup_button_ok_text">OK</string>
+    <string name="kiosk_mode__notification_title">Tryb budki</string>
+    <string name="kiosk_mode__notification_msg">Naciśnij i przytrzymaj prawy górny róg aby wyjść</string>
+    <string name="kiosk_mode__start_msg">Uruchamianie trybu budki</string>
+    <string name="kiosk_mode__dialog_title">Wyjdź</string>
+    <string name="kiosk_mode__dialog_password_hint">Hasło</string>
+    <string name="kiosk_mode__dialog_button_positive_text">OK</string>
+    <string name="kiosk_mode__dialog_button_negative_text">Anuluj</string>
+    <string name="kiosk_mode__error_password">Hasło niepoprawne</string>
+
+    <!-- Capture Fragment -->
+    <string name="capture__frame_count">%1$d z %2$d</string>
+    <string name="capture__error_camera_dialog_title">Aparat niedostępny</string>
+    <string name="capture__error_camera_dialog_message_none">Wymagany dostęp do aparatu fotograficznego.</string>
+    <string name="capture__error_camera_dialog_message_in_use">Kamera może być używana przez inną aplikację.</string>
+    <string name="capture__error_camera_crash">Ponowne uruchamianie kamery</string>
+
+    <!-- Photo Strip Fragment -->
+    <string name="photostrip__title_text">FOTO\nBUDKA</string>
+    <string name="photostrip__button_text_discard">Odrzuć</string>
+    <string name="photostrip__error_new_photo">Nie udało się dodać zdjęcia</string>
+    <string name="photostrip__error_missing_photo">Jeszcze jedno zdjęcie!</string>
+    <string name="photostrip__error_submission">Nie udało się zatwierdzić serii zdjęć </string>
+
+    <!-- Error Dialog Fragment -->
+    <string name="error__dialog_button_text">Wyjdź</string>
+
+    <!-- Confirmation Fragment -->
+    <string name="confirmation__message">Dzięki za skorzystanie z\n Imprezowej FotoBudki</string>
+    <string name="confirmation__button_submit_text">Zatwierdź</string>
+
+    <!-- Notice Fragment -->
+    <string name="notice__title_text">Znajdź swoje zdjęcia</string>
+    <string name="notice__button_ok_text">OK</string>
+
+</resources>
