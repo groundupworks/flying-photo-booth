@@ -66,6 +66,18 @@
     <string name="pref__filter_sepia_mixed_summary">Sepia poprawionego zdjęcia</string>
     <string name="pref__filter_line_art_summary">Krawędzie</string>
 
+    <string name="pref__arrangement_box">Kwadrat</string>
+    <string name="pref__arrangement_horizontal">Poziomy</string>
+    <string name="pref__arrangement_vertical">Pionowy</string>
+    <string name="pref__filter_bw">Czarno-biały</string>
+    <string name="pref__filter_bw_mixed">Mieszany czarno-biały</string>
+    <string name="pref__filter_none">Brak</string>
+    <string name="pref__filter_sepia">Sepia</string>
+    <string name="pref__filter_sepia_mixed">Mieszana Sepia</string>
+    <string name="pref__trigger_burst">Natychmiastowe</string>
+    <string name="pref__trigger_countdown">Samowyzwalacz</string>
+    <string name="pref__trigger_manual">Ręczne</string>
+
     <!-- Trigger Preferences -->
     <string name="pref__trigger_title">Wyzwalanie</string>
     <string name="pref__trigger_manual_summary">Ręczne każdego zdjęcia</string>
@@ -74,7 +86,7 @@
 
     <!-- Rate Preferences -->
     <string name="pref__rate_title">Masz uwagi?</string>
-    <string name="pref__rate_summary">Dziękujemy za pomoc</string>
+    <string name="pref__rate_summary">Podziel się spostrzeżeniami</string>
 
     <!-- Wings Endpoint Preferences -->
     <string name="pref__wings_endpoint_link_title_default">Połącz&#8230;</string>
