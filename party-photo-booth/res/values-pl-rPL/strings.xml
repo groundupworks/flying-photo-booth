@@ -33,7 +33,7 @@
     <string name="share_services_setup__notice_enabled">Daj gościom dostęp do zdjęć</string>
 
     <!-- Photo Booth Mode Adapter -->
-    <string name="photo_booth_mode_adapter__self_serve_display_name">Samo-obsługa</string>
+    <string name="photo_booth_mode_adapter__self_serve_display_name">Pojedyńcze zdjęcia</string>
     <string name="photo_booth_mode_adapter__self_serve_description">Przednia kamera i zdjęcia pojedyńczo</string>
     <string name="photo_booth_mode_adapter__automatic_display_name">Automatyczny</string>
     <string name="photo_booth_mode_adapter__automatic_description">Przednia kamera i seria automatyczna </string>
@@ -50,7 +50,7 @@
     <string name="photo_booth_theme_adapter__carbon_display_name">Czarno-biały</string>
 
     <!-- Photo Strip Template Adapter -->
-    <string name="photo_strip_template_adapter__single_display_name">Pojedyńczy</string>
+    <string name="photo_strip_template_adapter__single_display_name">Pojedyńcze</string>
     <string name="photo_strip_template_adapter__single_description">Jedno zdjęcie w serii </string>
     <string name="photo_strip_template_adapter__2_vertical_display_name">Dwa pionowo</string>
     <string name="photo_strip_template_adapter__2_vertical_description">Pionowy pasek od góry do dołu</string>
@@ -85,7 +85,7 @@
     <string name="capture__frame_count">%1$d z %2$d</string>
     <string name="capture__error_camera_dialog_title">Aparat niedostępny</string>
     <string name="capture__error_camera_dialog_message_none">Wymagany dostęp do aparatu fotograficznego.</string>
-    <string name="capture__error_camera_dialog_message_in_use">Kamera może być używana przez inną aplikację.</string>
+    <string name="capture__error_camera_dialog_message_in_use">Aparat może być używana przez inną aplikację.</string>
     <string name="capture__error_camera_crash">Ponowne uruchamianie kamery</string>
 
     <!-- Photo Strip Fragment -->
