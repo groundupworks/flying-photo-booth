@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Latająca FotoBudka</string>
+
+    <!-- Launch Activity -->
+    <string name="launch__error_storage_dialog_title">Pamięć niedostępna</string>
+    <string name="launch__error_storage_dialog_message">Ta aplikacja wymaga dostępu do pamięci współdzielonej/zewnętrznej.</string>
+
+    <!-- Capture Fragment -->
+    <string name="capture__title_frame">ZDJĘCIE %1$d Z %2$d</string>
+    <string name="capture__start_countdown_button_text">NACIŚNIJ ŻEBY ZACZĄĆ</string>
+    <string name="capture__start_manual_button_text">ZRÓB ZDJĘCIE</string>
+    <string name="capture__countdown_one">1</string>
+    <string name="capture__countdown_two">2</string>
+    <string name="capture__countdown_three">3</string>
+    <string name="capture__countdown_separator">•</string>
+    <string name="capture__review_instructions">Przesuń żeby zrobić następne</string>
+    <string name="capture__review_discarded">Anuluj</string>
+    <string name="capture__error_camera_dialog_title">Aparat niedostępny</string>
+    <string name="capture__error_camera_dialog_message_none">Ta aplikacja wymaga dostępu do aparatu w Twoim urządzeniu.</string>
+    <string name="capture__error_camera_dialog_message_in_use">Aparat telefonu może być używany przez inną aplikację.</string>
+    <string name="capture__error_camera_dialog_message_dead">Aparat ma jakieś problemy, spróbój uruchomić ponownie urządzenie.</string>
+    <string name="capture__error_camera_crash">Ponowne uruchamianie aparatu</string>
+
+    <!-- Share Fragment -->
+    <string name="share__beam_toast">Kliknij na kompatybilne urządzenie żeby udostępnić zdjęcie używająć Android Beam, naciśnij i przytrzymaj aby wyświetlić szczegóły</string>
+    <string name="share__share_chooser_title">Udostępnij obraz używając</string>
+    <string name="share__error_generic">Błąd udostępniania</string>
+
+    <!-- Beam Details Dialog Fragment -->
+    <string name="beam_details__dialog_title">Android Beam</string>
+    <string name="beam_details__dialog_message">Żeby podzielić się zdjęciami obydwa urządzenia muszą posiadać:\n\n1. Interfejs NFC\n2. System Android w wersji JellyBean lub wyższej\n3. Odblokowany ekran\n4. Uruchomioną komunikację NFC\n5. Włączony bluetooth\n6. Włączone Android Beam\n\n Zetknij urządzenia aby dokonać transferu</string>
+    <string name="beam_details__dialog_button_text">Ustawienia</string>
+
+    <!-- Error Dialog Fragment -->
+    <string name="error__dialog_button_text">Wyjdź</string>
+
+    <!-- Preferences -->
+    <string name="pref__preference_screen_title">Ustawienia</string>
+    <string name="pref__photo_booth_category_title">Foto Budka</string>
+    <string name="pref__facebook_category_title">Udostępnij na Facebooku</string>
+    <string name="pref__dropbox_category_title">Umieść na Dropboxie</string>
+    <string name="pref__gcp_category_title">Google Cloud Print</string>
+    <string name="pref__about_category_title">O aplikacji</string>
+
+    <!-- Arrangement Preferences -->
+    <string name="pref__arrangement_title">Układ zdjęć</string>
+    <string name="pref__arrangement_vertical_summary">Pionowa seria zdjęć</string>
+    <string name="pref__arrangement_horizontal_summary">Pozioma seria zdjęć</string>
+    <string name="pref__arrangement_box_summary">Kwadratowa seria zdjęć</string>
+
+    <!-- Number of Photos Preference -->
+    <string name="pref__number_of_photos_title">Liczba zdjęć</string>
+    <string name="pref__number_of_photos_one_summary">Pojedyńcze</string>
+    <string name="pref__number_of_photos_two_summary">Dwa zdjęcia w serii</string>
+    <string name="pref__number_of_photos_three_summary">Trzy zdjęcia w serii</string>
+    <string name="pref__number_of_photos_four_summary">Cztery zdjęcia w serii</string>
+
+    <!-- Filter Preferences -->
+    <string name="pref__filter_title">Filtr</string>
+    <string name="pref__filter_none_summary">Brak</string>
+    <string name="pref__filter_bw_summary">Czarno-białe</string>
+    <string name="pref__filter_bw_mixed_summary">Czarno-białe poprawione zdjęcie</string>
+    <string name="pref__filter_sepia_summary">Sepia</string>
+    <string name="pref__filter_sepia_mixed_summary">Sepia poprawionego zdjęcia</string>
+    <string name="pref__filter_line_art_summary">Krawędzie</string>
+
+    <string name="pref__arrangement_box">Kwadrat</string>
+    <string name="pref__arrangement_horizontal">Poziomy</string>
+    <string name="pref__arrangement_vertical">Pionowy</string>
+    <string name="pref__filter_bw">Czarno-biały</string>
+    <string name="pref__filter_bw_mixed">Mieszany czarno-biały</string>
+    <string name="pref__filter_none">Brak</string>
+    <string name="pref__filter_sepia">Sepia</string>
+    <string name="pref__filter_sepia_mixed">Mieszana Sepia</string>
+    <string name="pref__trigger_burst">Natychmiastowe</string>
+    <string name="pref__trigger_countdown">Samowyzwalacz</string>
+    <string name="pref__trigger_manual">Ręczne</string>
+
+    <!-- Trigger Preferences -->
+    <string name="pref__trigger_title">Wyzwalanie</string>
+    <string name="pref__trigger_manual_summary">Ręczne każdego zdjęcia</string>
+    <string name="pref__trigger_countdown_summary">Seria z samowyzwalaczem, opóźnienie 3s </string>
+    <string name="pref__trigger_burst_summary">Samowyzwalacz pojedyńczego zdjęcia, opóźnienie 1s</string>
+
+    <!-- Rate Preferences -->
+    <string name="pref__rate_title">Masz uwagi?</string>
+    <string name="pref__rate_summary">Podziel się spostrzeżeniami</string>
+
+    <!-- Wings Endpoint Preferences -->
+    <string name="pref__wings_endpoint_link_title_default">Połącz&#8230;</string>
+    <string name="pref__wings_endpoint_link_title_linked">Rozłącz</string>
+    <string name="pref__wings_endpoint_link_summary_default">Udostępnij jednym kliknięciem</string>
+    <string name="pref__wings_endpoint_link_summary_linked_one_click_share">Udostępniono %1$s</string>
+    <string name="pref__wings_endpoint_link_summary_linked_auto_share">Automatycznie udostępniono %1$s</string>
+    <string name="pref__wings_endpoint_auto_share_title">Automatyczne udostępnianie</string>
+
+</resources>
