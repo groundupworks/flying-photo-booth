@@ -1,12 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.groundupworks.flyingphotobooth"
-    android:versionCode="18"
-    android:versionName="3.9">
-
-    <uses-sdk
-        android:minSdkVersion="10"
-        android:targetSdkVersion="22" />
+    package="com.groundupworks.flyingphotobooth">
 
     <uses-feature
         android:name="android.hardware.screen.portrait"

@@ -1,16 +1,23 @@
 apply plugin: 'com.android.library'
 
 ext {
-    wingsVersion = '1.0.4'
+    wingsVersion = '1.0.5-SNAPSHOT'
     daggerVersion = '1.2.2'
 }
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:support-v4:22.0.0'
+    compile 'com.android.support:support-v4:25.3.1'
     compile "com.groundupworks.wings:wings:$wingsVersion"
     compile "com.groundupworks.wings:wings-dropbox:$wingsVersion"
-    compile "com.groundupworks.wings:wings-facebook:$wingsVersion"
+
+    // Exclude Facebook for now due to DEX limit.
+//    compile "com.groundupworks.wings:wings-facebook:$wingsVersion"
+    compile ("com.groundupworks.wings:wings-facebook:$wingsVersion") {
+        exclude group: 'com.facebook.android', module: 'facebook-login'
+        exclude group: 'com.facebook.android', module: 'facebook-share'
+    }
+
     compile "com.groundupworks.wings:wings-gcp:$wingsVersion"
 
     compile "com.squareup.dagger:dagger:$daggerVersion"
@@ -18,8 +25,8 @@ dependencies {
 }
 
 android {
-    buildToolsVersion '22.0.1'
-    compileSdkVersion 22
+    buildToolsVersion '26.0.2'
+    compileSdkVersion 26
     sourceSets {
         main {
             manifest.srcFile 'AndroidManifest.xml'
